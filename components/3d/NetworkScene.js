@@ -1,31 +1,39 @@
 import { useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
-import { Instances, Instance, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import useMousePosition from '../../lib/hooks/useMousePosition';
 
-const NetworkScene = ({ count = 70, depth = 50 }) => {
+// 完全不使用drei组件
+const NetworkScene = ({ count = 50, depth = 50 }) => {
   const { viewport, camera } = useThree();
   const mousePosition = useMousePosition();
-  const groupRef = useRef();
+  const particlesRef = useRef();
   
-  // Adjust particle count based on device performance
+  // 调整粒子数量以适应不同设备性能
   const particleCount = useMemo(() => {
-    // Check if window is available (client-side)
+    // 检查window是否可用（客户端渲染）
     if (typeof window !== 'undefined') {
-      // A simple heuristic for device capability
+      // 简单的设备性能估计
       const isMobile = window.innerWidth < 768;
-      const isLowPowerDevice = window.navigator.hardwareConcurrency < 4;
+      const isLowPowerDevice = window.navigator?.hardwareConcurrency < 4;
       
       if (isMobile || isLowPowerDevice) {
-        return Math.floor(count / 3); // Reduce particles for mobile/low-power devices
+        return Math.floor(count / 3); // 移动/低性能设备减少粒子
       }
     }
     return count;
   }, [count]);
   
-  // Precompute random positions
+  // 为粒子创建几何体和材质
+  const geometry = useMemo(() => new THREE.SphereGeometry(0.05, 8, 8), []);
+  const material = useMemo(() => 
+    new THREE.MeshStandardMaterial({
+      color: "#6E56CF",
+      emissive: "#4B3B93",
+      emissiveIntensity: 0.5
+    }), []);
+  
+  // 预计算随机位置
   const particles = useMemo(() => {
     const temp = [];
     for (let i = 0; i < particleCount; i++) {
@@ -45,58 +53,65 @@ const NetworkScene = ({ count = 70, depth = 50 }) => {
     return temp;
   }, [viewport, particleCount, depth]);
   
-  useFrame((state, delta) => {
-    if (!groupRef.current) return;
+  // 初始化粒子网络
+  const particleMeshes = useMemo(() => {
+    return particles.map((particle, i) => {
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.copy(particle.position);
+      mesh.scale.set(particle.size, particle.size, particle.size);
+      return mesh;
+    });
+  }, [particles, geometry, material]);
+  
+  // 创建粒子组
+  const group = useMemo(() => {
+    const g = new THREE.Group();
+    particleMeshes.forEach(mesh => g.add(mesh));
+    return g;
+  }, [particleMeshes]);
+  
+  // 当组件挂载时添加到场景
+  useFrame((state) => {
+    if (!particlesRef.current) {
+      particlesRef.current = group;
+      state.scene.add(group);
+    }
     
-    // Update particles based on mouse position
+    // 根据鼠标位置更新粒子
     const mouseX = (mousePosition.x / window.innerWidth) * 2 - 1;
     const mouseY = -(mousePosition.y / window.innerHeight) * 2 + 1;
     
-    groupRef.current.children.forEach((particle, i) => {
-      // Update position based on velocity
+    particleMeshes.forEach((mesh, i) => {
+      // 根据速度更新位置
       particles[i].position.add(particles[i].velocity);
       
-      // Add subtle attraction to mouse position
+      // 添加对鼠标位置的轻微吸引力
       const mouseAttraction = new THREE.Vector3(mouseX, mouseY, 0);
       mouseAttraction.multiplyScalar(0.02);
       particles[i].position.add(mouseAttraction);
       
-      // Boundary check and wrap around
+      // 边界检查并环绕
       if (particles[i].position.x > viewport.width) particles[i].position.x = -viewport.width;
       if (particles[i].position.x < -viewport.width) particles[i].position.x = viewport.width;
       if (particles[i].position.y > viewport.height) particles[i].position.y = -viewport.height;
       if (particles[i].position.y < -viewport.height) particles[i].position.y = viewport.height;
       
-      // Update instance
-      particle.position.copy(particles[i].position);
-      particle.scale.setScalar(particles[i].size);
+      // 更新网格
+      mesh.position.copy(particles[i].position);
     });
     
-    // Gentle camera animation
+    // 轻微的相机动画
     camera.position.z = 5 + Math.sin(state.clock.elapsedTime * 0.2) * 0.5;
+    
+    // 轻微旋转粒子组，增添动态感
+    group.rotation.y = Math.sin(state.clock.elapsedTime * 0.1) * 0.05;
   });
   
+  // 返回灯光用于场景照明
   return (
     <>
-      <color attach="background" args={['#0D0D18']} />
-      
-      <EffectComposer>
-        <Bloom intensity={0.5} luminanceThreshold={0.2} luminanceSmoothing={0.9} />
-      </EffectComposer>
-      
-      <Instances limit={particleCount} ref={groupRef}>
-        <sphereGeometry args={[0.05, 16, 16]} />
-        <meshStandardMaterial color="#6E56CF" emissive="#4B3B93" emissiveIntensity={0.5} />
-        
-        {particles.map((data, i) => (
-          <Instance key={i} position={data.position} scale={data.size} />
-        ))}
-      </Instances>
-      
       <ambientLight intensity={0.2} />
       <pointLight position={[10, 10, 10]} intensity={0.5} />
-      
-      <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
     </>
   );
 };
