@@ -1,4 +1,4 @@
-import { Suspense, useRef } from 'react';
+import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { PerspectiveCamera, Environment } from '@react-three/drei';
 import { motion } from 'framer-motion';
@@ -19,7 +19,7 @@ const Hero = () => {
     <section className="relative h-screen overflow-hidden">
       {/* 3D Background */}
       <div className="absolute inset-0 z-0">
-        <Canvas dpr={[1, 2]} performance={{ min: 0.5 }}>
+        <Canvas dpr={[1, 1.5]} performance={{ min: 0.5 }}>
           <Suspense fallback={null}>
             <NetworkScene />
             <Environment preset="city" />
