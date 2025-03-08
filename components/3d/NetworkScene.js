@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
 import { useTexture, Instances, Instance, OrbitControls } from '@react-three/drei';
 import { Vector3 } from 'three';
-import useMousePosition from '@/lib/hooks/useMousePosition';
+import useMousePosition from '../../lib/hooks/useMousePosition';
 
 const NetworkScene = ({ count = 100, depth = 80 }) => {
   const { viewport, camera } = useThree();
