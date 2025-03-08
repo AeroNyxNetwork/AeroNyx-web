@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { MeshTransmissionMaterial, Text3D } from '@react-three/drei';
 import { Vector3, MathUtils } from 'three';
-import useMousePosition from '@/lib/hooks/useMousePosition';
+import useMousePosition from '../../lib/hooks/useMousePosition';
 import GlassMaterial from './GlassMaterial';
 
 // Custom 3D logo for AeroNyx
