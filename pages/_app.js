@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import '@/styles/globals.css';
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps, router }) {
   // Add smooth scroll behavior
