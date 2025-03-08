@@ -1,29 +1,24 @@
-import { MeshTransmissionMaterial } from '@react-three/drei';
+// 避免使用MeshTransmissionMaterial，因为它可能依赖于兼容性有问题的库
+import * as THREE from 'three';
 
-// Premium glass-like material for 3D objects
+// 简化版的玻璃材质，使用标准材质模拟玻璃效果
 const GlassMaterial = ({ 
-  color, 
-  thickness = 0.5,
+  color = '#6E56CF', 
+  opacity = 0.7,
+  metalness = 0.9,
   roughness = 0.1,
-  distortion = 0.4,
-  temporalDistortion = 0.1,
   ...props 
 }) => {
   return (
-    <MeshTransmissionMaterial
-      samples={6}
-      resolution={256}
-      thickness={thickness}
+    <meshPhysicalMaterial
+      color={color}
+      transparent={true}
+      opacity={opacity}
+      metalness={metalness}
       roughness={roughness}
-      anisotropicBlur={0.1}
-      distortion={distortion}
-      distortionScale={0.3}
-      temporalDistortion={temporalDistortion}
       clearcoat={1}
       clearcoatRoughness={0.1}
-      color={color}
-      attenuationDistance={0.5}
-      attenuationColor="#ffffff"
+      envMapIntensity={1}
       {...props}
     />
   );
