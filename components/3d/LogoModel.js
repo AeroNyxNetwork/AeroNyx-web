@@ -1,11 +1,10 @@
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { MeshTransmissionMaterial, Text3D } from '@react-three/drei';
-import { Vector3, MathUtils } from 'three';
+import * as THREE from 'three';
 import useMousePosition from '../../lib/hooks/useMousePosition';
 import GlassMaterial from './GlassMaterial';
 
-// Custom 3D logo for AeroNyx
+// 简化版的3D Logo，避免使用可能引起兼容性问题的drei组件
 const LogoModel = ({ color = '#6E56CF', position = [0, 0, 0], scale = 1 }) => {
   const groupRef = useRef();
   const mousePosition = useMousePosition();
@@ -14,46 +13,46 @@ const LogoModel = ({ color = '#6E56CF', position = [0, 0, 0], scale = 1 }) => {
   useFrame((state) => {
     if (!groupRef.current) return;
     
-    // Subtle rotation based on mouse position
+    // 根据鼠标位置进行细微旋转
     const mouseX = (mousePosition.x / window.innerWidth) * 2 - 1;
     const mouseY = -(mousePosition.y / window.innerHeight) * 2 + 1;
     
-    // Set target rotation with easing
+    // 设置目标旋转角度并平滑过渡
     targetRotation.current.y = mouseX * 0.2;
     targetRotation.current.x = mouseY * 0.2;
     
-    // Smooth interpolation towards target rotation
-    groupRef.current.rotation.y = MathUtils.lerp(
+    // 平滑插值过渡到目标旋转角度
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(
       groupRef.current.rotation.y,
       targetRotation.current.y,
       0.05
     );
     
-    groupRef.current.rotation.x = MathUtils.lerp(
+    groupRef.current.rotation.x = THREE.MathUtils.lerp(
       groupRef.current.rotation.x,
       targetRotation.current.x,
       0.05
     );
     
-    // Gentle floating animation
+    // 轻微浮动动画
     groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
   });
   
   return (
-    <group ref={groupRef} position={new Vector3(...position)} scale={scale}>
-      {/* Outer torus knot representing network connectivity */}
+    <group ref={groupRef} position={position} scale={scale}>
+      {/* 外部环形结构代表网络连接 */}
       <mesh position={[0, 0, 0]}>
         <torusKnotGeometry args={[1, 0.3, 100, 16, 2, 3]} />
         <GlassMaterial color={color} />
       </mesh>
       
-      {/* Inner torus representing data flow */}
+      {/* 内部环形代表数据流 */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <torusGeometry args={[0.6, 0.1, 16, 32]} />
         <GlassMaterial color={'#07BFD3'} />
       </mesh>
       
-      {/* Core sphere representing secure center */}
+      {/* 核心球体代表安全中心 */}
       <mesh position={[0, 0, 0]}>
         <sphereGeometry args={[0.4, 32, 32]} />
         <meshStandardMaterial 
@@ -65,33 +64,31 @@ const LogoModel = ({ color = '#6E56CF', position = [0, 0, 0], scale = 1 }) => {
         />
       </mesh>
       
-      {/* Small particles orbiting around the logo */}
+      {/* 环绕Logo的小粒子 */}
       <OrbitalParticles count={5} radius={1.5} />
     </group>
   );
 };
 
-// Small particles that orbit around the main logo
+// 环绕主Logo的小粒子
 const OrbitalParticles = ({ count = 5, radius = 1.5 }) => {
-  const particlesRef = useRef([]);
-  
-  // Initialize particles with random positions on a circle
-  useEffect(() => {
-    particlesRef.current = Array.from({ length: count }).map(() => ({
+  const particles = useRef(
+    Array.from({ length: count }).map(() => ({
       angle: Math.random() * Math.PI * 2,
       speed: 0.2 + Math.random() * 0.5,
-      y: (Math.random() - 0.5) * 0.5
-    }));
-  }, [count]);
+      y: (Math.random() - 0.5) * 0.5,
+      ref: null
+    }))
+  );
   
   useFrame((state) => {
-    particlesRef.current.forEach((particle, i) => {
+    particles.current.forEach((particle, i) => {
       if (!particle.ref) return;
       
-      // Update angle for circular motion
+      // 更新角度实现环绕运动
       particle.angle += particle.speed * 0.005;
       
-      // Set new position
+      // 设置新位置
       particle.ref.position.x = Math.cos(particle.angle) * radius;
       particle.ref.position.z = Math.sin(particle.angle) * radius;
       particle.ref.position.y = particle.y + Math.sin(state.clock.elapsedTime * 0.5 + i) * 0.2;
@@ -103,7 +100,11 @@ const OrbitalParticles = ({ count = 5, radius = 1.5 }) => {
       {Array.from({ length: count }).map((_, i) => (
         <mesh 
           key={i}
-          ref={ref => particlesRef.current[i] && (particlesRef.current[i].ref = ref)}
+          ref={ref => {
+            if (ref && particles.current[i]) {
+              particles.current[i].ref = ref;
+            }
+          }}
         >
           <sphereGeometry args={[0.08, 16, 16]} />
           <meshStandardMaterial 
