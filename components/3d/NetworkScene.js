@@ -2,6 +2,7 @@ import { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
 import { useTexture, Instances, Instance, OrbitControls } from '@react-three/drei';
+import * as THREE from 'three';
 import { Vector3 } from 'three';
 import useMousePosition from '../../lib/hooks/useMousePosition';
 
