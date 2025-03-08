@@ -79,7 +79,7 @@ const featuresData = [
   },
   {
     title: 'Device Sovereignty',
-    description: 'Maintain complete control over your device's participation in the network. Set custom policies for resource sharing and privacy preferences.',
+    description: 'Maintain complete control over your device\'s participation in the network. Set custom policies for resource sharing and privacy preferences.',
     icon: <DeviceIcon />
   },
   {
