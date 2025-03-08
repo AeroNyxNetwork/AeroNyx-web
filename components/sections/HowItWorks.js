@@ -35,7 +35,7 @@ const HowItWorks = () => {
     },
     {
       title: 'Define Resource Availability',
-      description: 'Device owners specify which computing resources they're willing to share (GPU, CPU, bandwidth, storage) and under what conditions, maintaining complete sovereignty over their hardware.'
+      description: 'Device owners specify which computing resources they\'re willing to share (GPU, CPU, bandwidth, storage) and under what conditions, maintaining complete sovereignty over their hardware.'
     },
     {
       title: 'Join the Global Marketplace',
