@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { PerspectiveCamera, Environment } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import NetworkScene from '../3d/NetworkScene';
 import LogoModel from '../3d/LogoModel';
@@ -22,7 +21,8 @@ const Hero = () => {
         <Canvas dpr={[1, 1.5]} performance={{ min: 0.5 }}>
           <Suspense fallback={null}>
             <NetworkScene />
-            <Environment preset="city" />
+            <color attach="background" args={['#0D0D18']} />
+            <ambientLight intensity={0.2} />
           </Suspense>
         </Canvas>
       </div>
@@ -69,7 +69,6 @@ const Hero = () => {
             <div className="relative w-full h-full">
               <Canvas>
                 <Suspense fallback={<CanvasLoader />}>
-                  <PerspectiveCamera makeDefault position={[0, 0, 5]} />
                   <ambientLight intensity={0.2} />
                   <pointLight position={[10, 10, 10]} intensity={0.5} />
                   <LogoModel position={[0, 0, 0]} scale={1.5} />
