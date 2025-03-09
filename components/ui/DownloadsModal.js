@@ -67,35 +67,35 @@ const DownloadsModal = ({ isOpen, onClose }) => {
       version: "Version: 1.0.1",
       icon: MacOSIcon,
       available: true,
-      downloadUrl: "#macos-download" // Replace with actual download URL
+      downloadUrl: "https://binary.aeronyx.network/AeroNyx_mac1.0.1.dmg" // Replace with actual download URL
     },
     {
       name: "Windows",
       version: "Version: 1.0.1",
       icon: WindowsIcon,
       available: true,
-      downloadUrl: "#windows-download" // Replace with actual download URL
+      downloadUrl: "https://binary.aeronyx.network/AeroNyx_win1.0.1.exe" // Replace with actual download URL
     },
     {
       name: "Android",
       version: "Version: 1.0.1",
       icon: AndroidIcon,
       available: true,
-      downloadUrl: "#android-download" // Replace with actual download URL
-    },
-    {
-      name: "Linux",
-      version: "Version: 0.27 Beta",
-      icon: LinuxIcon,
-      available: true,
-      downloadUrl: "#linux-download" // Replace with actual download URL
+      downloadUrl: "https://binary.aeronyx.network/android1.0.1b.apk" // Replace with actual download URL
     },
     {
       name: "iOS",
       version: "Version: 1.0.1",
       icon: IPhoneIcon,
       available: true,
-      downloadUrl: "#iphone-download" // Replace with actual download URL
+      downloadUrl: "https://apps.apple.com/us/app/aeronyx/id6736854944" // Replace with actual download URL
+    },
+    {
+      name: "Linux",
+      version: "Version: 0.27 Beta",
+      icon: LinuxIcon,
+      available: true,
+      downloadUrl: "https://binary.aeronyx.network/AeroNyx0.2.7.tar.gz" // Replace with actual download URL
     },
     {
       name: "Chrome OS",
