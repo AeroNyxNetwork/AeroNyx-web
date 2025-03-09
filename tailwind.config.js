@@ -8,14 +8,14 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#6E56CF',
-          light: '#9E8CFF',
-          dark: '#4B3B93',
+          DEFAULT: '#776217', // RGB 119, 98, 23
+          light: '#967d1e',   // Lighter version
+          dark: '#574a10',    // Darker version
         },
         secondary: {
-          DEFAULT: '#07BFD3',
-          light: '#59E3F5',
-          dark: '#0597A7',
+          DEFAULT: '#8c7319', // Complementary to primary
+          light: '#a08723',   // Lighter version
+          dark: '#645210',    // Darker version
         },
         neutral: {
           100: '#E6E6F0',
@@ -29,10 +29,10 @@ module.exports = {
           900: '#0D0D18',
         },
         accent: {
-          success: '#3ECF8E',
-          warning: '#FFB224',
-          error: '#FF5A5A',
-          info: '#3B82F6',
+          success: '#5A9A6F', // Adjusted to complement new primary color
+          warning: '#D9A23B', // Adjusted to complement new primary color
+          error: '#C75A5A',   // Adjusted to match the new theme
+          info: '#5A7DA6',    // Adjusted to match the new theme
         },
       },
       fontFamily: {
@@ -50,7 +50,39 @@ module.exports = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
+      // Add text shadow utilities
+      textShadow: {
+        'sm': '0 1px 2px rgba(0, 0, 0, 0.2)',
+        'DEFAULT': '0 2px 4px rgba(0, 0, 0, 0.3)',
+        'lg': '0 4px 8px rgba(0, 0, 0, 0.4)',
+      },
+      // Add z-index utilities for layering
+      zIndex: {
+        '-10': '-10',
+        '-1': '-1',
+        '60': '60',
+        '70': '70',
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    // Custom plugin for text-shadow utilities
+    function({ addUtilities }) {
+      const newUtilities = {
+        '.text-shadow-sm': {
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
+        },
+        '.text-shadow': {
+          textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+        },
+        '.text-shadow-lg': {
+          textShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
+        },
+        '.text-shadow-none': {
+          textShadow: 'none',
+        },
+      };
+      addUtilities(newUtilities);
+    },
+  ],
 };
