@@ -1,23 +1,12 @@
-import { Suspense } from 'react';
 import Head from 'next/head';
-import dynamic from 'next/dynamic';
-
-// Using absolute imports with the @ alias from jsconfig.json
-import Layout from '@/components/layout/Layout';
-import Hero from '@/components/sections/Hero';
-
-// Import the simplified background component with client-side only rendering
-const SimpleNetworkBackground = dynamic(
-  () => import('@/components/ui/SimpleNetworkBackground'),
-  { ssr: false }
-);
-
-// Dynamic imports for other sections
-const Features = dynamic(() => import('@/components/sections/Features'));
-const HowItWorks = dynamic(() => import('@/components/sections/HowItWorks'));
-const Technology = dynamic(() => import('@/components/sections/Technology'));
-const Partners = dynamic(() => import('@/components/sections/Partners'));
-const CTA = dynamic(() => import('@/components/sections/CTA'));
+import Layout from '../components/layout/Layout';
+import Hero from '../components/sections/Hero';
+import Features from '../components/sections/Features';
+import HowItWorks from '../components/sections/HowItWorks';
+import TechnologySection from '../components/sections/TechnologySection';
+import Partners from '../components/sections/Partners';
+import CTA from '../components/sections/CTA';
+import GuaranteedBackground from '../components/ui/GuaranteedBackground';
 
 export default function Home() {
   return (
@@ -28,20 +17,20 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
         
-        {/* Preconnect to Google Fonts */}
+        {/* Font loading */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </Head>
       
-      {/* The simplified background effect */}
-      <SimpleNetworkBackground />
+      {/* Background effect that's guaranteed to show */}
+      <GuaranteedBackground />
       
       <Layout>
         <Hero />
         <Features />
         <HowItWorks />
-        <Technology />
+        <TechnologySection /> {/* Using our guaranteed visible section */}
         <Partners />
         <CTA />
       </Layout>
