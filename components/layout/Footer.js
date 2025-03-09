@@ -20,10 +20,8 @@ const Footer = () => {
               empowering billions of devices to securely share resources in a global marketplace.
             </p>
             <div className="flex space-x-4">
-              <SocialLink href="#" icon={<TwitterIcon />} />
-              <SocialLink href="#" icon={<GithubIcon />} />
-              <SocialLink href="#" icon={<DiscordIcon />} />
-              <SocialLink href="#" icon={<LinkedinIcon />} />
+              <SocialLink href="https://twitter.com/AeroNyxNetwork" icon={<TwitterIcon />} />
+              <SocialLink href="https://github.com/AeroNyxNetwork" icon={<GithubIcon />} />
             </div>
           </div>
           
@@ -31,10 +29,10 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Products</h4>
             <FooterLinks 
               links={[
-                { href: '#', label: 'Privacy SDK' },
-                { href: '#', label: 'Resource Marketplace' },
-                { href: '#', label: 'AI Infrastructure' },
-                { href: '#', label: 'Developer Tools' }
+                { href: 'https://docs.aeronyx.network/developer-documentation/overview', label: 'Privacy SDK' },
+                { href: 'https://app.aeronyx.network/', label: 'Resource Marketplace' },
+                { href: 'https://app.aeronyx.network/', label: 'AI Infrastructure' },
+                { href: 'https://docs.aeronyx.network/decentralized-node-documentation', label: 'Decentralized Nodes' }
               ]}
             />
           </div>
@@ -43,10 +41,10 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Resources</h4>
             <FooterLinks 
               links={[
-                { href: '#', label: 'Documentation' },
-                { href: '#', label: 'Whitepaper' },
-                { href: '#', label: 'GitHub' },
-                { href: '#', label: 'Blog' }
+                { href: 'https://docs.aeronyx.network/', label: 'Documentation' },
+                { href: 'https://docs.aeronyx.network/aeronyx-whitepaper/technical-white-paper', label: 'Whitepaper' },
+                { href: 'https://github.com/AeroNyxNetwork', label: 'GitHub' },
+                { href: 'https://app.aeronyx.network/', label: 'App' }
               ]}
             />
           </div>
@@ -55,10 +53,10 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Company</h4>
             <FooterLinks 
               links={[
-                { href: '#', label: 'About Us' },
-                { href: '#', label: 'Careers' },
-                { href: '#', label: 'Contact' },
-                { href: '#', label: 'Press Kit' }
+                { href: 'https://twitter.com/AeroNyxNetwork', label: 'X' },
+                { href: 'https://t.me/AeroNyxNetwork', label: 'Telegram' },
+                { href: 'hi@aeronyx.network', label: 'Contact' },
+                { href: 'https://docs.aeronyx.network/media-resources', label: 'Press Kit' }
               ]}
             />
           </div>
