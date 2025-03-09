@@ -18,34 +18,21 @@ html {
 
 body {
   color: white;
-  /* Create a fallback background with gradient in case JS fails */
   background-color: #0D0D18;
-  background-image: radial-gradient(circle at 30% 30%, rgba(119, 98, 243, 0.15), rgba(95, 187, 247, 0.05), transparent 70%);
-  background-attachment: fixed;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
     'Open Sans', 'Helvetica Neue', sans-serif;
-  
-  /* Add a subtle animation to the background */
-  animation: bg-pulse 20s infinite alternate ease-in-out;
 }
 
-@keyframes bg-pulse {
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 100% 100%;
-  }
+/* Force elements to be visible - important solution for animation issues */
+.force-visible {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
 }
 
-/* Floating particles animation */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
+/* Ensure motion elements start visible */
+.motion-safe\:opacity-0 {
+  opacity: 1 !important;
 }
 
 /* Enhanced text rendering for better clarity */
@@ -93,8 +80,8 @@ section h2 {
 
 /* Animation classes */
 .reveal-on-scroll {
-  opacity: 0;
-  transform: translateY(20px);
+  opacity: 1 !important; /* Force visibility */
+  transform: translateY(0) !important; /* Force positioning */
   transition: opacity 0.8s, transform 0.8s;
 }
 
