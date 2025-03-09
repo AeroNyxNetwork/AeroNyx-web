@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
+
+// Import directly from the correct relative paths
 import Layout from '../components/layout/Layout';
 import Hero from '../components/sections/Hero';
 
@@ -10,7 +12,7 @@ const SubtleNetworkBackground = dynamic(
   { ssr: false }
 );
 
-// Other dynamic imports
+// Other dynamic imports with correct relative paths
 const Features = dynamic(() => import('../components/sections/Features'));
 const HowItWorks = dynamic(() => import('../components/sections/HowItWorks'));
 const Technology = dynamic(() => import('../components/sections/Technology'));
