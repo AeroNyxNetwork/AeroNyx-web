@@ -56,7 +56,7 @@ const Footer = () => {
                 { href: 'https://twitter.com/AeroNyxNetwork', label: 'X' },
                 { href: 'https://t.me/AeroNyxNetwork', label: 'Telegram' },
                 { href: 'https://docs.aeronyx.network/media-resources', label: 'Press Kit' }
-                { href: 'email:hi@aeronyx.network', label: 'hi@aeronyx.network' },
+                { href: 'http://mail.google.com/', label: 'hi@aeronyx.network' },
                 
               ]}
             />
