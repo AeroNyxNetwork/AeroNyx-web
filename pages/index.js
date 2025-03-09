@@ -6,10 +6,9 @@ import dynamic from 'next/dynamic';
 import Layout from '@/components/layout/Layout';
 import Hero from '@/components/sections/Hero';
 
-// Dynamically import the background with client-side only rendering
-// Use noSSR to prevent hydration issues in Safari/Chrome
-const SubtleNetworkBackground = dynamic(
-  () => import('@/components/ui/SubtleNetworkBackground'),
+// Import the simplified background component with client-side only rendering
+const SimpleNetworkBackground = dynamic(
+  () => import('@/components/ui/SimpleNetworkBackground'),
   { ssr: false }
 );
 
@@ -35,10 +34,8 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </Head>
       
-      {/* The background effect with special className for additional control */}
-      <Suspense fallback={<div className="fixed inset-0 bg-neutral-900"></div>}>
-        <SubtleNetworkBackground className="bg-effect" />
-      </Suspense>
+      {/* The simplified background effect */}
+      <SimpleNetworkBackground />
       
       <Layout>
         <Hero />
