@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 
-// Button variants
+// Button variants updated with new brand colors
 const variants = {
   primary: 'bg-gradient-to-r from-primary-dark via-primary to-primary-light text-white',
   secondary: 'bg-opacity-10 bg-white border border-white/10 text-white',
@@ -51,7 +51,7 @@ const Button = ({
     />
   );
   
-  // Add a subtle inner glow for primary buttons
+  // Add a subtle inner glow for primary buttons - updated with new brand colors
   const glow = variant === 'primary' && (
     <div className="absolute inset-0 rounded-lg opacity-20 blur-md bg-gradient-to-r from-primary-light to-secondary-light" />
   );
@@ -66,9 +66,11 @@ const Button = ({
         sizes[size],
         fullWidth && 'w-full',
         disabled && 'opacity-50 cursor-not-allowed',
+        // Added text shadow for better readability
+        'text-shadow-sm',
         className
       )}
-      whileHover={!disabled ? { y: -2, boxShadow: '0 10px 20px -10px rgba(110, 86, 207, 0.5)' } : {}}
+      whileHover={!disabled ? { y: -2, boxShadow: '0 10px 20px -10px rgba(119, 98, 23, 0.5)' } : {}}
       whileTap={!disabled ? { y: 1 } : {}}
       disabled={disabled}
       href={href}
