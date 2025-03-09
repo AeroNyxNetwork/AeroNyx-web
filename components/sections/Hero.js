@@ -1,11 +1,15 @@
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { motion } from 'framer-motion';
 import Button from '../ui/Button';
 import Container from '../ui/Container';
 import AnimatedLogo from '../ui/AnimatedLogo';
+import DownloadsModal from '../ui/DownloadsModal';
 
-// This is a simplified version of the Hero component that uses our new AnimatedLogo
+// Updated Hero component with Downloads button and optimized modal
 const Hero = () => {
+  // State for managing download modal
+  const [isDownloadsModalOpen, setIsDownloadsModalOpen] = useState(false);
+  
   return (
     <section className="relative h-screen overflow-hidden">
       <div className="absolute inset-0 bg-gradient-radial from-primary-dark/5 to-transparent opacity-70" />
@@ -38,7 +42,13 @@ const Hero = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <Button size="large">Join The Network</Button>
+              {/* Downloads button that opens the modal */}
+              <Button 
+                size="large"
+                onClick={() => setIsDownloadsModalOpen(true)}
+              >
+                Downloads
+              </Button>
               <Button variant="secondary" size="large">Read Whitepaper</Button>
             </motion.div>
           </div>
@@ -52,7 +62,6 @@ const Hero = () => {
             <div className="w-full h-full relative">
               <div className="absolute inset-0 bg-gradient-to-br from-primary-dark/30 to-secondary-dark/20 rounded-2xl" />
               <div className="relative z-10 p-8">
-                {/* Replace the old icon with our new AnimatedLogo */}
                 <AnimatedLogo className="w-32 h-32" />
                 
                 <div className="text-center">
@@ -84,6 +93,12 @@ const Hero = () => {
           </motion.div>
         </div>
       </Container>
+      
+      {/* Optimized Downloads Modal */}
+      <DownloadsModal 
+        isOpen={isDownloadsModalOpen}
+        onClose={() => setIsDownloadsModalOpen(false)}
+      />
     </section>
   );
 };
