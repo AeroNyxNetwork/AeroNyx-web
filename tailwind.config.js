@@ -8,14 +8,14 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#776217', // RGB 119, 98, 23
-          light: '#967d1e',   // Lighter version
-          dark: '#574a10',    // Darker version
+          DEFAULT: '#7762F3', // RGB 119, 98, 243 (Purple)
+          light: '#9788F7',   // Lighter purple
+          dark: '#5945C4',    // Darker purple
         },
         secondary: {
-          DEFAULT: '#8c7319', // Complementary to primary
-          light: '#a08723',   // Lighter version
-          dark: '#645210',    // Darker version
+          DEFAULT: '#5FBBF7', // Complementary blue
+          light: '#8AD1FF',   // Lighter blue
+          dark: '#368AD1',    // Darker blue
         },
         neutral: {
           100: '#E6E6F0',
@@ -29,10 +29,10 @@ module.exports = {
           900: '#0D0D18',
         },
         accent: {
-          success: '#5A9A6F', // Adjusted to complement new primary color
-          warning: '#D9A23B', // Adjusted to complement new primary color
-          error: '#C75A5A',   // Adjusted to match the new theme
-          info: '#5A7DA6',    // Adjusted to match the new theme
+          success: '#67E8B6', // Teal - works well with purple
+          warning: '#FFB86C', // Orange - complements purple
+          error: '#FF7EB6',   // Pink - harmonizes with purple theme
+          info: '#5FBBF7',    // Blue - cohesive with secondary color
         },
       },
       fontFamily: {
@@ -50,13 +50,13 @@ module.exports = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
-      // Add text shadow utilities
+      // Text shadow utilities
       textShadow: {
         'sm': '0 1px 2px rgba(0, 0, 0, 0.2)',
         'DEFAULT': '0 2px 4px rgba(0, 0, 0, 0.3)',
         'lg': '0 4px 8px rgba(0, 0, 0, 0.4)',
       },
-      // Add z-index utilities for layering
+      // Z-index utilities
       zIndex: {
         '-10': '-10',
         '-1': '-1',
