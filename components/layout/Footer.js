@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Container from '../ui/Container';
+import AeroNyxLogo from '../ui/AeroNyxLogo';
 
 const Footer = () => {
   return (
@@ -8,8 +9,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center space-x-2 mb-6">
-              <span className="h-10 w-10 bg-gradient-to-br from-primary-light to-primary-dark rounded-lg flex items-center justify-center">
-                A
+              {/* Replace the logo with the new AeroNyx SVG logo */}
+              <span className="h-10 w-10 flex items-center justify-center">
+                <AeroNyxLogo width={40} height={40} />
               </span>
               <span className="text-xl font-bold">AeroNyx</span>
             </Link>
