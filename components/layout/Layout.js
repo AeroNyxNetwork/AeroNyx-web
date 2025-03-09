@@ -23,21 +23,33 @@ const Layout = ({ children }) => {
     // Trigger once on load
     handleScroll();
     
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Fix for animations - force all motion elements to be visible after a delay
+    const forceVisibilityTimer = setTimeout(() => {
+      document.querySelectorAll('[style*="opacity: 0"]').forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        el.classList.add('force-visible');
+      });
+    }, 500);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(forceVisibilityTimer);
+    };
   }, []);
   
   return (
     <div className="relative min-h-screen text-white font-sans">
-      {/* Note: Changed from 'bg-neutral-900' to allow the background effect to show through */}
-      <div className="relative z-10 flex flex-col min-h-screen">
+      {/* Note: No background color to allow background effects to show through */}
+      <div className="relative z-5 flex flex-col min-h-screen">
         <Header />
         <motion.main
           className="flex-grow"
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }} // Start visible
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          exit={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          style={{ position: 'relative', zIndex: 10 }}
+          style={{ position: 'relative', zIndex: 5 }}
         >
           {children}
         </motion.main>
