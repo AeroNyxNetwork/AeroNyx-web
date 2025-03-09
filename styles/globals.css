@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  /* Updated with new brand color rgb(119, 98, 23) */
-  --primary: #776217;
-  --primary-light: #967d1e;
-  --primary-dark: #574a10;
-  --secondary: #8c7319;
-  --secondary-light: #a08723;
-  --secondary-dark: #645210;
+  /* Updated with correct purple brand color rgb(119, 98, 243) */
+  --primary: #7762F3;
+  --primary-light: #9788F7;
+  --primary-dark: #5945C4;
+  --secondary: #5FBBF7;
+  --secondary-light: #8AD1FF;
+  --secondary-dark: #368AD1;
 }
 
 html {
@@ -58,12 +58,12 @@ section h2 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #776217; /* Updated to match new brand color */
+  background: #7762F3; /* Updated to purple */
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #967d1e; /* Updated to primary light */
+  background: #9788F7; /* Updated to lighter purple */
 }
 
 /* Animation classes */
@@ -120,4 +120,18 @@ section h2 {
 .text-white, .text-neutral-300, .text-neutral-200 {
   position: relative;
   z-index: 5;
+}
+
+/* Browser-specific fixes */
+.safari .text-center {
+  /* Safari-specific text clarity enhancement */
+  will-change: opacity;
+}
+
+/* Canvas background adjustments */
+canvas.network-bg {
+  opacity: 0.4;
+  /* Ensure canvas doesn't cause Safari performance issues */
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
