@@ -4,13 +4,13 @@ import dynamic from 'next/dynamic';
 import Layout from '../components/layout/Layout';
 import Hero from '../components/sections/Hero';
 
-// Use dynamic import with ssr disabled for the 3D background
-const InteractiveBackground = dynamic(
-  () => import('../components/3d/InteractiveBackground'),
+// Dynamically import the background with client-side only rendering
+const SubtleNetworkBackground = dynamic(
+  () => import('../components/ui/SubtleNetworkBackground'),
   { ssr: false }
 );
 
-// Use dynamic imports for other sections
+// Other dynamic imports
 const Features = dynamic(() => import('../components/sections/Features'));
 const HowItWorks = dynamic(() => import('../components/sections/HowItWorks'));
 const Technology = dynamic(() => import('../components/sections/Technology'));
@@ -27,8 +27,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
-      {/* Interactive background - positioned fixed and behind everything */}
-      <InteractiveBackground />
+      {/* The background is now subtle and non-intrusive */}
+      <SubtleNetworkBackground />
       
       <Layout>
         <Hero />
