@@ -4,7 +4,13 @@ import dynamic from 'next/dynamic';
 import Layout from '../components/layout/Layout';
 import Hero from '../components/sections/Hero';
 
-// 使用dynamic imports优化性能
+// Use dynamic import with ssr disabled for the 3D background
+const InteractiveBackground = dynamic(
+  () => import('../components/3d/InteractiveBackground'),
+  { ssr: false }
+);
+
+// Use dynamic imports for other sections
 const Features = dynamic(() => import('../components/sections/Features'));
 const HowItWorks = dynamic(() => import('../components/sections/HowItWorks'));
 const Technology = dynamic(() => import('../components/sections/Technology'));
@@ -20,6 +26,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      
+      {/* Interactive background - positioned fixed and behind everything */}
+      <InteractiveBackground />
       
       <Layout>
         <Hero />
