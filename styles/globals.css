@@ -18,9 +18,34 @@ html {
 
 body {
   color: white;
+  /* Create a fallback background with gradient in case JS fails */
   background-color: #0D0D18;
+  background-image: radial-gradient(circle at 30% 30%, rgba(119, 98, 243, 0.15), rgba(95, 187, 247, 0.05), transparent 70%);
+  background-attachment: fixed;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
     'Open Sans', 'Helvetica Neue', sans-serif;
+  
+  /* Add a subtle animation to the background */
+  animation: bg-pulse 20s infinite alternate ease-in-out;
+}
+
+@keyframes bg-pulse {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+/* Floating particles animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 /* Enhanced text rendering for better clarity */
@@ -120,18 +145,4 @@ section h2 {
 .text-white, .text-neutral-300, .text-neutral-200 {
   position: relative;
   z-index: 5;
-}
-
-/* Browser-specific fixes */
-.safari .text-center {
-  /* Safari-specific text clarity enhancement */
-  will-change: opacity;
-}
-
-/* Canvas background adjustments */
-canvas.network-bg {
-  opacity: 0.4;
-  /* Ensure canvas doesn't cause Safari performance issues */
-  transform: translateZ(0);
-  backface-visibility: hidden;
 }
