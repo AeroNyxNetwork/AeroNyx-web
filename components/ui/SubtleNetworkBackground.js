@@ -63,7 +63,7 @@ const SubtleNetworkBackground = ({ className }) => {
     
     // Get context and set initial size
     const ctx = canvas.getContext('2d');
-    const { width, height } = updateCanvasSize();
+    let { width, height } = updateCanvasSize();
     
     // Create nodes with positions, sizes, colors
     const nodes = Array(config.nodeCount).fill().map(() => ({
@@ -194,17 +194,17 @@ const SubtleNetworkBackground = ({ className }) => {
     
     // Handle window resize
     const handleResize = () => {
-      const { width: newWidth, height: newHeight } = updateCanvasSize();
+      const dimensions = updateCanvasSize();
       
       // Update node positions proportionally
       nodes.forEach(node => {
-        node.x = (node.x / width) * newWidth;
-        node.y = (node.y / height) * newHeight;
+        node.x = (node.x / width) * dimensions.width;
+        node.y = (node.y / height) * dimensions.height;
       });
       
       // Update cached dimensions
-      width = newWidth;
-      height = newHeight;
+      width = dimensions.width;
+      height = dimensions.height;
     };
     
     window.addEventListener('resize', handleResize);
