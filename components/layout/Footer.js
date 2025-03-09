@@ -68,10 +68,10 @@ const Footer = () => {
             © {new Date().getFullYear()} AeroNyx Network. All rights reserved.
           </p>
           <div className="flex space-x-6">
-            <Link href="#" className="text-neutral-400 text-sm hover:text-white transition-colors">
+            <Link href="https://docs.aeronyx.network/articles/aeronyx-privacy-policy" className="text-neutral-400 text-sm hover:text-white transition-colors">
               Privacy Policy
             </Link>
-            <Link href="#" className="text-neutral-400 text-sm hover:text-white transition-colors">
+            <Link href="https://docs.aeronyx.network/articles/aeronyx-user-agreement" className="text-neutral-400 text-sm hover:text-white transition-colors">
               Terms of Service
             </Link>
           </div>
