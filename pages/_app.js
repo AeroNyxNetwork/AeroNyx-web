@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
 import '../styles/globals.css';
+import { AnimatePresence } from 'framer-motion';
+// rest of the code
 
 function MyApp({ Component, pageProps, router }) {
   // 添加平滑滚动行为
