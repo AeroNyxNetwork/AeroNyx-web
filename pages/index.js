@@ -7,6 +7,7 @@ import Layout from '@/components/layout/Layout';
 import Hero from '@/components/sections/Hero';
 
 // Dynamically import the background with client-side only rendering
+// Use noSSR to prevent hydration issues in Safari/Chrome
 const SubtleNetworkBackground = dynamic(
   () => import('@/components/ui/SubtleNetworkBackground'),
   { ssr: false }
@@ -27,10 +28,17 @@ export default function Home() {
         <meta name="description" content="AeroNyx Network empowers billions of devices with its privacy-first SDK, establishing a secure foundation for decentralized networks." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        
+        {/* Preconnect to Google Fonts */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </Head>
       
-      {/* The subtle background effect */}
-      <SubtleNetworkBackground />
+      {/* The background effect with special className for additional control */}
+      <Suspense fallback={<div className="fixed inset-0 bg-neutral-900"></div>}>
+        <SubtleNetworkBackground className="bg-effect" />
+      </Suspense>
       
       <Layout>
         <Hero />
