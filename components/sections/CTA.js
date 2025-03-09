@@ -1,11 +1,15 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Container from '../ui/Container';
 import Button from '../ui/Button';
+import ContactModal from '../ui/ContactModal';
 
 const CTA = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
+  
+  // State for managing contact modal
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   
   return (
     <section className="py-24 relative overflow-hidden">
@@ -20,9 +24,9 @@ const CTA = () => {
         <div className="max-w-4xl mx-auto text-center">
           <motion.h2 
             className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-primary-light to-secondary-light force-visible"
-            initial={{ opacity: 1 }} // Start visible
-            animate={{ opacity: 1, y: 0 }} // Stay visible
-            style={{ opacity: 1, transform: 'none' }} // Force visibility with inline styles
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ opacity: 1, transform: 'none' }}
           >
             Start Building the Decentralized Future
           </motion.h2>
@@ -44,10 +48,22 @@ const CTA = () => {
             style={{ opacity: 1, transform: 'none' }}
           >
             <Button size="large">Get Started</Button>
-            <Button variant="secondary" size="large">Contact Us</Button>
+            <Button 
+              variant="secondary" 
+              size="large"
+              onClick={() => setIsContactModalOpen(true)}
+            >
+              Contact Us
+            </Button>
           </motion.div>
         </div>
       </Container>
+      
+      {/* Contact Modal */}
+      <ContactModal 
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
     </section>
   );
 };
