@@ -3,7 +3,7 @@ import Layout from '../components/layout/Layout';
 import Hero from '../components/sections/Hero';
 import Features from '../components/sections/Features';
 import HowItWorks from '../components/sections/HowItWorks';
-import TechnologySection from '../components/sections/TechnologySection';
+import Technology from '../components/sections/Technology'; // Using existing Technology component
 import Partners from '../components/sections/Partners';
 import CTA from '../components/sections/CTA';
 import GuaranteedBackground from '../components/ui/GuaranteedBackground';
@@ -30,7 +30,7 @@ export default function Home() {
         <Hero />
         <Features />
         <HowItWorks />
-        <TechnologySection /> {/* Using our guaranteed visible section */}
+        <Technology /> {/* Using existing Technology component */}
         <Partners />
         <CTA />
       </Layout>
