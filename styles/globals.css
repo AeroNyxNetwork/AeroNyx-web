@@ -1,16 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --primary: #6E56CF;
-  --primary-light: #9E8CFF;
-  --primary-dark: #4B3B93;
-  --secondary: #07BFD3;
-  --secondary-light: #59E3F5;
-  --secondary-dark: #0597A7;
+  /* Updated with new brand color rgb(119, 98, 23) */
+  --primary: #776217;
+  --primary-light: #967d1e;
+  --primary-dark: #574a10;
+  --secondary: #8c7319;
+  --secondary-light: #a08723;
+  --secondary-dark: #645210;
 }
 
 html {
@@ -24,6 +23,31 @@ body {
     'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+/* Enhanced text rendering for better clarity */
+h1, h2, h3, h4, h5, h6, p, span, a, button {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Text clarity fixes */
+.text-center {
+  position: relative;
+  z-index: 5; /* Ensure text is above background elements */
+}
+
+/* Add text shadow for better contrast against varying backgrounds */
+h1, h2, h3, .heading-text {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced section headings */
+section h2 {
+  position: relative;
+  z-index: 10;
+  font-weight: 700;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
@@ -34,12 +58,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #363658;
+  background: #776217; /* Updated to match new brand color */
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4B3B93;
+  background: #967d1e; /* Updated to primary light */
 }
 
 /* Animation classes */
@@ -63,4 +87,37 @@ body {
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-light to-secondary-light;
   }
+  
+  /* Fix for section headings */
+  .section-heading {
+    @apply text-4xl font-bold mb-4 relative z-10;
+  }
+  
+  /* Add backdrop for text sections that need more contrast */
+  .text-backdrop {
+    @apply relative;
+  }
+  
+  .text-backdrop::before {
+    content: '';
+    @apply absolute inset-0 bg-neutral-900 bg-opacity-50 rounded-lg -z-10;
+  }
+}
+
+/* Section specifics for clarity */
+#features, #how-it-works, #technology, #ecosystem {
+  position: relative;
+  z-index: 10;
+}
+
+/* Added container classes for better text clarity */
+.content-container {
+  position: relative;
+  z-index: 5;
+}
+
+/* Make sure text is always readable */
+.text-white, .text-neutral-300, .text-neutral-200 {
+  position: relative;
+  z-index: 5;
 }
