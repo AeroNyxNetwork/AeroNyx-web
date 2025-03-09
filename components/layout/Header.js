@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Button from '../ui/Button';
+import AeroNyxLogo from '../ui/AeroNyxLogo';
 
 const NavLink = ({ href, children, onClick }) => {
   return (
@@ -48,8 +49,9 @@ const Header = () => {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
-          <span className="h-10 w-10 bg-gradient-to-br from-primary-light to-primary-dark rounded-lg flex items-center justify-center">
-            A
+          {/* Replace the old logo with the new AeroNyx SVG logo */}
+          <span className="h-10 w-10 flex items-center justify-center">
+            <AeroNyxLogo width={40} height={40} />
           </span>
           <span className="text-xl font-bold">AeroNyx</span>
         </Link>
