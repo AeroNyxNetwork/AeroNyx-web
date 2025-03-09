@@ -19,29 +19,29 @@ const CTA = () => {
       <Container ref={ref} className="relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <motion.h2 
-            className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-primary-light to-secondary-light"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6 }}
+            className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-primary-light to-secondary-light force-visible"
+            initial={{ opacity: 1 }} // Start visible
+            animate={{ opacity: 1, y: 0 }} // Stay visible
+            style={{ opacity: 1, transform: 'none' }} // Force visibility with inline styles
           >
             Start Building the Decentralized Future
           </motion.h2>
           
           <motion.p 
-            className="text-xl text-neutral-300 mb-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-xl text-neutral-300 mb-10 force-visible"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ opacity: 1, transform: 'none' }}
           >
             Join thousands of developers and organizations already using AeroNyx 
             to power the next generation of privacy-first applications.
           </motion.p>
           
           <motion.div 
-            className="flex flex-col md:flex-row gap-4 justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex flex-col md:flex-row gap-4 justify-center force-visible"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ opacity: 1, transform: 'none' }}
           >
             <Button size="large">Get Started</Button>
             <Button variant="secondary" size="large">Contact Us</Button>
