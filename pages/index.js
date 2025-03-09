@@ -1,23 +1,19 @@
-import { Suspense } from 'react';
+import React from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-
-// Import directly from the correct relative paths
 import Layout from '../components/layout/Layout';
 import Hero from '../components/sections/Hero';
+import Features from '../components/sections/Features';
+import HowItWorks from '../components/sections/HowItWorks';
+import Technology from '../components/sections/Technology';
+import Partners from '../components/sections/Partners';
+import CTA from '../components/sections/CTA';
 
 // Dynamically import the background with client-side only rendering
 const SubtleNetworkBackground = dynamic(
   () => import('../components/ui/SubtleNetworkBackground'),
   { ssr: false }
 );
-
-// Other dynamic imports with correct relative paths
-const Features = dynamic(() => import('../components/sections/Features'));
-const HowItWorks = dynamic(() => import('../components/sections/HowItWorks'));
-const Technology = dynamic(() => import('../components/sections/Technology'));
-const Partners = dynamic(() => import('../components/sections/Partners'));
-const CTA = dynamic(() => import('../components/sections/CTA'));
 
 export default function Home() {
   return (
@@ -29,7 +25,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
-      {/* The background is now subtle and non-intrusive */}
+      {/* Add the subtle background */}
       <SubtleNetworkBackground />
       
       <Layout>
