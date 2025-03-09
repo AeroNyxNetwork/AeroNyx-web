@@ -1,43 +1,45 @@
-import { Suspense } from 'react';
-import Head from 'next/head';
-import dynamic from 'next/dynamic';
-import Layout from '../components/layout/Layout';
-import Hero from '../components/sections/Hero';
+import { useEffect } from 'react';
+import Header from './Header';
+import Footer from './Footer';
+import { motion } from 'framer-motion';
 
-// Use dynamic import with ssr disabled for the 3D background
-const InteractiveBackground = dynamic(
-  () => import('../components/3d/InteractiveBackground'),
-  { ssr: false }
-);
-
-// Use dynamic imports for other sections
-const Features = dynamic(() => import('../components/sections/Features'));
-const HowItWorks = dynamic(() => import('../components/sections/HowItWorks'));
-const Technology = dynamic(() => import('../components/sections/Technology'));
-const Partners = dynamic(() => import('../components/sections/Partners'));
-const CTA = dynamic(() => import('../components/sections/CTA'));
-
-export default function Home() {
+const Layout = ({ children }) => {
+  // Handle scroll-based animations and effects
+  useEffect(() => {
+    const handleScroll = () => {
+      const elements = document.querySelectorAll('.reveal-on-scroll');
+      
+      elements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        
+        if (rect.top <= windowHeight * 0.85) {
+          el.classList.add('revealed');
+        }
+      });
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    // Trigger once on load
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
   return (
-    <>
-      <Head>
-        <title>AeroNyx Network | Privacy-First Decentralized Computing</title>
-        <meta name="description" content="AeroNyx Network empowers billions of devices with its privacy-first SDK, establishing a secure foundation for decentralized networks." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      
-      {/* Interactive background - positioned fixed and behind everything */}
-      <InteractiveBackground />
-      
-      <Layout>
-        <Hero />
-        <Features />
-        <HowItWorks />
-        <Technology />
-        <Partners />
-        <CTA />
-      </Layout>
-    </>
+    <div className="min-h-screen bg-neutral-900 text-white font-sans overflow-hidden">
+      <Header />
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {children}
+      </motion.main>
+      <Footer />
+    </div>
   );
-}
+};
+
+export default Layout;
