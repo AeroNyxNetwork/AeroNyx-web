@@ -50,7 +50,7 @@ const Footer = () => {
           </div>
           
           <div>
-            <h4 className="text-lg font-semibold mb-4">Company</h4>
+            <h4 className="text-lg font-semibold mb-4">About</h4>
             <FooterLinks 
               links={[
                 { href: 'https://twitter.com/AeroNyxNetwork', label: 'X' },
