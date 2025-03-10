@@ -49,7 +49,7 @@ const Hero = () => {
               >
                 Downloads
               </Button>
-              <Button variant="secondary" size="large">Read Whitepaper</Button>
+              <Button variant="secondary" as="a" href="https://app.aeronyx.network/" target="_blank" rel="noopener noreferrer" size="large">Building a decentralized node</Button>
             </motion.div>
           </div>
           
