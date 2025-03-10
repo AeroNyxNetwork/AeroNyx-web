@@ -8,12 +8,12 @@ const Partners = () => {
   
   // Mock partner placeholders
   const partners = [
-    { name: 'Partner 1', logo: '/api/placeholder/150/80' },
-    { name: 'Partner 2', logo: '/api/placeholder/150/80' },
-    { name: 'Partner 3', logo: '/api/placeholder/150/80' },
-    { name: 'Partner 4', logo: '/api/placeholder/150/80' },
-    { name: 'Partner 5', logo: '/api/placeholder/150/80' },
-    { name: 'Partner 6', logo: '/api/placeholder/150/80' }
+    { name: 'SOON', logo: '#' },
+    { name: 'DePHY', logo: '#' },
+    { name: 'JRR Crypto', logo: '#' },
+    { name: 'Massachusetts Institute', logo: '#' },
+    { name: 'Google Cloud', logo: '#' },
+    { name: 'Anthropic', logo: '#' }
   ];
   
   return (
@@ -25,7 +25,7 @@ const Partners = () => {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-4xl font-bold mb-4">Join Our Growing Ecosystem</h2>
+          <h2 className="text-4xl font-bold mb-4">Our respected partners</h2>
           <p className="text-lg text-neutral-300 max-w-3xl mx-auto">
             AeroNyx is building partnerships with leading organizations across the technology 
             landscape to create a robust decentralized computing infrastructure.
