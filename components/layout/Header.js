@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Button from '../ui/Button';
-import AeroNyxLogo from '../ui/AeroNyxLogo';
+import AeroNyxLogo from '../ui/AeroNyxLogo'; 
 
 const NavLink = ({ href, children, onClick }) => {
   return (
