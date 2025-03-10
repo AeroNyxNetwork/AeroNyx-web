@@ -47,7 +47,15 @@ const CTA = () => {
             animate={{ opacity: 1, y: 0 }}
             style={{ opacity: 1, transform: 'none' }}
           >
-            <Button size="large">Get Started</Button>
+            <Button 
+  size="large" 
+  as="a" 
+  href="https://app.aeronyx.network/" 
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  Get Started
+</Button>
             <Button 
               variant="secondary" 
               size="large"
