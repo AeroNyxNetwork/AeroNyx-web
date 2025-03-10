@@ -1,6 +1,8 @@
-import { Suspense } from 'react';
-import Head from 'next/head';
+import { Suspense, useState } from 'react';
 import dynamic from 'next/dynamic';
+
+// Import SEO component
+import SEO from '@/components/ui/SEO';
 
 // Using absolute imports with the @ alias from jsconfig.json
 import Layout from '@/components/layout/Layout';
@@ -20,33 +22,28 @@ const GuaranteedBackground = dynamic(
 export default function Home() {
   return (
     <>
-      <Head>
-        <title>AeroNyx Network | Privacy-First Decentralized Computing</title>
-        <meta name="description" content="AeroNyx Network empowers billions of devices with its privacy-first SDK, establishing a secure foundation for decentralized networks." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-        
-        {/* Font loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-        
-        {/* Add a script to force visibility of all elements after page load */}
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            setTimeout(function() {
-              document.querySelectorAll('[style*="opacity: 0"]').forEach(function(el) {
-                el.style.opacity = '1';
-                el.style.transform = 'none';
-              });
-            }, 300);
-          `
-        }} />
-      </Head>
+      <SEO 
+        title="AeroNyx Network | Privacy-First Decentralized Computing"
+        description="AeroNyx Network empowers billions of devices with its privacy-first SDK, establishing a secure foundation for decentralized networks."
+        canonicalUrl="https://aeronyx.network/"
+        ogImage="https://github.com/AeroNyxNetwork/AeroNyx-web/blob/main/favicon.svg"
+        keywords={[
+          'privacy',
+          'decentralized computing',
+          'blockchain',
+          'network',
+          'SDK',
+          'secure computing',
+          'privacy-first',
+          'data protection',
+          'distributed network',
+          'resource marketplace'
+        ]}
+      />
       
-      {/* Background effect that's guaranteed to show */}
+      {/* The background effect with special className for additional control */}
       <Suspense fallback={<div className="fixed inset-0 bg-neutral-900"></div>}>
-        <GuaranteedBackground />
+        <GuaranteedBackground className="bg-effect" />
       </Suspense>
       
       <Layout>
