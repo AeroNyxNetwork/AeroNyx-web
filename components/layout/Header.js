@@ -61,11 +61,11 @@ const Header = () => {
           <NavLink href="#features">Features</NavLink>
           <NavLink href="#how-it-works">How It Works</NavLink>
           <NavLink href="#technology">Technology</NavLink>
-          <NavLink href="#ecosystem">Ecosystem</NavLink>
+           <NavLink href="https://docs.aeronyx.network/" onClick={() => setIsOpen(false)}>Docs</NavLink>
         </nav>
         
         <div className="hidden md:block">
-          <Button>Get Started</Button>
+           <Button as="a" href="https://app.aeronyx.network/" target="_blank" rel="noopener noreferrer">Get Started</Button>
         </div>
         
         {/* Mobile Menu Button */}
@@ -96,7 +96,7 @@ const Header = () => {
             <NavLink href="#how-it-works" onClick={() => setIsOpen(false)}>How It Works</NavLink>
             <NavLink href="#technology" onClick={() => setIsOpen(false)}>Technology</NavLink>
             <NavLink href="https://docs.aeronyx.network/" onClick={() => setIsOpen(false)}>Docs</NavLink>
-            <NavLink href="https://docs.aeronyx.network/" onClick={() => setIsOpen(false)}>Docs</NavLink>
+        
             <Button fullWidth as="a" href="https://app.aeronyx.network/" target="_blank" rel="noopener noreferrer">Get Started</Button>
           </div>
         </motion.div>
