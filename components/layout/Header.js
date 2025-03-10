@@ -62,6 +62,7 @@ const Header = () => {
           <NavLink href="#how-it-works">How It Works</NavLink>
           <NavLink href="#technology">Technology</NavLink>
            <NavLink href="https://docs.aeronyx.network/" onClick={() => setIsOpen(false)}>Docs</NavLink>
+          <NavLink href="https://rwa.aeronyx.network/" onClick={() => setIsOpen(false)}>RWA</NavLink>
         </nav>
         
         <div className="hidden md:block">
@@ -96,7 +97,7 @@ const Header = () => {
             <NavLink href="#how-it-works" onClick={() => setIsOpen(false)}>How It Works</NavLink>
             <NavLink href="#technology" onClick={() => setIsOpen(false)}>Technology</NavLink>
             <NavLink href="https://docs.aeronyx.network/" onClick={() => setIsOpen(false)}>Docs</NavLink>
-        
+            <NavLink href="https://rwa.aeronyx.network/" onClick={() => setIsOpen(false)}>RWA</NavLink>
             <Button fullWidth as="a" href="https://app.aeronyx.network/" target="_blank" rel="noopener noreferrer">Get Started</Button>
           </div>
         </motion.div>
