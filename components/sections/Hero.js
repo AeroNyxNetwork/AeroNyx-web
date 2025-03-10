@@ -49,7 +49,7 @@ const Hero = () => {
               >
                 Downloads
               </Button>
-              <Button variant="secondary" as="a" href="https://app.aeronyx.network/" target="_blank" rel="noopener noreferrer" size="large">Building a decentralized node</Button>
+              <Button variant="secondary" as="a" href="https://docs.aeronyx.network/decentralized-node-documentation/run-aeronyx-decentralized-nodes-on-your-server-using-docker" target="_blank" rel="noopener noreferrer" size="large">Building a decentralized node</Button>
             </motion.div>
           </div>
           
