@@ -30,7 +30,7 @@ const Footer = () => {
             <FooterLinks 
               links={[
                 { href: 'https://docs.aeronyx.network/developer-documentation/overview', label: 'Privacy SDK' },
-                { href: 'https://app.aeronyx.network/', label: 'Resource Marketplace' },
+                { href: 'https://rwa.aeronyx.network/', label: 'RWA' },
                 { href: 'https://app.aeronyx.network/', label: 'AI Infrastructure' },
                 { href: 'https://docs.aeronyx.network/decentralized-node-documentation', label: 'Decentralized Nodes' }
               ]}
