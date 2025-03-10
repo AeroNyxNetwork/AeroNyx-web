@@ -5,8 +5,8 @@ export default function Document() {
     <Html lang="en">
       <Head>
         {/* Favicon */}
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/favicon.svg" />
+        <link rel="icon" href="https://github.com/AeroNyxNetwork/AeroNyx-web/blob/main/favicon.ico" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="https://github.com/AeroNyxNetwork/AeroNyx-web/blob/main/favicon.ico" />
         
         {/* Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
