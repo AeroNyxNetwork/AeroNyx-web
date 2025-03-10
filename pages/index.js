@@ -26,7 +26,7 @@ export default function Home() {
         title="AeroNyx Network | Privacy-First Decentralized Computing"
         description="AeroNyx Network empowers billions of devices with its privacy-first SDK, establishing a secure foundation for decentralized networks."
         canonicalUrl="https://aeronyx.network/"
-        ogImage="https://github.com/AeroNyxNetwork/AeroNyx-web/blob/main/favicon.svg"
+        ogImage="https://binary.aeronyx.network/aeronyx_logo.png"
         keywords={[
           'privacy',
           'decentralized computing',
