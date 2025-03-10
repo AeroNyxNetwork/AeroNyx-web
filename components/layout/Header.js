@@ -95,8 +95,9 @@ const Header = () => {
             <NavLink href="#features" onClick={() => setIsOpen(false)}>Features</NavLink>
             <NavLink href="#how-it-works" onClick={() => setIsOpen(false)}>How It Works</NavLink>
             <NavLink href="#technology" onClick={() => setIsOpen(false)}>Technology</NavLink>
-            <NavLink href="#ecosystem" onClick={() => setIsOpen(false)}>Ecosystem</NavLink>
-            <Button fullWidth>Get Started</Button>
+            <NavLink href="https://docs.aeronyx.network/" onClick={() => setIsOpen(false)}>Docs</NavLink>
+            <NavLink href="https://docs.aeronyx.network/" onClick={() => setIsOpen(false)}>Docs</NavLink>
+            <Button fullWidth as="a" href="https://app.aeronyx.network/" target="_blank" rel="noopener noreferrer">Get Started</Button>
           </div>
         </motion.div>
       )}
