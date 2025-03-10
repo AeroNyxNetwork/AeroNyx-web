@@ -9,7 +9,7 @@ const Partners = () => {
   // Mock partner placeholders
   const partners = [
     { name: 'SOON', logo: 'https://explorer.testnet.soo.network/_next/static/media/soon-explorer.115ff8e8.svg' },
-    { name: 'DePHY', logo: 'https://explorer.testnet.soo.network/_next/static/media/soon-explorer.115ff8e8.svg' },
+    { name: 'DePHY', logo: 'https://imagedelivery.net/BV5aFXW_8-vuplL3cruTxw/b2689a99-8434-4cbd-5b1e-159c4f4ec900/public' },
     { name: 'JRR Crypto', logo: 'https://imagedelivery.net/BV5aFXW_8-vuplL3cruTxw/5e5aadb9-b36b-4b3d-5a7b-521ae79f8000/public' },
     { name: 'MIT', logo: 'https://brand.mit.edu/sites/default/files/styles/image_text_2x/public/2023-08/MIT-lockup-3line-red.png?itok=MJP9Djff' },
     { name: 'Google Cloud', logo: 'https://www.gstatic.com/devrel-devsite/prod/v0e0f589edd85502a40d78d7d0825db8ea5ef3b99ab4070381ee86977c9168730/cloud/images/cloud-logo.svg' },
