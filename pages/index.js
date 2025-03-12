@@ -7,6 +7,7 @@ import SEO from '@/components/ui/SEO';
 // Import layout component
 import Layout from '@/components/layout/Layout';
 
+
 // Import standard section components
 import Hero from '@/components/sections/Hero';
 import Features from '@/components/sections/Features';
@@ -17,6 +18,8 @@ import CTA from '@/components/sections/CTA';
 
 // Import background for simple fallback
 import GuaranteedBackground from '@/components/ui/GuaranteedBackground';
+
+import ConstellationBackground from '@/components/ui/ConstellationBackground';
 
 export default function Home() {
   return (
@@ -42,6 +45,7 @@ export default function Home() {
       
       {/* Use existing background with Suspense for better loading */}
       <Suspense fallback={<div className="fixed inset-0 bg-neutral-900"></div>}>
+        <ConstellationBackground className="z-0" />
         <GuaranteedBackground className="bg-effect" />
       </Suspense>
       
