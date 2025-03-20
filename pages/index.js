@@ -7,14 +7,9 @@ import SEO from '@/components/ui/SEO';
 // Import layout component
 import Layout from '@/components/layout/Layout';
 
-// Import optimized components with dynamic loading for code splitting
+// Import optimized background with dynamic loading
 const OptimizedGlassBackground = dynamic(
   () => import('@/components/ui/OptimizedGlassBackground'),
-  { ssr: false, suspense: true }
-);
-
-const OptimizedInteractiveBackground = dynamic(
-  () => import('@/components/3d/OptimizedInteractiveBackground'),
   { ssr: false, suspense: true }
 );
 
