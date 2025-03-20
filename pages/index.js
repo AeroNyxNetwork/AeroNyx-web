@@ -2,12 +2,12 @@ import { Suspense } from 'react';
 import SEO from '@/components/ui/SEO';
 import Layout from '@/components/layout/Layout';
 import Hero from '@/components/sections/Hero';
-// import Features from '@/components/sections/Features'; // Comment out if this file was deleted
 import HowItWorks from '@/components/sections/HowItWorks';
 import Technology from '@/components/sections/Technology';
 import Partners from '@/components/sections/Partners';
 import CTA from '@/components/sections/CTA';
 
+// Simple background
 const SimpleFallback = () => (
   <div className="fixed inset-0 bg-neutral-900 z-0"></div>
 );
@@ -34,7 +34,6 @@ export default function Home() {
       
       <Layout>
         <Hero />
-        {/* {Features && <Features />} */}
         <HowItWorks />
         <Technology />
         <Partners />
