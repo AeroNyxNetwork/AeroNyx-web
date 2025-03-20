@@ -4,7 +4,7 @@ import HeroLogo3D from '../ui/HeroLogo3D';
 import EnhancedButton from '../ui/EnhancedButton';
 import Container from '../ui/Container';
 import DownloadsModal from '../ui/DownloadsModal';
-import LiveNetworkStats from '../ui/LiveNetworkStats';
+import OnlyAdditionalMetrics from '../ui/OnlyAdditionalMetrics';
 
 const ModernHero = () => {
   const [isDownloadsModalOpen, setIsDownloadsModalOpen] = useState(false);
@@ -136,11 +136,11 @@ const ModernHero = () => {
               </EnhancedButton>
             </motion.div>
             
-            {/* Network Stats - Only show the primary stats */}
+            {/* Only Additional Network Stats - no primary stats */}
             <motion.div
               variants={itemVariants}
             >
-              <LiveNetworkStats />
+              <OnlyAdditionalMetrics />
             </motion.div>
           </motion.div>
           
