@@ -7,10 +7,18 @@ import SEO from '@/components/ui/SEO';
 // Import layout component
 import Layout from '@/components/layout/Layout';
 
-// Import modern glass background
-import ModernGlassBackground from '@/components/ui/ModernGlassBackground';
+// Import optimized components with dynamic loading for code splitting
+const OptimizedGlassBackground = dynamic(
+  () => import('@/components/ui/OptimizedGlassBackground'),
+  { ssr: false, suspense: true }
+);
 
-// Import modern section components - you can replace more sections as you create them
+const OptimizedInteractiveBackground = dynamic(
+  () => import('@/components/3d/OptimizedInteractiveBackground'),
+  { ssr: false, suspense: true }
+);
+
+// Import modern section components
 import ModernHero from '@/components/sections/ModernHero';
 import ModernFeatures from '@/components/sections/ModernFeatures';
 import HowItWorks from '@/components/sections/HowItWorks';
@@ -43,20 +51,16 @@ export default function Home() {
         ]}
       />
       
-      {/* Modern glass background with fallback */}
-      <Suspense fallback={<div className="fixed inset-0 bg-neutral-900"></div>}>
-        <ModernGlassBackground className="z-0" />
-        <GuaranteedBackground className="bg-effect" />
+      {/* Optimized background system with proper fallbacks */}
+      <Suspense fallback={<GuaranteedBackground />}>
+        <OptimizedGlassBackground className="z-0" />
       </Suspense>
       
+      {/* Main layout with performance optimizations */}
       <Layout>
-        {/* Use modern hero section */}
+        {/* Use modern sections with math-optimized components */}
         <ModernHero />
-        
-        {/* Use modern features section */}
         <ModernFeatures />
-        
-        {/* Keep original sections until you create modern versions */}
         <HowItWorks />
         <Technology />
         <Partners />
