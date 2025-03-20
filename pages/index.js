@@ -7,23 +7,22 @@ import SEO from '@/components/ui/SEO';
 // Import layout component
 import Layout from '@/components/layout/Layout';
 
-// Import optimized background with dynamic loading for better performance
+// Import optimized background with dynamic loading
 const OptimizedGlassBackground = dynamic(
   () => import('@/components/ui/OptimizedGlassBackground'),
   { ssr: false, suspense: true }
 );
 
-// Import original section components as fallbacks
-import Hero from '@/components/sections/Hero';
+// Import modern section components
+import ModernHero from '@/components/sections/ModernHero';
+import ModernFeatures from '@/components/sections/ModernFeatures';
 import HowItWorks from '@/components/sections/HowItWorks';
 import Technology from '@/components/sections/Technology';
 import Partners from '@/components/sections/Partners';
 import CTA from '@/components/sections/CTA';
 
-// Simple fallback for background during loading
-const SimpleFallback = () => (
-  <div className="fixed inset-0 bg-neutral-900 z-0"></div>
-);
+// Fallback for simple background
+import GuaranteedBackground from '@/components/ui/GuaranteedBackground';
 
 export default function Home() {
   return (
@@ -47,14 +46,16 @@ export default function Home() {
         ]}
       />
       
-      {/* Optimized background with fallback */}
-      <Suspense fallback={<SimpleFallback />}>
-        <OptimizedGlassBackground className="z-0" intensity={0.8} />
+      {/* Optimized background system with proper fallbacks */}
+      <Suspense fallback={<GuaranteedBackground />}>
+        <OptimizedGlassBackground className="z-0" />
       </Suspense>
       
+      {/* Main layout with performance optimizations */}
       <Layout>
-        {/* You can gradually replace these with your optimized versions */}
-        <Hero />
+        {/* Use modern sections with math-optimized components */}
+        <ModernHero />
+        <ModernFeatures />
         <HowItWorks />
         <Technology />
         <Partners />
