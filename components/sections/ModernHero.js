@@ -121,7 +121,7 @@ const ModernHero = () => {
                 size="large"
                 onClick={() => setIsDownloadsModalOpen(true)}
               >
-                Download SDK
+                Download the client
               </EnhancedButton>
               
               <EnhancedButton 
