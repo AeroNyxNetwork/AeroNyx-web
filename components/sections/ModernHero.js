@@ -50,6 +50,11 @@ const ModernHero = () => {
     }
   };
 
+  // Function to handle deploy nodes button click
+  const handleDeployNodesClick = () => {
+    window.open('https://docs.aeronyx.network/decentralized-node-documentation/run-aeronyx-decentralized-nodes-on-your-server-using-docker', '_blank');
+  };
+
   return (
     <section className="relative min-h-[100svh] flex items-center pt-20 pb-16 overflow-hidden">
       {/* Subtle animated radial gradient for depth */}
@@ -207,10 +212,10 @@ const ModernHero = () => {
             </div>
             <EnhancedButton 
               size="large"
-              onClick={() => setIsDownloadsModalOpen(true)}
+              onClick={handleDeployNodesClick}
               className="w-full sm:w-auto"
             >
-              Download Node Software
+              Deploy decentralized nodes
             </EnhancedButton>
           </div>
         </motion.div>
