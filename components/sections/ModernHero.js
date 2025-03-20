@@ -4,7 +4,8 @@ import HeroLogo3D from '../ui/HeroLogo3D';
 import EnhancedButton from '../ui/EnhancedButton';
 import Container from '../ui/Container';
 import DownloadsModal from '../ui/DownloadsModal';
-import NetworkStats from '../ui/NetworkStats'; // Import the new NetworkStats component
+import LiveNetworkStats from '../ui/LiveNetworkStats';
+import AdditionalMetrics from '../ui/AdditionalMetrics';
 
 const ModernHero = () => {
   const [isDownloadsModalOpen, setIsDownloadsModalOpen] = useState(false);
@@ -136,8 +137,13 @@ const ModernHero = () => {
               </EnhancedButton>
             </motion.div>
             
-            {/* Network Stats - Replaced with dynamic component */}
-            <NetworkStats />
+            {/* Network Stats - Updated to use live data */}
+            <motion.div
+              variants={itemVariants}
+            >
+              <LiveNetworkStats />
+              <AdditionalMetrics className="mt-8" />
+            </motion.div>
           </motion.div>
           
           {/* 3D Logo Visual */}
