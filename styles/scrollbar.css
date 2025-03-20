@@ -1,0 +1,44 @@
+/* Hide scrollbars but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Custom styles for mobile optimization */
+@media (max-width: 640px) {
+  .stats-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1rem;
+  }
+  
+  .stat-card {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 80%;
+  }
+}
+
+/* Use smaller text on small mobile devices */
+@media (max-width: 360px) {
+  .mobile-text-sm {
+    font-size: 0.875rem;
+  }
+  
+  .mobile-text-xs {
+    font-size: 0.75rem;
+  }
+}
+
+/* Fix for iOS Safari 100vh issue */
+.min-h-screen-safe {
+  min-height: 100vh;
+  /* For iOS Safari mobile viewport height issue */
+  min-height: -webkit-fill-available;
+  min-height: 100svh; /* Using svh where supported */
+}
