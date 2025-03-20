@@ -10,6 +10,9 @@
   --secondary: #5FBBF7;
   --secondary-light: #8AD1FF;
   --secondary-dark: #368AD1;
+  
+  /* CSS variable for dynamic viewport height */
+  --vh: 1vh;
 }
 
 html {
@@ -95,6 +98,37 @@ section h2 {
   background-image: radial-gradient(var(--tw-gradient-stops));
 }
 
+/* Hide scrollbars but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* For iOS Safari mobile viewport height issue */
+.min-h-screen {
+  min-height: 100vh; /* Default */
+  min-height: calc(var(--vh, 1vh) * 100); /* Fallback */
+  min-height: 100svh; /* Using svh where supported */
+}
+
+/* Properly handle long words in smaller viewports */
+p, h1, h2, h3, h4, h5, h6, span, a {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+/* Prevent image overflow on small screens */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 @layer components {
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-light to-secondary-light;
@@ -116,6 +150,50 @@ section h2 {
   }
 }
 
+/* Mobile Optimizations */
+@media (max-width: 640px) {
+  /* Increase tap target sizes */
+  button, 
+  a,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Adjust font sizes for better readability */
+  h1 {
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  h2 {
+    font-size: 1.5rem !important;
+  }
+  
+  h3 {
+    font-size: 1.25rem !important;
+  }
+  
+  /* Better spacing for mobile */
+  .gap-4 {
+    gap: 1rem;
+  }
+  
+  /* Improve touch scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Make buttons more touchable on mobile */
+  .modal-close-button {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
 /* Section specifics for clarity */
 #features, #how-it-works, #technology, #ecosystem {
   position: relative;
@@ -132,4 +210,25 @@ section h2 {
 .text-white, .text-neutral-300, .text-neutral-200 {
   position: relative;
   z-index: 5;
+}
+
+/* Fix for scrollable containers on mobile */
+.stats-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 1rem;
+}
+
+.stat-card {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  width: 80%;
+}
+
+/* Fix for Safari 100vh issue */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    height: -webkit-fill-available;
+  }
 }
