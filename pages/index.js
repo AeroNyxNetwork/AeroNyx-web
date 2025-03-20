@@ -7,19 +7,19 @@ import SEO from '@/components/ui/SEO';
 // Import layout component
 import Layout from '@/components/layout/Layout';
 
+// Import modern glass background
+import ModernGlassBackground from '@/components/ui/ModernGlassBackground';
 
-// Import standard section components
-import Hero from '@/components/sections/Hero';
-import Features from '@/components/sections/Features';
+// Import modern section components - you can replace more sections as you create them
+import ModernHero from '@/components/sections/ModernHero';
+import ModernFeatures from '@/components/sections/ModernFeatures';
 import HowItWorks from '@/components/sections/HowItWorks';
 import Technology from '@/components/sections/Technology';
 import Partners from '@/components/sections/Partners';
 import CTA from '@/components/sections/CTA';
 
-// Import background for simple fallback
+// Fallback for simple background
 import GuaranteedBackground from '@/components/ui/GuaranteedBackground';
-
-import ConstellationBackground from '@/components/ui/ConstellationBackground';
 
 export default function Home() {
   return (
@@ -43,15 +43,20 @@ export default function Home() {
         ]}
       />
       
-      {/* Use existing background with Suspense for better loading */}
+      {/* Modern glass background with fallback */}
       <Suspense fallback={<div className="fixed inset-0 bg-neutral-900"></div>}>
-        <ConstellationBackground className="z-0" />
+        <ModernGlassBackground className="z-0" />
         <GuaranteedBackground className="bg-effect" />
       </Suspense>
       
       <Layout>
-        <Hero />
-        <Features />
+        {/* Use modern hero section */}
+        <ModernHero />
+        
+        {/* Use modern features section */}
+        <ModernFeatures />
+        
+        {/* Keep original sections until you create modern versions */}
         <HowItWorks />
         <Technology />
         <Partners />
