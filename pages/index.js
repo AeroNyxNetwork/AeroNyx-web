@@ -9,7 +9,7 @@ import Layout from '@/components/layout/Layout';
 
 // Import optimized background with dynamic loading
 const OptimizedGlassBackground = dynamic(
-  () => import('@/components/ui/OptimizedGlassBackground'),
+  () => import('@/components/ui/OptimizedGlassBackground'), 
   { ssr: false, suspense: true }
 );
 
