@@ -21,8 +21,6 @@ import Technology from '@/components/sections/Technology';
 import Partners from '@/components/sections/Partners';
 import CTA from '@/components/sections/CTA';
 
-// Fallback for simple background
-import GuaranteedBackground from '@/components/ui/GuaranteedBackground';
 
 export default function Home() {
   return (
@@ -47,9 +45,7 @@ export default function Home() {
       />
       
       {/* Optimized background system with proper fallbacks */}
-      <Suspense fallback={<GuaranteedBackground />}>
-        <OptimizedGlassBackground className="z-0" />
-      </Suspense>
+      <Suspense fallback={<div className="fixed inset-0 bg-neutral-900 z-0"></div>}>
       
       {/* Main layout with performance optimizations */}
       <Layout>
