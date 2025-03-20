@@ -1,3 +1,4 @@
+// pages/index.js
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 
@@ -7,20 +8,18 @@ import SEO from '@/components/ui/SEO';
 // Import layout component
 import Layout from '@/components/layout/Layout';
 
-// Import optimized background with dynamic loading
-const OptimizedGlassBackground = dynamic(
-  () => import('@/components/ui/OptimizedGlassBackground'),
-  { ssr: false, suspense: true }
-);
-
-// Import modern section components
-import ModernHero from '@/components/sections/ModernHero';
-import ModernFeatures from '@/components/sections/ModernFeatures';
+// Import sections
+import Hero from '@/components/sections/Hero';
+import Features from '@/components/sections/Features';
 import HowItWorks from '@/components/sections/HowItWorks';
 import Technology from '@/components/sections/Technology';
 import Partners from '@/components/sections/Partners';
 import CTA from '@/components/sections/CTA';
 
+// Simple fallback for background
+const SimpleFallback = () => (
+  <div className="fixed inset-0 bg-neutral-900 z-0"></div>
+);
 
 export default function Home() {
   return (
@@ -44,14 +43,12 @@ export default function Home() {
         ]}
       />
       
-      {/* Optimized background system with proper fallbacks */}
-      <Suspense fallback={<div className="fixed inset-0 bg-neutral-900 z-0"></div>}>
+      {/* Simple background fallback */}
+      <SimpleFallback />
       
-      {/* Main layout with performance optimizations */}
       <Layout>
-        {/* Use modern sections with math-optimized components */}
-        <ModernHero />
-        <ModernFeatures />
+        <Hero />
+        <Features />
         <HowItWorks />
         <Technology />
         <Partners />
