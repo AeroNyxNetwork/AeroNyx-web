@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Container from '../ui/Container';
-import Card from '../ui/Card';
+import EnhancedCard from '../ui/EnhancedCard';
 
 const TechCard = ({ title, description, features, delay = 0 }) => {
   return (
@@ -13,7 +13,7 @@ const TechCard = ({ title, description, features, delay = 0 }) => {
       viewport={{ once: true, amount: 0.3 }}
       style={{ opacity: 1, transform: 'none' }} // Force visibility with inline styles
     >
-      <Card className="h-full flex flex-col">
+      <EnhancedCard className="h-full flex flex-col">
         <div className="relative mb-6">
           <div className="absolute top-0 h-1 w-full bg-gradient-to-r from-primary-light to-primary-dark rounded-full" />
         </div>
@@ -27,7 +27,7 @@ const TechCard = ({ title, description, features, delay = 0 }) => {
             </li>
           ))}
         </ul>
-      </Card>
+      </EnhancedCard>
     </motion.div>
   );
 };
