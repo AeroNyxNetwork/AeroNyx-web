@@ -6,23 +6,18 @@ import { motion } from 'framer-motion';
  * Displays the four additional metrics: Total Delegators, Active Addresses,
  * Synx Transactions, and Faucet Transactions
  * 
- * Fixed version with improved data handling and debug logging
+ * Fixed version with improved data handling
  */
 const AdditionalMetrics = ({ className = '' }) => {
   // State for stats data
   const [stats, setStats] = useState({
-    totalDelegators: '0',
-    activeAddresses: '0',
-    synxTransactions: '0',
-    faucetTransactions: '0'
+    totalDelegators: '35K+',  // Default fallback values
+    activeAddresses: '42K+',
+    synxTransactions: '156K+',
+    faucetTransactions: '89K+'
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [rawData, setRawData] = useState({
-    nodes: null,
-    faucet: null,
-    synx: null
-  });
 
   // Fetch data on component mount
   useEffect(() => {
@@ -30,95 +25,102 @@ const AdditionalMetrics = ({ className = '' }) => {
       try {
         setIsLoading(true);
         
-        // Fetch data from the three API endpoints with better error logging
-        const responses = await Promise.all([
-          fetch('https://api.aeronyx.network/api/stats/nodes/?period=30d')
-            .then(res => {
-              if (!res.ok) {
-                console.error('Nodes API response not OK:', res.status, res.statusText);
-                throw new Error(`Nodes API error: ${res.status}`);
-              }
-              return res.json();
-            }),
-          fetch('https://api.aeronyx.network/api/stats/faucet/?format=json&period=30d')
-            .then(res => {
-              if (!res.ok) {
-                console.error('Faucet API response not OK:', res.status, res.statusText);
-                throw new Error(`Faucet API error: ${res.status}`);
-              }
-              return res.json();
-            }),
-          fetch('https://api.aeronyx.network/api/stats/synx/?format=json&period=30d')
-            .then(res => {
-              if (!res.ok) {
-                console.error('Synx API response not OK:', res.status, res.statusText);
-                throw new Error(`Synx API error: ${res.status}`);
-              }
-              return res.json();
-            })
-        ]).catch(error => {
-          console.error('Error in Promise.all:', error);
-          throw error;
-        });
-        
-        const [nodesData, faucetData, synxData] = responses;
-        
-        // Store raw data for debugging
-        setRawData({
-          nodes: nodesData,
-          faucet: faucetData,
-          synx: synxData
-        });
-        
-        // Log the raw responses for debugging
-        console.log('Nodes API response:', nodesData);
-        console.log('Faucet API response:', faucetData);
-        console.log('Synx API response:', synxData);
-
-        // Extract metrics with better validation
-        // For nodes data - check both possible field names
-        let totalDelegators = '35K+';  // Default fallback
-        if (nodesData) {
-          if (typeof nodesData.total_delegators !== 'undefined') {
-            totalDelegators = nodesData.total_delegators;
-          } else if (typeof nodesData.delegators !== 'undefined') {
-            totalDelegators = nodesData.delegators;
-          }
-        }
-        
-        // For synx data - check multiple possible field names
-        let activeAddresses = '42K+';  // Default fallback
-        let synxTransactions = '156K+';  // Default fallback
-        if (synxData) {
-          if (typeof synxData.active_addresses !== 'undefined') {
-            activeAddresses = synxData.active_addresses;
-          } else if (typeof synxData.unique_addresses !== 'undefined') {
-            activeAddresses = synxData.unique_addresses;
-          }
+        // Define APIs with robust error handling
+        const fetchWithTimeout = async (url, timeout = 8000) => {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), timeout);
           
-          if (typeof synxData.total_transactions !== 'undefined') {
-            synxTransactions = synxData.total_transactions;
-          } else if (typeof synxData.transactions !== 'undefined') {
-            synxTransactions = synxData.transactions;
+          try {
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+              throw new Error(`API error: ${response.status}`);
+            }
+            
+            return await response.json();
+          } catch (e) {
+            if (e.name === 'AbortError') {
+              throw new Error('Request timeout');
+            }
+            throw e;
           }
-        }
+        };
         
-        // For faucet data
-        let faucetTransactions = '89K+';  // Default fallback
-        if (faucetData) {
-          if (typeof faucetData.total_transactions !== 'undefined') {
-            faucetTransactions = faucetData.total_transactions;
-          } else if (typeof faucetData.transactions !== 'undefined') {
-            faucetTransactions = faucetData.transactions;
-          }
+        // Fetch all APIs in parallel with proper error handling
+        const [nodesData, faucetData, synxData] = await Promise.all([
+          fetchWithTimeout('https://api.aeronyx.network/api/stats/nodes/?period=30d')
+            .catch(e => {
+              console.error('Error fetching nodes API:', e);
+              return null;
+            }),
+          fetchWithTimeout('https://api.aeronyx.network/api/stats/faucet/?format=json&period=30d')
+            .catch(e => {
+              console.error('Error fetching faucet API:', e);
+              return null;
+            }),
+          fetchWithTimeout('https://api.aeronyx.network/api/stats/synx/?format=json&period=30d')
+            .catch(e => {
+              console.error('Error fetching synx API:', e);
+              return null;
+            })
+        ]);
+        
+        // Debug the received data
+        console.log('API Data Received:', {
+          nodesData,
+          faucetData,
+          synxData
+        });
+
+        // Use hardcoded fallback data if any API failed
+        const useHardcodedData = !nodesData || !faucetData || !synxData;
+        if (useHardcodedData) {
+          console.log('Using hardcoded fallback data due to API failures');
+          setStats({
+            totalDelegators: '35K+',
+            activeAddresses: '42K+',
+            synxTransactions: '156K+',
+            faucetTransactions: '89K+'
+          });
+          throw new Error('One or more APIs failed to return data');
         }
+
+        // Process the data from all APIs
+        // For Total Delegators - Use actual data or fallback to default
+        const totalDelegators = nodesData?.total_delegators !== undefined 
+          ? nodesData.total_delegators 
+          : (nodesData?.delegators !== undefined ? nodesData.delegators : '35K+');
+          
+        // For Active Addresses - Use actual data or fallback to default
+        const activeAddresses = synxData?.active_addresses !== undefined 
+          ? synxData.active_addresses 
+          : (synxData?.unique_addresses !== undefined ? synxData.unique_addresses : '42K+');
+          
+        // For Synx Transactions - Use actual data or fallback to default
+        const synxTransactions = synxData?.total_transactions !== undefined 
+          ? synxData.total_transactions 
+          : (synxData?.transactions !== undefined ? synxData.transactions : '156K+');
+          
+        // For Faucet Transactions - Use actual data or fallback to default
+        const faucetTransactions = faucetData?.total_transactions !== undefined 
+          ? faucetData.total_transactions 
+          : (faucetData?.transactions !== undefined ? faucetData.transactions : '89K+');
+        
+        // Log the values we're extracting
+        console.log('Extracted values:', {
+          totalDelegators,
+          activeAddresses,
+          synxTransactions,
+          faucetTransactions
+        });
         
         // Update state with properly formatted data
         setStats({
-          totalDelegators: formatNumber(totalDelegators),
-          activeAddresses: formatNumber(activeAddresses),
-          synxTransactions: formatNumber(synxTransactions),
-          faucetTransactions: formatNumber(faucetTransactions)
+          totalDelegators: formatMetricValue(totalDelegators),
+          activeAddresses: formatMetricValue(activeAddresses),  
+          synxTransactions: formatMetricValue(synxTransactions),
+          faucetTransactions: formatMetricValue(faucetTransactions)
         });
         
         setError(null);
@@ -126,7 +128,7 @@ const AdditionalMetrics = ({ className = '' }) => {
         console.error('Error fetching additional metrics:', err);
         setError(err.message || 'Failed to fetch metrics');
         
-        // Use fallback values
+        // Ensure we always have fallback values displayed
         setStats({
           totalDelegators: '35K+',
           activeAddresses: '42K+',
@@ -141,48 +143,56 @@ const AdditionalMetrics = ({ className = '' }) => {
     fetchAdditionalMetrics();
   }, []);
 
-  // Format numbers with K, M, B suffixes - improved with better validation
-  const formatNumber = (value) => {
-    // If the value is falsy, but not zero - return default formatting
-    if (!value && value !== 0) return '0';
+  // Format metric values with better validation
+  const formatMetricValue = (value) => {
+    // Check for invalid values
+    if (value === undefined || value === null || value === '') {
+      return '0';
+    }
     
     // If already formatted with suffix, return as is
     if (typeof value === 'string' && /[KMB+]/.test(value)) {
       return value;
     }
     
-    // Convert to number with better error handling
-    let num;
+    let numValue;
+    
+    // Handle numeric parsing
     try {
       if (typeof value === 'string') {
-        // Remove non-numeric characters except decimal point
-        num = parseFloat(value.replace(/[^\d.-]/g, ''));
+        // Try to extract numeric part
+        numValue = parseFloat(value.replace(/[^0-9.]/g, ''));
       } else {
-        num = Number(value);
+        numValue = Number(value);
       }
+      
+      // Handle invalid numbers
+      if (isNaN(numValue)) {
+        console.warn('Invalid numeric value:', value);
+        return '0';
+      }
+      
+      // Format based on size
+      if (numValue >= 1000000000) {
+        return `${(numValue / 1000000000).toFixed(1).replace(/\.0$/, '')}B+`;
+      }
+      if (numValue >= 1000000) {
+        return `${(numValue / 1000000).toFixed(1).replace(/\.0$/, '')}M+`;
+      }
+      if (numValue >= 1000) {
+        return `${(numValue / 1000).toFixed(1).replace(/\.0$/, '')}K+`;
+      }
+      if (numValue === 0) {
+        return '0';
+      }
+      
+      // Format with commas
+      return numValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      
     } catch (e) {
-      console.error('Error parsing number:', value, e);
-      return '0'; // Return default on parsing error
-    }
-    
-    // Check if result is a valid number
-    if (isNaN(num)) {
-      console.error('Invalid number after parsing:', value, '→', num);
+      console.error('Error formatting metric value:', e, value);
       return '0';
     }
-    
-    // Format with appropriate suffix
-    if (num >= 1000000000) {
-      return `${(num / 1000000000).toFixed(1).replace(/\.0$/, '')}B+`;
-    }
-    if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(1).replace(/\.0$/, '')}M+`;
-    }
-    if (num >= 1000) {
-      return `${(num / 1000).toFixed(1).replace(/\.0$/, '')}K+`;
-    }
-    
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   // Define the metrics to display
@@ -213,12 +223,6 @@ const AdditionalMetrics = ({ className = '' }) => {
     }
   ];
 
-  // Debug button for development
-  const handleDebugClick = () => {
-    console.log('Current stats:', stats);
-    console.log('Raw API data:', rawData);
-  };
-
   return (
     <div className={`${className}`}>
       <div className="mb-4 flex justify-between items-center">
@@ -227,16 +231,6 @@ const AdditionalMetrics = ({ className = '' }) => {
           <p className="text-sm text-neutral-300">Key performance indicators from AeroNyx network</p>
           <p className="text-xs text-neutral-400">The data for the last 30 days</p>
         </div>
-        
-        {/* Debug button - only visible during development */}
-        {process.env.NODE_ENV === 'development' && (
-          <button 
-            onClick={handleDebugClick}
-            className="text-xs text-neutral-500 hover:text-neutral-300 px-2 py-1 rounded border border-neutral-700"
-          >
-            Debug
-          </button>
-        )}
       </div>
       
       <motion.div 
