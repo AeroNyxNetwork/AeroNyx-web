@@ -212,22 +212,6 @@ const ModernHero = () => {
         </motion.div>
       </Container>
       
-      {/* Trusted By Companies */}
-      <motion.div 
-        className="absolute bottom-4 left-0 right-0 flex justify-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.7 }}
-        transition={{ duration: 0.5, delay: 1.5 }}
-      >
-        <div className="text-center">
-          <div className="text-xs text-neutral-500 mb-2 uppercase tracking-widest">Trusted by industry leaders</div>
-          <div className="flex flex-wrap items-center justify-center gap-8">
-            {['SOON', 'DePHY', 'WaterDrip', 'JRR Crypto', 'MIT'].map((brand, index) => (
-              <div key={index} className="text-neutral-400 font-medium mx-2">{brand}</div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
       
       {/* Downloads Modal */}
       <DownloadsModal 
