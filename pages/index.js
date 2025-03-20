@@ -10,7 +10,7 @@ import Layout from '@/components/layout/Layout';
 
 // Import sections
 import Hero from '@/components/sections/Hero';
-import Features from '@/components/sections/Features';
+import Features from '@/components/sections/ModernFeatures';
 import HowItWorks from '@/components/sections/HowItWorks';
 import Technology from '@/components/sections/Technology';
 import Partners from '@/components/sections/Partners';
