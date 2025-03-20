@@ -51,7 +51,7 @@ const ModernHero = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center pt-20 pb-16 overflow-hidden">
+    <section className="relative min-h-[100svh] flex items-center pt-20 pb-16 overflow-hidden">
       {/* Subtle animated radial gradient for depth */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-neutral-900" />
@@ -95,18 +95,18 @@ const ModernHero = () => {
             </motion.div>
             
             <motion.h1 
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
               variants={itemVariants}
             >
               Privacy-First 
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-light via-primary to-secondary ml-3">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-light via-primary to-secondary ml-0 md:ml-3 block md:inline">
                 Decentralized
               </span>
-              <br />Computing Infrastructure
+              <br className="hidden md:block" />Computing Infrastructure
             </motion.h1>
             
             <motion.p 
-              className="text-xl text-neutral-300 mb-8 max-w-2xl leading-relaxed"
+              className="text-base sm:text-lg md:text-xl text-neutral-300 mb-8 max-w-2xl leading-relaxed"
               variants={itemVariants}
             >
               AeroNyx Network empowers billions of devices with its privacy-first SDK, 
@@ -120,8 +120,9 @@ const ModernHero = () => {
               <EnhancedButton 
                 size="large"
                 onClick={() => setIsDownloadsModalOpen(true)}
+                className="w-full sm:w-auto"
               >
-                Download the client
+                Download SDK
               </EnhancedButton>
               
               <EnhancedButton 
@@ -131,6 +132,7 @@ const ModernHero = () => {
                 href="https://docs.aeronyx.network/" 
                 target="_blank"
                 rel="noopener noreferrer"
+                className="w-full sm:w-auto"
               >
                 View Documentation
               </EnhancedButton>
@@ -139,6 +141,7 @@ const ModernHero = () => {
             {/* Only Additional Network Stats - no primary stats */}
             <motion.div
               variants={itemVariants}
+              className="overflow-x-auto pb-2"
             >
               <OnlyAdditionalMetrics />
             </motion.div>
@@ -151,12 +154,12 @@ const ModernHero = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <div className="relative">
+            <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-auto">
               {/* Main 3D Logo */}
               <HeroLogo3D size={1.2} />
               
-              {/* Floating Features */}
-              <div className="absolute -top-8 -right-4 backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-3 z-20 shadow-lg">
+              {/* Floating Features - Hidden on small screens, visible on medium+ */}
+              <div className="absolute -top-8 -right-4 backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-3 z-20 shadow-lg hidden sm:flex">
                 <div className="flex items-center">
                   <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center mr-3">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -171,7 +174,7 @@ const ModernHero = () => {
                 </div>
               </div>
               
-              <div className="absolute -bottom-4 -left-6 backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-3 z-20 shadow-lg">
+              <div className="absolute -bottom-4 -left-6 backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-3 z-20 shadow-lg hidden sm:flex">
                 <div className="flex items-center">
                   <div className="h-10 w-10 rounded-full bg-secondary/20 flex items-center justify-center mr-3">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -192,26 +195,26 @@ const ModernHero = () => {
 
         {/* Download Call-to-Action */}
         <motion.div 
-          className="mt-16 backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-6 sm:p-8"
+          className="mt-12 lg:mt-16 backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 lg:p-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1 }}
         >
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div>
-              <h3 className="text-xl font-bold mb-2">Ready to join the decentralized revolution?</h3>
-              <p className="text-neutral-300">Contribute your device resources and get rewarded.</p>
+              <h3 className="text-lg sm:text-xl font-bold mb-2 text-center sm:text-left">Ready to join the decentralized revolution?</h3>
+              <p className="text-neutral-300 text-center sm:text-left text-sm sm:text-base">Contribute your device resources and get rewarded.</p>
             </div>
             <EnhancedButton 
               size="large"
               onClick={() => setIsDownloadsModalOpen(true)}
+              className="w-full sm:w-auto"
             >
               Download Node Software
             </EnhancedButton>
           </div>
         </motion.div>
       </Container>
-      
       
       {/* Downloads Modal */}
       <DownloadsModal 
