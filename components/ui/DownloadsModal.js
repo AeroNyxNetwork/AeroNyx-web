@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useOsDetection from '../../lib/hooks/useOsDetection';
 import AeroNyxLogo from './AeroNyxLogo';
@@ -44,7 +44,21 @@ const IPhoneIcon = () => (
   </svg>
 );
 
-const ModernDownloadsModal = ({ isOpen, onClose }) => {
+// CloseIcon component with larger touch target for mobile
+const CloseIcon = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="p-3 rounded-full text-neutral-400 hover:text-white transition-colors bg-neutral-800/50 hover:bg-neutral-700/50"
+    aria-label="Close"
+    style={{ minWidth: '44px', minHeight: '44px' }} // Larger touch target
+  >
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M18 6L6 18M6 6l12 12" />
+    </svg>
+  </button>
+);
+
+const DownloadsModal = ({ isOpen, onClose }) => {
   // Detect user's OS
   const userOs = useOsDetection();
   
@@ -140,35 +154,18 @@ const ModernDownloadsModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: i => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.05,
-        duration: 0.3
-      }
-    })
-  };
-
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div 
-          className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 overflow-y-auto"
-          variants={backdropVariants}
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
           {/* Backdrop with blur effect */}
           <motion.div 
             className="fixed inset-0 bg-neutral-900/70 backdrop-blur-md"
+            variants={backdropVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
             onClick={onClose}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
           />
 
           {/* Modal */}
@@ -178,7 +175,7 @@ const ModernDownloadsModal = ({ isOpen, onClose }) => {
             initial="hidden"
             animate="visible"
             exit="hidden"
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* The glass modal */}
             <div className="relative rounded-2xl overflow-hidden">
@@ -193,76 +190,51 @@ const ModernDownloadsModal = ({ isOpen, onClose }) => {
               
               {/* Content */}
               <div className="relative z-10 p-6">
-                {/* Close button */}
-                <div className="absolute top-4 right-4">
-                  <button
-                    onClick={onClose}
-                    className="p-1.5 rounded-full text-neutral-400 hover:text-white transition-colors bg-neutral-800/50 hover:bg-neutral-700/50"
-                    aria-label="Close"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M18 6L6 18M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-
-                {/* Logo and title */}
-                <div className="text-center mb-6">
-                  <div className="w-12 h-12 mx-auto mb-4 relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-full opacity-20 blur-md" />
-                    <div className="relative">
-                      <AeroNyxLogo width={48} height={48} />
+                {/* Header with close button - Fixed for better mobile accessibility */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 mr-3 relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-full opacity-20 blur-md"></div>
+                      <div className="relative">
+                        <AeroNyxLogo width={40} height={40} />
+                      </div>
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold">Download AeroNyx</h2>
+                      <p className="text-sm text-neutral-300">Join the decentralized network</p>
                     </div>
                   </div>
-                  <h2 className="text-xl font-bold mb-1">
-                    Download AeroNyx
-                  </h2>
-                  <p className="text-sm text-neutral-300">
-                    Join the decentralized network and earn rewards
-                  </p>
                   
-                  {/* Security notice */}
-                  <div className="mt-4 backdrop-blur-sm bg-amber-500/10 border border-amber-500/20 rounded-lg p-2.5 flex items-center">
-                    <svg className="w-5 h-5 text-amber-400 mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-                      <path d="M12 9v4" />
-                      <path d="M12 17h.01" />
-                    </svg>
-                    <p className="text-xs text-amber-200">
-                      For your security, verify you're visiting <strong>aeronyx.network</strong>
-                    </p>
-                  </div>
+                  {/* Larger close button for mobile */}
+                  <CloseIcon onClick={onClose} />
+                </div>
+                
+                {/* Security notice */}
+                <div className="mb-6 bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 flex items-center">
+                  <svg className="w-5 h-5 text-amber-400 mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                    <path d="M12 9v4" />
+                    <path d="M12 17h.01" />
+                  </svg>
+                  <p className="text-xs text-amber-200">
+                    For your security, verify you're visiting <strong>aeronyx.network</strong>
+                  </p>
                 </div>
                 
                 {/* Recommended for your device section */}
                 {userOsOptions.length > 0 && (
-                  <motion.div 
-                    className="mb-6"
-                    variants={itemVariants}
-                    custom={0}
-                    initial="hidden"
-                    animate="visible"
-                  >
-                    <h3 className="text-sm text-neutral-400 mb-2 flex items-center">
-                      <span className="mr-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M9 12l2 2 4-4" />
-                          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-                        </svg>
-                      </span>
-                      Recommended for your device
-                    </h3>
+                  <div className="mb-4">
+                    <h3 className="text-sm text-neutral-400 mb-2">Recommended for your device</h3>
                     
                     {userOsOptions.map((os, index) => {
                       const Icon = os.icon;
                       
                       return (
-                        <motion.button
+                        <button
                           key={os.name}
                           className="w-full p-4 mb-2 flex items-center rounded-xl bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 hover:border-primary/50 transition-colors"
                           onClick={() => handleDownload(os)}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
+                          style={{ minHeight: '68px' }} // Ensure good touch target
                         >
                           <div className="rounded-full bg-primary/20 p-2 text-primary mr-3">
                             <Icon />
@@ -283,31 +255,17 @@ const ModernDownloadsModal = ({ isOpen, onClose }) => {
                               <path d="M19 21H5" />
                             </svg>
                           </div>
-                        </motion.button>
+                        </button>
                       );
                     })}
-                  </motion.div>
+                  </div>
                 )}
                 
-                {/* All platforms */}
-                <motion.div
-                  variants={itemVariants}
-                  custom={1}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  <h3 className="text-sm text-neutral-400 mb-3 flex items-center">
-                    <span className="mr-2">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-                        <path d="M15 9h-6v6h6" />
-                        <path d="m9 15 6-6" />
-                      </svg>
-                    </span>
-                    All platforms
-                  </h3>
+                {/* All platforms - Mobile friendly grid layout */}
+                <div>
+                  <h3 className="text-sm text-neutral-400 mb-3">All platforms</h3>
                   
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {sortedOptions.map((os, index) => {
                       const Icon = os.icon;
                       const isUserOs = userOs !== 'Unknown' && os.name.toLowerCase().includes(userOs.toLowerCase());
@@ -316,7 +274,7 @@ const ModernDownloadsModal = ({ isOpen, onClose }) => {
                       if (isUserOs && userOsOptions.length > 0) return null;
                       
                       return (
-                        <motion.button
+                        <button
                           key={os.name}
                           className={`border rounded-xl p-3 text-center transition-colors ${
                             !os.available 
@@ -324,10 +282,7 @@ const ModernDownloadsModal = ({ isOpen, onClose }) => {
                               : "border-primary/20 bg-neutral-800/50 hover:bg-neutral-800/80 hover:border-primary/40 cursor-pointer"
                           }`}
                           onClick={() => os.available && handleDownload(os)}
-                          variants={itemVariants}
-                          custom={index + 2}
-                          whileHover={os.available ? { y: -2 } : {}}
-                          whileTap={os.available ? { y: 0 } : {}}
+                          style={{ minHeight: '90px' }} // Larger touch target
                         >
                           <div className="flex items-center justify-center mb-1 text-primary opacity-80">
                             <Icon />
@@ -336,29 +291,29 @@ const ModernDownloadsModal = ({ isOpen, onClose }) => {
                             {os.name}
                           </div>
                           <div className="text-xs text-neutral-400 mt-1">{os.version}</div>
-                        </motion.button>
+                        </button>
                       );
                     })}
                   </div>
-                </motion.div>
+                </div>
                 
-                {/* Footer note */}
-                <motion.div 
-                  className="mt-6 text-center text-neutral-400 text-xs"
-                  variants={itemVariants}
-                  custom={7}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  <p>AeroNyx respects your privacy and doesn't collect device information</p>
-                </motion.div>
+                {/* Extra close button at bottom for mobile accessibility */}
+                <div className="mt-6 text-center">
+                  <button 
+                    onClick={onClose}
+                    className="px-4 py-2 text-sm text-neutral-400 hover:text-white bg-neutral-800/50 hover:bg-neutral-700/50 rounded-lg transition-colors"
+                    style={{ minHeight: '40px', minWidth: '100px' }} // Ensure good touch target
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>
-        </motion.div>
+        </div>
       )}
     </AnimatePresence>
   );
 };
 
-export default ModernDownloadsModal;
+export default DownloadsModal;
