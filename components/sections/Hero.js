@@ -1,6 +1,6 @@
 import { Suspense, useState } from 'react';
 import { motion } from 'framer-motion';
-import EnhancedButton from '../ui/EnhancedButton';
+import Button from '../ui/Button'; 
 import Container from '../ui/Container';
 import AnimatedLogo from '../ui/AnimatedLogo';
 import DownloadsModal from '../ui/DownloadsModal';
