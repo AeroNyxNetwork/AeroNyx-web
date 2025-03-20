@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Container from '../ui/Container';
-import Card from '../ui/Card';
+import EnhancedCard from '../ui/EnhancedCard';
 
 const TechCard = ({ title, description, features, delay = 0 }) => {
   return (
