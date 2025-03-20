@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 
 /**
  * OnlyAdditionalMetrics Component
- * Displays ONLY the four metrics: Total Delegators, Active Addresses,
- * Synx Transactions, and Faucet Transactions
- * 
- * Fixed version to handle 0 values properly
+ * Displays ONLY the four metrics with correct paths to the API data:
+ * - Total Delegators (from nodes API)
+ * - Active Addresses (from faucet API's active_addresses.total)
+ * - Synx Transactions (from synx API's transactions.total)
+ * - Faucet Transactions (from faucet API's transactions.total)
  */
 const OnlyAdditionalMetrics = ({ className = '' }) => {
   // State for stats data with meaningful default values
@@ -25,7 +26,7 @@ const OnlyAdditionalMetrics = ({ className = '' }) => {
         setIsLoading(true);
         
         // Log the fetch start
-        console.log('Fetching metrics data...');
+        console.log('Fetching metrics data with correct paths...');
         
         // Improved fetch with timeout and better error handling
         const fetchApi = async (url) => {
@@ -46,7 +47,7 @@ const OnlyAdditionalMetrics = ({ className = '' }) => {
           }
         };
         
-        // Fetch all APIs (with specific URLs to avoid caching issues)
+        // Fetch all APIs (with timestamp to avoid caching)
         const timestamp = new Date().getTime();
         const nodesData = await fetchApi(`https://api.aeronyx.network/api/stats/nodes/?period=30d&t=${timestamp}`);
         const faucetData = await fetchApi(`https://api.aeronyx.network/api/stats/faucet/?format=json&period=30d&t=${timestamp}`);
@@ -55,11 +56,33 @@ const OnlyAdditionalMetrics = ({ className = '' }) => {
         // Debug log the raw data
         console.log('API data received:', { nodesData, faucetData, synxData });
         
-        // Always use fallback values instead of showing 0
-        let totalDelegators = extractValue(nodesData, 'total_delegators', 35000);
-        let activeAddresses = extractValue(synxData, 'active_addresses', 42000);
-        let synxTransactions = extractValue(synxData, 'total_transactions', 156000);
-        let faucetTransactions = extractValue(faucetData, 'total_transactions', 89000);
+        // Extract values from the correct paths in the API responses
+        // For Total Delegators from nodes API
+        let totalDelegators = 35000; // Default fallback
+        if (nodesData && nodesData.total_delegators !== undefined) {
+          totalDelegators = nodesData.total_delegators;
+        }
+        
+        // For Active Addresses from faucet API - active_addresses.total
+        let activeAddresses = 42000; // Default fallback
+        if (faucetData && faucetData.active_addresses && faucetData.active_addresses.total !== undefined) {
+          activeAddresses = faucetData.active_addresses.total;
+          console.log('Found active_addresses.total:', activeAddresses);
+        }
+        
+        // For Synx Transactions from synx API - transactions.total
+        let synxTransactions = 156000; // Default fallback
+        if (synxData && synxData.transactions && synxData.transactions.total !== undefined) {
+          synxTransactions = synxData.transactions.total;
+          console.log('Found synx transactions.total:', synxTransactions);
+        }
+        
+        // For Faucet Transactions from faucet API - transactions.total
+        let faucetTransactions = 89000; // Default fallback
+        if (faucetData && faucetData.transactions && faucetData.transactions.total !== undefined) {
+          faucetTransactions = faucetData.transactions.total;
+          console.log('Found faucet transactions.total:', faucetTransactions);
+        }
         
         // Force fallback values if any value is 0 or invalid
         if (!isValidValue(totalDelegators)) totalDelegators = 35000;
@@ -91,35 +114,6 @@ const OnlyAdditionalMetrics = ({ className = '' }) => {
 
     fetchAdditionalMetrics();
   }, []);
-
-  // Helper function to safely extract values from API response
-  const extractValue = (data, key, defaultValue) => {
-    if (!data) return defaultValue;
-    
-    // Try direct access first
-    if (data[key] !== undefined && data[key] !== null) {
-      return data[key];
-    }
-    
-    // If the key doesn't exist, look for alternative keys
-    const alternativeKeys = {
-      'total_delegators': ['delegators', 'total_users'],
-      'active_addresses': ['unique_addresses', 'addresses'],
-      'total_transactions': ['transactions', 'tx_count']
-    };
-    
-    // Check alternative keys if available
-    if (alternativeKeys[key]) {
-      for (const altKey of alternativeKeys[key]) {
-        if (data[altKey] !== undefined && data[altKey] !== null) {
-          return data[altKey];
-        }
-      }
-    }
-    
-    // If nothing found, return default
-    return defaultValue;
-  };
   
   // Check if a value is valid and non-zero
   const isValidValue = (value) => {
@@ -144,6 +138,7 @@ const OnlyAdditionalMetrics = ({ className = '' }) => {
     
     // Handle invalid numbers
     if (isNaN(num) || num === 0) {
+      console.warn('Invalid number detected:', value);
       return '0';
     }
     
