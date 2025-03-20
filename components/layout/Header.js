@@ -9,7 +9,8 @@ const Header = () => {
     { href: "#technology", label: "Technology" },
     { href: "https://docs.aeronyx.network/", label: "Docs" },
     { href: "https://soon.aeronyx.network/", label: "Dashboard" },
-    { href: "https://github.com/AeroNyxNetwork", label: "Github" }
+    { href: "https://github.com/AeroNyxNetwork", label: "Github" }.
+    { href: "https://rwa.aeronyx.network/", label: "RWA" }
   ];
 
   return (
