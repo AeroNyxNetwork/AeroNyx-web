@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Container from '../ui/Container';
-import EnhancedButton from '../ui/EnhancedButton';
+import Button from '../ui/Button';
 import ContactModal from '../ui/ContactModal';
 
 const CTA = () => {
