@@ -1,13 +1,26 @@
 import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
+
+// Import SEO component
 import SEO from '@/components/ui/SEO';
+
+// Import layout component
 import Layout from '@/components/layout/Layout';
+
+// Import optimized background with dynamic loading for better performance
+const OptimizedGlassBackground = dynamic(
+  () => import('@/components/ui/OptimizedGlassBackground'),
+  { ssr: false, suspense: true }
+);
+
+// Import original section components as fallbacks
 import Hero from '@/components/sections/Hero';
 import HowItWorks from '@/components/sections/HowItWorks';
 import Technology from '@/components/sections/Technology';
 import Partners from '@/components/sections/Partners';
 import CTA from '@/components/sections/CTA';
 
-// Simple background
+// Simple fallback for background during loading
 const SimpleFallback = () => (
   <div className="fixed inset-0 bg-neutral-900 z-0"></div>
 );
@@ -25,14 +38,22 @@ export default function Home() {
           'decentralized computing',
           'blockchain',
           'network',
+          'SDK',
           'secure computing',
           'privacy-first',
+          'data protection',
+          'distributed network',
+          'resource marketplace'
         ]}
       />
       
-      <SimpleFallback />
+      {/* Optimized background with fallback */}
+      <Suspense fallback={<SimpleFallback />}>
+        <OptimizedGlassBackground className="z-0" intensity={0.8} />
+      </Suspense>
       
       <Layout>
+        {/* You can gradually replace these with your optimized versions */}
         <Hero />
         <HowItWorks />
         <Technology />
