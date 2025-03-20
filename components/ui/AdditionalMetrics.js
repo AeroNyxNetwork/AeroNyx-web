@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
  * AdditionalMetrics Component
  * Displays the four additional metrics: Total Delegators, Active Addresses,
  * Synx Transactions, and Faucet Transactions
+ * 
+ * Fixed version with improved data handling and debug logging
  */
 const AdditionalMetrics = ({ className = '' }) => {
   // State for stats data
@@ -16,6 +18,11 @@ const AdditionalMetrics = ({ className = '' }) => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [rawData, setRawData] = useState({
+    nodes: null,
+    faucet: null,
+    synx: null
+  });
 
   // Fetch data on component mount
   useEffect(() => {
@@ -23,23 +30,90 @@ const AdditionalMetrics = ({ className = '' }) => {
       try {
         setIsLoading(true);
         
-        // Fetch data from the three API endpoints
-        const [nodesData, faucetData, synxData] = await Promise.all([
+        // Fetch data from the three API endpoints with better error logging
+        const responses = await Promise.all([
           fetch('https://api.aeronyx.network/api/stats/nodes/?period=30d')
-            .then(res => res.ok ? res.json() : null),
+            .then(res => {
+              if (!res.ok) {
+                console.error('Nodes API response not OK:', res.status, res.statusText);
+                throw new Error(`Nodes API error: ${res.status}`);
+              }
+              return res.json();
+            }),
           fetch('https://api.aeronyx.network/api/stats/faucet/?format=json&period=30d')
-            .then(res => res.ok ? res.json() : null),
+            .then(res => {
+              if (!res.ok) {
+                console.error('Faucet API response not OK:', res.status, res.statusText);
+                throw new Error(`Faucet API error: ${res.status}`);
+              }
+              return res.json();
+            }),
           fetch('https://api.aeronyx.network/api/stats/synx/?format=json&period=30d')
-            .then(res => res.ok ? res.json() : null)
-        ]);
-
-        // Extract metrics from the data
-        const totalDelegators = nodesData?.total_delegators || '35K+';
-        const activeAddresses = synxData?.active_addresses || synxData?.unique_addresses || '42K+';
-        const synxTransactions = synxData?.total_transactions || '156K+';
-        const faucetTransactions = faucetData?.total_transactions || '89K+';
+            .then(res => {
+              if (!res.ok) {
+                console.error('Synx API response not OK:', res.status, res.statusText);
+                throw new Error(`Synx API error: ${res.status}`);
+              }
+              return res.json();
+            })
+        ]).catch(error => {
+          console.error('Error in Promise.all:', error);
+          throw error;
+        });
         
-        // Update state with the data
+        const [nodesData, faucetData, synxData] = responses;
+        
+        // Store raw data for debugging
+        setRawData({
+          nodes: nodesData,
+          faucet: faucetData,
+          synx: synxData
+        });
+        
+        // Log the raw responses for debugging
+        console.log('Nodes API response:', nodesData);
+        console.log('Faucet API response:', faucetData);
+        console.log('Synx API response:', synxData);
+
+        // Extract metrics with better validation
+        // For nodes data - check both possible field names
+        let totalDelegators = '35K+';  // Default fallback
+        if (nodesData) {
+          if (typeof nodesData.total_delegators !== 'undefined') {
+            totalDelegators = nodesData.total_delegators;
+          } else if (typeof nodesData.delegators !== 'undefined') {
+            totalDelegators = nodesData.delegators;
+          }
+        }
+        
+        // For synx data - check multiple possible field names
+        let activeAddresses = '42K+';  // Default fallback
+        let synxTransactions = '156K+';  // Default fallback
+        if (synxData) {
+          if (typeof synxData.active_addresses !== 'undefined') {
+            activeAddresses = synxData.active_addresses;
+          } else if (typeof synxData.unique_addresses !== 'undefined') {
+            activeAddresses = synxData.unique_addresses;
+          }
+          
+          if (typeof synxData.total_transactions !== 'undefined') {
+            synxTransactions = synxData.total_transactions;
+          } else if (typeof synxData.transactions !== 'undefined') {
+            synxTransactions = synxData.transactions;
+          }
+        }
+        
+        // For faucet data
+        let faucetTransactions = '89K+';  // Default fallback
+        if (faucetData) {
+          if (typeof faucetData.total_transactions !== 'undefined') {
+            faucetTransactions = faucetData.total_transactions;
+          } else if (typeof faucetData.transactions !== 'undefined') {
+            faucetTransactions = faucetData.transactions;
+          }
+        }
+        
+        // Update state with properly formatted data
         setStats({
           totalDelegators: formatNumber(totalDelegators),
           activeAddresses: formatNumber(activeAddresses),
@@ -67,36 +141,51 @@ const AdditionalMetrics = ({ className = '' }) => {
     fetchAdditionalMetrics();
   }, []);
 
-  // Format numbers with K, M, B suffixes
-  const formatNumber = (num) => {
-    if (!num && num !== 0) return '0';
+  // Format numbers with K, M, B suffixes - improved with better validation
+  const formatNumber = (value) => {
+    // If the value is falsy, but not zero - return default formatting
+    if (!value && value !== 0) return '0';
     
     // If already formatted with suffix, return as is
-    if (typeof num === 'string' && /[KMB+]/.test(num)) {
-      return num;
+    if (typeof value === 'string' && /[KMB+]/.test(value)) {
+      return value;
     }
     
-    // Convert to number
-    const value = typeof num === 'string' ? 
-      parseFloat(num.replace(/[^\d.]/g, '')) : Number(num);
+    // Convert to number with better error handling
+    let num;
+    try {
+      if (typeof value === 'string') {
+        // Remove non-numeric characters except decimal point
+        num = parseFloat(value.replace(/[^\d.-]/g, ''));
+      } else {
+        num = Number(value);
+      }
+    } catch (e) {
+      console.error('Error parsing number:', value, e);
+      return '0'; // Return default on parsing error
+    }
     
-    if (isNaN(value)) return '0';
+    // Check if result is a valid number
+    if (isNaN(num)) {
+      console.error('Invalid number after parsing:', value, '→', num);
+      return '0';
+    }
     
     // Format with appropriate suffix
-    if (value >= 1000000000) {
-      return `${(value / 1000000000).toFixed(1).replace(/\.0$/, '')}B+`;
+    if (num >= 1000000000) {
+      return `${(num / 1000000000).toFixed(1).replace(/\.0$/, '')}B+`;
     }
-    if (value >= 1000000) {
-      return `${(value / 1000000).toFixed(1).replace(/\.0$/, '')}M+`;
+    if (num >= 1000000) {
+      return `${(num / 1000000).toFixed(1).replace(/\.0$/, '')}M+`;
     }
-    if (value >= 1000) {
-      return `${(value / 1000).toFixed(1).replace(/\.0$/, '')}K+`;
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(1).replace(/\.0$/, '')}K+`;
     }
     
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  // Define the stats to display
+  // Define the metrics to display
   const metricsData = [
     { 
       label: "Total Delegators", 
@@ -124,11 +213,30 @@ const AdditionalMetrics = ({ className = '' }) => {
     }
   ];
 
+  // Debug button for development
+  const handleDebugClick = () => {
+    console.log('Current stats:', stats);
+    console.log('Raw API data:', rawData);
+  };
+
   return (
     <div className={`${className}`}>
-      <div className="mb-4">
-        <h3 className="text-xl font-bold text-white">Additional Network Metrics</h3>
-        <p className="text-sm text-neutral-300">Key performance indicators from AeroNyx network</p>
+      <div className="mb-4 flex justify-between items-center">
+        <div>
+          <h3 className="text-xl font-bold text-white">Additional Network Metrics</h3>
+          <p className="text-sm text-neutral-300">Key performance indicators from AeroNyx network</p>
+          <p className="text-xs text-neutral-400">The data for the last 30 days</p>
+        </div>
+        
+        {/* Debug button - only visible during development */}
+        {process.env.NODE_ENV === 'development' && (
+          <button 
+            onClick={handleDebugClick}
+            className="text-xs text-neutral-500 hover:text-neutral-300 px-2 py-1 rounded border border-neutral-700"
+          >
+            Debug
+          </button>
+        )}
       </div>
       
       <motion.div 
@@ -165,11 +273,11 @@ const AdditionalMetrics = ({ className = '' }) => {
         ))}
       </motion.div>
       
-      {/* Error message */}
+      {/* Error message with more details */}
       {error && (
         <div className="mt-4 text-center">
           <span className="text-xs text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full">
-            Using estimated values. Unable to fetch live data.
+            {error.includes('API error') ? 'API connection error.' : error} Using estimated values.
           </span>
         </div>
       )}
