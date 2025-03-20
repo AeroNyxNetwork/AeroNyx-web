@@ -122,7 +122,7 @@ const ModernHero = () => {
                 onClick={() => setIsDownloadsModalOpen(true)}
                 className="w-full sm:w-auto"
               >
-                Download SDK
+                Download the client
               </EnhancedButton>
               
               <EnhancedButton 
