@@ -5,7 +5,6 @@ import EnhancedButton from '../ui/EnhancedButton';
 import Container from '../ui/Container';
 import DownloadsModal from '../ui/DownloadsModal';
 import LiveNetworkStats from '../ui/LiveNetworkStats';
-import AdditionalMetrics from '../ui/AdditionalMetrics';
 
 const ModernHero = () => {
   const [isDownloadsModalOpen, setIsDownloadsModalOpen] = useState(false);
@@ -137,12 +136,11 @@ const ModernHero = () => {
               </EnhancedButton>
             </motion.div>
             
-            {/* Network Stats - Updated to use live data */}
+            {/* Network Stats - Only show the primary stats */}
             <motion.div
               variants={itemVariants}
             >
               <LiveNetworkStats />
-              <AdditionalMetrics className="mt-8" />
             </motion.div>
           </motion.div>
           
