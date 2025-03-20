@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
  * OnlyAdditionalMetrics Component
  * Displays ONLY the four metrics with correct paths to the API data
  * 
- * Enhanced with better responsive layout and mobile compatibility
+ * Enhanced with better responsive layout, mobile compatibility, and click-to-open feature
  */
 const OnlyAdditionalMetrics = ({ className = '' }) => {
   // State for stats data with meaningful default values
@@ -141,6 +141,11 @@ const OnlyAdditionalMetrics = ({ className = '' }) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
+  // Click handler to open URL in new window
+  const handleCardClick = () => {
+    window.open('https://soon.aeronyx.network/', '_blank');
+  };
+
   // Define the metrics to display
   const metricsData = [
     { 
@@ -173,7 +178,8 @@ const OnlyAdditionalMetrics = ({ className = '' }) => {
           {metricsData.map((metric, index) => (
             <div 
               key={index} 
-              className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-3 flex-shrink-0 w-[160px] snap-start"
+              className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-3 flex-shrink-0 w-[160px] snap-start cursor-pointer hover:bg-white/10 transition-colors duration-200"
+              onClick={handleCardClick}
             >
               <div className="text-xl font-bold text-white mb-1">
                 {isLoading ? (
@@ -193,7 +199,11 @@ const OnlyAdditionalMetrics = ({ className = '' }) => {
       <div className="hidden sm:block">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {metricsData.map((metric, index) => (
-            <div key={index} className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4">
+            <div 
+              key={index} 
+              className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 cursor-pointer hover:bg-white/10 transition-colors duration-200"
+              onClick={handleCardClick}
+            >
               <div className="text-2xl sm:text-3xl font-bold text-white mb-1">
                 {isLoading ? (
                   <div className="h-8 w-24 bg-white/10 animate-pulse rounded"></div>
