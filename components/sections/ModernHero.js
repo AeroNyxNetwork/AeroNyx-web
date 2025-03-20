@@ -4,6 +4,7 @@ import HeroLogo3D from '../ui/HeroLogo3D';
 import EnhancedButton from '../ui/EnhancedButton';
 import Container from '../ui/Container';
 import DownloadsModal from '../ui/DownloadsModal';
+import NetworkStats from '../ui/NetworkStats'; // Import the new NetworkStats component
 
 const ModernHero = () => {
   const [isDownloadsModalOpen, setIsDownloadsModalOpen] = useState(false);
@@ -135,23 +136,8 @@ const ModernHero = () => {
               </EnhancedButton>
             </motion.div>
             
-            {/* Network Stats */}
-            <motion.div 
-              className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8"
-              variants={itemVariants}
-            >
-              {[
-                { label: "Active Nodes", value: "12,500+" },
-                { label: "Total Resources", value: "87 PH/s" },
-                { label: "Network Users", value: "65K+" },
-                { label: "Data Protected", value: "125+ TB" }
-              ].map((stat, index) => (
-                <div key={index} className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4">
-                  <div className="text-2xl sm:text-3xl font-bold text-white mb-1">{stat.value}</div>
-                  <div className="text-sm text-neutral-400">{stat.label}</div>
-                </div>
-              ))}
-            </motion.div>
+            {/* Network Stats - Replaced with dynamic component */}
+            <NetworkStats />
           </motion.div>
           
           {/* 3D Logo Visual */}
