@@ -83,34 +83,45 @@ const ProductsEcosystem = () => {
     }
   };
   
+  // Handle smooth scrolling for CTA links
+  const handleCtaClick = (e, link) => {
+    if (link && link.startsWith('#')) {
+      e.preventDefault();
+      const element = document.querySelector(link);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+  
   return (
-    <section id="products" className="py-24 bg-black">
+    <section id="products" className="py-12 md:py-24 bg-black">
       <Container>
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-light mb-6">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-light mb-4 md:mb-6">
               Products & Applications
             </h2>
-            <p className="text-xl text-white/40 max-w-3xl mx-auto">
+            <p className="text-base md:text-xl text-white/40 max-w-3xl mx-auto px-4">
               From foundational privacy infrastructure to consumer applications and enterprise solutions — 
               all powered by the Autonomous Intelligence Layer.
             </p>
           </div>
           
-          {/* Product selector */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
+          {/* Product selector - Horizontal scroll on mobile */}
+          <div className="flex flex-nowrap overflow-x-auto gap-3 md:gap-4 mb-8 md:mb-12 -mx-4 px-4 md:mx-0 md:px-0 md:justify-center scrollbar-hide">
             {products.map((product) => (
               <button
                 key={product.id}
                 onClick={() => setSelectedProduct(product.id)}
-                className={`px-6 py-3 border rounded-lg transition-all ${
+                className={`flex-shrink-0 px-4 md:px-6 py-2 md:py-3 border rounded-lg transition-all min-w-fit ${
                   selectedProduct === product.id
                     ? 'border-white/40 bg-white/5 text-white'
                     : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'
                 }`}
               >
-                <div className="text-sm font-medium">{product.name}</div>
+                <div className="text-xs md:text-sm font-medium whitespace-nowrap">{product.name}</div>
                 <div className="text-xs opacity-60 mt-1">{product.category}</div>
               </button>
             ))}
@@ -128,29 +139,29 @@ const ProductsEcosystem = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  className="grid md:grid-cols-2 gap-12 items-center"
+                  className="grid md:grid-cols-2 gap-8 md:gap-12 items-center"
                 >
-                  {/* Visual representation */}
-                  <div className="order-2 md:order-1">
+                  {/* Visual representation - Hidden on mobile for better performance */}
+                  <div className="order-2 md:order-1 hidden md:block">
                     <ProductVisual productId={product.id} />
                   </div>
                   
                   {/* Content */}
                   <div className="order-1 md:order-2">
-                    <div className="flex items-center gap-4 mb-4">
-                      <h3 className="text-3xl font-light">{product.name}</h3>
+                    <div className="flex items-center gap-3 md:gap-4 mb-4">
+                      <h3 className="text-2xl md:text-3xl font-light">{product.name}</h3>
                       {getStatusBadge(product.status)}
                     </div>
                     
-                    <p className="text-lg text-white/60 mb-8">
+                    <p className="text-sm md:text-lg text-white/60 mb-6 md:mb-8">
                       {product.description}
                     </p>
                     
-                    <div className="space-y-3 mb-8">
+                    <div className="space-y-2 md:space-y-3 mb-6 md:mb-8">
                       {product.features.map((feature, i) => (
                         <div key={i} className="flex items-start">
-                          <div className="w-1 h-1 rounded-full bg-white/40 mt-2 mr-3" />
-                          <span className="text-white/60">{feature}</span>
+                          <div className="w-1 h-1 rounded-full bg-white/40 mt-1.5 md:mt-2 mr-2 md:mr-3 flex-shrink-0" />
+                          <span className="text-sm md:text-base text-white/60">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -158,9 +169,10 @@ const ProductsEcosystem = () => {
                     {product.cta && (
                       <a
                         href={product.cta.link}
-                        className="inline-block px-8 py-3 border border-white/20 hover:border-white/40 transition-all"
+                        onClick={(e) => handleCtaClick(e, product.cta.link)}
+                        className="inline-block px-6 md:px-8 py-2.5 md:py-3 border border-white/20 hover:border-white/40 transition-all"
                       >
-                        <span className="text-sm uppercase tracking-wider">
+                        <span className="text-xs md:text-sm uppercase tracking-wider">
                           {product.cta.text}
                         </span>
                       </a>
@@ -171,49 +183,61 @@ const ProductsEcosystem = () => {
             })}
           </AnimatePresence>
           
-          {/* Ecosystem diagram */}
+          {/* Ecosystem diagram - Simplified for mobile */}
           <motion.div
-            className="mt-24 pt-16 border-t border-white/10"
+            className="mt-16 md:mt-24 pt-8 md:pt-16 border-t border-white/10"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
           >
-            <h3 className="text-2xl font-light text-center mb-12">
+            <h3 className="text-xl md:text-2xl font-light text-center mb-8 md:mb-12">
               The AeroNyx Ecosystem
             </h3>
             
             <div className="relative max-w-4xl mx-auto">
               {/* Center: AIL */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full border border-white/20 flex items-center justify-center bg-black">
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 md:w-32 md:h-32 rounded-full border border-white/20 flex items-center justify-center bg-black">
                 <div className="text-center">
                   <div className="text-xs uppercase tracking-wider text-white/40">Core</div>
                   <div className="text-sm">AIL</div>
                 </div>
               </div>
               
-              {/* Orbiting products */}
-              <div className="relative h-96">
+              {/* Orbiting products - Responsive sizing */}
+              <div className="relative h-64 md:h-96">
                 {products.map((product, i) => {
                   const angle = (i / products.length) * Math.PI * 2;
-                  const x = Math.cos(angle) * 150 + 192; // 192 = half of 384 (h-96)
-                  const y = Math.sin(angle) * 150 + 192;
+                  const radius = 100; // Smaller radius for mobile
+                  const radiusMd = 150; // Desktop radius
+                  const x = Math.cos(angle) * radius + 128;
+                  const y = Math.sin(angle) * radius + 128;
+                  const xMd = Math.cos(angle) * radiusMd + 192;
+                  const yMd = Math.sin(angle) * radiusMd + 192;
                   
                   return (
                     <div
                       key={product.id}
-                      className="absolute w-24 h-24 rounded-full border border-white/10 flex items-center justify-center bg-black hover:border-white/30 transition-all cursor-pointer"
-                      style={{ left: `${x}px`, top: `${y}px`, transform: 'translate(-50%, -50%)' }}
+                      className="absolute w-20 h-20 md:w-24 md:h-24 rounded-full border border-white/10 flex items-center justify-center bg-black hover:border-white/30 transition-all cursor-pointer"
+                      style={{ 
+                        left: `${x}px`, 
+                        top: `${y}px`, 
+                        transform: 'translate(-50%, -50%)',
+                        '@media (min-width: 768px)': {
+                          left: `${xMd}px`,
+                          top: `${yMd}px`
+                        }
+                      }}
                       onClick={() => setSelectedProduct(product.id)}
                     >
-                      <div className="text-center">
+                      <div className="text-center p-2">
                         <div className="text-xs">{product.name.split(' ')[0]}</div>
                       </div>
                     </div>
                   );
                 })}
                 
-                {/* Connection lines */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                {/* Connection lines - Hidden on mobile for clarity */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block">
                   {products.map((_, i) => {
                     const angle = (i / products.length) * Math.PI * 2;
                     const x = Math.cos(angle) * 150 + 192;
@@ -241,7 +265,7 @@ const ProductsEcosystem = () => {
   );
 };
 
-// Product visual components
+// Product visual components - Simplified for mobile
 const ProductVisual = ({ productId }) => {
   const visuals = {
     foundation: <FoundationVisual />,
@@ -261,24 +285,24 @@ const FoundationVisual = () => (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="relative">
       {/* Network mesh */}
-      <svg className="w-64 h-64">
+      <svg className="w-48 h-48 md:w-64 md:h-64">
         {Array.from({ length: 6 }).map((_, i) => {
           const angle1 = (i / 6) * Math.PI * 2;
           const angle2 = ((i + 1) / 6) * Math.PI * 2;
-          const x1 = 128 + Math.cos(angle1) * 80;
-          const y1 = 128 + Math.sin(angle1) * 80;
-          const x2 = 128 + Math.cos(angle2) * 80;
-          const y2 = 128 + Math.sin(angle2) * 80;
+          const x1 = 96 + Math.cos(angle1) * 60;
+          const y1 = 96 + Math.sin(angle1) * 60;
+          const x2 = 96 + Math.cos(angle2) * 60;
+          const y2 = 96 + Math.sin(angle2) * 60;
           
           return (
             <g key={i}>
               <circle cx={x1} cy={y1} r="4" fill="rgba(119, 98, 243, 0.6)" />
               <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(119, 98, 243, 0.3)" strokeWidth="1" />
-              <line x1={x1} y1={y1} x2="128" y2="128" stroke="rgba(119, 98, 243, 0.2)" strokeWidth="1" />
+              <line x1={x1} y1={y1} x2="96" y2="96" stroke="rgba(119, 98, 243, 0.2)" strokeWidth="1" />
             </g>
           );
         })}
-        <circle cx="128" cy="128" r="6" fill="rgba(119, 98, 243, 0.8)" />
+        <circle cx="96" cy="96" r="6" fill="rgba(119, 98, 243, 0.8)" />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-xs uppercase tracking-wider text-white/40">Privacy Layer</div>
@@ -310,7 +334,7 @@ const ComputeVisual = () => (
       {Array.from({ length: 9 }).map((_, i) => (
         <motion.div
           key={i}
-          className="w-12 h-12 border border-white/20 rounded flex items-center justify-center"
+          className="w-10 h-10 md:w-12 md:h-12 border border-white/20 rounded flex items-center justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: i * 0.1 }}
