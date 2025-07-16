@@ -1,77 +1,72 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
+
+// Dynamically import ConstellationBackground for better performance
+const ConstellationBackground = dynamic(() => import('./ConstellationBackground'), {
+  ssr: false,
+  loading: () => null
+});
 
 const MinimalAILBackground = () => {
-  const canvasRef = useRef(null);
+  const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener('resize', resize);
-    
-    // Minimal particle system
-    const particles = Array.from({ length: 20 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.2,
-      vy: (Math.random() - 0.5) * 0.2,
-      opacity: Math.random() * 0.3 + 0.1
-    }));
-    
-    const animate = () => {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-        
-        ctx.fillStyle = `rgba(119, 98, 243, ${p.opacity})`;
-        ctx.fillRect(p.x, p.y, 1, 1);
-      });
-      
-      requestAnimationFrame(animate);
-    };
-    
-    animate();
-    
-    return () => window.removeEventListener('resize', resize);
+    setMounted(true);
   }, []);
   
+  if (!mounted) return null;
+  
   return (
-    <div className="fixed inset-0 -z-10">
-      {/* Base gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-neutral-950 to-black" />
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
+      {/* Base gradient for depth */}
+      <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 via-black to-black" />
       
-      {/* Subtle grid */}
-      <div 
-        className="absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '50px 50px'
-        }}
-      />
+      {/* Constellation background */}
+      <ConstellationBackground />
       
-      {/* Minimal particle canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0" />
-      
-      {/* Very subtle glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]">
-        <div className="w-full h-full bg-primary/5 rounded-full blur-3xl" />
+      {/* Subtle animated gradient orbs for additional mystique */}
+      <div className="absolute inset-0">
+        {/* Purple glow orb */}
+        <motion.div
+          className="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        
+        {/* Blue glow orb */}
+        <motion.div
+          className="absolute bottom-1/3 left-1/3 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
       </div>
+      
+      {/* Vignette effect for focus */}
+      <div className="absolute inset-0 bg-radial-gradient from-transparent via-transparent to-black/50" />
+      
+      {/* Mobile optimization: Less complex background on small devices */}
+      <style jsx>{`
+        @media (max-width: 640px) {
+          .blur-3xl {
+            filter: blur(60px);
+          }
+        }
+      `}</style>
     </div>
   );
 };
