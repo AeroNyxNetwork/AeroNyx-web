@@ -111,9 +111,9 @@ const NarrativeHero = () => {
             className="border-t border-white/10 pt-8"
           >
             <p className="text-lg text-white/60 mb-8 leading-relaxed">
-              AeroNyx combines AI orchestration, blockchain verification, and distributed computing 
-              into a single <span className="text-white">Autonomous Intelligence Layer</span> — 
-              infrastructure that doesn't just execute commands, but thinks, learns, and evolves.
+              Built on our proven privacy network foundation, AeroNyx evolves beyond secure communications 
+              to create the world's first <span className="text-white">Autonomous Intelligence Layer</span> — 
+              infrastructure that doesn't just protect and execute, but thinks, learns, and evolves.
             </p>
             
             <div className="flex gap-8">
