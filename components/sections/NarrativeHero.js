@@ -21,7 +21,7 @@ const NarrativeHero = () => {
   ];
   
   return (
-    <section className="min-h-screen flex items-center relative px-4 sm:px-6 lg:px-8">
+    <section className="min-h-screen flex items-center relative px-4 sm:px-6 lg:px-8 pt-20 md:pt-0">
       {/* Remove the animated background lines for mobile performance */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-black" />
