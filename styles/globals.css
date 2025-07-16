@@ -125,23 +125,32 @@ section h2 {
   display: none;
 }
 
-/* Fix for iOS Safari mobile viewport height issue */
-.min-h-screen {
-  min-height: 100vh;
-  min-height: calc(var(--vh, 1vh) * 100);
-  min-height: 100svh;
-  min-height: -webkit-fill-available;
-}
-
 /* Fix for hero section on mobile to prevent content from going under header */
-section:first-of-type {
-  padding-top: 80px; /* Account for fixed header height */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: 64px; /* Default header height */
 }
 
-@media (max-width: 768px) {
-  section:first-of-type {
-    padding-top: 64px; /* Smaller header on mobile */
+@media (min-width: 768px) {
+  header {
+    height: 80px; /* Desktop header height */
   }
+}
+
+/* Ensure main content has proper z-index */
+main {
+  position: relative;
+  z-index: 10;
+}
+
+/* Fix for canvas elements to ensure they stay in background */
+canvas {
+  touch-action: none;
+  pointer-events: none;
 }
 
 /* Properly handle long words in smaller viewports */
