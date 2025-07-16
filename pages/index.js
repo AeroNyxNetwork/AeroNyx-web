@@ -20,6 +20,7 @@ const MinimalAILBackground = dynamic(
 // Import narrative-focused sections
 import NarrativeHero from '../components/sections/NarrativeHero';
 import HowAILWorks from '../components/sections/HowAILWorks';
+import JoinNetwork from '../components/sections/JoinNetwork';
 import ProductsEcosystem from '../components/sections/ProductsEcosystem';
 import VPNDownloadSection from '../components/sections/VPNDownloadSection';
 import FutureVision from '../components/sections/FutureVision';
@@ -61,6 +62,9 @@ export default function Home() {
         
         {/* Clear explanation of how it works */}
         <HowAILWorks />
+        
+        {/* Join the network - New section */}
+        <JoinNetwork />
         
         {/* Products ecosystem */}
         <ProductsEcosystem />
