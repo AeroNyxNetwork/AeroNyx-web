@@ -21,30 +21,32 @@ const NarrativeHero = () => {
   ];
   
   return (
-    <section className="min-h-screen flex items-center relative">
-      {/* Subtle animated background */}
+    <section className="min-h-screen flex items-center relative px-4 sm:px-6 lg:px-8">
+      {/* Remove the animated background lines for mobile performance */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-black" />
-        {/* Floating geometric shapes */}
-        {[...Array(3)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-px bg-white/10"
-            style={{
-              left: `${30 + i * 20}%`,
-              height: '100vh',
-            }}
-            animate={{
-              y: ['-100vh', '100vh'],
-            }}
-            transition={{
-              duration: 20 + i * 5,
-              repeat: Infinity,
-              ease: 'linear',
-              delay: i * 3,
-            }}
-          />
-        ))}
+        {/* Only show on desktop for better mobile performance */}
+        <div className="hidden md:block">
+          {[...Array(3)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-px bg-white/10"
+              style={{
+                left: `${30 + i * 20}%`,
+                height: '100vh',
+              }}
+              animate={{
+                y: ['-100vh', '100vh'],
+              }}
+              transition={{
+                duration: 20 + i * 5,
+                repeat: Infinity,
+                ease: 'linear',
+                delay: i * 3,
+              }}
+            />
+          ))}
+        </div>
       </div>
       
       <Container className="relative z-10">
@@ -54,13 +56,13 @@ const NarrativeHero = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
-            className="mb-16"
+            className="mb-8 md:mb-16"
           >
-            <div className="text-sm uppercase tracking-[0.3em] text-white/40 mb-8">
+            <div className="text-xs sm:text-sm uppercase tracking-[0.2em] sm:tracking-[0.3em] text-white/40 mb-4 md:mb-8">
               AeroNyx Network
             </div>
             
-            <h1 className="text-6xl md:text-7xl font-extralight leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extralight leading-tight">
               The first infrastructure
               <br />
               <span className="font-light">that manages itself</span>
@@ -72,19 +74,19 @@ const NarrativeHero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="space-y-6 mb-16"
+            className="space-y-4 md:space-y-6 mb-8 md:mb-16"
           >
             {questions.map((item, index) => (
               <motion.div
                 key={index}
-                className={`border-l-2 pl-6 cursor-pointer transition-all duration-300 ${
+                className={`border-l-2 pl-4 md:pl-6 cursor-pointer transition-all duration-300 ${
                   activeQuestion === index 
                     ? 'border-white/60' 
                     : 'border-white/20 hover:border-white/40'
                 }`}
                 onClick={() => setActiveQuestion(index)}
               >
-                <h3 className="text-xl md:text-2xl font-light mb-2 text-white/80">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-light mb-2 text-white/80">
                   {item.q}
                 </h3>
                 <AnimatePresence>
@@ -93,7 +95,7 @@ const NarrativeHero = () => {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="text-white/60 leading-relaxed"
+                      className="text-sm sm:text-base text-white/60 leading-relaxed"
                     >
                       {item.a}
                     </motion.p>
@@ -108,21 +110,21 @@ const NarrativeHero = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1 }}
-            className="border-t border-white/10 pt-8"
+            className="border-t border-white/10 pt-6 md:pt-8"
           >
-            <p className="text-lg text-white/60 mb-8 leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-white/60 mb-6 md:mb-8 leading-relaxed">
               Built on our proven privacy network foundation, AeroNyx evolves beyond secure communications 
               to create the world's first <span className="text-white">Autonomous Intelligence Layer</span> — 
               infrastructure that doesn't just protect and execute, but thinks, learns, and evolves.
             </p>
             
-            <div className="flex gap-8">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
               <a
                 href="#how-it-works"
-                className="group relative overflow-hidden"
+                className="group relative overflow-hidden inline-block"
               >
-                <div className="relative z-10 px-8 py-4 border border-white/20 group-hover:border-white/40 transition-all">
-                  <span className="text-sm uppercase tracking-wider">
+                <div className="relative z-10 px-6 sm:px-8 py-3 sm:py-4 border border-white/20 group-hover:border-white/40 transition-all text-center sm:text-left">
+                  <span className="text-xs sm:text-sm uppercase tracking-wider">
                     Discover How
                   </span>
                 </div>
@@ -130,9 +132,9 @@ const NarrativeHero = () => {
               
               <a
                 href="#vision"
-                className="px-8 py-4 text-white/40 hover:text-white transition-colors"
+                className="px-6 sm:px-8 py-3 sm:py-4 text-white/40 hover:text-white transition-colors text-center sm:text-left"
               >
-                <span className="text-sm uppercase tracking-wider">
+                <span className="text-xs sm:text-sm uppercase tracking-wider">
                   See the Vision
                 </span>
               </a>
