@@ -18,9 +18,9 @@ const MinimalAILBackground = () => {
   if (!mounted) return null;
   
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
+    <div className="fixed inset-0 overflow-hidden bg-black" style={{ zIndex: 0 }}>
       {/* Base gradient for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 via-black to-black" />
+      <div className="absolute inset-0 bg-gradient-to-b from-neutral-900/20 via-black to-black" />
       
       {/* Constellation background */}
       <ConstellationBackground />
