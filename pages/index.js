@@ -7,10 +7,14 @@ import SEO from '../components/ui/SEO';
 // Import custom header
 import AILHeader from '../components/layout/AILHeader';
 
-// Import the minimal background
+// Import the enhanced background with constellations
 const MinimalAILBackground = dynamic(
   () => import('../components/ui/MinimalAILBackground'), 
-  { ssr: false, suspense: true }
+  { 
+    ssr: false, 
+    suspense: true,
+    loading: () => <div className="fixed inset-0 bg-black" />
+  }
 );
 
 // Import narrative-focused sections
@@ -42,8 +46,8 @@ export default function Home() {
         ]}
       />
       
-      {/* Minimal sophisticated background */}
-      <Suspense fallback={<div className="bg-black" />}>
+      {/* Enhanced background with constellations */}
+      <Suspense fallback={<div className="fixed inset-0 bg-black" />}>
         <MinimalAILBackground />
       </Suspense>
       
@@ -51,7 +55,7 @@ export default function Home() {
       <AILHeader />
       
       {/* Main content */}
-      <main>
+      <main className="relative z-10">
         {/* Opening narrative */}
         <NarrativeHero />
         
