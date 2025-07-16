@@ -17,13 +17,17 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 body {
   color: white;
-  background-color: #0D0D18;
+  background-color: #000000; /* Pure black for constellation background */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
     'Open Sans', 'Helvetica Neue', sans-serif;
+  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+  margin: 0;
+  padding: 0;
 }
 
 /* Force elements to be visible - important solution for animation issues */
@@ -48,12 +52,12 @@ h1, h2, h3, h4, h5, h6, p, span, a, button {
 /* Text clarity fixes */
 .text-center {
   position: relative;
-  z-index: 5; /* Ensure text is above background elements */
+  z-index: 5;
 }
 
-/* Add text shadow for better contrast against varying backgrounds */
+/* Add text shadow for better contrast against starry background */
 h1, h2, h3, .heading-text {
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(119, 98, 243, 0.3);
 }
 
 /* Enhanced section headings */
@@ -66,25 +70,34 @@ section h2 {
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #151528;
+  background: #0a0a0a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #7762F3; /* Updated to purple */
+  background: #7762F3;
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9788F7; /* Updated to lighter purple */
+  background: #9788F7;
+}
+
+/* Mobile scrollbar */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
 }
 
 /* Animation classes */
 .reveal-on-scroll {
-  opacity: 1 !important; /* Force visibility */
-  transform: translateY(0) !important; /* Force positioning */
+  opacity: 1 !important;
+  transform: translateY(0) !important;
   transition: opacity 0.8s, transform 0.8s;
 }
 
@@ -98,25 +111,41 @@ section h2 {
   background-image: radial-gradient(var(--tw-gradient-stops));
 }
 
+.bg-radial-gradient {
+  background: radial-gradient(circle at center, var(--tw-gradient-from) 0%, var(--tw-gradient-via) 50%, var(--tw-gradient-to) 100%);
+}
+
 /* Hide scrollbars but keep functionality */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none;
 }
 
-/* For iOS Safari mobile viewport height issue */
+/* Fix for iOS Safari mobile viewport height issue */
 .min-h-screen {
-  min-height: 100vh; /* Default */
-  min-height: calc(var(--vh, 1vh) * 100); /* Fallback */
-  min-height: 100svh; /* Using svh where supported */
+  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: 100svh;
+  min-height: -webkit-fill-available;
+}
+
+/* Fix for hero section on mobile to prevent content from going under header */
+section:first-of-type {
+  padding-top: 80px; /* Account for fixed header height */
+}
+
+@media (max-width: 768px) {
+  section:first-of-type {
+    padding-top: 64px; /* Smaller header on mobile */
+  }
 }
 
 /* Properly handle long words in smaller viewports */
-p, h1, h2, h3, h4, h5, h6, span, a {
+p, h1, h2, h3, h4, h5, h6, span, a, div {
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
@@ -124,9 +153,36 @@ p, h1, h2, h3, h4, h5, h6, span, a {
 }
 
 /* Prevent image overflow on small screens */
-img {
+img, svg {
   max-width: 100%;
   height: auto;
+}
+
+/* Fix for canvas elements on mobile */
+canvas {
+  max-width: 100%;
+  touch-action: none;
+  position: fixed !important; /* Ensure canvas stays fixed */
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+  z-index: 1; /* Behind content but above background */
+}
+
+/* Ensure background layers are properly stacked */
+.fixed.inset-0 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Background container specific styles */
+.fixed.inset-0.-z-10 {
+  z-index: 0; /* Ensure it's behind everything */
 }
 
 @layer components {
@@ -146,7 +202,7 @@ img {
   
   .text-backdrop::before {
     content: '';
-    @apply absolute inset-0 bg-neutral-900 bg-opacity-50 rounded-lg -z-10;
+    @apply absolute inset-0 bg-black bg-opacity-70 rounded-lg -z-10 backdrop-blur-sm;
   }
 }
 
@@ -162,7 +218,7 @@ img {
   
   /* Adjust font sizes for better readability */
   h1 {
-    font-size: 2rem !important;
+    font-size: 1.875rem !important; /* Reduced from 2rem */
     line-height: 1.2 !important;
   }
   
@@ -172,6 +228,11 @@ img {
   
   h3 {
     font-size: 1.25rem !important;
+  }
+  
+  p {
+    font-size: 0.938rem;
+    line-height: 1.6;
   }
   
   /* Better spacing for mobile */
@@ -192,18 +253,64 @@ img {
     align-items: center;
     justify-content: center;
   }
+  
+  /* Reduce padding on mobile */
+  section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  
+  /* First section needs more padding to account for header */
+  section:first-of-type {
+    padding-top: 5rem;
+  }
+  
+  /* Mobile-specific container padding */
+  .container, .max-w-7xl {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Very small mobile devices */
+@media (max-width: 375px) {
+  h1 {
+    font-size: 1.625rem !important;
+  }
+  
+  h2 {
+    font-size: 1.375rem !important;
+  }
+  
+  section:first-of-type {
+    padding-top: 4.5rem;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+  
+  h2 {
+    font-size: 2rem;
+  }
+  
+  section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+  
+  section:first-of-type {
+    padding-top: 6rem;
+  }
 }
 
 /* Section specifics for clarity */
-#features, #how-it-works, #technology, #ecosystem {
+#features, #how-it-works, #technology, #ecosystem, #products, #vision, #download-vpn {
   position: relative;
   z-index: 10;
-}
-
-/* Added container classes for better text clarity */
-.content-container {
-  position: relative;
-  z-index: 5;
 }
 
 /* Make sure text is always readable */
@@ -232,3 +339,55 @@ img {
     height: -webkit-fill-available;
   }
 }
+
+/* Improve performance on mobile */
+@media (max-width: 768px) {
+  /* Disable complex animations on mobile */
+  .animate-pulse {
+    animation: none;
+  }
+  
+  /* Reduce blur intensity for performance */
+  .blur-3xl {
+    filter: blur(40px);
+  }
+  
+  .blur-2xl {
+    filter: blur(24px);
+  }
+  
+  .blur-xl {
+    filter: blur(12px);
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Ensure constellation background is visible */
+.constellation-canvas {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+}
+
+/* Z-index hierarchy for proper layering */
+/* 0: Main background (black) */
+/* 1: Constellation canvas */
+/* 2: Gradient overlays */
+/* 5: General content */
+/* 10: Section headings and important content */
+/* 50: Fixed header */
+/* 100+: Modals and overlays */
