@@ -2,30 +2,30 @@ import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 
 // Import SEO component
-import SEO from '@/components/ui/SEO';
+import SEO from '../components/ui/SEO';
 
 // Import layout component
-import Layout from '@/components/layout/Layout';
+import Layout from '../components/layout/Layout';
 
 // Import the new Living Network Background
 const LivingNetworkBackground = dynamic(
-  () => import('@/components/ui/LivingNetworkBackground'), 
+  () => import('../components/ui/LivingNetworkBackground'), 
   { ssr: false, suspense: true }
 );
 
 // Import new section components for Autonomous Intelligence Layer
-import AutonomousHero from '@/components/sections/AutonomousHero';
-import ThreeStates from '@/components/sections/ThreeStates';
-import CognitiveInfrastructure from '@/components/sections/CognitiveInfrastructure';
-import IntentionComputing from '@/components/sections/IntentionComputing';
+import AutonomousHero from '../components/sections/AutonomousHero';
+import ThreeStates from '../components/sections/ThreeStates';
+import CognitiveInfrastructure from '../components/sections/CognitiveInfrastructure';
+import IntentionComputing from '../components/sections/IntentionComputing';
 
 // Keep some existing sections that still fit the narrative
-import ModernFeatures from '@/components/sections/ModernFeatures';
-import Partners from '@/components/sections/Partners';
-import CTA from '@/components/sections/CTA';
+import ModernFeatures from '../components/sections/ModernFeatures';
+import Partners from '../components/sections/Partners';
+import CTA from '../components/sections/CTA';
 
 // Fallback for simple background
-import GuaranteedBackground from '@/components/ui/GuaranteedBackground';
+import GuaranteedBackground from '../components/ui/GuaranteedBackground';
 
 export default function Home() {
   return (
