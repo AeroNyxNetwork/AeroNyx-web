@@ -18,15 +18,17 @@ const MinimalAILBackground = () => {
   if (!mounted) return null;
   
   return (
-    <div className="fixed inset-0 overflow-hidden bg-black" style={{ zIndex: 0 }}>
-      {/* Base gradient for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-neutral-900/20 via-black to-black" />
+    <>
+      {/* Fixed background that covers entire viewport */}
+      <div className="fixed inset-0 w-full h-full bg-black" style={{ zIndex: -2 }} />
       
-      {/* Constellation background */}
-      <ConstellationBackground />
+      {/* Constellation background layer */}
+      <div className="fixed inset-0 w-full h-full" style={{ zIndex: -1 }}>
+        <ConstellationBackground />
+      </div>
       
       {/* Subtle animated gradient orbs for additional mystique */}
-      <div className="absolute inset-0">
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
         {/* Purple glow orb */}
         <motion.div
           className="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"
@@ -57,7 +59,13 @@ const MinimalAILBackground = () => {
       </div>
       
       {/* Vignette effect for focus */}
-      <div className="absolute inset-0 bg-radial-gradient from-transparent via-transparent to-black/50" />
+      <div 
+        className="fixed inset-0 pointer-events-none"
+        style={{ 
+          zIndex: 1,
+          background: 'radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%)'
+        }}
+      />
       
       {/* Mobile optimization: Less complex background on small devices */}
       <style jsx>{`
@@ -67,7 +75,7 @@ const MinimalAILBackground = () => {
           }
         }
       `}</style>
-    </div>
+    </>
   );
 };
 
