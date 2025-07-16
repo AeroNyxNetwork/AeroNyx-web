@@ -56,34 +56,7 @@ const SophisticatedCTA = () => {
             </a>
           </motion.div>
           
-          {/* Bottom metrics */}
-          <motion.div
-            className="mt-24 pt-12 border-t border-white/5"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            <div className="grid grid-cols-3 gap-8 text-center">
-              <div>
-                <div className="text-3xl font-light mb-2">$2.1B</div>
-                <div className="text-xs uppercase tracking-wider text-white/40">
-                  Market Opportunity
-                </div>
-              </div>
-              <div>
-                <div className="text-3xl font-light mb-2">147</div>
-                <div className="text-xs uppercase tracking-wider text-white/40">
-                  Patents Filed
-                </div>
-              </div>
-              <div>
-                <div className="text-3xl font-light mb-2">Q2 2025</div>
-                <div className="text-xs uppercase tracking-wider text-white/40">
-                  Mainnet Launch
-                </div>
-              </div>
-            </div>
-          </motion.div>
+
         </div>
       </Container>
     </section>
