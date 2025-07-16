@@ -5,7 +5,7 @@ import Container from '../ui/Container';
 const FutureVision = () => {
   const visions = [
     {
-      year: '2025',
+      year: '2026',
       title: 'The Network Awakens',
       description: 'First signs of emergent intelligence as nodes begin coordinating without human intervention.',
       implications: [
@@ -15,7 +15,7 @@ const FutureVision = () => {
       ]
     },
     {
-      year: '2027',
+      year: '2028',
       title: 'Infrastructure Becomes Invisible',
       description: 'Computing resources flow like electricity — always available, always optimized.',
       implications: [
