@@ -131,7 +131,7 @@ const AILHeader = () => {
                 className="mt-2 px-4 py-3 text-center border border-white/20 hover:border-white/40 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
-                Download VPN
+                Downloads
               </a>
             </nav>
           </motion.div>
