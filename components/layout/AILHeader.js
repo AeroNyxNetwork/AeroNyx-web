@@ -16,13 +16,26 @@ const AILHeader = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
+  // Updated navigation links with proper hrefs
   const navLinks = [
-    { href: "#technology", label: "Technology" },
+    { href: "#how-it-works", label: "Technology" }, // Fixed to point to how-it-works section
     { href: "#products", label: "Products" },
     { href: "https://docs.aeronyx.network/", label: "Docs", external: true },
     { href: "https://github.com/AeroNyxNetwork", label: "GitHub", external: true },
     { href: "https://rwa.aeronyx.network/", label: "RWA", external: true }
   ];
+  
+  // Handle smooth scrolling for internal links
+  const handleNavClick = (e, href) => {
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setIsOpen(false); // Close mobile menu
+      }
+    }
+  };
   
   return (
     <motion.header
@@ -60,6 +73,7 @@ const AILHeader = () => {
                 <a
                   key={link.href}
                   href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
                   className="text-white/60 hover:text-white transition-colors text-sm uppercase tracking-wider"
@@ -72,11 +86,12 @@ const AILHeader = () => {
             <div>
               <motion.a
                 href="#download-vpn"
+                onClick={(e) => handleNavClick(e, '#download-vpn')}
                 className="relative px-6 py-2.5 border border-white/20 hover:border-white/40 transition-all"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span className="relative z-10 text-sm uppercase tracking-wider">Download VPN</span>
+                <span className="relative z-10 text-sm uppercase tracking-wider">Downloads</span>
               </motion.a>
             </div>
           </div>
@@ -84,7 +99,7 @@ const AILHeader = () => {
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
-              className="p-2 text-white/60 hover:text-white"
+              className="p-2 text-white/60 hover:text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
               onClick={() => setIsOpen(!isOpen)}
               aria-label="Toggle menu"
             >
@@ -117,10 +132,10 @@ const AILHeader = () => {
                 <a
                   key={link.href}
                   href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
-                  className="px-3 py-2 text-base text-white/60 hover:text-white transition-colors"
-                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2 text-base text-white/60 hover:text-white transition-colors min-h-[44px] flex items-center"
                 >
                   {link.label}
                 </a>
@@ -128,8 +143,8 @@ const AILHeader = () => {
               
               <a
                 href="#download-vpn"
-                className="mt-2 px-4 py-3 text-center border border-white/20 hover:border-white/40 transition-colors"
-                onClick={() => setIsOpen(false)}
+                onClick={(e) => handleNavClick(e, '#download-vpn')}
+                className="mt-2 px-4 py-3 text-center border border-white/20 hover:border-white/40 transition-colors min-h-[44px] flex items-center justify-center"
               >
                 Downloads
               </a>
