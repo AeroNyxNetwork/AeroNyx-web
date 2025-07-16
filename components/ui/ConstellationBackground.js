@@ -230,23 +230,20 @@ const ConstellationBackground = () => {
   }, [dimensions]);
   
   return (
-    <div className="fixed inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+    <>
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full constellation-canvas"
+        className="w-full h-full"
         style={{ 
-          background: 'transparent',
-          position: 'fixed',
+          position: 'absolute',
           top: 0,
           left: 0,
           width: '100%',
           height: '100%',
-          opacity: 0.8
+          opacity: 1
         }}
       />
-      {/* Gradient overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black pointer-events-none" />
-    </div>
+    </>
   );
 };
 
