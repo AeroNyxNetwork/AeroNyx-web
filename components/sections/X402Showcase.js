@@ -3,11 +3,7 @@
  * X402Showcase.js - NEW Component
  * ============================================
  * 
- * Creation Reason:
- * - Immediately showcase x402 as core differentiator after Hero
- * - Give proper credit to Coinbase for x402 protocol invention
- * - Demonstrate AeroNyx's unique application: x402 + ZKP + DePIN
- * - Provide tangible before/after comparison for quick understanding
+ * 
  * Last Modified: v1.0 - Initial creation
  * ============================================
  */
@@ -34,7 +30,7 @@ const X402Showcase = () => {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-4">
               <span className="text-xs sm:text-sm font-medium text-purple-300">
-                The x402 Difference
+                The x402 Advantage
               </span>
             </div>
             
@@ -43,7 +39,7 @@ const X402Showcase = () => {
             </h2>
             
             <p className="text-base md:text-lg text-white/60 max-w-2xl mx-auto">
-              Built on <span className="text-white font-medium">Coinbase's x402 protocol</span>, 
+              Using the <span className="text-white font-medium">x402 protocol</span>, 
               AeroNyx makes infrastructure truly autonomous — no human intervention required.
             </p>
           </motion.div>
@@ -146,14 +142,17 @@ const X402Showcase = () => {
               
               <div className="flex-1">
                 <h3 className="text-lg font-medium mb-2">
-                  AeroNyx's Innovation: x402 + ZKP + DePIN
+                  AeroNyx Innovation: x402 + ZKP + DePIN
                 </h3>
-                <p className="text-sm text-white/60 leading-relaxed">
-                  We combine <span className="text-white">Coinbase's x402 protocol</span> with 
+                <p className="text-sm text-white/60 leading-relaxed mb-3">
+                  We're the first to combine <span className="text-white">x402 instant payments</span> with 
                   zero-knowledge hardware proofs and a 15,000-node decentralized network — 
-                  creating the first infrastructure where AI agents can verify quality, 
+                  creating infrastructure where AI agents can verify quality, 
                   pay instantly, and access resources without any human setup.
                 </p>
+                <div className="text-xs text-white/40 pt-2 border-t border-white/10">
+                  x402 protocol developed by Coinbase (2024)
+                </div>
               </div>
             </div>
           </motion.div>
