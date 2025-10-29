@@ -1,3 +1,12 @@
+/**
+ * ============================================
+ * ProductsEcosystem.js - Optimized Version
+ * ============================================
+ * 
+ * Last Modified: v2.0 - Commercial value optimization
+ * ============================================
+ */
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Container from '../ui/Container';
@@ -5,32 +14,37 @@ import Container from '../ui/Container';
 const ProductsEcosystem = () => {
   const [selectedProduct, setSelectedProduct] = useState('vpn');
   
+  /**
+   * PRODUCT STRUCTURE - Updated with business value focus
+   * Each product now includes: pain point → solution → quantified savings
+   */
   const products = [
-    {
-      id: 'foundation',
-      name: 'Privacy Network',
-      category: 'Foundation Layer',
-      description: 'The core privacy infrastructure that powers all AeroNyx applications',
-      features: [
-        'Zero-knowledge proof verification',
-        'End-to-end encrypted communications',
-        'Decentralized node network',
-        'Privacy-preserving routing'
-      ],
-      status: 'live',
-      cta: null
-    },
     {
       id: 'vpn',
       name: 'AeroNyx VPN',
       category: 'Consumer Application',
-      description: 'Privacy-first VPN built on our decentralized network',
+      tagline: 'Privacy without compromise',
+      
+      // USE CASE driven approach
+      useCase: {
+        pain: 'Traditional VPNs log your data and sell it to advertisers',
+        solution: 'Zero-knowledge architecture ensures we cannot see your data, even if we wanted to',
+        savings: 'Pay only when you use it. No monthly subscriptions.'
+      },
+      
       features: [
-        'No-logs guarantee enforced by cryptography',
+        'Cryptographically enforced no-logs guarantee',
         'Distributed exit nodes across 50+ countries',
         'AI-optimized routing for best performance',
-        'Pay with cryptocurrency for full anonymity'
+        'Pay with crypto for full anonymity'
       ],
+      
+      comparison: {
+        traditional: 'ExpressVPN: $12.95/month',
+        aeronyx: 'AeroNyx: Pay per use, ~$3-5/month',
+        savings: 'Save 60-70%'
+      },
+      
       status: 'live',
       cta: {
         text: 'Download VPN',
@@ -40,14 +54,28 @@ const ProductsEcosystem = () => {
     {
       id: 'compute',
       name: 'Distributed Compute',
-      category: 'Enterprise Solution',
-      description: 'Rent computing power from our global network',
+      category: 'For AI Developers',
+      tagline: 'GPU power on demand',
+      
+      useCase: {
+        pain: 'AWS charges $100/month even when you use 5 days',
+        solution: 'Rent GPU power by the hour via x402 instant payments',
+        savings: 'Pay $20 for what you actually use — 80% cost reduction'
+      },
+      
       features: [
-        'GPU/CPU resources on demand',
-        'Verified hardware via ZKP',
-        'Pay only for what you use',
-        'AI workload optimization'
+        'H100 & A100 GPUs available globally',
+        'ZKP-verified hardware capabilities',
+        'Pay only for compute time used',
+        'Scale from 1 to 1000 GPUs instantly'
       ],
+      
+      comparison: {
+        traditional: 'AWS Lambda: $0.20/GB-hour',
+        aeronyx: 'AeroNyx: $0.05/GB-hour',
+        savings: 'Save 75%'
+      },
+      
       status: 'beta',
       cta: {
         text: 'Join Beta',
@@ -55,18 +83,66 @@ const ProductsEcosystem = () => {
       }
     },
     {
-      id: 'ai-agent',
-      name: 'AI Infrastructure Agent',
-      category: 'Developer Tool',
-      description: 'Autonomous management for your infrastructure',
+      id: 'cdn',
+      name: 'Decentralized CDN',
+      category: 'For Enterprises',
+      tagline: 'Global content delivery',
+      
+      useCase: {
+        pain: 'Cloudflare charges $10K/month for global CDN',
+        solution: 'Distributed nodes deliver content with x402 pay-per-request pricing',
+        savings: 'Cut CDN costs by 70% with our decentralized network'
+      },
+      
       features: [
-        'Natural language infrastructure control',
-        'Self-optimizing resource allocation',
-        'Predictive maintenance',
-        'Cost optimization AI'
+        '15,000+ edge nodes in 147 countries',
+        'Sub-50ms latency worldwide',
+        'DDoS protection via network distribution',
+        'Pay per GB transferred, not monthly fees'
       ],
+      
+      comparison: {
+        traditional: 'Cloudflare: $200/TB',
+        aeronyx: 'AeroNyx: $50/TB',
+        savings: 'Save 75%'
+      },
+      
       status: 'coming-soon',
-      cta: null
+      cta: {
+        text: 'Join Waitlist',
+        link: 'https://app.aeronyx.network/waitlist'
+      }
+    },
+    {
+      id: 'foundation',
+      name: 'Privacy Network',
+      category: 'Foundation Layer',
+      tagline: 'The infrastructure beneath',
+      
+      useCase: {
+        pain: 'Building privacy infrastructure from scratch costs millions',
+        solution: 'Build on our battle-tested network with 15,000+ verified nodes',
+        savings: 'Skip 2+ years of development and millions in costs'
+      },
+      
+      features: [
+        'Zero-knowledge proof verification',
+        'End-to-end encrypted communications',
+        'Decentralized node network',
+        'Privacy-preserving routing'
+      ],
+      
+      comparison: {
+        traditional: 'Build from scratch: $2M+ dev cost',
+        aeronyx: 'AeroNyx SDK: Start building today',
+        savings: 'Save 2+ years'
+      },
+      
+      status: 'live',
+      cta: {
+        text: 'View SDK Docs',
+        link: 'https://docs.aeronyx.network/developer-documentation/overview'
+      }
     }
   ];
   
@@ -98,14 +174,15 @@ const ProductsEcosystem = () => {
     <section id="products" className="py-12 md:py-24 bg-black">
       <Container>
         <div className="max-w-6xl mx-auto">
+          
           {/* Header */}
           <div className="text-center mb-8 md:mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-light mb-4 md:mb-6">
-              Products & Applications
+              Products & Use Cases
             </h2>
-            <p className="text-base md:text-xl text-white/40 max-w-3xl mx-auto px-4">
-              From foundational privacy infrastructure to consumer applications and enterprise solutions — 
-              all powered by the Autonomous Intelligence Layer.
+            <p className="text-base md:text-xl text-white/60 max-w-3xl mx-auto px-4">
+              From consumer privacy to enterprise infrastructure — all enabled by 
+              x402 instant payments and zero-knowledge verification.
             </p>
           </div>
           
@@ -139,25 +216,65 @@ const ProductsEcosystem = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  className="grid md:grid-cols-2 gap-8 md:gap-12 items-center"
+                  className="grid md:grid-cols-2 gap-8 md:gap-12 items-start"
                 >
-                  {/* Visual representation - Hidden on mobile for better performance */}
+                  {/* Visual representation - Hidden on mobile for performance */}
                   <div className="order-2 md:order-1 hidden md:block">
                     <ProductVisual productId={product.id} />
                   </div>
                   
                   {/* Content */}
                   <div className="order-1 md:order-2">
-                    <div className="flex items-center gap-3 md:gap-4 mb-4">
+                    <div className="flex items-center gap-3 md:gap-4 mb-3">
                       <h3 className="text-2xl md:text-3xl font-light">{product.name}</h3>
                       {getStatusBadge(product.status)}
                     </div>
                     
-                    <p className="text-sm md:text-lg text-white/60 mb-6 md:mb-8">
-                      {product.description}
+                    <p className="text-base md:text-lg text-white/40 mb-6">
+                      {product.tagline}
                     </p>
                     
+                    {/* USE CASE Section - NEW */}
+                    <div className="mb-6 p-4 bg-white/5 border-l-2 border-purple-500/40 rounded-r-lg">
+                      <div className="space-y-3">
+                        <div>
+                          <div className="text-xs uppercase tracking-wider text-white/40 mb-1">Pain Point</div>
+                          <p className="text-sm text-white/70">{product.useCase.pain}</p>
+                        </div>
+                        <div>
+                          <div className="text-xs uppercase tracking-wider text-white/40 mb-1">Solution</div>
+                          <p className="text-sm text-white/70">{product.useCase.solution}</p>
+                        </div>
+                        <div>
+                          <div className="text-xs uppercase tracking-wider text-green-400 mb-1">Savings</div>
+                          <p className="text-sm text-green-400 font-medium">{product.useCase.savings}</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Value Comparison - NEW */}
+                    <div className="mb-6 md:mb-8 p-4 bg-black/50 border border-white/10 rounded-lg">
+                      <div className="text-xs uppercase tracking-wider text-white/40 mb-3">Cost Comparison</div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-white/60">Traditional</span>
+                          <span className="text-white/80">{product.comparison.traditional}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-white/60">AeroNyx</span>
+                          <span className="text-green-400 font-medium">{product.comparison.aeronyx}</span>
+                        </div>
+                        <div className="pt-2 border-t border-white/10">
+                          <div className="text-center text-green-400 font-semibold">
+                            {product.comparison.savings}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Features */}
                     <div className="space-y-2 md:space-y-3 mb-6 md:mb-8">
+                      <div className="text-xs uppercase tracking-wider text-white/40 mb-2">Key Features</div>
                       {product.features.map((feature, i) => (
                         <div key={i} className="flex items-start">
                           <div className="w-1 h-1 rounded-full bg-white/40 mt-1.5 md:mt-2 mr-2 md:mr-3 flex-shrink-0" />
@@ -166,10 +283,13 @@ const ProductsEcosystem = () => {
                       ))}
                     </div>
                     
+                    {/* CTA */}
                     {product.cta && (
                       <a
                         href={product.cta.link}
                         onClick={(e) => handleCtaClick(e, product.cta.link)}
+                        target={product.cta.link.startsWith('http') ? '_blank' : undefined}
+                        rel={product.cta.link.startsWith('http') ? 'noopener noreferrer' : undefined}
                         className="inline-block px-6 md:px-8 py-2.5 md:py-3 border border-white/20 hover:border-white/40 transition-all"
                       >
                         <span className="text-xs md:text-sm uppercase tracking-wider">
@@ -182,6 +302,25 @@ const ProductsEcosystem = () => {
               );
             })}
           </AnimatePresence>
+          
+          {/* Bottom value proposition */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mt-12 md:mt-16 text-center p-6 md:p-8 bg-white/5 border border-white/10 rounded-xl"
+          >
+            <h3 className="text-xl md:text-2xl font-light mb-3">
+              Why x402 Makes This Possible
+            </h3>
+            <p className="text-sm md:text-base text-white/60 max-w-2xl mx-auto">
+              Traditional infrastructure requires monthly commitments because processing payments 
+              is expensive. With x402 instant settlements, we can offer true pay-per-use pricing — 
+              you only pay for the exact resources you consume, down to the millisecond.
+            </p>
+          </motion.div>
+          
         </div>
       </Container>
     </section>
@@ -194,7 +333,7 @@ const ProductVisual = ({ productId }) => {
     foundation: <FoundationVisual />,
     vpn: <VPNVisual />,
     compute: <ComputeVisual />,
-    'ai-agent': <AIAgentVisual />
+    cdn: <CDNVisual />
   };
   
   return (
@@ -227,9 +366,6 @@ const FoundationVisual = () => (
         })}
         <circle cx="96" cy="96" r="6" fill="rgba(119, 98, 243, 0.8)" />
       </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-xs uppercase tracking-wider text-white/40">Privacy Layer</div>
-      </div>
     </div>
   </div>
 );
@@ -269,17 +405,33 @@ const ComputeVisual = () => (
   </div>
 );
 
-const AIAgentVisual = () => (
+const CDNVisual = () => (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="text-center">
       <motion.div
-        className="w-32 h-32 mx-auto rounded-full border border-white/20 flex items-center justify-center"
+        className="relative w-32 h-32 mx-auto"
         animate={{ rotate: 360 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
       >
-        <div className="text-4xl text-white/40">AI</div>
+        {/* Globe */}
+        <div className="absolute inset-0 border-2 border-white/20 rounded-full" />
+        
+        {/* Nodes around globe */}
+        {Array.from({ length: 8 }).map((_, i) => {
+          const angle = (i / 8) * Math.PI * 2;
+          const x = 50 + Math.cos(angle) * 40;
+          const y = 50 + Math.sin(angle) * 40;
+          
+          return (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-purple-400 rounded-full"
+              style={{ left: `${x}%`, top: `${y}%` }}
+            />
+          );
+        })}
       </motion.div>
-      <div className="mt-4 text-xs text-white/40">Thinking...</div>
+      <div className="mt-4 text-xs text-white/40">Global Network</div>
     </div>
   </div>
 );
