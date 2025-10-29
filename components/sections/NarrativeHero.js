@@ -3,7 +3,7 @@
  * NarrativeHero.js - Optimized Version
  * ============================================
  * 
- * Last Modified: v3.0 - Repositioned to infrastructure-first, added Coinbase x402 credit
+ * Last Modified: v3.1 - CRITICAL mobile fix: pt-48, removed min-h-screen conflicts, optimized typography
  * ============================================
  */
 
@@ -32,9 +32,15 @@ const NarrativeHero = () => {
   ];
   
   return (
-    <section className="relative px-4 sm:px-6 lg:px-8 pt-32 md:pt-40">
-      {/* Moved padding to section level and removed conflicting min-h-screen from inner div */}
-      <div className="min-h-screen flex justify-center flex-col pb-16">
+    <section className="relative px-6 sm:px-8 lg:px-8 pt-48 sm:pt-52 md:pt-40">
+      {/* 
+        CRITICAL FIX: 
+        - pt-48 (192px) for mobile to clear fixed header
+        - sm:pt-52 (208px) for extra safety on small screens
+        - md:pt-40 (160px) restored for desktop
+        - px-6 increased horizontal padding to prevent edge clipping
+      */}
+      <div className="flex flex-col pb-16 min-h-[calc(100vh-12rem)]">
         <Container className="relative z-10 w-full">
           <div className="max-w-5xl mx-auto">
             
@@ -64,14 +70,14 @@ const NarrativeHero = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="mb-6 md:mb-8"
             >
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light leading-tight mb-4 md:mb-6">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-light leading-tight mb-4 md:mb-6">
                 Infrastructure
                 <br />
                 <span className="font-semibold">AI Agents Can Actually Use</span>
               </h1>
               
               {/* Subheadline - infrastructure capabilities + x402 enabler */}
-              <p className="text-lg sm:text-xl md:text-2xl text-white/70 leading-relaxed max-w-3xl">
+              <p className="text-base sm:text-lg md:text-2xl text-white/70 leading-relaxed max-w-3xl break-words">
                 Pay-per-use compute, storage, and bandwidth.{' '}
                 <span className="text-white">No accounts, no setup, just x402 instant payments.</span>
               </p>
