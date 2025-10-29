@@ -2,6 +2,8 @@
  * ============================================
  * HowAILWorks.js - Optimized Version
  * ============================================
+ * 
+ * 
  * Last Modified: v2.0 - Business narrative optimization
  * ============================================
  */
@@ -287,16 +289,16 @@ const ProblemVisual = () => (
 // Protocol Visual - Shows x402 flow
 const ProtocolVisual = () => (
   <div className="relative w-full h-full flex items-center justify-center">
-    <div className="space-y-4 w-full max-w-sm">
+    <div className="space-y-3 sm:space-y-4 w-full max-w-sm px-2">
       {/* Request */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0 }}
-        className="bg-white/5 rounded p-3 border border-white/10"
+        className="bg-white/5 rounded p-2 sm:p-3 border border-white/10"
       >
         <div className="text-xs text-white/40 mb-1">1. Request</div>
-        <code className="text-xs text-white/80">GET /bandwidth</code>
+        <code className="text-xs break-all">GET /bandwidth</code>
       </motion.div>
       
       {/* 402 Response */}
@@ -304,10 +306,10 @@ const ProtocolVisual = () => (
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-white/5 rounded p-3 border border-purple-500/30"
+        className="bg-white/5 rounded p-2 sm:p-3 border border-purple-500/30"
       >
         <div className="text-xs text-purple-400 mb-1">2. Price Quote</div>
-        <code className="text-xs text-white/80">402 Payment Required</code>
+        <code className="text-xs break-all">402 Payment Required</code>
         <div className="text-xs text-white/60 mt-1">Price: $0.008</div>
       </motion.div>
       
@@ -316,10 +318,10 @@ const ProtocolVisual = () => (
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="bg-white/5 rounded p-3 border border-green-500/30"
+        className="bg-white/5 rounded p-2 sm:p-3 border border-green-500/30"
       >
         <div className="text-xs text-green-400 mb-1">3. Instant Payment</div>
-        <code className="text-xs text-white/80">X-PAYMENT: 0x...</code>
+        <code className="text-xs break-all">X-PAYMENT: 0x...</code>
       </motion.div>
       
       {/* Access Granted */}
@@ -327,10 +329,10 @@ const ProtocolVisual = () => (
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.9 }}
-        className="bg-white/5 rounded p-3 border border-white/10"
+        className="bg-white/5 rounded p-2 sm:p-3 border border-white/10"
       >
         <div className="text-xs text-white/40 mb-1">4. Access Granted</div>
-        <code className="text-xs text-white/80">200 OK + Resource</code>
+        <code className="text-xs break-all">200 OK + Resource</code>
       </motion.div>
       
       <motion.div
