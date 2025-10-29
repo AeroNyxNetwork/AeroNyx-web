@@ -3,8 +3,7 @@
  * X402Showcase.js - NEW Component
  * ============================================
  * 
- * 
- * Last Modified: v1.0 - Initial creation
+ * Last Modified: v1.1 - Fixed mobile overflow issues with code blocks
  * ============================================
  */
 
@@ -71,7 +70,7 @@ const X402Showcase = () => {
           </div>
           
           {/* Comparison Content */}
-          <div className="grid md:grid-cols-2 gap-8 md:gap-12 mb-12">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-12 mb-12">
             
             {/* Flow Visualization */}
             <motion.div
@@ -96,28 +95,31 @@ const X402Showcase = () => {
               transition={{ duration: 0.4 }}
               className="order-1 md:order-2"
             >
-              <div className="bg-neutral-900 rounded-lg border border-white/10 overflow-hidden">
-                {/* Code Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/5">
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-red-500/60" />
-                      <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
-                      <div className="w-3 h-3 rounded-full bg-green-500/60" />
+              {/* Add overflow container with proper padding */}
+              <div className="w-full overflow-hidden">
+                <div className="bg-neutral-900 rounded-lg border border-white/10 overflow-x-auto">
+                  {/* Code Header */}
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/5">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500/60" />
+                        <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
+                        <div className="w-3 h-3 rounded-full bg-green-500/60" />
+                      </div>
+                      <span className="text-xs text-white/40 ml-2">
+                        {activeTab === 'traditional' ? 'traditional_api.js' : 'x402_api.js'}
+                      </span>
                     </div>
-                    <span className="text-xs text-white/40 ml-2">
-                      {activeTab === 'traditional' ? 'traditional_api.js' : 'x402_api.js'}
-                    </span>
                   </div>
-                </div>
-                
-                {/* Code Content */}
-                <div className="p-4 font-mono text-sm overflow-x-auto">
-                  {activeTab === 'traditional' ? (
-                    <TraditionalCode />
-                  ) : (
-                    <X402Code />
-                  )}
+                  
+                  {/* Code Content - with max-w and proper wrapping */}
+                  <div className="p-4 font-mono text-xs sm:text-sm min-w-0">
+                    {activeTab === 'traditional' ? (
+                      <TraditionalCode />
+                    ) : (
+                      <X402Code />
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -309,13 +311,13 @@ const FlowStep = ({ number, title, description, status, icon }) => {
  * Traditional API Code Example
  */
 const TraditionalCode = () => (
-  <pre className="text-xs leading-relaxed">
-    <code>
+  <pre className="text-xs leading-relaxed overflow-x-visible whitespace-pre-wrap break-words">
+    <code className="block">
       <span className="text-gray-500">// Step 1: Human signs up manually</span>{'\n'}
       <span className="text-gray-500">// Step 2: Human adds credit card</span>{'\n'}
       <span className="text-gray-500">// Step 3: Human gets API key</span>{'\n'}
       {'\n'}
-      <span className="text-purple-400">const</span> <span className="text-blue-300">apiKey</span> = <span className="text-green-300">'sk_live_...'</span>; <span className="text-gray-500">// From dashboard</span>{'\n'}
+      <span className="text-purple-400">const</span> <span className="text-blue-300">apiKey</span> = <span className="text-green-300">'sk_live_...'</span>; <span className="text-gray-500">// Dashboard</span>{'\n'}
       {'\n'}
       <span className="text-purple-400">const</span> <span className="text-blue-300">response</span> = <span className="text-purple-400">await</span> <span className="text-yellow-300">fetch</span>(<span className="text-green-300">'https://api.example.com'</span>, {'{'}{'\n'}
       {'  '}<span className="text-blue-300">headers</span>: {'{'}{'\n'}
@@ -323,9 +325,9 @@ const TraditionalCode = () => (
       {'  }'}{'\n'}
       {'}'});{'\n'}
       {'\n'}
-      <span className="text-gray-500">// ❌ Problem: AI agents can't get apiKey</span>{'\n'}
+      <span className="text-gray-500">// ❌ AI agents can't get apiKey</span>{'\n'}
       <span className="text-gray-500">// ❌ Requires human intervention</span>{'\n'}
-      <span className="text-gray-500">// ❌ Monthly billing = inflexible</span>
+      <span className="text-gray-500">// ❌ Monthly billing inflexible</span>
     </code>
   </pre>
 );
@@ -334,9 +336,9 @@ const TraditionalCode = () => (
  * x402 API Code Example
  */
 const X402Code = () => (
-  <pre className="text-xs leading-relaxed">
-    <code>
-      <span className="text-gray-500">// That's it! No sign-up, no API keys needed</span>{'\n'}
+  <pre className="text-xs leading-relaxed overflow-x-visible whitespace-pre-wrap break-words">
+    <code className="block">
+      <span className="text-gray-500">// That's it! No sign-up needed</span>{'\n'}
       {'\n'}
       <span className="text-purple-400">const</span> <span className="text-blue-300">response</span> = <span className="text-purple-400">await</span> <span className="text-yellow-300">fetch</span>(<span className="text-green-300">'https://aeronyx.network/compute'</span>, {'{'}{'\n'}
       {'  '}<span className="text-blue-300">headers</span>: {'{'}{'\n'}
@@ -346,12 +348,12 @@ const X402Code = () => (
       {'\n'}
       <span className="text-gray-500">// ✅ Fully autonomous</span>{'\n'}
       <span className="text-gray-500">// ✅ Instant payment (&lt;200ms)</span>{'\n'}
-      <span className="text-gray-500">// ✅ Pay only for what you use</span>{'\n'}
+      <span className="text-gray-500">// ✅ Pay only what you use</span>{'\n'}
       {'\n'}
       <span className="text-gray-500">// Behind the scenes:</span>{'\n'}
-      <span className="text-gray-500">// 1. Server responds 402 Payment Required</span>{'\n'}
-      <span className="text-gray-500">// 2. Wallet auto-signs payment via x402</span>{'\n'}
-      <span className="text-gray-500">// 3. Request retried with payment proof</span>{'\n'}
+      <span className="text-gray-500">// 1. Server: 402 Payment Required</span>{'\n'}
+      <span className="text-gray-500">// 2. Wallet auto-signs via x402</span>{'\n'}
+      <span className="text-gray-500">// 3. Request retried with payment</span>{'\n'}
       <span className="text-gray-500">// 4. Resource delivered instantly</span>
     </code>
   </pre>
