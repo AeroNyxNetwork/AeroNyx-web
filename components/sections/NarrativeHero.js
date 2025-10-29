@@ -2,9 +2,8 @@
  * ============================================
  * NarrativeHero.js - Optimized Version
  * ============================================
- * Dependencies:
- * - Container component (ui/Container)
- * - Framer Motion for animations
+ * 
+ * Last Modified: v2.1 - Fixed header overlap issue
  * ============================================
  */
 
@@ -34,7 +33,8 @@ const NarrativeHero = () => {
   
   return (
     <section className="min-h-screen relative px-4 sm:px-6 lg:px-8">
-      <div className="min-h-screen flex items-center pt-24 md:pt-0">
+      {/* Added extra padding-top to account for fixed header */}
+      <div className="min-h-screen flex items-center pt-32 md:pt-40 pb-16">
         <Container className="relative z-10 w-full">
           <div className="max-w-5xl mx-auto">
             
