@@ -2,7 +2,6 @@
  * ============================================
  * NarrativeHero.js - Optimized Version
  * ============================================
- * 
  * Last Modified: v2.2 - Fixed header overlap by removing items-center conflict
  * ============================================
  */
