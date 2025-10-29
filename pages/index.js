@@ -3,7 +3,7 @@
  * index.js - Homepage with X402Showcase Integration
  * ============================================
  * 
- * Last Modified: v2.0 - Added X402Showcase integration
+ * Last Modified: v3.0 - Added ProblemStatement, reordered narrative flow
  * ============================================
  */
 
@@ -28,6 +28,7 @@ const MinimalAILBackground = dynamic(
 
 // Import narrative-focused sections
 import NarrativeHero from '../components/sections/NarrativeHero';
+import ProblemStatement from '../components/sections/ProblemStatement'; // NEW: AI infrastructure paradox
 import X402Showcase from '../components/sections/X402Showcase'; // NEW: x402 differentiation
 import HowAILWorks from '../components/sections/HowAILWorks';
 import JoinNetwork from '../components/sections/JoinNetwork';
@@ -70,7 +71,10 @@ export default function Home() {
         {/* Opening narrative - Infrastructure-first positioning */}
         <NarrativeHero />
         
-        {/* NEW: Immediate x402 showcase - establishes technical differentiation */}
+        {/* NEW: Problem Statement - establishes pain points */}
+        <ProblemStatement />
+        
+        {/* NEW: X402 Showcase - shows the solution */}
         <X402Showcase />
         
         {/* Clear explanation of how it works */}
@@ -79,7 +83,7 @@ export default function Home() {
         {/* Join the network */}
         <JoinNetwork />
         
-        {/* Products ecosystem */}
+        {/* Products ecosystem - now with value quantification */}
         <ProductsEcosystem />
         
         {/* VPN download section */}
