@@ -3,7 +3,7 @@
  * NarrativeHero.js - Optimized Version
  * ============================================
  * 
- * Last Modified: v2.1 - Fixed header overlap issue
+ * Last Modified: v2.2 - Fixed header overlap by removing items-center conflict
  * ============================================
  */
 
@@ -33,8 +33,8 @@ const NarrativeHero = () => {
   
   return (
     <section className="min-h-screen relative px-4 sm:px-6 lg:px-8">
-      {/* Added extra padding-top to account for fixed header */}
-      <div className="min-h-screen flex items-center pt-32 md:pt-40 pb-16">
+      {/* Removed items-center to respect padding-top, added justify-center for vertical centering */}
+      <div className="min-h-screen flex justify-center flex-col pt-32 md:pt-40 pb-16">
         <Container className="relative z-10 w-full">
           <div className="max-w-5xl mx-auto">
             
