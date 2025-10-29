@@ -1,3 +1,12 @@
+/**
+ * ============================================
+ * index.js - Homepage with X402Showcase Integration
+ * ============================================
+ * 
+ * Last Modified: v2.0 - Added X402Showcase integration
+ * ============================================
+ */
+
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 
@@ -19,6 +28,7 @@ const MinimalAILBackground = dynamic(
 
 // Import narrative-focused sections
 import NarrativeHero from '../components/sections/NarrativeHero';
+import X402Showcase from '../components/sections/X402Showcase'; // NEW: x402 differentiation
 import HowAILWorks from '../components/sections/HowAILWorks';
 import JoinNetwork from '../components/sections/JoinNetwork';
 import ProductsEcosystem from '../components/sections/ProductsEcosystem';
@@ -31,19 +41,19 @@ export default function Home() {
   return (
     <>
       <SEO 
-        title="AeroNyx | Autonomous Intelligence Layer"
-        description="The first infrastructure that manages itself. Built on our proven privacy network foundation."
+        title="AeroNyx | Infrastructure AI Agents Can Use"
+        description="Decentralized compute with x402 instant payments. No accounts, no setup - built for autonomous agents."
         canonicalUrl="https://aeronyx.network/"
         ogImage="https://binary.aeronyx.network/aeronyx_logo.png"
         keywords={[
-          'autonomous infrastructure',
-          'privacy network',
-          'self-managing systems',
-          'AI orchestration',
-          'zero-knowledge infrastructure',
-          'decentralized VPN',
-          'MCP protocol',
-          'Web3 infrastructure'
+          'AI infrastructure',
+          'x402 payments',
+          'autonomous agents',
+          'decentralized compute',
+          'DePIN',
+          'zero-knowledge proofs',
+          'instant payments',
+          'machine-native infrastructure'
         ]}
       />
       
@@ -57,13 +67,16 @@ export default function Home() {
       
       {/* Main content */}
       <main className="relative z-10">
-        {/* Opening narrative */}
+        {/* Opening narrative - Infrastructure-first positioning */}
         <NarrativeHero />
+        
+        {/* NEW: Immediate x402 showcase - establishes technical differentiation */}
+        <X402Showcase />
         
         {/* Clear explanation of how it works */}
         <HowAILWorks />
         
-        {/* Join the network - New section */}
+        {/* Join the network */}
         <JoinNetwork />
         
         {/* Products ecosystem */}
