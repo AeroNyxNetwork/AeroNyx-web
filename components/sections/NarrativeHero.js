@@ -38,16 +38,18 @@ const NarrativeHero = () => {
         <Container className="relative z-10 w-full">
           <div className="max-w-5xl mx-auto">
             
-            {/* x402 Protocol Badge - builds credibility */}
+            {/* x402 Innovation Badge - highlights uniqueness without dependency feel */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="inline-flex items-center gap-2 mb-6 md:mb-8 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm"
+              className="inline-flex items-center gap-2 mb-6 md:mb-8 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 backdrop-blur-sm"
             >
-              <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-              <span className="text-xs sm:text-sm text-white/70">
-                Powered by <span className="font-medium text-white">Coinbase x402</span>
+              <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span className="text-xs sm:text-sm text-purple-200 font-medium">
+                First DePIN with x402
               </span>
             </motion.div>
             
@@ -221,8 +223,8 @@ const NarrativeHero = () => {
               className="border-t border-white/10 pt-8"
             >
               <p className="text-sm sm:text-base md:text-lg text-white/60 leading-relaxed mb-6">
-                Built on our proven privacy network with 15,000+ nodes, AeroNyx leverages{' '}
-                <span className="text-white font-medium">Coinbase's x402 protocol</span> and{' '}
+                Built on our proven privacy network with 15,000+ nodes, AeroNyx combines{' '}
+                <span className="text-white font-medium">x402 instant payments</span> with{' '}
                 <span className="text-white font-medium">zero-knowledge proofs</span> to create 
                 the first truly machine-native infrastructure — where AI agents can autonomously 
                 discover, verify, and pay for compute resources without human intervention.
