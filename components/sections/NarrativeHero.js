@@ -3,7 +3,7 @@
  * NarrativeHero.js - Optimized Version
  * ============================================
  * 
- * Last Modified: v2.3 - Fixed by moving padding to section level (parent container)
+ * Last Modified: v3.0 - Repositioned to infrastructure-first, added Coinbase x402 credit
  * ============================================
  */
 
@@ -38,20 +38,23 @@ const NarrativeHero = () => {
         <Container className="relative z-10 w-full">
           <div className="max-w-5xl mx-auto">
             
-            {/* Brand identifier - subtle and professional */}
+            {/* x402 Protocol Badge - builds credibility */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              className="text-xs sm:text-sm uppercase tracking-[0.2em] sm:tracking-[0.3em] text-white/40 mb-6 md:mb-8"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="inline-flex items-center gap-2 mb-6 md:mb-8 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm"
             >
-              AeroNyx Protocol
+              <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+              <span className="text-xs sm:text-sm text-white/70">
+                Powered by <span className="font-medium text-white">Coinbase x402</span>
+              </span>
             </motion.div>
             
             {/* 
-              PRIMARY VALUE PROPOSITION
+              PRIMARY VALUE PROPOSITION - REVISED
               Goal: User understands core value in 3 seconds
-              Format: Direct, specific, benefit-oriented
+              New positioning: Infrastructure-first, not payment-first
             */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -60,15 +63,15 @@ const NarrativeHero = () => {
               className="mb-6 md:mb-8"
             >
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light leading-tight mb-4 md:mb-6">
-                The Payment Layer
+                Infrastructure
                 <br />
-                <span className="font-semibold">AI Agents Need</span>
+                <span className="font-semibold">AI Agents Can Actually Use</span>
               </h1>
               
-              {/* Subheadline - specific and actionable */}
+              {/* Subheadline - infrastructure capabilities + x402 enabler */}
               <p className="text-lg sm:text-xl md:text-2xl text-white/70 leading-relaxed max-w-3xl">
-                Pay-per-API-call infrastructure.{' '}
-                <span className="text-white">No accounts, no credit cards, just code.</span>
+                Pay-per-use compute, storage, and bandwidth.{' '}
+                <span className="text-white">No accounts, no setup, just x402 instant payments.</span>
               </p>
             </motion.div>
             
@@ -218,11 +221,11 @@ const NarrativeHero = () => {
               className="border-t border-white/10 pt-8"
             >
               <p className="text-sm sm:text-base md:text-lg text-white/60 leading-relaxed mb-6">
-                Built on our proven privacy network with 15,000+ nodes, AeroNyx introduces{' '}
-                <span className="text-white font-medium">HTTP 402 payments</span> and{' '}
+                Built on our proven privacy network with 15,000+ nodes, AeroNyx leverages{' '}
+                <span className="text-white font-medium">Coinbase's x402 protocol</span> and{' '}
                 <span className="text-white font-medium">zero-knowledge proofs</span> to create 
                 the first truly machine-native infrastructure — where AI agents can autonomously 
-                discover, verify, and pay for resources without human intervention.
+                discover, verify, and pay for compute resources without human intervention.
               </p>
               
               {/* Tertiary navigation for deeper exploration */}
