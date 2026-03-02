@@ -1,9 +1,12 @@
 /**
  * ============================================
- * ProblemStatement.js - NEW Component
+ * ProblemStatement.js
  * ============================================
  * 
- * Last Modified: v1.0 - Initial creation
+ * Modification Reason: v1.1 - Replaced "Billing Management" blocker
+ * with "Memory Lock-in" to introduce the MemChain problem space early.
+ * 
+ * Last Modified: v1.1 - Added AI memory lock-in blocker
  * ============================================
  */
 
@@ -26,10 +29,10 @@ const ProblemStatement = () => {
       stat: "100% blocked"
     },
     {
-      icon: "📊",
-      title: "Billing Management",
-      problem: "Monthly subscriptions require ongoing human management",
-      stat: "Unsustainable"
+      icon: "🧠",
+      title: "Memory Lock-in",
+      problem: "AI memories are trapped in vendor silos — switch tools, lose everything",
+      stat: "Zero portability"
     }
   ];
   
