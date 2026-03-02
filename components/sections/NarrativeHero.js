@@ -3,10 +3,11 @@
  * NarrativeHero.js - Optimized Version
  * ============================================
  * 
- * Modification Reason: v3.2 - Added MemChain narrative to interactive
- * questions. First question now hooks with "What if your AI never forgot?"
+ * Modification Reason: v4.0 - Complete Hero rewrite with MemChain-first
+ * narrative. "Your AI Deserves a Memory" as emotional hook, then bridges
+ * to infrastructure story. Badge updated to MemChain + x402 dual identity.
  * 
- * Last Modified: v3.2 - MemChain narrative integration
+ * Last Modified: v4.0 - MemChain-first emotional narrative
  * ============================================
  */
 
@@ -20,47 +21,48 @@ const NarrativeHero = () => {
   const questions = [
     {
       q: "What if your AI never forgot?",
-      a: "MemChain gives your AI permanent, encrypted memory — synced across all your devices through the VPN tunnel. No cloud. No third party."
+      a: "MemChain stores every insight as a cryptographically signed fact on your personal memory chain. Synced across devices, encrypted end-to-end, owned by you alone."
     },
     {
-      q: "What if infrastructure could think?",
-      a: "Not just respond to commands, but anticipate needs, optimize itself, and evolve without human intervention."
+      q: "What if switching AI tools didn't erase everything?",
+      a: "Your memory chain is portable. Move from ChatGPT to Claude to OpenClaw — your AI's knowledge follows you, not the vendor."
     },
     {
-      q: "What if privacy was guaranteed by math?",
-      a: "Zero-knowledge proofs ensure complete privacy while enabling global coordination. Your data, your rules."
+      q: "What if infrastructure just worked for machines?",
+      a: "x402 instant payments let AI agents access compute, storage, and bandwidth without accounts, credit cards, or human setup."
     }
   ];
   
   return (
     <section className="relative px-6 sm:px-8 lg:px-8 pt-48 sm:pt-52 md:pt-40">
-      {/* 
-        CRITICAL FIX: 
-        - pt-48 (192px) for mobile to clear fixed header
-        - sm:pt-52 (208px) for extra safety on small screens
-        - md:pt-40 (160px) restored for desktop
-        - px-6 increased horizontal padding to prevent edge clipping
-      */}
       <div className="flex flex-col pb-16 min-h-[calc(100vh-12rem)]">
         <Container className="relative z-10 w-full">
           <div className="max-w-5xl mx-auto">
             
-            {/* x402 Innovation Badge */}
+            {/* Dual Badge — MemChain + x402 */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="inline-flex items-center gap-2 mb-6 md:mb-8 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 backdrop-blur-sm"
+              className="flex flex-wrap gap-2 mb-6 md:mb-8"
             >
-              <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              <span className="text-xs sm:text-sm text-purple-200 font-medium">
-                First DePIN with x402
-              </span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 backdrop-blur-sm">
+                <span className="text-sm">🧠</span>
+                <span className="text-xs sm:text-sm text-purple-200 font-medium">
+                  MemChain — AI Memory Blockchain
+                </span>
+              </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span className="text-xs sm:text-sm text-white/60 font-medium">
+                  First DePIN with x402
+                </span>
+              </div>
             </motion.div>
             
-            {/* PRIMARY VALUE PROPOSITION */}
+            {/* PRIMARY VALUE PROPOSITION — Emotional Hook */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -68,14 +70,15 @@ const NarrativeHero = () => {
               className="mb-6 md:mb-8"
             >
               <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-light leading-tight mb-4 md:mb-6">
-                Infrastructure
+                Your AI Deserves
                 <br />
-                <span className="font-semibold">AI Agents Can Actually Use</span>
+                <span className="font-semibold">a Memory</span>
               </h1>
               
               <p className="text-base sm:text-lg md:text-2xl text-white/70 leading-relaxed max-w-3xl break-words">
-                Pay-per-use compute, storage, and bandwidth.{' '}
-                <span className="text-white">No accounts, no setup, just x402 instant payments.</span>
+                Permanent. Encrypted. Yours.{' '}
+                <span className="text-white">Every conversation, every insight — stored on your personal 
+                memory chain, synced across all your devices through an invisible VPN tunnel.</span>
               </p>
             </motion.div>
             
@@ -107,38 +110,62 @@ const NarrativeHero = () => {
               <div className="hidden sm:block w-px h-4 bg-white/20" />
               
               <div className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
+                <span className="text-sm">🔐</span>
                 <span className="text-sm text-white/60">
-                  <span className="text-white font-medium">&lt;50ms</span> Latency
+                  <span className="text-white font-medium">Ed25519</span> Signed
+                </span>
+              </div>
+              
+              <div className="hidden sm:block w-px h-4 bg-white/20" />
+              
+              <div className="flex items-center gap-2">
+                <span className="text-sm">⛓️</span>
+                <span className="text-sm text-white/60">
+                  <span className="text-white font-medium">Merkle</span> Chained
                 </span>
               </div>
             </motion.div>
             
-            {/* DUAL CTA */}
+            {/* TRIPLE CTA — Three Personas */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
               className="flex flex-col sm:flex-row gap-4 mb-12 md:mb-16"
             >
+              {/* Primary CTA — MemChain / AI Users */}
+              <a
+                href="#memchain"
+                className="group relative overflow-hidden inline-block"
+              >
+                <div className="relative z-10 px-8 py-4 bg-white text-black hover:bg-white/90 transition-all text-center">
+                  <span className="text-sm font-medium uppercase tracking-wider">
+                    🧠 Explore MemChain
+                  </span>
+                  <div className="text-xs text-black/60 mt-1">
+                    Give your AI permanent memory
+                  </div>
+                </div>
+              </a>
+              
+              {/* Secondary CTA — Developers */}
               <a
                 href="https://docs.aeronyx.network/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group relative overflow-hidden inline-block"
               >
-                <div className="relative z-10 px-8 py-4 bg-white text-black hover:bg-white/90 transition-all text-center">
+                <div className="relative z-10 px-8 py-4 border border-white/20 hover:border-white/40 transition-all text-center">
                   <span className="text-sm font-medium uppercase tracking-wider">
                     Start Building
                   </span>
-                  <div className="text-xs text-black/60 mt-1">
+                  <div className="text-xs text-white/60 mt-1">
                     Integrate in 5 minutes
                   </div>
                 </div>
               </a>
               
+              {/* Tertiary CTA — Node Operators */}
               <a
                 href="https://docs.aeronyx.network/decentralized-node-documentation"
                 target="_blank"
@@ -206,11 +233,13 @@ const NarrativeHero = () => {
               className="border-t border-white/10 pt-8"
             >
               <p className="text-sm sm:text-base md:text-lg text-white/60 leading-relaxed mb-6">
-                Built on our proven privacy network with 15,000+ nodes, AeroNyx combines{' '}
-                <span className="text-white font-medium">x402 instant payments</span> with{' '}
-                <span className="text-white font-medium">zero-knowledge proofs</span> to create 
-                the first truly machine-native infrastructure — where AI agents can autonomously 
-                discover, verify, and pay for compute resources without human intervention.
+                Built on a proven privacy network with 15,000+ nodes across 147 countries. 
+                AeroNyx combines{' '}
+                <span className="text-white font-medium">MemChain encrypted memory</span> with{' '}
+                <span className="text-white font-medium">x402 instant payments</span> and{' '}
+                <span className="text-white font-medium">zero-knowledge proofs</span> — creating 
+                the first platform where your AI truly belongs to you: its knowledge, its memory, 
+                its infrastructure. No corporations in the middle.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
@@ -237,7 +266,7 @@ const NarrativeHero = () => {
                   className="text-white/40 hover:text-white transition-colors text-center sm:text-left"
                 >
                   <span className="text-xs sm:text-sm uppercase tracking-wider">
-                    Explore Products →
+                    All Products →
                   </span>
                 </a>
               </div>
