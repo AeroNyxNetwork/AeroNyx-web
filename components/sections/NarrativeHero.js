@@ -3,7 +3,10 @@
  * NarrativeHero.js - Optimized Version
  * ============================================
  * 
- * Last Modified: v3.1 - CRITICAL mobile fix: pt-48, removed min-h-screen conflicts, optimized typography
+ * Modification Reason: v3.2 - Added MemChain narrative to interactive
+ * questions. First question now hooks with "What if your AI never forgot?"
+ * 
+ * Last Modified: v3.2 - MemChain narrative integration
  * ============================================
  */
 
@@ -14,20 +17,18 @@ import Container from '../ui/Container';
 const NarrativeHero = () => {
   const [activeQuestion, setActiveQuestion] = useState(0);
   
-  // Interactive questions - preserved from original for engagement
-  // These create curiosity and invite exploration
   const questions = [
+    {
+      q: "What if your AI never forgot?",
+      a: "MemChain gives your AI permanent, encrypted memory — synced across all your devices through the VPN tunnel. No cloud. No third party."
+    },
     {
       q: "What if infrastructure could think?",
       a: "Not just respond to commands, but anticipate needs, optimize itself, and evolve without human intervention."
     },
     {
-      q: "What if every node had intelligence?",
-      a: "Each device becomes a neuron in a global brain, contributing to collective decision-making."
-    },
-    {
       q: "What if privacy was guaranteed by math?",
-      a: "Zero-knowledge proofs ensure complete privacy while enabling global coordination."
+      a: "Zero-knowledge proofs ensure complete privacy while enabling global coordination. Your data, your rules."
     }
   ];
   
@@ -44,7 +45,7 @@ const NarrativeHero = () => {
         <Container className="relative z-10 w-full">
           <div className="max-w-5xl mx-auto">
             
-            {/* x402 Innovation Badge - highlights uniqueness without dependency feel */}
+            {/* x402 Innovation Badge */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -59,11 +60,7 @@ const NarrativeHero = () => {
               </span>
             </motion.div>
             
-            {/* 
-              PRIMARY VALUE PROPOSITION - REVISED
-              Goal: User understands core value in 3 seconds
-              New positioning: Infrastructure-first, not payment-first
-            */}
+            {/* PRIMARY VALUE PROPOSITION */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -76,18 +73,13 @@ const NarrativeHero = () => {
                 <span className="font-semibold">AI Agents Can Actually Use</span>
               </h1>
               
-              {/* Subheadline - infrastructure capabilities + x402 enabler */}
               <p className="text-base sm:text-lg md:text-2xl text-white/70 leading-relaxed max-w-3xl break-words">
                 Pay-per-use compute, storage, and bandwidth.{' '}
                 <span className="text-white">No accounts, no setup, just x402 instant payments.</span>
               </p>
             </motion.div>
             
-            {/* 
-              NETWORK PROOF ELEMENTS
-              Social proof builds trust immediately
-              Note: Replace with real-time data when API is available
-            */}
+            {/* NETWORK PROOF ELEMENTS */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -124,19 +116,13 @@ const NarrativeHero = () => {
               </div>
             </motion.div>
             
-            {/* 
-              DUAL CTA STRATEGY
-              Different personas need different entry points
-              - Developers: Technical integration
-              - Node Operators: Economic opportunity
-            */}
+            {/* DUAL CTA */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
               className="flex flex-col sm:flex-row gap-4 mb-12 md:mb-16"
             >
-              {/* Primary CTA - For Developers */}
               <a
                 href="https://docs.aeronyx.network/"
                 target="_blank"
@@ -153,7 +139,6 @@ const NarrativeHero = () => {
                 </div>
               </a>
               
-              {/* Secondary CTA - For Node Operators */}
               <a
                 href="https://docs.aeronyx.network/decentralized-node-documentation"
                 target="_blank"
@@ -171,11 +156,7 @@ const NarrativeHero = () => {
               </a>
             </motion.div>
             
-            {/* 
-              INTERACTIVE QUESTIONS
-              Preserved from original - creates engagement and invites exploration
-              These work as a "second layer" for curious visitors
-            */}
+            {/* INTERACTIVE QUESTIONS */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -217,11 +198,7 @@ const NarrativeHero = () => {
               ))}
             </motion.div>
             
-            {/* 
-              CLOSING PROPOSITION
-              Bridges to the next section with context
-              Maintains brand story while being grounded in business value
-            */}
+            {/* CLOSING PROPOSITION */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -236,7 +213,6 @@ const NarrativeHero = () => {
                 discover, verify, and pay for compute resources without human intervention.
               </p>
               
-              {/* Tertiary navigation for deeper exploration */}
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
                 <a
                   href="#how-it-works"
@@ -244,6 +220,15 @@ const NarrativeHero = () => {
                 >
                   <span className="text-xs sm:text-sm uppercase tracking-wider">
                     See How It Works →
+                  </span>
+                </a>
+                
+                <a
+                  href="#memchain"
+                  className="text-white/40 hover:text-white transition-colors text-center sm:text-left"
+                >
+                  <span className="text-xs sm:text-sm uppercase tracking-wider">
+                    Explore MemChain →
                   </span>
                 </a>
                 
