@@ -246,19 +246,25 @@ const MemoryChainVisual = () => {
  */
 const LiveTerminalDemo = () => {
   const [step, setStep] = useState(0);
+  const [hasBeenVisible, setHasBeenVisible] = useState(false);
   
   useEffect(() => {
+    if (!hasBeenVisible) return;
     const timers = [
-      setTimeout(() => setStep(1), 1000),
-      setTimeout(() => setStep(2), 2500),
-      setTimeout(() => setStep(3), 4000),
-      setTimeout(() => setStep(4), 5500),
+      setTimeout(() => setStep(1), 500),
+      setTimeout(() => setStep(2), 2000),
+      setTimeout(() => setStep(3), 3500),
+      setTimeout(() => setStep(4), 5000),
     ];
     return () => timers.forEach(clearTimeout);
-  }, []);
+  }, [hasBeenVisible]);
   
   return (
-    <div className="bg-neutral-900 border border-white/10 rounded-xl overflow-hidden">
+    <motion.div
+      onViewportEnter={() => setHasBeenVisible(true)}
+      viewport={{ once: true }}
+      className="bg-neutral-900 border border-white/10 rounded-xl overflow-hidden"
+    >
       {/* Terminal Header */}
       <div className="flex items-center gap-2 px-4 py-3 bg-white/5 border-b border-white/10">
         <div className="flex gap-1.5">
@@ -349,7 +355,7 @@ const LiveTerminalDemo = () => {
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -393,27 +399,7 @@ const CrossDeviceSyncVisual = () => (
       />
       
       {/* Sync arrows */}
-      <div className="flex flex-col items-center gap-1">
-        <motion.div
-          animate={{ x: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-purple-400"
-        >
-          <svg width="32" height="16" viewBox="0 0 32 16" fill="none">
-            <path d="M0 8h28M20 2l8 6-8 6" stroke="currentColor" strokeWidth="2" />
-          </svg>
-        </motion.div>
-        <div className="text-xs text-white/30">encrypted tunnel</div>
-        <motion.div
-          animate={{ x: [0, -8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
-          className="text-purple-400"
-        >
-          <svg width="32" height="16" viewBox="0 0 32 16" fill="none">
-            <path d="M32 8H4M12 2L4 8l8 6" stroke="currentColor" strokeWidth="2" />
-          </svg>
-        </motion.div>
-      </div>
+      <SyncArrows />
       
       {/* Desktop */}
       <DeviceCard 
@@ -425,37 +411,48 @@ const CrossDeviceSyncVisual = () => (
       />
       
       {/* Sync arrows */}
-      <div className="hidden md:flex flex-col items-center gap-1">
-        <motion.div
-          animate={{ x: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
-          className="text-purple-400"
-        >
-          <svg width="32" height="16" viewBox="0 0 32 16" fill="none">
-            <path d="M0 8h28M20 2l8 6-8 6" stroke="currentColor" strokeWidth="2" />
-          </svg>
-        </motion.div>
-        <div className="text-xs text-white/30">encrypted tunnel</div>
-        <motion.div
-          animate={{ x: [0, -8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, delay: 0.8 }}
-          className="text-purple-400"
-        >
-          <svg width="32" height="16" viewBox="0 0 32 16" fill="none">
-            <path d="M32 8H4M12 2L4 8l8 6" stroke="currentColor" strokeWidth="2" />
-          </svg>
-        </motion.div>
+      <div className="hidden md:block">
+        <SyncArrows />
       </div>
       
       {/* NAS */}
-      <DeviceCard 
-        icon="🗄️" 
-        name="Home NAS" 
-        status="Full node" 
-        memories={2847}
-        statusColor="text-green-400"
-      />
+      <div className="hidden md:block">
+        <DeviceCard 
+          icon="🗄️" 
+          name="Home NAS" 
+          status="Full node" 
+          memories={2847}
+          statusColor="text-green-400"
+        />
+      </div>
     </div>
+  </div>
+);
+
+/**
+ * Sync Arrows
+ */
+const SyncArrows = () => (
+  <div className="flex flex-col items-center gap-1">
+    <motion.div
+      animate={{ x: [0, 8, 0] }}
+      transition={{ duration: 1.5, repeat: Infinity }}
+      className="text-purple-400"
+    >
+      <svg width="32" height="16" viewBox="0 0 32 16" fill="none">
+        <path d="M0 8h28M20 2l8 6-8 6" stroke="currentColor" strokeWidth="2" />
+      </svg>
+    </motion.div>
+    <div className="text-xs text-white/30">encrypted tunnel</div>
+    <motion.div
+      animate={{ x: [0, -8, 0] }}
+      transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
+      className="text-purple-400"
+    >
+      <svg width="32" height="16" viewBox="0 0 32 16" fill="none">
+        <path d="M32 8H4M12 2L4 8l8 6" stroke="currentColor" strokeWidth="2" />
+      </svg>
+    </motion.div>
   </div>
 );
 
