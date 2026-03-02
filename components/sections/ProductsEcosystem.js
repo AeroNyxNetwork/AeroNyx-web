@@ -3,7 +3,11 @@
  * ProductsEcosystem.js - Optimized Version
  * ============================================
  * 
- * Last Modified: v2.0 - Commercial value optimization
+ * Modification Reason: v2.1 - Added MemChain as fifth product with
+ * dedicated visual, OpenClaw integration callout, and memory chain
+ * block visualization.
+ * 
+ * Last Modified: v2.1 - Added MemChain product
  * ============================================
  */
 
@@ -14,10 +18,6 @@ import Container from '../ui/Container';
 const ProductsEcosystem = () => {
   const [selectedProduct, setSelectedProduct] = useState('vpn');
   
-  /**
-   * PRODUCT STRUCTURE - Updated with business value focus
-   * Each product now includes: pain point → solution → quantified savings
-   */
   const products = [
     {
       id: 'vpn',
@@ -25,7 +25,6 @@ const ProductsEcosystem = () => {
       category: 'Consumer Application',
       tagline: 'Privacy without compromise',
       
-      // USE CASE driven approach
       useCase: {
         pain: 'Traditional VPNs log your data and sell it to advertisers',
         solution: 'Zero-knowledge architecture ensures we cannot see your data, even if we wanted to',
@@ -143,6 +142,37 @@ const ProductsEcosystem = () => {
         text: 'View SDK Docs',
         link: 'https://docs.aeronyx.network/developer-documentation/overview'
       }
+    },
+    {
+      id: 'memchain',
+      name: 'MemChain',
+      category: 'AI Memory Layer',
+      tagline: 'Blockchain for AI memories',
+      
+      useCase: {
+        pain: 'AI memories are trapped in vendor silos — switch tools, lose everything',
+        solution: 'A personal, encrypted memory chain that your AI carries across any platform',
+        savings: 'Own your AI\'s knowledge forever. No vendor lock-in.'
+      },
+      
+      features: [
+        'Ed25519 signed, SHA-256 hashed memory facts',
+        'Merkle tree blocks mined every hour',
+        'Cross-device sync via encrypted VPN tunnel',
+        'OpenClaw AI integration with wallet-based identity'
+      ],
+      
+      comparison: {
+        traditional: 'ChatGPT memory: Owned by OpenAI',
+        aeronyx: 'MemChain: Owned by you, on your devices',
+        savings: 'Total data sovereignty'
+      },
+      
+      status: 'beta',
+      cta: {
+        text: 'Explore MemChain',
+        link: '#memchain'
+      }
     }
   ];
   
@@ -159,7 +189,6 @@ const ProductsEcosystem = () => {
     }
   };
   
-  // Handle smooth scrolling for CTA links
   const handleCtaClick = (e, link) => {
     if (link && link.startsWith('#')) {
       e.preventDefault();
@@ -186,7 +215,7 @@ const ProductsEcosystem = () => {
             </p>
           </div>
           
-          {/* Product selector - Horizontal scroll on mobile */}
+          {/* Product selector */}
           <div className="flex flex-nowrap overflow-x-auto gap-3 md:gap-4 mb-8 md:mb-12 -mx-4 px-4 md:mx-0 md:px-0 md:justify-center scrollbar-hide">
             {products.map((product) => (
               <button
@@ -218,7 +247,7 @@ const ProductsEcosystem = () => {
                   transition={{ duration: 0.3 }}
                   className="grid md:grid-cols-2 gap-8 md:gap-12 items-start"
                 >
-                  {/* Visual representation - Hidden on mobile for performance */}
+                  {/* Visual */}
                   <div className="order-2 md:order-1 hidden md:block">
                     <ProductVisual productId={product.id} />
                   </div>
@@ -234,7 +263,7 @@ const ProductsEcosystem = () => {
                       {product.tagline}
                     </p>
                     
-                    {/* USE CASE Section - NEW */}
+                    {/* USE CASE Section */}
                     <div className="mb-6 p-4 bg-white/5 border-l-2 border-purple-500/40 rounded-r-lg">
                       <div className="space-y-3">
                         <div>
@@ -252,7 +281,7 @@ const ProductsEcosystem = () => {
                       </div>
                     </div>
                     
-                    {/* Value Comparison - NEW */}
+                    {/* Value Comparison */}
                     <div className="mb-6 md:mb-8 p-4 bg-black/50 border border-white/10 rounded-lg">
                       <div className="text-xs uppercase tracking-wider text-white/40 mb-3">Cost Comparison</div>
                       <div className="space-y-2">
@@ -327,13 +356,17 @@ const ProductsEcosystem = () => {
   );
 };
 
-// Product visual components - Simplified for mobile
+// ============================================
+// Product Visual Components
+// ============================================
+
 const ProductVisual = ({ productId }) => {
   const visuals = {
     foundation: <FoundationVisual />,
     vpn: <VPNVisual />,
     compute: <ComputeVisual />,
-    cdn: <CDNVisual />
+    cdn: <CDNVisual />,
+    memchain: <MemChainProductVisual />
   };
   
   return (
@@ -346,7 +379,6 @@ const ProductVisual = ({ productId }) => {
 const FoundationVisual = () => (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="relative">
-      {/* Network mesh */}
       <svg className="w-48 h-48 md:w-64 md:h-64">
         {Array.from({ length: 6 }).map((_, i) => {
           const angle1 = (i / 6) * Math.PI * 2;
@@ -413,10 +445,7 @@ const CDNVisual = () => (
         animate={{ rotate: 360 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
       >
-        {/* Globe */}
         <div className="absolute inset-0 border-2 border-white/20 rounded-full" />
-        
-        {/* Nodes around globe */}
         {Array.from({ length: 8 }).map((_, i) => {
           const angle = (i / 8) * Math.PI * 2;
           const x = 50 + Math.cos(angle) * 40;
@@ -432,6 +461,42 @@ const CDNVisual = () => (
         })}
       </motion.div>
       <div className="mt-4 text-xs text-white/40">Global Network</div>
+    </div>
+  </div>
+);
+
+const MemChainProductVisual = () => (
+  <div className="relative w-full h-full flex items-center justify-center">
+    <div className="space-y-3 w-full max-w-xs">
+      {/* Chain of blocks */}
+      {[3, 2, 1].map((height) => (
+        <motion.div
+          key={height}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: (3 - height) * 0.2 }}
+          className="flex items-center gap-3"
+        >
+          <div className="w-10 h-10 rounded bg-purple-500/20 border border-purple-500/30 flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-mono text-purple-300">#{height}</span>
+          </div>
+          <div className="flex-1 h-px bg-purple-500/20" />
+          <div className="text-xs text-white/40">{height * 5 + 3} facts</div>
+        </motion.div>
+      ))}
+      
+      {/* Pending */}
+      <div className="flex items-center gap-3 opacity-60">
+        <div className="w-10 h-10 rounded border border-dashed border-white/20 flex items-center justify-center flex-shrink-0">
+          <span className="text-xs text-white/30">⏳</span>
+        </div>
+        <div className="flex-1 h-px bg-white/10" />
+        <div className="text-xs text-white/30">pending...</div>
+      </div>
+      
+      <div className="text-center pt-4 text-xs text-white/40">
+        🧠 Immutable AI Memory Chain
+      </div>
     </div>
   </div>
 );
