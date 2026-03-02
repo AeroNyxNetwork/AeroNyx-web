@@ -1,9 +1,25 @@
 /**
  * ============================================
- * index.js - Homepage with X402Showcase Integration
+ * index.js - Homepage with MemChain Integration
  * ============================================
  * 
- * Last Modified: v3.0 - Added ProblemStatement, reordered narrative flow
+ * Modification Reason: v4.0 - Added MemChainShowcase section between
+ * ProductsEcosystem and VPNDownloadSection. Narrative flow now includes
+ * the AI memory story as a killer app demonstration.
+ * 
+ * Section Order (v4.0):
+ * 1. NarrativeHero      — "Infrastructure AI Agents Can Use"
+ * 2. ProblemStatement    — AI paradox (accounts, payments, memory lock-in)
+ * 3. X402Showcase        — x402 protocol solution
+ * 4. HowAILWorks         — Technical deep-dive
+ * 5. JoinNetwork         — Node operator CTA
+ * 6. ProductsEcosystem   — 5 products (VPN, Compute, CDN, Network, MemChain)
+ * 7. MemChainShowcase    — 🌟 NEW: Deep dive into AI Memory Chain
+ * 8. VPNDownloadSection  — Download CTA
+ * 9. FutureVision        — Roadmap
+ * 10. SophisticatedCTA   — Final conversion
+ * 
+ * Last Modified: v4.0 - Added MemChainShowcase
  * ============================================
  */
 
@@ -26,13 +42,14 @@ const MinimalAILBackground = dynamic(
   }
 );
 
-// Import narrative-focused sections
+// Import sections
 import NarrativeHero from '../components/sections/NarrativeHero';
-import ProblemStatement from '../components/sections/ProblemStatement'; // NEW: AI infrastructure paradox
-import X402Showcase from '../components/sections/X402Showcase'; // NEW: x402 differentiation
+import ProblemStatement from '../components/sections/ProblemStatement';
+import X402Showcase from '../components/sections/X402Showcase';
 import HowAILWorks from '../components/sections/HowAILWorks';
 import JoinNetwork from '../components/sections/JoinNetwork';
 import ProductsEcosystem from '../components/sections/ProductsEcosystem';
+import MemChainShowcase from '../components/sections/MemChainShowcase';
 import VPNDownloadSection from '../components/sections/VPNDownloadSection';
 import FutureVision from '../components/sections/FutureVision';
 import SophisticatedCTA from '../components/sections/SophisticatedCTA';
@@ -43,7 +60,7 @@ export default function Home() {
     <>
       <SEO 
         title="AeroNyx | Infrastructure AI Agents Can Use"
-        description="Decentralized compute with x402 instant payments. No accounts, no setup - built for autonomous agents."
+        description="Decentralized compute, storage, and AI memory with x402 instant payments. No accounts, no setup — built for autonomous agents. Featuring MemChain: your AI's permanent, encrypted memory."
         canonicalUrl="https://aeronyx.network/"
         ogImage="https://binary.aeronyx.network/aeronyx_logo.png"
         keywords={[
@@ -54,7 +71,11 @@ export default function Home() {
           'DePIN',
           'zero-knowledge proofs',
           'instant payments',
-          'machine-native infrastructure'
+          'machine-native infrastructure',
+          'AI memory',
+          'MemChain',
+          'OpenClaw',
+          'encrypted memory chain'
         ]}
       />
       
@@ -68,31 +89,34 @@ export default function Home() {
       
       {/* Main content */}
       <main className="relative z-10">
-        {/* Opening narrative - Infrastructure-first positioning */}
+        {/* 1. Opening narrative */}
         <NarrativeHero />
         
-        {/* NEW: Problem Statement - establishes pain points */}
+        {/* 2. Problem Statement — AI infrastructure paradox */}
         <ProblemStatement />
         
-        {/* NEW: X402 Showcase - shows the solution */}
+        {/* 3. X402 Showcase — the payment solution */}
         <X402Showcase />
         
-        {/* Clear explanation of how it works */}
+        {/* 4. How it works — technical deep-dive */}
         <HowAILWorks />
         
-        {/* Join the network */}
+        {/* 5. Join the network */}
         <JoinNetwork />
         
-        {/* Products ecosystem - now with value quantification */}
+        {/* 6. Products ecosystem (now includes MemChain as 5th product) */}
         <ProductsEcosystem />
         
-        {/* VPN download section */}
+        {/* 7. 🌟 NEW: MemChain deep-dive — the killer app */}
+        <MemChainShowcase />
+        
+        {/* 8. VPN download section */}
         <VPNDownloadSection />
         
-        {/* Vision for the future */}
+        {/* 9. Vision for the future */}
         <FutureVision />
         
-        {/* Call to action */}
+        {/* 10. Call to action */}
         <SophisticatedCTA />
       </main>
       
