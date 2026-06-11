@@ -43,9 +43,9 @@
  *   - splitRef.current is assigned during render on purpose (cheap, keeps the
  *     rAF loop dependency-free). Do not move it into the hot loop's deps.
  *
- * Last Modified: v7.3.0 — Rewrote copy: positions AeroNyx as a private
- *   network (VPN/encrypted tunnel) for the AI era; removed competitor
- *   comparison. Headline unchanged.
+ * Last Modified: v7.4.0 — Restraint pass: copy down to headline + one-line
+ *   subhead + CTAs; sparser/dimmer/slower eyes; Lens stripped to scene +
+ *   divider + minimal drag hint (removed scanlines, footer monitor, stamp).
  * ============================================================================
  */
 
@@ -98,21 +98,21 @@ function WatcherField({ reduced, splitRef }) {
     };
 
     const build = () => {
-      // Eye count self-scales with area; denser so the field never feels empty.
-      // Mobile still lands around ~8-10; desktop ~20-30.
+      // Eye count self-scales with area; sparse on purpose — peripheral unease,
+      // not foreground noise. Desktop ~8-12, mobile ~4-6.
       eyes = [];
-      const n = Math.max(7, Math.floor((W * H) / 38000));
+      const n = Math.max(4, Math.floor((W * H) / 110000));
       for (let i = 0; i < n; i++) {
         eyes.push({
           x: 40 + Math.random() * (W - 80),
           y: 40 + Math.random() * (H - 80),
-          s: 11 + Math.random() * 19,
+          s: 10 + Math.random() * 16,
           open: reduced ? 0.5 : 0,
           target: reduced ? 0.5 : 1,
-          glow: 0.14,
-          nextBlink: performance.now() + 1000 + Math.random() * 6000,
+          glow: 0.1,
+          nextBlink: performance.now() + 2000 + Math.random() * 9000,
           wander: Math.random() * Math.PI * 2,
-          wspd: 0.18 + Math.random() * 0.34,
+          wspd: 0.12 + Math.random() * 0.22,
           px: 0, py: 0, pvx: 0, pvy: 0,
         });
       }
@@ -204,8 +204,8 @@ function WatcherField({ reduced, splitRef }) {
         ctx.fill();
       });
 
-      // --- packets (hex ciphertext travelling the relay mesh) ---
-      if (packets.length < 9 && Math.random() < 0.04) spawnPacket();
+      // --- packets (hex ciphertext travelling the relay mesh) — quiet, no glow ---
+      if (packets.length < 5 && Math.random() < 0.02) spawnPacket();
       packets = packets.filter((p) => p.t <= 1);
       packets.forEach((p) => {
         p.t += p.spd * dt * 2;
@@ -213,15 +213,9 @@ function WatcherField({ reduced, splitRef }) {
         p.x = A.x + (B.x - A.x) * p.t;
         p.y = A.y + (B.y - A.y) * p.t;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = ACCENT;
-        ctx.shadowColor = ACCENT;
-        ctx.shadowBlur = 10;
+        ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(119,98,243,0.5)';
         ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.font = '8px monospace';
-        ctx.fillStyle = 'rgba(151,136,247,0.4)';
-        ctx.fillText(p.hex, p.x + 6, p.y - 4);
         if (p.t >= 1) {
           const nexts = edges.filter((e) => e.a === p.b || e.b === p.b);
           if (nexts.length && Math.random() < 0.7) {
@@ -269,17 +263,17 @@ function WatcherField({ reduced, splitRef }) {
             const d = Math.hypot(p.x - e.x, p.y - e.y);
             if (d < pd) { pd = d; pp = p; }
           });
-          if (mouse.current.active && md < 340) {
-            gx = mouse.current.x; gy = mouse.current.y; interest = 1 - md / 340;
-          } else if (pp && pd < 200) {
-            gx = pp.x; gy = pp.y; interest = (1 - pd / 200) * 0.8;
+          if (mouse.current.active && md < 260) {
+            gx = mouse.current.x; gy = mouse.current.y; interest = 1 - md / 260;
+          } else if (pp && pd < 150) {
+            gx = pp.x; gy = pp.y; interest = (1 - pd / 150) * 0.6;
           } else {
             e.wander += e.wspd * dt;
             gx = e.x + Math.cos(e.wander) * 100;
             gy = e.y + Math.sin(e.wander * 0.7) * 60;
           }
         }
-        e.glow += ((0.11 + interest * 0.55) - e.glow) * Math.min(dt * 5, 1);
+        e.glow += ((0.08 + interest * 0.38) - e.glow) * Math.min(dt * 5, 1);
 
         // Pupil spring: ~150ms lag + slight overshoot = lifelike.
         const dx = gx - e.x, dy = gy - e.y;
@@ -445,15 +439,11 @@ const NarrativeHero = () => {
   const [reduced, setReduced] = useState(false);
   const [split, setSplit] = useState(50);
   const [hint, setHint] = useState(true);
-  const [pass, setPass] = useState(1);
-  const [stamp, setStamp] = useState(false);
-  const [entropy, setEntropy] = useState('7.98');
 
   const boxRef = useRef(null);
   const scrub = useRef(false);
   const auto = useRef(true);
   const dir = useRef(1);
-  const defeatRef = useRef(0);
   const splitRef = useRef(50);
 
   // Mirror split into a ref so the rAF loop reads it without re-subscribing.
@@ -473,38 +463,28 @@ const NarrativeHero = () => {
     };
   }, []);
 
-  // Auto-sweep the Lens until the visitor interacts.
+  // Auto-sweep the Lens gently until the visitor interacts. Quiet loop —
+  // no stamp/ceremony, just a slow back-and-forth so the idea reads itself.
   useEffect(() => {
     if (reduced) { setSplit(50); return; }
-    let raf, segStart = performance.now(), stamping = false;
+    let raf, segStart = performance.now();
     const loop = (now) => {
       if (scrub.current || !auto.current) { segStart = now; raf = requestAnimationFrame(loop); return; }
-      if (stamping) {
-        if (now - segStart > 1400) { stamping = false; setStamp(false); setPass((p) => p + 1); segStart = now; }
-        raf = requestAnimationFrame(loop);
-        return;
-      }
-      const period = 4200;
+      const period = 5200;
       const t = (now - segStart) / period;
       if (t >= 1) {
         segStart = now;
-        if (dir.current === 1) {
-          stamping = true; setStamp(true);
-          defeatRef.current = now + 1900;
-          setSplit(96);
-        }
         dir.current *= -1;
       } else {
         const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-        const from = dir.current === 1 ? 6 : 96;
-        const to = dir.current === 1 ? 96 : 6;
+        const from = dir.current === 1 ? 18 : 82;
+        const to = dir.current === 1 ? 82 : 18;
         setSplit(from + (to - from) * e);
       }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
-    const ent = setInterval(() => setEntropy((7.95 + Math.random() * 0.05).toFixed(2)), 160);
-    return () => { cancelAnimationFrame(raf); clearInterval(ent); };
+    return () => cancelAnimationFrame(raf);
   }, [reduced]);
 
   // Drag the divider → manual control. Pointer events cover mouse + most
@@ -521,7 +501,7 @@ const NarrativeHero = () => {
 
     const down = (e) => {
       if (!inside(e.target)) return;
-      scrub.current = true; auto.current = false; setHint(false); setStamp(false);
+      scrub.current = true; auto.current = false; setHint(false);
       moveTo(e.clientX);
     };
     const move = (e) => { if (scrub.current) moveTo(e.clientX); };
@@ -529,7 +509,7 @@ const NarrativeHero = () => {
 
     const tStart = (e) => {
       if (!inside(e.target)) return;
-      scrub.current = true; auto.current = false; setHint(false); setStamp(false);
+      scrub.current = true; auto.current = false; setHint(false);
       moveTo(e.touches?.[0]?.clientX);
     };
     const tMove = (e) => {
@@ -567,8 +547,6 @@ const NarrativeHero = () => {
       <WatcherField reduced={reduced} splitRef={splitRef} />
 
       <style>{`
-        @keyframes nh-scanlines { from { background-position: 0 0; } to { background-position: 0 8px; } }
-        @keyframes nh-stampIn { 0% {opacity:0; transform:scale(1.15);} 18% {opacity:1; transform:scale(1);} 80% {opacity:1;} 100% {opacity:0;} }
         @keyframes nh-nudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(7px); } }
       `}</style>
 
@@ -580,7 +558,7 @@ const NarrativeHero = () => {
 
             {/* ---- Left: copy + CTAs ---- */}
             <div className="text-center lg:text-left order-1">
-              <h1 className="font-light leading-[1.05] mb-5"
+              <h1 className="font-light leading-[1.05] mb-6"
                 style={{ fontSize: 'clamp(2rem, 3.4vw, 3.4rem)', letterSpacing: '-0.025em' }}>
                 Your AI knows
                 <br className="hidden sm:block" /> everything about you.
@@ -590,20 +568,9 @@ const NarrativeHero = () => {
                 </span>
               </h1>
 
-              <p className="text-sm sm:text-base leading-relaxed mb-6 max-w-md mx-auto lg:mx-0"
+              <p className="text-base sm:text-lg font-light leading-relaxed mb-10 max-w-md mx-auto lg:mx-0"
                 style={{ color: 'rgba(255,255,255,0.6)' }}>
-                AeroNyx is a private network for the AI era. An encrypted tunnel
-                across 15,000 relays in 147 countries keeps your traffic
-                unreadable — so you, your team, and your AI agents can browse,
-                talk, and transact without anyone watching.
-              </p>
-
-              <p className="text-sm sm:text-base font-light leading-relaxed mb-8 max-w-md mx-auto lg:mx-0"
-                style={{ color: 'rgba(255,255,255,0.7)' }}>
-                Your AI remembers everything about you.{' '}
-                <span className="text-white font-medium">
-                  With AeroNyx, that knowledge stays yours alone.
-                </span>
+                A private network for the AI era.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 items-center lg:items-start justify-center lg:justify-start">
@@ -645,14 +612,6 @@ const NarrativeHero = () => {
                 <div className="absolute inset-0"
                   style={{ clipPath: `inset(0 0 0 ${split}%)`, background: '#070c10' }}>
                   <Scene cipher />
-                  {!reduced && (
-                    <div className="absolute inset-0 pointer-events-none"
-                      style={{
-                        background:
-                          'repeating-linear-gradient(to bottom, rgba(95,187,247,0.05) 0px, rgba(95,187,247,0.05) 1px, transparent 1px, transparent 4px)',
-                        animation: 'nh-scanlines 0.4s linear infinite',
-                      }} />
-                  )}
                 </div>
 
                 {/* divider + handle */}
@@ -670,36 +629,11 @@ const NarrativeHero = () => {
 
                 {hint && !reduced && (
                   <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap"
-                    style={{ bottom: '44px', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace',
+                    style={{ bottom: '20px', color: 'rgba(255,255,255,0.35)', fontFamily: 'monospace',
                       animation: 'nh-nudge 1.6s ease-in-out infinite' }}>
                     ◂ DRAG ▸
                   </div>
                 )}
-
-                {stamp && !reduced && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                    style={{ background: 'rgba(6,6,10,0.45)' }}>
-                    <div className="px-5 py-4 rounded-lg border text-center"
-                      style={{ borderColor: ACCENT, background: 'rgba(6,6,10,0.85)',
-                        animation: 'nh-stampIn 1.4s ease forwards', boxShadow: `0 0 40px ${ACCENT}33` }}>
-                      <div className="text-[10px] tracking-widest mb-1"
-                        style={{ fontFamily: 'monospace', color: 'rgba(255,255,255,0.45)' }}>
-                        SCAN PASS {String(pass).padStart(2, '0')} COMPLETE
-                      </div>
-                      <div className="text-base sm:text-lg font-semibold tracking-wide" style={{ color: ACCENT_LT }}>
-                        PLAINTEXT RECOVERED: 0 B
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div className="absolute bottom-0 left-0 right-0 px-4 py-2 flex justify-between border-t text-[9px] sm:text-[10px] tracking-wider"
-                  style={{ fontFamily: 'monospace', borderColor: 'rgba(255,255,255,0.07)',
-                    background: 'rgba(6,6,10,0.85)', color: 'rgba(95,187,247,0.55)' }}>
-                  <span>SCAN · PASS {String(pass).padStart(2, '0')}</span>
-                  <span className="hidden sm:inline">ENTROPY {entropy} b/B</span>
-                  <span style={{ color: ACCENT_LT }}>RECOVERED 0 B</span>
-                </div>
               </div>
             </div>
 
