@@ -43,8 +43,9 @@
  *   - splitRef.current is assigned during render on purpose (cheap, keeps the
  *     rAF loop dependency-free). Do not move it into the hot loop's deps.
  *
- * Last Modified: v7.1.0 — Lens moved above support copy; SSR-safe reduced-
- *   motion detection; iOS touch-drag fallback; -webkit-backdrop-filter.
+ * Last Modified: v7.3.0 — Rewrote copy: positions AeroNyx as a private
+ *   network (VPN/encrypted tunnel) for the AI era; removed competitor
+ *   comparison. Headline unchanged.
  * ============================================================================
  */
 
@@ -97,9 +98,10 @@ function WatcherField({ reduced, splitRef }) {
     };
 
     const build = () => {
-      // Eye count self-scales with area; mobile naturally drops to ~5-8.
+      // Eye count self-scales with area; denser so the field never feels empty.
+      // Mobile still lands around ~8-10; desktop ~20-30.
       eyes = [];
-      const n = Math.max(5, Math.floor((W * H) / 60000));
+      const n = Math.max(7, Math.floor((W * H) / 38000));
       for (let i = 0; i < n; i++) {
         eyes.push({
           x: 40 + Math.random() * (W - 80),
@@ -570,125 +572,137 @@ const NarrativeHero = () => {
         @keyframes nh-nudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(7px); } }
       `}</style>
 
-      <Container className="relative" >
-        <div className="relative flex flex-col items-center pt-40 sm:pt-44 md:pt-48 pb-20" style={{ zIndex: 10 }}>
+      <Container className="relative">
+        <div className="relative pt-28 sm:pt-32 md:pt-28 pb-16 md:pb-24" style={{ zIndex: 10 }}>
 
-          {/* 1 — Hook: one line, no fluff above the fold */}
-          <h1 className="text-center font-light leading-tight mb-3 max-w-3xl"
-            style={{ fontSize: 'clamp(2rem, 5vw, 4.2rem)', letterSpacing: '-0.025em' }}>
-            Your AI knows everything about you.
-            <br />
-            <span className="font-semibold">
-              No one else <span style={{ color: ACCENT_LT }}>should</span>.
-            </span>
-          </h1>
-          <p className="text-center max-w-md mb-10 text-xs sm:text-sm tracking-wide"
-            style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>
-            ◂ drag the line · see what the network sees ▸
-          </p>
+          {/* Desktop: two columns (copy left, Lens right). Mobile: stacked. */}
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
 
-          {/* 2 — The signature interaction, up top where the eye lands */}
-          <div ref={boxRef}
-            className="relative w-full max-w-2xl rounded-2xl border overflow-hidden select-none"
-            style={{
-              borderColor: 'rgba(255,255,255,0.1)',
-              background: 'rgba(10,10,17,0.92)',
-              WebkitBackdropFilter: 'blur(6px)',
-              backdropFilter: 'blur(6px)',
-              height: '460px',
-              touchAction: 'none',
-              cursor: reduced ? 'default' : 'ew-resize',
-              boxShadow: '0 0 80px rgba(0,0,0,0.8)',
-            }}>
-            <Scene cipher={false} />
-            {/* clipPath inset() — fully supported in all evergreen browsers */}
-            <div className="absolute inset-0"
-              style={{ clipPath: `inset(0 0 0 ${split}%)`, background: '#070c10' }}>
-              <Scene cipher />
-              {!reduced && (
-                <div className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background:
-                      'repeating-linear-gradient(to bottom, rgba(95,187,247,0.05) 0px, rgba(95,187,247,0.05) 1px, transparent 1px, transparent 4px)',
-                    animation: 'nh-scanlines 0.4s linear infinite',
-                  }} />
-              )}
-            </div>
+            {/* ---- Left: copy + CTAs ---- */}
+            <div className="text-center lg:text-left order-1">
+              <h1 className="font-light leading-[1.05] mb-5"
+                style={{ fontSize: 'clamp(2rem, 3.4vw, 3.4rem)', letterSpacing: '-0.025em' }}>
+                Your AI knows
+                <br className="hidden sm:block" /> everything about you.
+                <br />
+                <span className="font-semibold">
+                  No one else <span style={{ color: ACCENT_LT }}>should</span>.
+                </span>
+              </h1>
 
-            {/* divider + handle */}
-            <div className="absolute top-0 bottom-0 pointer-events-none"
-              style={{ left: `${split}%`, width: '2px', transform: 'translateX(-1px)',
-                background: `linear-gradient(to bottom, transparent, ${SCAN}, transparent)`,
-                boxShadow: `0 0 24px 4px ${SCAN}44` }} />
-            <div className="absolute pointer-events-none flex items-center justify-center"
-              style={{ left: `${split}%`, top: '50%', transform: 'translate(-50%,-50%)' }}>
-              <div className="w-9 h-9 rounded-full flex items-center justify-center"
-                style={{ background: 'rgba(6,6,10,0.9)', border: `1px solid ${SCAN}`, boxShadow: `0 0 18px ${SCAN}55` }}>
-                <span style={{ color: SCAN, fontSize: 13, letterSpacing: '-2px' }}>‹ ›</span>
+              <p className="text-sm sm:text-base leading-relaxed mb-6 max-w-md mx-auto lg:mx-0"
+                style={{ color: 'rgba(255,255,255,0.6)' }}>
+                AeroNyx is a private network for the AI era. An encrypted tunnel
+                across 15,000 relays in 147 countries keeps your traffic
+                unreadable — so you, your team, and your AI agents can browse,
+                talk, and transact without anyone watching.
+              </p>
+
+              <p className="text-sm sm:text-base font-light leading-relaxed mb-8 max-w-md mx-auto lg:mx-0"
+                style={{ color: 'rgba(255,255,255,0.7)' }}>
+                Your AI remembers everything about you.{' '}
+                <span className="text-white font-medium">
+                  With AeroNyx, that knowledge stays yours alone.
+                </span>
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 items-center lg:items-start justify-center lg:justify-start">
+                <a href="#download-vpn"
+                  className="px-7 py-3.5 rounded-lg text-sm font-medium tracking-wide transition-transform hover:scale-[1.03]"
+                  style={{ background: ACCENT, color: '#fff', boxShadow: `0 0 30px ${ACCENT}55` }}>
+                  Get the private network
+                </a>
+                <a href="#how-it-works"
+                  className="px-7 py-3.5 rounded-lg text-sm tracking-wide border transition-colors hover:border-white/40"
+                  style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.75)' }}>
+                  How it works
+                </a>
               </div>
             </div>
 
-            {hint && !reduced && (
-              <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none text-[10px] tracking-widest"
-                style={{ bottom: '44px', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace',
-                  animation: 'nh-nudge 1.6s ease-in-out infinite' }}>
-                ◂ DRAG TO SEE WHAT THE NETWORK SEES ▸
-              </div>
-            )}
+            {/* ---- Right: the Privacy Lens ---- */}
+            <div className="order-2">
+              <p className="text-center text-[11px] sm:text-xs tracking-wide mb-3"
+                style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>
+                ◂ drag the line · see what the network sees ▸
+              </p>
 
-            {stamp && !reduced && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                style={{ background: 'rgba(6,6,10,0.45)' }}>
-                <div className="px-6 py-4 rounded-lg border text-center"
-                  style={{ borderColor: ACCENT, background: 'rgba(6,6,10,0.85)',
-                    animation: 'nh-stampIn 1.4s ease forwards', boxShadow: `0 0 40px ${ACCENT}33` }}>
-                  <div className="text-[10px] tracking-widest mb-1"
-                    style={{ fontFamily: 'monospace', color: 'rgba(255,255,255,0.45)' }}>
-                    SCAN PASS {String(pass).padStart(2, '0')} COMPLETE
-                  </div>
-                  <div className="text-lg sm:text-xl font-semibold tracking-wide" style={{ color: ACCENT_LT }}>
-                    PLAINTEXT RECOVERED: 0 B
+              <div ref={boxRef}
+                className="relative w-full rounded-2xl border overflow-hidden select-none mx-auto"
+                style={{
+                  maxWidth: '560px',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  background: 'rgba(10,10,17,0.92)',
+                  WebkitBackdropFilter: 'blur(6px)',
+                  backdropFilter: 'blur(6px)',
+                  height: '440px',
+                  touchAction: 'none',
+                  cursor: reduced ? 'default' : 'ew-resize',
+                  boxShadow: '0 0 80px rgba(0,0,0,0.8)',
+                }}>
+                <Scene cipher={false} />
+                {/* clipPath inset() — fully supported in all evergreen browsers */}
+                <div className="absolute inset-0"
+                  style={{ clipPath: `inset(0 0 0 ${split}%)`, background: '#070c10' }}>
+                  <Scene cipher />
+                  {!reduced && (
+                    <div className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background:
+                          'repeating-linear-gradient(to bottom, rgba(95,187,247,0.05) 0px, rgba(95,187,247,0.05) 1px, transparent 1px, transparent 4px)',
+                        animation: 'nh-scanlines 0.4s linear infinite',
+                      }} />
+                  )}
+                </div>
+
+                {/* divider + handle */}
+                <div className="absolute top-0 bottom-0 pointer-events-none"
+                  style={{ left: `${split}%`, width: '2px', transform: 'translateX(-1px)',
+                    background: `linear-gradient(to bottom, transparent, ${SCAN}, transparent)`,
+                    boxShadow: `0 0 24px 4px ${SCAN}44` }} />
+                <div className="absolute pointer-events-none flex items-center justify-center"
+                  style={{ left: `${split}%`, top: '50%', transform: 'translate(-50%,-50%)' }}>
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center"
+                    style={{ background: 'rgba(6,6,10,0.9)', border: `1px solid ${SCAN}`, boxShadow: `0 0 18px ${SCAN}55` }}>
+                    <span style={{ color: SCAN, fontSize: 13, letterSpacing: '-2px' }}>‹ ›</span>
                   </div>
                 </div>
+
+                {hint && !reduced && (
+                  <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap"
+                    style={{ bottom: '44px', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace',
+                      animation: 'nh-nudge 1.6s ease-in-out infinite' }}>
+                    ◂ DRAG ▸
+                  </div>
+                )}
+
+                {stamp && !reduced && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                    style={{ background: 'rgba(6,6,10,0.45)' }}>
+                    <div className="px-5 py-4 rounded-lg border text-center"
+                      style={{ borderColor: ACCENT, background: 'rgba(6,6,10,0.85)',
+                        animation: 'nh-stampIn 1.4s ease forwards', boxShadow: `0 0 40px ${ACCENT}33` }}>
+                      <div className="text-[10px] tracking-widest mb-1"
+                        style={{ fontFamily: 'monospace', color: 'rgba(255,255,255,0.45)' }}>
+                        SCAN PASS {String(pass).padStart(2, '0')} COMPLETE
+                      </div>
+                      <div className="text-base sm:text-lg font-semibold tracking-wide" style={{ color: ACCENT_LT }}>
+                        PLAINTEXT RECOVERED: 0 B
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="absolute bottom-0 left-0 right-0 px-4 py-2 flex justify-between border-t text-[9px] sm:text-[10px] tracking-wider"
+                  style={{ fontFamily: 'monospace', borderColor: 'rgba(255,255,255,0.07)',
+                    background: 'rgba(6,6,10,0.85)', color: 'rgba(95,187,247,0.55)' }}>
+                  <span>SCAN · PASS {String(pass).padStart(2, '0')}</span>
+                  <span className="hidden sm:inline">ENTROPY {entropy} b/B</span>
+                  <span style={{ color: ACCENT_LT }}>RECOVERED 0 B</span>
+                </div>
               </div>
-            )}
-
-            <div className="absolute bottom-0 left-0 right-0 px-4 py-2 flex justify-between border-t text-[9px] sm:text-[10px] tracking-wider"
-              style={{ fontFamily: 'monospace', borderColor: 'rgba(255,255,255,0.07)',
-                background: 'rgba(6,6,10,0.85)', color: 'rgba(95,187,247,0.55)' }}>
-              <span>ADVERSARY SCAN · PASS {String(pass).padStart(2, '0')}</span>
-              <span className="hidden sm:inline">ENTROPY {entropy} b/B</span>
-              <span style={{ color: ACCENT_LT }}>RECOVERED 0 B</span>
             </div>
-          </div>
 
-          {/* 3 — Support copy, now that they've seen the idea */}
-          <p className="mt-12 text-center max-w-xl text-sm sm:text-base leading-relaxed"
-            style={{ color: 'rgba(255,255,255,0.55)' }}>
-            AeroNyx is the encrypted network where you, your people, and your AI
-            agents talk, call, and transact — across 15,000 relays the watchers
-            can&apos;t read.
-          </p>
-          <p className="mt-5 text-center text-base sm:text-lg max-w-xl font-light leading-relaxed"
-            style={{ color: 'rgba(255,255,255,0.7)' }}>
-            Signal was built for humans.{' '}
-            <span className="text-white font-medium">
-              The next billion conversations won&apos;t be.
-            </span>
-          </p>
-
-          {/* 4 — CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-10 items-center">
-            <a href="#download-vpn"
-              className="px-7 py-3.5 rounded-lg text-sm font-medium tracking-wide transition-transform hover:scale-[1.03]"
-              style={{ background: ACCENT, color: '#fff', boxShadow: `0 0 30px ${ACCENT}55` }}>
-              Get AeroNyx
-            </a>
-            <a href="#how-it-works"
-              className="px-7 py-3.5 rounded-lg text-sm tracking-wide border transition-colors hover:border-white/40"
-              style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.75)' }}>
-              How it works
-            </a>
           </div>
         </div>
       </Container>
