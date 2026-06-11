@@ -43,7 +43,8 @@
  *   - splitRef.current is assigned during render on purpose (cheap, keeps the
  *     rAF loop dependency-free). Do not move it into the hot loop's deps.
  *
- * Last Modified: v7.0.0 — Privacy Lens + Watcher Field hero
+ * Last Modified: v7.1.0 — Lens moved above support copy; SSR-safe reduced-
+ *   motion detection; iOS touch-drag fallback; -webkit-backdrop-filter.
  * ============================================================================
  */
 
@@ -70,14 +71,6 @@ const CIPHER = CONVO.map((m) => ({
   hex: rhex(m.receipt ? 96 : Math.min((m.text ? m.text.length * 2 : 60), 72)),
   size: m.receipt ? 412 : 180 + ((Math.random() * 140) | 0),
 }));
-
-function reducedMotion() {
-  return (
-    typeof window !== 'undefined' &&
-    window.matchMedia &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
-}
 
 // ============================================================================
 // BACKGROUND — WatcherField (section-scoped canvas of eyes)
@@ -445,7 +438,9 @@ function Scene({ cipher }) {
 // NarrativeHero — Act I
 // ============================================================================
 const NarrativeHero = () => {
-  const reduced = useRef(reducedMotion()).current;
+  // SSR-safe: assume motion on the server, detect reduced-motion after mount
+  // to avoid hydration mismatch. WatcherField re-inits when `reduced` flips.
+  const [reduced, setReduced] = useState(false);
   const [split, setSplit] = useState(50);
   const [hint, setHint] = useState(true);
   const [pass, setPass] = useState(1);
@@ -461,6 +456,20 @@ const NarrativeHero = () => {
 
   // Mirror split into a ref so the rAF loop reads it without re-subscribing.
   splitRef.current = split;
+
+  // Detect reduced-motion preference once mounted (client only).
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduced(mq.matches);
+    const onChange = (e) => setReduced(e.matches);
+    if (mq.addEventListener) mq.addEventListener('change', onChange);
+    else if (mq.addListener) mq.addListener(onChange); // Safari < 14
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener('change', onChange);
+      else if (mq.removeListener) mq.removeListener(onChange);
+    };
+  }, []);
 
   // Auto-sweep the Lens until the visitor interacts.
   useEffect(() => {
@@ -496,28 +505,51 @@ const NarrativeHero = () => {
     return () => { cancelAnimationFrame(raf); clearInterval(ent); };
   }, [reduced]);
 
-  // Drag the divider → manual control.
+  // Drag the divider → manual control. Pointer events cover mouse + most
+  // touch; explicit touch listeners are the iOS Safari fallback (non-passive
+  // so we can preventDefault and stop the page from scrolling mid-drag).
   useEffect(() => {
     if (reduced) return;
     const moveTo = (cx) => {
       const r = boxRef.current?.getBoundingClientRect();
-      if (!r) return;
+      if (!r || cx == null) return;
       setSplit(Math.max(0, Math.min(100, ((cx - r.left) / r.width) * 100)));
     };
+    const inside = (target) => boxRef.current?.contains(target);
+
     const down = (e) => {
-      if (!boxRef.current?.contains(e.target)) return;
+      if (!inside(e.target)) return;
       scrub.current = true; auto.current = false; setHint(false); setStamp(false);
-      moveTo(e.clientX ?? e.touches?.[0]?.clientX);
+      moveTo(e.clientX);
     };
-    const move = (e) => { if (scrub.current) moveTo(e.clientX ?? e.touches?.[0]?.clientX); };
+    const move = (e) => { if (scrub.current) moveTo(e.clientX); };
     const up = () => { scrub.current = false; };
+
+    const tStart = (e) => {
+      if (!inside(e.target)) return;
+      scrub.current = true; auto.current = false; setHint(false); setStamp(false);
+      moveTo(e.touches?.[0]?.clientX);
+    };
+    const tMove = (e) => {
+      if (!scrub.current) return;
+      e.preventDefault();
+      moveTo(e.touches?.[0]?.clientX);
+    };
+    const tEnd = () => { scrub.current = false; };
+
     window.addEventListener('pointerdown', down);
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', up);
+    window.addEventListener('touchstart', tStart, { passive: true });
+    window.addEventListener('touchmove', tMove, { passive: false });
+    window.addEventListener('touchend', tEnd);
     return () => {
       window.removeEventListener('pointerdown', down);
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', up);
+      window.removeEventListener('touchstart', tStart);
+      window.removeEventListener('touchmove', tMove);
+      window.removeEventListener('touchend', tEnd);
     };
   }, [reduced]);
 
@@ -540,7 +572,9 @@ const NarrativeHero = () => {
 
       <Container className="relative" >
         <div className="relative flex flex-col items-center pt-40 sm:pt-44 md:pt-48 pb-20" style={{ zIndex: 10 }}>
-          <h1 className="text-center font-light leading-tight mb-5 max-w-3xl"
+
+          {/* 1 — Hook: one line, no fluff above the fold */}
+          <h1 className="text-center font-light leading-tight mb-3 max-w-3xl"
             style={{ fontSize: 'clamp(2rem, 5vw, 4.2rem)', letterSpacing: '-0.025em' }}>
             Your AI knows everything about you.
             <br />
@@ -548,19 +582,18 @@ const NarrativeHero = () => {
               No one else <span style={{ color: ACCENT_LT }}>should</span>.
             </span>
           </h1>
-          <p className="text-center max-w-xl mb-12 text-sm sm:text-base leading-relaxed"
-            style={{ color: 'rgba(255,255,255,0.5)' }}>
-            AeroNyx is the encrypted network where you, your people, and your AI
-            agents talk, call, and transact — across 15,000 relays the watchers
-            can&apos;t read.
+          <p className="text-center max-w-md mb-10 text-xs sm:text-sm tracking-wide"
+            style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>
+            ◂ drag the line · see what the network sees ▸
           </p>
 
-          {/* ---- The Privacy Lens ---- */}
+          {/* 2 — The signature interaction, up top where the eye lands */}
           <div ref={boxRef}
             className="relative w-full max-w-2xl rounded-2xl border overflow-hidden select-none"
             style={{
               borderColor: 'rgba(255,255,255,0.1)',
               background: 'rgba(10,10,17,0.92)',
+              WebkitBackdropFilter: 'blur(6px)',
               backdropFilter: 'blur(6px)',
               height: '460px',
               touchAction: 'none',
@@ -568,6 +601,7 @@ const NarrativeHero = () => {
               boxShadow: '0 0 80px rgba(0,0,0,0.8)',
             }}>
             <Scene cipher={false} />
+            {/* clipPath inset() — fully supported in all evergreen browsers */}
             <div className="absolute inset-0"
               style={{ clipPath: `inset(0 0 0 ${split}%)`, background: '#070c10' }}>
               <Scene cipher />
@@ -628,15 +662,22 @@ const NarrativeHero = () => {
             </div>
           </div>
 
-          <p className="mt-10 text-center text-base sm:text-lg max-w-xl font-light leading-relaxed"
-            style={{ color: 'rgba(255,255,255,0.65)' }}>
+          {/* 3 — Support copy, now that they've seen the idea */}
+          <p className="mt-12 text-center max-w-xl text-sm sm:text-base leading-relaxed"
+            style={{ color: 'rgba(255,255,255,0.55)' }}>
+            AeroNyx is the encrypted network where you, your people, and your AI
+            agents talk, call, and transact — across 15,000 relays the watchers
+            can&apos;t read.
+          </p>
+          <p className="mt-5 text-center text-base sm:text-lg max-w-xl font-light leading-relaxed"
+            style={{ color: 'rgba(255,255,255,0.7)' }}>
             Signal was built for humans.{' '}
             <span className="text-white font-medium">
               The next billion conversations won&apos;t be.
             </span>
           </p>
 
-          {/* ---- CTAs ---- */}
+          {/* 4 — CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 mt-10 items-center">
             <a href="#download-vpn"
               className="px-7 py-3.5 rounded-lg text-sm font-medium tracking-wide transition-transform hover:scale-[1.03]"
