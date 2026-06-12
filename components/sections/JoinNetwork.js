@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Container from '../ui/Container';
+import useNetworkStats from '../../lib/hooks/useNetworkStats';
 
 const JoinNetwork = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const { stats, isLoading } = useNetworkStats({
+    period: '30d',
+    autoRefresh: true,
+    refreshInterval: 300000
+  });
   
   const steps = [
     {
@@ -99,6 +105,37 @@ const JoinNetwork = () => {
               Four simple steps to become part of the world's first autonomous infrastructure. 
               Run a node, let AI manage it, earn from your resources, and build amazing things.
             </p>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-10 md:mb-14"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45 }}
+          >
+            {[
+              { label: 'VPN Nodes Online', value: stats.vpnOnlineNodes },
+              { label: 'Active VPN Sessions', value: stats.vpnActiveSessions },
+              { label: 'Encrypted Traffic', value: stats.encryptedTraffic },
+              { label: 'Encrypted Messages', value: stats.encryptedMessages }
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm"
+              >
+                <div className="text-2xl md:text-3xl font-light text-white min-h-[2.25rem]">
+                  {isLoading ? (
+                    <span className="block h-8 w-20 bg-white/10 animate-pulse" />
+                  ) : (
+                    item.value
+                  )}
+                </div>
+                <div className="mt-1 text-[11px] md:text-xs uppercase tracking-[0.18em] text-white/40">
+                  {item.label}
+                </div>
+              </div>
+            ))}
           </motion.div>
           
           {/* Progress indicator */}
@@ -402,7 +439,7 @@ const BuildVisual = () => (
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
       >
-        <div className="text-3xl font-light text-white/80">15,000+</div>
+        <div className="text-3xl font-light text-white/80">Live</div>
         <div className="text-sm text-white/40">Active Nodes Worldwide</div>
       </motion.div>
     </div>
