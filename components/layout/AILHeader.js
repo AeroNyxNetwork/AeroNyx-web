@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import AeroNyxLogo from '../ui/AeroNyxLogo';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, getMessages } from '../../lib/i18n';
 
 const AILHeader = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const locale = router.locale || DEFAULT_LOCALE;
+  const copy = getMessages(locale);
+  const currentLocale = SUPPORTED_LOCALES.find((item) => item.code === locale) || SUPPORTED_LOCALES[0];
   
   useEffect(() => {
     const handleScroll = () => {
@@ -18,11 +24,11 @@ const AILHeader = () => {
   
   // Updated navigation links with proper hrefs
   const navLinks = [
-    { href: "#how-it-works", label: "Technology" }, // Fixed to point to how-it-works section
-    { href: "#products", label: "Products" },
-    { href: "https://docs.aeronyx.network/", label: "Docs", external: true },
-    { href: "https://github.com/AeroNyxNetwork", label: "GitHub", external: true },
-    { href: "https://rwa.aeronyx.network/", label: "RWA", external: true }
+    { href: "#how-it-works", label: copy.nav.technology }, // Fixed to point to how-it-works section
+    { href: "#products", label: copy.nav.products },
+    { href: "https://docs.aeronyx.network/", label: copy.nav.docs, external: true },
+    { href: "https://github.com/AeroNyxNetwork", label: copy.nav.github, external: true },
+    { href: "https://rwa.aeronyx.network/", label: copy.nav.rwa, external: true }
   ];
   
   // Handle smooth scrolling for internal links
@@ -60,7 +66,7 @@ const AILHeader = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
+            <Link href="/" locale={locale} className="flex items-center space-x-2">
               <AeroNyxLogo width={32} height={32} />
               <span className="text-xl font-light">AeroNyx</span>
             </Link>
@@ -83,6 +89,29 @@ const AILHeader = () => {
               ))}
             </nav>
             
+            <div className="relative group">
+              <button
+                className="px-3 py-2 text-white/60 hover:text-white transition-colors text-sm uppercase tracking-wider"
+                aria-label={copy.nav.language}
+              >
+                {currentLocale.short}
+              </button>
+              <div className="absolute right-0 mt-3 w-44 border border-white/10 bg-black/95 p-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all">
+                {SUPPORTED_LOCALES.map((item) => (
+                  <Link
+                    key={item.code}
+                    href={router.asPath || '/'}
+                    locale={item.code}
+                    className={`block px-3 py-2 text-sm transition-colors ${
+                      item.code === locale ? 'text-white' : 'text-white/50 hover:text-white'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
             <div>
               <motion.a
                 href="#download-vpn"
@@ -91,7 +120,7 @@ const AILHeader = () => {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span className="relative z-10 text-sm uppercase tracking-wider">Downloads</span>
+                <span className="relative z-10 text-sm uppercase tracking-wider">{copy.nav.downloads}</span>
               </motion.a>
             </div>
           </div>
@@ -146,8 +175,26 @@ const AILHeader = () => {
                 onClick={(e) => handleNavClick(e, '#download-vpn')}
                 className="mt-2 px-4 py-3 text-center border border-white/20 hover:border-white/40 transition-colors min-h-[44px] flex items-center justify-center"
               >
-                Downloads
+                {copy.nav.downloads}
               </a>
+
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                {SUPPORTED_LOCALES.map((item) => (
+                  <Link
+                    key={item.code}
+                    href={router.asPath || '/'}
+                    locale={item.code}
+                    onClick={() => setIsOpen(false)}
+                    className={`px-3 py-2 text-sm border transition-colors ${
+                      item.code === locale
+                        ? 'border-white/30 text-white'
+                        : 'border-white/10 text-white/50 hover:text-white'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             </nav>
           </motion.div>
         )}

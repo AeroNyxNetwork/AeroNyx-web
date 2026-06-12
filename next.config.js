@@ -2,6 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  i18n: {
+    locales: ['en', 'ru', 'zh-Hant', 'zh-Hans', 'ja', 'ko', 'es'],
+    defaultLocale: 'en',
+    localeDetection: false,
+  },
   // Add explicit CSS configuration
   webpack(config) {
     return config;

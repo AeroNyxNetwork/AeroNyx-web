@@ -25,9 +25,11 @@
 
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 
 // Import SEO component
 import SEO from '../components/ui/SEO';
+import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
 
 // Import custom header
 import AILHeader from '../components/layout/AILHeader';
@@ -56,27 +58,19 @@ import SophisticatedCTA from '../components/sections/SophisticatedCTA';
 import Footer from '../components/layout/Footer';
 
 export default function Home() {
+  const { locale } = useRouter();
+  const activeLocale = locale || DEFAULT_LOCALE;
+  const copy = getMessages(activeLocale);
+  const canonicalPath = activeLocale === DEFAULT_LOCALE ? '' : `/${activeLocale}`;
+
   return (
     <>
       <SEO 
-        title="AeroNyx | Infrastructure AI Agents Can Use"
-        description="Decentralized compute, storage, and AI memory with x402 instant payments. No accounts, no setup — built for autonomous agents. Featuring MemChain: your AI's permanent, encrypted memory."
-        canonicalUrl="https://aeronyx.network/"
+        title={copy.seo.title}
+        description={copy.seo.description}
+        canonicalUrl={`https://aeronyx.network${canonicalPath}/`}
         ogImage="https://binary.aeronyx.network/aeronyx_logo.png"
-        keywords={[
-          'AI infrastructure',
-          'x402 payments',
-          'autonomous agents',
-          'decentralized compute',
-          'DePIN',
-          'zero-knowledge proofs',
-          'instant payments',
-          'machine-native infrastructure',
-          'AI memory',
-          'MemChain',
-          'OpenClaw',
-          'encrypted memory chain'
-        ]}
+        keywords={copy.seo.keywords}
       />
       
       {/* Enhanced background with constellations */}

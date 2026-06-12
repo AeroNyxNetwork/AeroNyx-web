@@ -1,29 +1,15 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import Container from '../ui/Container';
 import DownloadsModal from '../ui/DownloadsModal';
+import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
 const VPNDownloadSection = () => {
   const [showDownloads, setShowDownloads] = useState(false);
-  
-  const features = [
-    {
-      title: 'True Privacy',
-      description: 'Zero-knowledge architecture means we cannot see your data, even if we wanted to'
-    },
-    {
-      title: 'Global Network',
-      description: '15,000+ nodes across 147 countries, all verified through cryptographic proofs'
-    },
-    {
-      title: 'AI-Optimized',
-      description: 'Intelligent routing finds the fastest path while maintaining maximum privacy'
-    },
-    {
-      title: 'No Central Servers',
-      description: 'Fully decentralized infrastructure eliminates single points of failure'
-    }
-  ];
+  const { locale } = useRouter();
+  const copy = getMessages(locale || DEFAULT_LOCALE).vpn;
+  const features = copy.features;
   
   return (
     <section id="download-vpn" className="py-12 md:py-24 bg-neutral-950">
@@ -33,16 +19,14 @@ const VPNDownloadSection = () => {
             {/* Content */}
             <div className="order-2 lg:order-1">
               <h2 className="text-3xl md:text-4xl font-light mb-4 md:mb-6">
-                AeroNyx VPN
+                {copy.title}
                 <span className="block text-lg md:text-xl text-white/40 mt-2">
-                  Privacy without compromise
+                  {copy.subtitle}
                 </span>
               </h2>
               
               <p className="text-sm md:text-lg text-white/60 mb-6 md:mb-8 leading-relaxed">
-                Built on our revolutionary privacy network, AeroNyx VPN represents the next 
-                evolution in secure communications. No logs, no tracking, no compromise — 
-                guaranteed by mathematics, not promises.
+                {copy.description}
               </p>
               
               <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
@@ -61,13 +45,13 @@ const VPNDownloadSection = () => {
                 onClick={() => setShowDownloads(true)}
                 className="px-6 md:px-8 py-3 md:py-4 bg-white text-black hover:bg-white/90 transition-all text-sm md:text-base font-medium w-full sm:w-auto"
               >
-                Download Now
+                {copy.download}
               </button>
             </div>
             
             {/* Visual */}
             <div className="order-1 lg:order-2">
-              <VPNAppVisual />
+              <VPNAppVisual copy={copy} />
             </div>
           </div>
         </div>
@@ -82,7 +66,7 @@ const VPNDownloadSection = () => {
 };
 
 // VPN App Visual - Responsive
-const VPNAppVisual = () => {
+const VPNAppVisual = ({ copy }) => {
   const [isConnected, setIsConnected] = useState(false);
   
   return (
@@ -104,7 +88,7 @@ const VPNAppVisual = () => {
             {/* Logo */}
             <div className="text-center mb-6 md:mb-8">
               <div className="text-xl md:text-2xl font-light mb-1 md:mb-2">AeroNyx VPN</div>
-              <div className="text-xs md:text-sm text-white/40">Privacy Network</div>
+              <div className="text-xs md:text-sm text-white/40">{copy.privacyNetwork}</div>
             </div>
             
             {/* Connection button */}
@@ -122,7 +106,7 @@ const VPNAppVisual = () => {
                     {isConnected ? '🛡️' : '⚡'}
                   </div>
                   <div className="text-xs md:text-sm">
-                    {isConnected ? 'Connected' : 'Connect'}
+                    {isConnected ? copy.connected : copy.connect}
                   </div>
                 </div>
               </button>
@@ -131,19 +115,19 @@ const VPNAppVisual = () => {
             {/* Status */}
             <div className="space-y-2 md:space-y-3 mb-6 md:mb-8">
               <div className="flex justify-between text-xs md:text-sm">
-                <span className="text-white/40">Status</span>
+                <span className="text-white/40">{copy.status}</span>
                 <span className={isConnected ? 'text-green-400' : 'text-white/60'}>
-                  {isConnected ? 'Protected' : 'Unprotected'}
+                  {isConnected ? copy.protected : copy.unprotected}
                 </span>
               </div>
               <div className="flex justify-between text-xs md:text-sm">
-                <span className="text-white/40">Location</span>
+                <span className="text-white/40">{copy.location}</span>
                 <span className="text-white/60">
                   {isConnected ? 'Singapore' : '—'}
                 </span>
               </div>
               <div className="flex justify-between text-xs md:text-sm">
-                <span className="text-white/40">IP Address</span>
+                <span className="text-white/40">{copy.ipAddress}</span>
                 <span className="text-white/60">
                   {isConnected ? '***.***.***' : '192.168.1.1'}
                 </span>
@@ -154,15 +138,15 @@ const VPNAppVisual = () => {
             <div className="flex justify-around pt-3 md:pt-4 border-t border-white/10">
               <div className="text-center">
                 <div className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-1 border border-white/20 rounded" />
-                <div className="text-xs text-white/40">Home</div>
+                <div className="text-xs text-white/40">{copy.home}</div>
               </div>
               <div className="text-center">
                 <div className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-1 border border-white/20 rounded" />
-                <div className="text-xs text-white/40">Nodes</div>
+                <div className="text-xs text-white/40">{copy.nodes}</div>
               </div>
               <div className="text-center">
                 <div className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-1 border border-white/20 rounded" />
-                <div className="text-xs text-white/40">Settings</div>
+                <div className="text-xs text-white/40">{copy.settings}</div>
               </div>
             </div>
           </div>

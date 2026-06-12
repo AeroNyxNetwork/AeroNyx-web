@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import Container from '../ui/Container';
+import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 import useNetworkStats from '../../lib/hooks/useNetworkStats';
 
 const JoinNetwork = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const { locale } = useRouter();
+  const copy = getMessages(locale || DEFAULT_LOCALE).join;
   const { stats, isLoading } = useNetworkStats({
     period: '30d',
     autoRefresh: true,
@@ -14,71 +18,51 @@ const JoinNetwork = () => {
   const steps = [
     {
       number: "01",
-      title: "Run a Node",
-      subtitle: "Join the decentralized network",
-      description: "Download and install the AeroNyx node software on your computer or server. One command, and you're part of the global network.",
-      features: [
-        "Works on Windows, Mac, Linux",
-        "Lightweight: < 100MB RAM",
-        "Auto-updates and self-heals",
-        "Earn rewards while you sleep"
-      ],
+      title: copy.steps[0].title,
+      subtitle: copy.steps[0].subtitle,
+      description: copy.steps[0].description,
+      features: copy.steps[0].features,
       cta: {
-        text: "Download Node",
+        text: copy.steps[0].cta,
         link: "https://docs.aeronyx.network/node-setup"
       },
       visual: <NodeVisual />
     },
     {
       number: "02",
-      title: "AI Takes Control",
-      subtitle: "Natural language infrastructure management",
-      description: "Once your node is running, the AeroNyx MCP AI becomes your infrastructure assistant. Just tell it what you want in plain English.",
-      features: [
-        '"Optimize my server for lowest cost"',
-        '"Allocate 50% resources to mining"',
-        '"Pause all tasks during work hours"',
-        '"Show me my earnings dashboard"'
-      ],
+      title: copy.steps[1].title,
+      subtitle: copy.steps[1].subtitle,
+      description: copy.steps[1].description,
+      features: copy.steps[1].features,
       cta: {
-        text: "Explore AI Commands",
+        text: copy.steps[1].cta,
         link: "https://docs.aeronyx.network/mcp-ai"
       },
       visual: <AIVisual />
     },
     {
       number: "03",
-      title: "Share Resources",
-      subtitle: "Turn idle compute into income",
-      description: "Your unused CPU, GPU, and storage become valuable assets. The AI automatically optimizes resource allocation to maximize your earnings.",
-      features: [
-        "Set your own availability schedule",
-        "Choose what resources to share",
-        "Privacy-first: your data stays yours",
-        "Get paid in crypto or fiat"
-      ],
+      title: copy.steps[2].title,
+      subtitle: copy.steps[2].subtitle,
+      description: copy.steps[2].description,
+      features: copy.steps[2].features,
       cta: {
-        text: "Calculate Earnings",
+        text: copy.steps[2].cta,
         link: "https://aeronyx.network/calculator"
       },
       visual: <ResourceVisual />
     },
     {
       number: "04",
-      title: "Build on AeroNyx",
-      subtitle: "Access global compute instantly",
-      description: "Need computing power? The network has you covered. Deploy applications, run AI models, or process data across thousands of nodes.",
-      features: [
-        "Pay only for what you use",
-        "Scale from 1 to 10,000 nodes",
-        "99.99% uptime guaranteed",
-        "Built-in privacy and security"
-      ],
+      title: copy.steps[3].title,
+      subtitle: copy.steps[3].subtitle,
+      description: copy.steps[3].description,
+      features: copy.steps[3].features,
       cta: {
-        text: "Start Building",
+        text: copy.steps[3].cta,
         link: "https://docs.aeronyx.network/developers"
       },
-      visual: <BuildVisual />
+      visual: <BuildVisual liveLabel={copy.live} activeNodesLabel={copy.activeNodesWorldwide} />
     }
   ];
   
@@ -97,13 +81,12 @@ const JoinNetwork = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-light mb-4 md:mb-6">
-              Join the Network, Shape the Future
+            >
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-light mb-4 md:mb-6">
+              {copy.title}
             </h2>
             <p className="text-base md:text-xl text-white/60 max-w-3xl mx-auto">
-              Four simple steps to become part of the world's first autonomous infrastructure. 
-              Run a node, let AI manage it, earn from your resources, and build amazing things.
+              {copy.description}
             </p>
           </motion.div>
 
@@ -115,10 +98,10 @@ const JoinNetwork = () => {
             transition={{ duration: 0.45 }}
           >
             {[
-              { label: 'VPN Nodes Online', value: stats.vpnOnlineNodes },
-              { label: 'Active VPN Sessions', value: stats.vpnActiveSessions },
-              { label: 'Encrypted Traffic', value: stats.encryptedTraffic },
-              { label: 'Encrypted Messages', value: stats.encryptedMessages }
+              { label: copy.stats.vpnNodesOnline, value: stats.vpnOnlineNodes },
+              { label: copy.stats.activeVpnSessions, value: stats.vpnActiveSessions },
+              { label: copy.stats.encryptedTraffic, value: stats.encryptedTraffic },
+              { label: copy.stats.encryptedMessages, value: stats.encryptedMessages }
             ].map((item) => (
               <div
                 key={item.label}
@@ -247,7 +230,7 @@ const JoinNetwork = () => {
               }`}
               disabled={activeStep === 0}
             >
-              ← Previous
+              ← {copy.previous}
             </button>
             
             <button
@@ -257,7 +240,7 @@ const JoinNetwork = () => {
               }`}
               disabled={activeStep === steps.length - 1}
             >
-              Next →
+              {copy.next} →
             </button>
           </div>
         </div>
@@ -396,7 +379,7 @@ const ResourceVisual = () => (
   </div>
 );
 
-const BuildVisual = () => (
+const BuildVisual = ({ liveLabel = 'Live', activeNodesLabel = 'Active Nodes Worldwide' }) => (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="text-center">
       {/* Global network visualization */}
@@ -439,8 +422,8 @@ const BuildVisual = () => (
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
       >
-        <div className="text-3xl font-light text-white/80">Live</div>
-        <div className="text-sm text-white/40">Active Nodes Worldwide</div>
+        <div className="text-3xl font-light text-white/80">{liveLabel}</div>
+        <div className="text-sm text-white/40">{activeNodesLabel}</div>
       </motion.div>
     </div>
   </div>

@@ -1,8 +1,13 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import Container from '../ui/Container';
+import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
 const SophisticatedCTA = () => {
+  const { locale } = useRouter();
+  const copy = getMessages(locale || DEFAULT_LOCALE).cta;
+
   return (
     <section className="py-16 md:py-32 bg-black border-t border-white/10">
       <Container>
@@ -15,12 +20,12 @@ const SophisticatedCTA = () => {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-3xl md:text-5xl font-extralight mb-4 md:mb-6 px-4">
-              The future of infrastructure
-              <span className="block font-normal">is autonomous</span>
+              {copy.line1}
+              <span className="block font-normal">{copy.line2}</span>
             </h2>
             
             <p className="text-base md:text-xl text-white/40 font-light max-w-2xl mx-auto px-4">
-              Join the first wave of builders creating systems that manage themselves
+              {copy.description}
             </p>
           </motion.div>
           
@@ -40,7 +45,7 @@ const SophisticatedCTA = () => {
             >
               <div className="px-8 sm:px-12 py-4 sm:py-5 border border-white/20 hover:border-white/40 transition-all duration-300 text-center">
                 <span className="text-xs sm:text-sm uppercase tracking-[0.15em] sm:tracking-[0.2em]">
-                  Read Whitepaper
+                  {copy.whitepaper}
                 </span>
               </div>
             </a>
@@ -51,7 +56,7 @@ const SophisticatedCTA = () => {
               className="text-white/40 hover:text-white transition-colors px-4 py-2"
             >
               <span className="text-xs sm:text-sm uppercase tracking-[0.15em] sm:tracking-[0.2em]">
-                Partnership Inquiries
+                {copy.partnership}
               </span>
             </a>
           </motion.div>
