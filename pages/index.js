@@ -29,7 +29,9 @@ import { useRouter } from 'next/router';
 
 // Import SEO component
 import SEO from '../components/ui/SEO';
+import Container from '../components/ui/Container';
 import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
+import useNetworkStats from '../lib/hooks/useNetworkStats';
 
 // Import custom header
 import AILHeader from '../components/layout/AILHeader';
@@ -62,6 +64,11 @@ export default function Home() {
   const activeLocale = locale || DEFAULT_LOCALE;
   const copy = getMessages(activeLocale);
   const canonicalPath = activeLocale === DEFAULT_LOCALE ? '' : `/${activeLocale}`;
+  const { stats, isLoading } = useNetworkStats({
+    period: '30d',
+    autoRefresh: true,
+    refreshInterval: 300000
+  });
 
   return (
     <>
@@ -85,6 +92,8 @@ export default function Home() {
       <main className="relative z-10">
         {/* 1. Opening narrative */}
         <NarrativeHero />
+
+        <HomeNetworkStats stats={stats} isLoading={isLoading} copy={copy} />
         
         {/* 2. Problem Statement — AI infrastructure paradox */}
         <ProblemStatement />
@@ -119,3 +128,49 @@ export default function Home() {
     </>
   );
 }
+
+const HomeNetworkStats = ({ stats, isLoading, copy }) => {
+  const items = [
+    { label: copy.join.stats.vpnNodesOnline, value: stats.vpnOnlineNodes },
+    { label: copy.join.stats.activeVpnSessions, value: stats.vpnActiveSessions },
+    { label: copy.join.stats.encryptedTraffic, value: stats.encryptedTraffic },
+    { label: copy.join.stats.encryptedMessages, value: stats.encryptedMessages },
+  ];
+
+  return (
+    <section aria-label={copy.homeStats.ariaLabel} className="relative z-20 -mt-6 md:-mt-10 pb-10 md:pb-16">
+      <Container>
+        <div className="max-w-6xl mx-auto border border-white/10 bg-black/70 backdrop-blur-md">
+          <div className="grid gap-0 lg:grid-cols-[1.15fr_2fr]">
+            <div className="border-b border-white/10 p-5 md:p-6 lg:border-b-0 lg:border-r">
+              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-green-300">
+                <span className="h-2 w-2 rounded-full bg-green-400 shadow-[0_0_16px_rgba(74,222,128,0.75)]" />
+                {copy.homeStats.eyebrow}
+              </div>
+              <p className="mt-3 text-sm leading-relaxed text-white/50">
+                {copy.homeStats.description}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4">
+              {items.map((item) => (
+                <div key={item.label} className="border-white/10 p-4 md:p-5 md:border-l first:md:border-l-0">
+                  <div className="min-h-[2rem] text-2xl font-light text-white md:text-3xl">
+                    {isLoading ? (
+                      <span className="block h-7 w-16 animate-pulse bg-white/10" />
+                    ) : (
+                      item.value || copy.homeStats.syncing
+                    )}
+                  </div>
+                  <div className="mt-2 min-h-[2.5rem] text-[10px] uppercase leading-relaxed tracking-[0.16em] text-white/40 md:text-xs">
+                    {item.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+};

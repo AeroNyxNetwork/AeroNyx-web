@@ -8,6 +8,7 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES, getMessages } from '../../lib/i18n';
 const AILHeader = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const router = useRouter();
   const locale = router.locale || DEFAULT_LOCALE;
   const copy = getMessages(locale);
@@ -20,6 +21,17 @@ const AILHeader = () => {
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickAway = (event) => {
+      if (!event.target.closest('[data-language-menu]')) {
+        setIsLanguageOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickAway);
+    return () => document.removeEventListener('mousedown', handleClickAway);
   }, []);
   
   // Updated navigation links with proper hrefs
@@ -89,19 +101,25 @@ const AILHeader = () => {
               ))}
             </nav>
             
-            <div className="relative group">
+            <div className="relative" data-language-menu>
               <button
                 className="px-3 py-2 text-white/60 hover:text-white transition-colors text-sm uppercase tracking-wider"
                 aria-label={copy.nav.language}
+                aria-expanded={isLanguageOpen}
+                onClick={() => setIsLanguageOpen((value) => !value)}
               >
                 {currentLocale.short}
               </button>
-              <div className="absolute right-0 mt-3 w-44 border border-white/10 bg-black/95 p-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all">
+              <div className={`absolute right-0 top-full w-44 pt-2 transition-all ${
+                isLanguageOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+              }`}>
+                <div className="border border-white/10 bg-black/95 p-2 shadow-2xl shadow-black/40">
                 {SUPPORTED_LOCALES.map((item) => (
                   <Link
                     key={item.code}
                     href={router.asPath || '/'}
                     locale={item.code}
+                    onClick={() => setIsLanguageOpen(false)}
                     className={`block px-3 py-2 text-sm transition-colors ${
                       item.code === locale ? 'text-white' : 'text-white/50 hover:text-white'
                     }`}
@@ -109,6 +127,7 @@ const AILHeader = () => {
                     {item.label}
                   </Link>
                 ))}
+                </div>
               </div>
             </div>
 
