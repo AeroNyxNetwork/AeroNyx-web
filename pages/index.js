@@ -30,6 +30,7 @@ import { useRouter } from 'next/router';
 // Import SEO component
 import SEO from '../components/ui/SEO';
 import Container from '../components/ui/Container';
+import AnimatedMessageCounter from '../components/ui/AnimatedMessageCounter';
 import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
 import useNetworkStats from '../lib/hooks/useNetworkStats';
 
@@ -67,7 +68,7 @@ export default function Home() {
   const { stats, isLoading } = useNetworkStats({
     period: '30d',
     autoRefresh: true,
-    refreshInterval: 300000
+    refreshInterval: 30000
   });
 
   return (
@@ -132,7 +133,12 @@ export default function Home() {
 const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const items = [
     { label: copy.join.stats.encryptedTraffic, value: stats.encryptedTraffic },
-    { label: copy.join.stats.encryptedMessages, value: stats.encryptedMessages },
+    {
+      label: copy.join.stats.encryptedMessages,
+      value: stats.encryptedMessages,
+      liveValue: stats.encryptedMessagesRaw,
+      isLiveCounter: true,
+    },
   ];
 
   return (
@@ -156,6 +162,11 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                   <div className="min-h-[2rem] text-2xl font-light text-white md:text-3xl">
                     {isLoading ? (
                       <span className="block h-7 w-16 animate-pulse bg-white/10" />
+                    ) : item.isLiveCounter ? (
+                      <AnimatedMessageCounter
+                        value={item.liveValue}
+                        fallback={item.value || copy.homeStats.syncing}
+                      />
                     ) : (
                       item.value || copy.homeStats.syncing
                     )}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import Container from '../ui/Container';
+import AnimatedMessageCounter from '../ui/AnimatedMessageCounter';
 import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 import useNetworkStats from '../../lib/hooks/useNetworkStats';
 
@@ -12,7 +13,7 @@ const JoinNetwork = () => {
   const { stats, isLoading } = useNetworkStats({
     period: '30d',
     autoRefresh: true,
-    refreshInterval: 300000
+    refreshInterval: 30000
   });
   
   const steps = [
@@ -99,7 +100,12 @@ const JoinNetwork = () => {
           >
             {[
               { label: copy.stats.encryptedTraffic, value: stats.encryptedTraffic },
-              { label: copy.stats.encryptedMessages, value: stats.encryptedMessages }
+              {
+                label: copy.stats.encryptedMessages,
+                value: stats.encryptedMessages,
+                liveValue: stats.encryptedMessagesRaw,
+                isLiveCounter: true
+              }
             ].map((item) => (
               <div
                 key={item.label}
@@ -108,6 +114,11 @@ const JoinNetwork = () => {
                 <div className="text-2xl md:text-3xl font-light text-white min-h-[2.25rem]">
                   {isLoading ? (
                     <span className="block h-8 w-20 bg-white/10 animate-pulse" />
+                  ) : item.isLiveCounter ? (
+                    <AnimatedMessageCounter
+                      value={item.liveValue}
+                      fallback={item.value}
+                    />
                   ) : (
                     item.value
                   )}
