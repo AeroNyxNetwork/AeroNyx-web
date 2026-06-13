@@ -131,8 +131,6 @@ export default function Home() {
 
 const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const items = [
-    { label: copy.join.stats.vpnNodesOnline, value: stats.vpnOnlineNodes },
-    { label: copy.join.stats.activeVpnSessions, value: stats.vpnActiveSessions },
     { label: copy.join.stats.encryptedTraffic, value: stats.encryptedTraffic },
     { label: copy.join.stats.encryptedMessages, value: stats.encryptedMessages },
   ];
@@ -152,7 +150,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4">
+            <div className="grid grid-cols-2">
               {items.map((item) => (
                 <div key={item.label} className="border-white/10 p-4 md:p-5 md:border-l first:md:border-l-0">
                   <div className="min-h-[2rem] text-2xl font-light text-white md:text-3xl">

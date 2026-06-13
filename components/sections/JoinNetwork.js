@@ -91,15 +91,13 @@ const JoinNetwork = () => {
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-10 md:mb-14"
+            className="grid grid-cols-2 gap-3 md:gap-4 mb-10 md:mb-14"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45 }}
           >
             {[
-              { label: copy.stats.vpnNodesOnline, value: stats.vpnOnlineNodes },
-              { label: copy.stats.activeVpnSessions, value: stats.vpnActiveSessions },
               { label: copy.stats.encryptedTraffic, value: stats.encryptedTraffic },
               { label: copy.stats.encryptedMessages, value: stats.encryptedMessages }
             ].map((item) => (
