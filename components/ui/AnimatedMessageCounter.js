@@ -40,20 +40,40 @@ const formatPulseValue = (value) => {
   return formatCompactValue(value);
 };
 
+const randomBetween = (min, max) => (
+  min + Math.random() * (max - min)
+);
+
+const estimateJitteredStep = (ratePerSecond, delayMs) => {
+  if (ratePerSecond <= 0) {
+    return 0;
+  }
+
+  const expected = ratePerSecond * (delayMs / 1000) * randomBetween(0.35, 1.75);
+  const whole = Math.floor(expected);
+
+  if (whole > 0) {
+    return whole;
+  }
+
+  return Math.random() < expected ? 1 : 0;
+};
+
 const AnimatedMessageCounter = ({
   value,
   fallback = 'Syncing',
   suffix = '',
-  defaultStep = 1,
 }) => {
   const [displayValue, setDisplayValue] = useState(
     normalizeValue(value)
   );
-  const [stepPerSecond, setStepPerSecond] = useState(defaultStep);
+  const [ratePerSecond, setRatePerSecond] = useState(0);
+  const [pulseAmount, setPulseAmount] = useState(0);
   const [tick, setTick] = useState(0);
   const previousValueRef = useRef(normalizeValue(value));
   const previousSyncAtRef = useRef(Date.now());
   const hasSyncedRef = useRef(false);
+  const hasObservedGrowthRef = useRef(false);
   const pulseKeyRef = useRef(0);
   const hasDisplayValue = typeof displayValue === 'number';
 
@@ -75,13 +95,15 @@ const AnimatedMessageCounter = ({
       const elapsedSeconds = Math.max(1, Math.round((now - previousSyncAt) / 1000));
 
       if (delta > 0) {
-        setStepPerSecond(Math.max(1, Math.floor(delta / elapsedSeconds)));
+        hasObservedGrowthRef.current = true;
+        setRatePerSecond(delta / elapsedSeconds);
       } else {
-        setStepPerSecond(0);
+        setRatePerSecond(0);
+        setPulseAmount(0);
       }
     } else {
       hasSyncedRef.current = true;
-      setStepPerSecond(Math.max(0, defaultStep));
+      setRatePerSecond(0);
     }
 
     setDisplayValue((current) => {
@@ -99,25 +121,48 @@ const AnimatedMessageCounter = ({
 
       return Math.max(current, normalizedValue);
     });
-  }, [defaultStep, value]);
+  }, [value]);
 
   useEffect(() => {
-    if (!hasDisplayValue || stepPerSecond <= 0) {
+    if (!hasDisplayValue || ratePerSecond <= 0 || !hasObservedGrowthRef.current) {
       return undefined;
     }
 
-    const timer = window.setInterval(() => {
-      pulseKeyRef.current += 1;
-      setDisplayValue((current) => (
-        typeof current === 'number'
-          ? Math.max(current + stepPerSecond, (previousValueRef.current || 0) + stepPerSecond)
-          : current
-      ));
-      setTick(pulseKeyRef.current);
-    }, 1000);
+    let stopped = false;
+    let timer = null;
 
-    return () => window.clearInterval(timer);
-  }, [hasDisplayValue, stepPerSecond]);
+    const scheduleNextPulse = () => {
+      const delayMs = randomBetween(700, 1900);
+
+      timer = window.setTimeout(() => {
+        if (stopped) {
+          return;
+        }
+
+        const step = estimateJitteredStep(ratePerSecond, delayMs);
+
+        if (step > 0) {
+          pulseKeyRef.current += 1;
+          setDisplayValue((current) => (
+            typeof current === 'number'
+              ? current + step
+              : current
+          ));
+          setPulseAmount(step);
+          setTick(pulseKeyRef.current);
+        }
+
+        scheduleNextPulse();
+      }, delayMs);
+    };
+
+    scheduleNextPulse();
+
+    return () => {
+      stopped = true;
+      window.clearTimeout(timer);
+    };
+  }, [hasDisplayValue, ratePerSecond]);
 
   const displayMeta = useMemo(
     () => {
@@ -136,7 +181,7 @@ const AnimatedMessageCounter = ({
     },
     [displayValue, suffix]
   );
-  const pulseValue = formatPulseValue(stepPerSecond);
+  const pulseValue = formatPulseValue(pulseAmount);
 
   if (!displayMeta) {
     return fallback;
