@@ -132,12 +132,20 @@ export default function Home() {
 
 const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const items = [
-    { label: copy.join.stats.encryptedTraffic, value: stats.encryptedTraffic },
+    {
+      label: copy.join.stats.encryptedTraffic,
+      value: stats.encryptedTraffic,
+      liveValue: stats.encryptedTrafficBytes,
+      isLiveCounter: true,
+      suffix: 'B',
+      defaultStep: 1024,
+    },
     {
       label: copy.join.stats.encryptedMessages,
       value: stats.encryptedMessages,
       liveValue: stats.encryptedMessagesRaw,
       isLiveCounter: true,
+      defaultStep: 1,
     },
   ];
 
@@ -166,6 +174,8 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                       <AnimatedMessageCounter
                         value={item.liveValue}
                         fallback={item.value || copy.homeStats.syncing}
+                        suffix={item.suffix}
+                        defaultStep={item.defaultStep}
                       />
                     ) : (
                       item.value || copy.homeStats.syncing

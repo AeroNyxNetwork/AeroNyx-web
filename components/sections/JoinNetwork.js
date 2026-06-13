@@ -99,12 +99,20 @@ const JoinNetwork = () => {
             transition={{ duration: 0.45 }}
           >
             {[
-              { label: copy.stats.encryptedTraffic, value: stats.encryptedTraffic },
+              {
+                label: copy.stats.encryptedTraffic,
+                value: stats.encryptedTraffic,
+                liveValue: stats.encryptedTrafficBytes,
+                isLiveCounter: true,
+                suffix: 'B',
+                defaultStep: 1024
+              },
               {
                 label: copy.stats.encryptedMessages,
                 value: stats.encryptedMessages,
                 liveValue: stats.encryptedMessagesRaw,
-                isLiveCounter: true
+                isLiveCounter: true,
+                defaultStep: 1
               }
             ].map((item) => (
               <div
@@ -118,6 +126,8 @@ const JoinNetwork = () => {
                     <AnimatedMessageCounter
                       value={item.liveValue}
                       fallback={item.value}
+                      suffix={item.suffix}
+                      defaultStep={item.defaultStep}
                     />
                   ) : (
                     item.value
