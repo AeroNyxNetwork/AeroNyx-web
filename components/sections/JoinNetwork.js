@@ -100,7 +100,7 @@ const JoinNetwork = () => {
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-2 gap-3 md:gap-4 mb-10 md:mb-14"
+            className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 mb-10 md:mb-14"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -128,11 +128,11 @@ const JoinNetwork = () => {
             ].map((item) => (
               <div
                 key={item.label}
-                className="min-w-0 border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm"
+                className="min-w-0 border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm md:p-5"
               >
-                <div className="min-h-[2.5rem] min-w-0 font-light text-white">
+                <div className="min-h-[2.65rem] min-w-0 font-light text-white">
                   {isLoading ? (
-                    <span className="block h-8 w-20 bg-white/10 animate-pulse" />
+                    <span className="block h-8 w-28 bg-white/10 animate-pulse" />
                   ) : item.isLiveCounter ? (
                     <AnimatedMessageCounter
                       value={item.liveValue}
@@ -148,7 +148,7 @@ const JoinNetwork = () => {
                 <div className="mt-1 text-[11px] md:text-xs uppercase tracking-[0.18em] text-white/40">
                   {item.label}
                 </div>
-                <p className="mt-2 text-xs leading-relaxed text-white/45">
+                <p className="mt-2 max-w-[34rem] text-xs leading-relaxed text-white/45">
                   {item.description}
                 </p>
               </div>

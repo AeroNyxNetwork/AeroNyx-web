@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+const MAX_VALUE_FONT_SIZE = 44;
+const MIN_VALUE_FONT_SIZE = 18;
+
 const normalizeValue = (value) => {
   if (typeof value !== 'number' || !Number.isFinite(value)) {
     return null;
@@ -47,11 +50,14 @@ const AnimatedMessageCounter = ({
   suffix = '',
   pulseLabel = 'last sync',
 }) => {
+  const containerRef = useRef(null);
+  const measureRef = useRef(null);
   const [displayValue, setDisplayValue] = useState(
     normalizeValue(value)
   );
   const [ratePerSecond, setRatePerSecond] = useState(0);
   const [pulseAmount, setPulseAmount] = useState(0);
+  const [valueFontSize, setValueFontSize] = useState(MAX_VALUE_FONT_SIZE);
   const [tick, setTick] = useState(0);
   const previousValueRef = useRef(normalizeValue(value));
   const previousSyncAtRef = useRef(Date.now());
@@ -167,16 +173,85 @@ const AnimatedMessageCounter = ({
   );
   const pulseValue = formatPulseValue(pulseAmount);
 
+  useEffect(() => {
+    if (!displayMeta || !containerRef.current || !measureRef.current) {
+      return undefined;
+    }
+
+    let animationFrame = null;
+
+    const fitValueToContainer = () => {
+      if (!containerRef.current || !measureRef.current) {
+        return;
+      }
+
+      const containerWidth = containerRef.current.getBoundingClientRect().width;
+      const measuredWidth = measureRef.current.scrollWidth;
+
+      if (!containerWidth || !measuredWidth) {
+        return;
+      }
+
+      const availableWidth = Math.max(120, containerWidth - 2);
+      const nextFontSize = Math.max(
+        MIN_VALUE_FONT_SIZE,
+        Math.min(
+          MAX_VALUE_FONT_SIZE,
+          Math.floor((availableWidth / measuredWidth) * MAX_VALUE_FONT_SIZE)
+        )
+      );
+
+      setValueFontSize(nextFontSize);
+    };
+
+    const scheduleFit = () => {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(fitValueToContainer);
+    };
+
+    scheduleFit();
+
+    const resizeObserver = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(scheduleFit)
+      : null;
+
+    if (resizeObserver) {
+      resizeObserver.observe(containerRef.current);
+    } else {
+      window.addEventListener('resize', scheduleFit);
+    }
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      } else {
+        window.removeEventListener('resize', scheduleFit);
+      }
+    };
+  }, [displayMeta]);
+
   if (!displayMeta) {
     return fallback;
   }
 
   return (
-    <span className="metric-counter tabular-nums" title={displayMeta.full}>
-      <span className="metric-value">{displayMeta.value}</span>
-      {displayMeta.unit ? (
-        <span className="metric-unit">{displayMeta.unit}</span>
-      ) : null}
+    <span ref={containerRef} className="metric-counter tabular-nums" title={displayMeta.full}>
+      <span
+        className="metric-line"
+        style={{ '--metric-value-size': `${valueFontSize}px` }}
+      >
+        <span className="metric-value">{displayMeta.value}</span>
+        {displayMeta.unit ? (
+          <span className="metric-unit">{displayMeta.unit}</span>
+        ) : null}
+      </span>
+      <span ref={measureRef} className="metric-measure" aria-hidden="true">
+        <span className="metric-value">{displayMeta.value}</span>
+        {displayMeta.unit ? (
+          <span className="metric-unit">{displayMeta.unit}</span>
+        ) : null}
+      </span>
       {pulseValue ? (
         <span
           key={tick}
@@ -187,34 +262,51 @@ const AnimatedMessageCounter = ({
       ) : null}
       <style jsx>{`
         .metric-counter {
-          display: flex;
+          position: relative;
+          display: block;
           min-width: 0;
           max-width: 100%;
-          flex-wrap: wrap;
-          align-items: baseline;
-          gap: 0.2rem 0.45rem;
           line-height: 1;
         }
 
-        .metric-value {
-          min-width: 0;
+        .metric-line,
+        .metric-measure {
+          display: inline-flex;
           max-width: 100%;
-          overflow-wrap: anywhere;
-          font-size: clamp(1.35rem, 4.4vw, 2.75rem);
+          align-items: baseline;
+          gap: 0.45rem;
+          white-space: nowrap;
+        }
+
+        .metric-line {
+          min-width: 0;
+        }
+
+        .metric-measure {
+          pointer-events: none;
+          position: absolute;
+          left: 0;
+          top: 0;
+          visibility: hidden;
+        }
+
+        .metric-value {
+          font-size: var(--metric-value-size, ${MAX_VALUE_FONT_SIZE}px);
           line-height: 0.95;
-          white-space: normal;
+          white-space: nowrap;
         }
 
         .metric-unit {
           flex: 0 0 auto;
           color: rgba(255, 255, 255, 0.55);
-          font-size: clamp(0.68rem, 1.2vw, 0.95rem);
+          font-size: max(0.72rem, calc(var(--metric-value-size, ${MAX_VALUE_FONT_SIZE}px) * 0.3));
           letter-spacing: 0.08em;
           text-transform: uppercase;
         }
 
         .metric-pulse {
-          flex-basis: 100%;
+          display: block;
+          margin-top: 0.35rem;
           animation: metricPulse 1.2s ease-out;
           color: rgba(134, 239, 172, 0.9);
           font-size: clamp(0.68rem, 1.2vw, 0.82rem);
@@ -242,11 +334,6 @@ const AnimatedMessageCounter = ({
           }
         }
 
-        @media (max-width: 420px) {
-          .metric-value {
-            font-size: clamp(1.1rem, 8vw, 1.65rem);
-          }
-        }
       `}</style>
     </span>
   );

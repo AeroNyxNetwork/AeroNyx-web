@@ -162,9 +162,9 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   return (
     <section aria-label={copy.homeStats.ariaLabel} className="relative z-20 -mt-6 md:-mt-10 pb-10 md:pb-16">
       <Container>
-        <div className="max-w-6xl mx-auto border border-white/10 bg-black/70 backdrop-blur-md">
-          <div className="grid gap-0 lg:grid-cols-[1.15fr_2fr]">
-            <div className="border-b border-white/10 p-5 md:p-6 lg:border-b-0 lg:border-r">
+        <div className="mx-auto max-w-6xl border border-white/10 bg-black/70 backdrop-blur-md">
+          <div className="grid gap-0 xl:grid-cols-[0.8fr_2.2fr]">
+            <div className="border-b border-white/10 p-5 md:p-6 xl:border-b-0 xl:border-r">
               <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-green-300">
                 <span className="h-2 w-2 rounded-full bg-green-400 shadow-[0_0_16px_rgba(74,222,128,0.75)]" />
                 {copy.homeStats.eyebrow}
@@ -174,12 +174,12 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2">
+            <div className="grid grid-cols-1 md:grid-cols-2">
               {items.map((item) => (
-                <div key={item.label} className="min-w-0 border-t border-white/10 p-4 first:border-t-0 sm:border-l sm:border-t-0 sm:first:border-l-0 md:p-5">
-                  <div className="min-h-[2.25rem] min-w-0 font-light text-white">
+                <div key={item.label} className="min-w-0 border-t border-white/10 p-5 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0 md:p-6">
+                  <div className="min-h-[2.65rem] min-w-0 font-light text-white">
                     {isLoading ? (
-                      <span className="block h-7 w-16 animate-pulse bg-white/10" />
+                      <span className="block h-8 w-28 animate-pulse bg-white/10" />
                     ) : item.isLiveCounter ? (
                       <AnimatedMessageCounter
                         value={item.liveValue}
@@ -195,7 +195,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                   <div className="mt-2 min-h-[2.5rem] text-[10px] uppercase leading-relaxed tracking-[0.16em] text-white/40 md:text-xs">
                     {item.label}
                   </div>
-                  <p className="mt-2 text-xs leading-relaxed text-white/45 md:text-sm">
+                  <p className="mt-2 max-w-[34rem] text-xs leading-relaxed text-white/45 md:text-sm">
                     {item.description}
                   </p>
                 </div>
