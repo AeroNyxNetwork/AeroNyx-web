@@ -131,20 +131,30 @@ export default function Home() {
 }
 
 const HomeNetworkStats = ({ stats, isLoading, copy }) => {
+  // Live homepage counters are sourced from:
+  //   GET /api/privacy_network/vpn/public/network-stats/
+  // Backend:
+  //   /root/aeronyx/privacy_network/api/vpn_observability.py
+  // Rust packet/traffic sources:
+  //   /root/open/AeroNyx/crates/aeronyx-server/src/api/vpn_health.rs
+  //   /root/open/AeroNyx/crates/aeronyx-server/src/handlers/packet.rs
   const items = [
     {
       label: copy.join.stats.encryptedTraffic,
+      description: copy.join.stats.encryptedTrafficDescription,
       value: stats.encryptedTraffic,
       liveValue: stats.encryptedTrafficBytes,
       isLiveCounter: true,
-      suffix: 'B',
+      suffix: copy.join.stats.bytesUnit,
       defaultStep: 1024,
     },
     {
       label: copy.join.stats.encryptedMessages,
+      description: copy.join.stats.encryptedMessagesDescription,
       value: stats.encryptedMessages,
       liveValue: stats.encryptedMessagesRaw,
       isLiveCounter: true,
+      suffix: copy.join.stats.packetsUnit,
       defaultStep: 1,
     },
   ];
@@ -164,10 +174,10 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
               </p>
             </div>
 
-            <div className="grid grid-cols-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2">
               {items.map((item) => (
-                <div key={item.label} className="border-white/10 p-4 md:p-5 md:border-l first:md:border-l-0">
-                  <div className="min-h-[2rem] text-2xl font-light text-white md:text-3xl">
+                <div key={item.label} className="min-w-0 border-t border-white/10 p-4 first:border-t-0 sm:border-l sm:border-t-0 sm:first:border-l-0 md:p-5">
+                  <div className="min-h-[2.25rem] min-w-0 font-light text-white">
                     {isLoading ? (
                       <span className="block h-7 w-16 animate-pulse bg-white/10" />
                     ) : item.isLiveCounter ? (
@@ -175,6 +185,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                         value={item.liveValue}
                         fallback={item.value || copy.homeStats.syncing}
                         suffix={item.suffix}
+                        pulseLabel={copy.homeStats.lastSync}
                         defaultStep={item.defaultStep}
                       />
                     ) : (
@@ -184,6 +195,9 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                   <div className="mt-2 min-h-[2.5rem] text-[10px] uppercase leading-relaxed tracking-[0.16em] text-white/40 md:text-xs">
                     {item.label}
                   </div>
+                  <p className="mt-2 text-xs leading-relaxed text-white/45 md:text-sm">
+                    {item.description}
+                  </p>
                 </div>
               ))}
             </div>

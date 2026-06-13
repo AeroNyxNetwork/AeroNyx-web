@@ -14,30 +14,12 @@ const formatFullValue = (value) => (
   }).format(value)
 );
 
-const formatCompactValue = (value) => {
-  const raw = String(value);
-
-  if (raw.length < 6) {
-    return raw;
-  }
-
-  return `${raw.slice(0, 3)}...${raw.slice(-2)}`;
-};
-
 const formatPulseValue = (value) => {
   if (value <= 0) {
     return null;
   }
 
-  if (value < 10) {
-    return `0${value}`;
-  }
-
-  if (value < 100000) {
-    return String(value);
-  }
-
-  return formatCompactValue(value);
+  return formatFullValue(value);
 };
 
 const randomBetween = (min, max) => (
@@ -63,6 +45,7 @@ const AnimatedMessageCounter = ({
   value,
   fallback = 'Syncing',
   suffix = '',
+  pulseLabel = 'last sync',
 }) => {
   const [displayValue, setDisplayValue] = useState(
     normalizeValue(value)
@@ -175,7 +158,8 @@ const AnimatedMessageCounter = ({
       const unit = suffix ? ` ${suffix}` : '';
 
       return {
-        compact: `${formatCompactValue(normalizedValue)}${unit}`,
+        value: formatFullValue(normalizedValue),
+        unit: suffix,
         full: `${formatFullValue(normalizedValue)}${unit}`,
       };
     },
@@ -188,29 +172,79 @@ const AnimatedMessageCounter = ({
   }
 
   return (
-    <span className="inline-flex min-w-[9ch] items-baseline gap-2 tabular-nums" title={displayMeta.full}>
-      <span>{displayMeta.compact}</span>
+    <span className="metric-counter tabular-nums" title={displayMeta.full}>
+      <span className="metric-value">{displayMeta.value}</span>
+      {displayMeta.unit ? (
+        <span className="metric-unit">{displayMeta.unit}</span>
+      ) : null}
       {pulseValue ? (
         <span
           key={tick}
-          className="translate-y-[-0.1em] animate-[metricPulse_1s_ease-out] text-sm font-normal text-green-300 md:text-base"
+          className="metric-pulse"
         >
-          +{pulseValue}{suffix ? ` ${suffix}` : ''}
+          {pulseLabel} +{pulseValue}{suffix ? ` ${suffix}` : ''}
         </span>
       ) : null}
       <style jsx>{`
+        .metric-counter {
+          display: flex;
+          min-width: 0;
+          max-width: 100%;
+          flex-wrap: wrap;
+          align-items: baseline;
+          gap: 0.2rem 0.45rem;
+          line-height: 1;
+        }
+
+        .metric-value {
+          min-width: 0;
+          max-width: 100%;
+          overflow-wrap: anywhere;
+          font-size: clamp(1.35rem, 4.4vw, 2.75rem);
+          line-height: 0.95;
+          white-space: normal;
+        }
+
+        .metric-unit {
+          flex: 0 0 auto;
+          color: rgba(255, 255, 255, 0.55);
+          font-size: clamp(0.68rem, 1.2vw, 0.95rem);
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        .metric-pulse {
+          flex-basis: 100%;
+          animation: metricPulse 1.2s ease-out;
+          color: rgba(134, 239, 172, 0.9);
+          font-size: clamp(0.68rem, 1.2vw, 0.82rem);
+          font-weight: 400;
+          letter-spacing: 0.02em;
+          line-height: 1.2;
+        }
+
         @keyframes metricPulse {
           0% {
             opacity: 0;
-            transform: translateY(0.25rem);
+            transform: translateY(0.2rem);
           }
           18% {
             opacity: 1;
-            transform: translateY(-0.1rem);
+            transform: translateY(0);
+          }
+          70% {
+            opacity: 1;
+            transform: translateY(0);
           }
           100% {
             opacity: 0;
-            transform: translateY(-0.7rem);
+            transform: translateY(-0.25rem);
+          }
+        }
+
+        @media (max-width: 420px) {
+          .metric-value {
+            font-size: clamp(1.1rem, 8vw, 1.65rem);
           }
         }
       `}</style>

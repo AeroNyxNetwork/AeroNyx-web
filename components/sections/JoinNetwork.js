@@ -15,6 +15,14 @@ const JoinNetwork = () => {
     autoRefresh: true,
     refreshInterval: 30000
   });
+
+  // Join section live counters use the public aggregate privacy endpoint:
+  //   GET /api/privacy_network/vpn/public/network-stats/
+  // Backend:
+  //   /root/aeronyx/privacy_network/api/vpn_observability.py
+  // Rust packet/traffic sources:
+  //   /root/open/AeroNyx/crates/aeronyx-server/src/api/vpn_health.rs
+  //   /root/open/AeroNyx/crates/aeronyx-server/src/handlers/packet.rs
   
   const steps = [
     {
@@ -101,25 +109,28 @@ const JoinNetwork = () => {
             {[
               {
                 label: copy.stats.encryptedTraffic,
+                description: copy.stats.encryptedTrafficDescription,
                 value: stats.encryptedTraffic,
                 liveValue: stats.encryptedTrafficBytes,
                 isLiveCounter: true,
-                suffix: 'B',
+                suffix: copy.stats.bytesUnit,
                 defaultStep: 1024
               },
               {
                 label: copy.stats.encryptedMessages,
+                description: copy.stats.encryptedMessagesDescription,
                 value: stats.encryptedMessages,
                 liveValue: stats.encryptedMessagesRaw,
                 isLiveCounter: true,
+                suffix: copy.stats.packetsUnit,
                 defaultStep: 1
               }
             ].map((item) => (
               <div
                 key={item.label}
-                className="border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm"
+                className="min-w-0 border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm"
               >
-                <div className="text-2xl md:text-3xl font-light text-white min-h-[2.25rem]">
+                <div className="min-h-[2.5rem] min-w-0 font-light text-white">
                   {isLoading ? (
                     <span className="block h-8 w-20 bg-white/10 animate-pulse" />
                   ) : item.isLiveCounter ? (
@@ -127,6 +138,7 @@ const JoinNetwork = () => {
                       value={item.liveValue}
                       fallback={item.value}
                       suffix={item.suffix}
+                      pulseLabel={copy.live}
                       defaultStep={item.defaultStep}
                     />
                   ) : (
@@ -136,6 +148,9 @@ const JoinNetwork = () => {
                 <div className="mt-1 text-[11px] md:text-xs uppercase tracking-[0.18em] text-white/40">
                   {item.label}
                 </div>
+                <p className="mt-2 text-xs leading-relaxed text-white/45">
+                  {item.description}
+                </p>
               </div>
             ))}
           </motion.div>
