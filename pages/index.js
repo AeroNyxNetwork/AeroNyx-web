@@ -130,6 +130,18 @@ export default function Home() {
   );
 }
 
+const formatCompactCount = (value) => (
+  new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 0,
+  }).format(Number(value || 0))
+);
+
+const protocolStatusTone = (status) => {
+  if (status === 'healthy') return 'border-green-400/30 bg-green-400/10 text-green-200';
+  if (status === 'degraded') return 'border-yellow-400/30 bg-yellow-400/10 text-yellow-200';
+  return 'border-white/15 bg-white/5 text-white/60';
+};
+
 const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   // Live homepage counters are sourced from:
   //   GET /api/privacy_network/vpn/public/network-stats/
@@ -156,6 +168,36 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
       isLiveCounter: true,
       suffix: copy.join.stats.packetsUnit,
       defaultStep: 1,
+    },
+  ];
+  const protocolCopy = copy.homeStats.protocol;
+  const protocolStatusLabel = (
+    protocolCopy.statusLabels[stats.protocolStatus]
+    || protocolCopy.statusLabels.syncing
+  );
+  const recoverySources = (stats.protocolRecoverySources || [])
+    .map((source) => protocolCopy.recoverySources[source] || source.replace(/_/g, ' '))
+    .join(' · ');
+  const protocolCards = [
+    {
+      label: protocolCopy.mesh,
+      value: `${formatCompactCount(stats.protocolHealthyNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
+      detail: protocolCopy.meshDetail,
+    },
+    {
+      label: protocolCopy.peerSync,
+      value: formatCompactCount(stats.protocolValidPeerCount),
+      detail: protocolCopy.peerSyncDetail,
+    },
+    {
+      label: protocolCopy.restartRecovery,
+      value: `${formatCompactCount(stats.protocolCacheRecoveredNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
+      detail: recoverySources || protocolCopy.recoveryPending,
+    },
+    {
+      label: protocolCopy.memoryChain,
+      value: protocolCopy.memoryChainMode,
+      detail: protocolCopy.memoryChainDetail,
     },
   ];
 
@@ -200,6 +242,42 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                   </p>
                 </div>
               ))}
+            </div>
+          </div>
+          <div className="border-t border-white/10 p-5 md:p-6">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div className="max-w-2xl">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] ${protocolStatusTone(stats.protocolStatus)}`}>
+                    {protocolStatusLabel}
+                  </span>
+                  <span className="text-xs uppercase tracking-[0.16em] text-white/35">
+                    {protocolCopy.eyebrow}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-white/55">
+                  {protocolCopy.description}
+                </p>
+              </div>
+              <div className="grid w-full gap-2 sm:grid-cols-2 lg:max-w-2xl xl:grid-cols-4">
+                {protocolCards.map((item) => (
+                  <div key={item.label} className="min-w-0 border border-white/10 bg-white/[0.025] p-3">
+                    <div className="truncate text-lg font-light text-white md:text-xl">
+                      {isLoading ? (
+                        <span className="block h-6 w-16 animate-pulse bg-white/10" />
+                      ) : (
+                        item.value || copy.homeStats.syncing
+                      )}
+                    </div>
+                    <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/40">
+                      {item.label}
+                    </div>
+                    <p className="mt-2 text-[11px] leading-4 text-white/35">
+                      {item.detail}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
