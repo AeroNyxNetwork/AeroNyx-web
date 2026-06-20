@@ -175,6 +175,11 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     protocolCopy.statusLabels[stats.protocolStatus]
     || protocolCopy.statusLabels.syncing
   );
+  const localRelayStatusLabel = (
+    protocolCopy.localRelayStatusLabels?.[stats.protocolLocalRelayStatus]
+    || protocolCopy.localRelayStatusLabels?.syncing
+    || copy.homeStats.syncing
+  );
   const recoverySources = (stats.protocolRecoverySources || [])
     .map((source) => protocolCopy.recoverySources[source] || source.replace(/_/g, ' '))
     .join(' · ');
@@ -188,6 +193,11 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
       label: protocolCopy.peerSync,
       value: formatCompactCount(stats.protocolValidPeerCount),
       detail: protocolCopy.peerSyncDetail,
+    },
+    {
+      label: protocolCopy.localRelay,
+      value: `${formatCompactCount(stats.protocolLocalRelayConsistentNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
+      detail: `${localRelayStatusLabel} · ${protocolCopy.localRelayDetail}`,
     },
     {
       label: protocolCopy.restartRecovery,
@@ -259,7 +269,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                   {protocolCopy.description}
                 </p>
               </div>
-              <div className="grid w-full gap-2 sm:grid-cols-2 lg:max-w-2xl xl:grid-cols-4">
+              <div className="grid w-full gap-2 sm:grid-cols-2 lg:max-w-3xl xl:grid-cols-5">
                 {protocolCards.map((item) => (
                   <div key={item.label} className="min-w-0 border border-white/10 bg-white/[0.025] p-3">
                     <div className="truncate text-lg font-light text-white md:text-xl">
