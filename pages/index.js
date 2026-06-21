@@ -20,6 +20,8 @@
  * 10. SophisticatedCTA   — Final conversion
  * 
  * Last Modified: v4.0 - Added MemChainShowcase
+ * Last Modified: v4.1 - Added privacy-safe protocol network_story card sourced
+ * from Rust peer discovery summaries and the backend public aggregate endpoint.
  * ============================================
  */
 
@@ -137,8 +139,8 @@ const formatCompactCount = (value) => (
 );
 
 const protocolStatusTone = (status) => {
-  if (status === 'healthy') return 'border-green-400/30 bg-green-400/10 text-green-200';
-  if (status === 'degraded') return 'border-yellow-400/30 bg-yellow-400/10 text-yellow-200';
+  if (['healthy', 'peer_view_ready', 'relay_ready', 'onion_ready'].includes(status)) return 'border-green-400/30 bg-green-400/10 text-green-200';
+  if (['degraded', 'attention'].includes(status)) return 'border-yellow-400/30 bg-yellow-400/10 text-yellow-200';
   return 'border-white/15 bg-white/5 text-white/60';
 };
 
@@ -180,10 +182,25 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     || protocolCopy.localRelayStatusLabels?.syncing
     || copy.homeStats.syncing
   );
+  const networkStoryStatusLabel = (
+    protocolCopy.networkStoryStatusLabels?.[stats.protocolNetworkStoryStatus]
+    || protocolCopy.networkStoryStatusLabels?.syncing
+    || copy.homeStats.syncing
+  );
   const recoverySources = (stats.protocolRecoverySources || [])
     .map((source) => protocolCopy.recoverySources[source] || source.replace(/_/g, ' '))
     .join(' · ');
   const protocolCards = [
+    {
+      label: protocolCopy.networkStory,
+      value: networkStoryStatusLabel,
+      detail: protocolCopy.networkStoryDetail
+        .replace('{nodes}', formatCompactCount(stats.protocolNetworkStoryReportedNodes))
+        .replace('{valid}', formatCompactCount(stats.protocolNetworkStoryMaxValidNodes))
+        .replace('{relays}', formatCompactCount(stats.protocolNetworkStoryMaxRouteableChatRelays))
+        .replace('{onion}', formatCompactCount(stats.protocolNetworkStoryMaxRouteableOnionHops)),
+      tone: protocolStatusTone(stats.protocolNetworkStoryStatus),
+    },
     {
       label: protocolCopy.mesh,
       value: `${formatCompactCount(stats.protocolHealthyNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
@@ -269,10 +286,10 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                   {protocolCopy.description}
                 </p>
               </div>
-              <div className="grid w-full gap-2 sm:grid-cols-2 lg:max-w-3xl xl:grid-cols-5">
+              <div className="grid w-full gap-2 sm:grid-cols-2 lg:max-w-3xl xl:grid-cols-6">
                 {protocolCards.map((item) => (
                   <div key={item.label} className="min-w-0 border border-white/10 bg-white/[0.025] p-3">
-                    <div className="truncate text-lg font-light text-white md:text-xl">
+                    <div className={`truncate text-lg font-light md:text-xl ${item.tone ? `rounded-sm border px-2 py-1 text-sm uppercase tracking-[0.12em] ${item.tone}` : 'text-white'}`}>
                       {isLoading ? (
                         <span className="block h-6 w-16 animate-pulse bg-white/10" />
                       ) : (
