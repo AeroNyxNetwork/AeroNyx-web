@@ -43,9 +43,10 @@
  *   - splitRef.current is assigned during render on purpose (cheap, keeps the
  *     rAF loop dependency-free). Do not move it into the hot loop's deps.
  *
- * Last Modified: v7.4.0 — Restraint pass: copy down to headline + one-line
- *   subhead + CTAs; sparser/dimmer/slower eyes; Lens stripped to scene +
- *   divider + minimal drag hint (removed scanlines, footer monitor, stamp).
+ * Last Modified: v7.5.0 — Protocol positioning pass for investor-grade
+ *   homepage narrative. The hero now frames AeroNyx as an open privacy
+ *   coordination protocol for humans, applications, and autonomous agents,
+ *   while preserving the Lens interaction as the blind-relay proof point.
  * ============================================================================
  */
 
@@ -558,31 +559,63 @@ const NarrativeHero = () => {
 
             {/* ---- Left: copy + CTAs ---- */}
             <div className="text-center lg:text-left order-1">
+              <div
+                className="inline-flex items-center gap-2 border px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] mb-5"
+                style={{
+                  borderColor: 'rgba(151,136,247,0.22)',
+                  background: 'rgba(119,98,243,0.06)',
+                  color: 'rgba(210,205,255,0.78)',
+                }}
+              >
+                Open privacy coordination protocol
+              </div>
+
               <h1 className="font-light leading-[1.05] mb-6"
-                style={{ fontSize: 'clamp(2rem, 3.4vw, 3.4rem)', letterSpacing: '-0.025em' }}>
-                Your AI knows
-                <br className="hidden sm:block" /> everything about you.
+                style={{ fontSize: 'clamp(2.25rem, 4.15vw, 4.45rem)', letterSpacing: '-0.025em' }}>
+                The encrypted
+                <br className="hidden sm:block" /> coordination layer
                 <br />
                 <span className="font-semibold">
-                  No one else <span style={{ color: ACCENT_LT }}>should</span>.
+                  for autonomous <span style={{ color: ACCENT_LT }}>agents</span>.
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg font-light leading-relaxed mb-10 max-w-md mx-auto lg:mx-0"
+              <p className="text-base sm:text-lg font-light leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0"
                 style={{ color: 'rgba(255,255,255,0.6)' }}>
-                A private network for the AI era.
+                AeroNyx lets humans, apps, and AI agents route traffic, exchange encrypted messages,
+                preserve private memory, and coordinate work through a blind, open protocol.
               </p>
 
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-10 max-w-xl mx-auto lg:mx-0">
+                {[
+                  'Blind relay fabric',
+                  'Encrypted Memory Chain',
+                  'Agent-to-agent services',
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="border px-3 py-2 text-[10px] uppercase leading-4 tracking-[0.14em]"
+                    style={{
+                      borderColor: 'rgba(255,255,255,0.08)',
+                      background: 'rgba(255,255,255,0.025)',
+                      color: 'rgba(255,255,255,0.48)',
+                    }}
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-4 items-center lg:items-start justify-center lg:justify-start">
-                <a href="#download-vpn"
+                <a href="#how-it-works"
                   className="px-7 py-3.5 rounded-lg text-sm font-medium tracking-wide transition-transform hover:scale-[1.03]"
                   style={{ background: ACCENT, color: '#fff', boxShadow: `0 0 30px ${ACCENT}55` }}>
-                  Get the private network
+                  Explore the protocol
                 </a>
-                <a href="#how-it-works"
+                <a href="#join-network"
                   className="px-7 py-3.5 rounded-lg text-sm tracking-wide border transition-colors hover:border-white/40"
                   style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.75)' }}>
-                  How it works
+                  Run a node
                 </a>
               </div>
             </div>
