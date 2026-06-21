@@ -144,6 +144,17 @@ const protocolStatusTone = (status) => {
   return 'border-white/15 bg-white/5 text-white/60';
 };
 
+const formatBlockerSummary = (blockerCounts) => {
+  const entries = Object.entries(blockerCounts || {})
+    .filter(([, count]) => Number(count) > 0)
+    .sort((left, right) => Number(right[1]) - Number(left[1]) || left[0].localeCompare(right[0]))
+    .slice(0, 2);
+
+  return entries
+    .map(([key, count]) => `${key.replace(/_/g, ' ')} ${formatCompactCount(count)}`)
+    .join(' · ');
+};
+
 const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   // Live homepage counters are sourced from:
   //   GET /api/privacy_network/vpn/public/network-stats/
@@ -190,6 +201,10 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const recoverySources = (stats.protocolRecoverySources || [])
     .map((source) => protocolCopy.recoverySources[source] || source.replace(/_/g, ' '))
     .join(' · ');
+  const localRelayBlockers = formatBlockerSummary(stats.protocolLocalRelayBlockerCounts);
+  const localRelayDetail = localRelayBlockers
+    ? `${localRelayStatusLabel} · ${localRelayBlockers}`
+    : `${localRelayStatusLabel} · safe ${formatCompactCount(stats.protocolLocalRelaySafeToAdvertiseNodes)} / ${formatCompactCount(stats.protocolReportedNodes)} · runtime ${formatCompactCount(stats.protocolLocalRelayRuntimeReadyNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`;
   const protocolCards = [
     {
       label: protocolCopy.networkStory,
@@ -213,8 +228,8 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     },
     {
       label: protocolCopy.localRelay,
-      value: `${formatCompactCount(stats.protocolLocalRelayConsistentNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
-      detail: `${localRelayStatusLabel} · ${protocolCopy.localRelayDetail}`,
+      value: `${formatCompactCount(stats.protocolLocalRelaySafeToAdvertiseNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
+      detail: localRelayDetail,
     },
     {
       label: protocolCopy.restartRecovery,
