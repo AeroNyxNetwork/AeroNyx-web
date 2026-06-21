@@ -22,6 +22,10 @@
  * Last Modified: v4.0 - Added MemChainShowcase
  * Last Modified: v4.1 - Added privacy-safe protocol network_story card sourced
  * from Rust peer discovery summaries and the backend public aggregate endpoint.
+ * Last Modified: v4.2 - Added peer lifecycle activity sourced from
+ * protocol_status.peer_store.peer_lifecycle. The homepage shows aggregate
+ * accepted/refreshed/rejected peer events only, never node IDs, endpoints,
+ * routes, public keys, encrypted payloads, or social graph edges.
  * ============================================
  */
 
@@ -139,7 +143,7 @@ const formatCompactCount = (value) => (
 );
 
 const protocolStatusTone = (status) => {
-  if (['healthy', 'peer_view_ready', 'relay_ready', 'onion_ready'].includes(status)) return 'border-green-400/30 bg-green-400/10 text-green-200';
+  if (['healthy', 'peer_view_ready', 'relay_ready', 'onion_ready', 'observed'].includes(status)) return 'border-green-400/30 bg-green-400/10 text-green-200';
   if (['degraded', 'attention'].includes(status)) return 'border-yellow-400/30 bg-yellow-400/10 text-yellow-200';
   return 'border-white/15 bg-white/5 text-white/60';
 };
@@ -205,6 +209,20 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const localRelayDetail = localRelayBlockers
     ? `${localRelayStatusLabel} · ${localRelayBlockers}`
     : `${localRelayStatusLabel} · safe ${formatCompactCount(stats.protocolLocalRelaySafeToAdvertiseNodes)} / ${formatCompactCount(stats.protocolReportedNodes)} · runtime ${formatCompactCount(stats.protocolLocalRelayRuntimeReadyNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`;
+  const peerLifecycleOutcomes = stats.protocolPeerLifecycleOutcomeCounts || {};
+  const peerLifecycleEventCounts = stats.protocolPeerLifecycleEventCounts || {};
+  const peerLifecycleStatusLabel = (
+    protocolCopy.peerLifecycleStatusLabels?.[stats.protocolPeerLifecycleStatus]
+    || protocolCopy.peerLifecycleStatusLabels?.syncing
+    || copy.homeStats.syncing
+  );
+  const peerLifecycleDetail = stats.protocolPeerLifecycleRecentEvents > 0
+    ? protocolCopy.peerLifecycleDetail
+      .replace('{accepted}', formatCompactCount(peerLifecycleOutcomes.accepted || 0))
+      .replace('{refreshed}', formatCompactCount(peerLifecycleEventCounts.peer_refreshed || 0))
+      .replace('{rejected}', formatCompactCount(peerLifecycleOutcomes.rejected || 0))
+      .replace('{nodes}', formatCompactCount(stats.protocolPeerLifecycleReportedNodes))
+    : protocolCopy.peerLifecyclePending;
   const protocolCards = [
     {
       label: protocolCopy.networkStory,
@@ -225,6 +243,14 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
       label: protocolCopy.peerSync,
       value: formatCompactCount(stats.protocolValidPeerCount),
       detail: protocolCopy.peerSyncDetail,
+    },
+    {
+      label: protocolCopy.peerLifecycle,
+      value: isLoading
+        ? ''
+        : `${formatCompactCount(stats.protocolPeerLifecycleRecentEvents)} ${peerLifecycleStatusLabel}`,
+      detail: peerLifecycleDetail,
+      tone: protocolStatusTone(stats.protocolPeerLifecycleStatus),
     },
     {
       label: protocolCopy.localRelay,
@@ -301,7 +327,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                   {protocolCopy.description}
                 </p>
               </div>
-              <div className="grid w-full gap-2 sm:grid-cols-2 lg:max-w-3xl xl:grid-cols-6">
+              <div className="grid w-full gap-2 sm:grid-cols-2 lg:max-w-4xl xl:grid-cols-7">
                 {protocolCards.map((item) => (
                   <div key={item.label} className="min-w-0 border border-white/10 bg-white/[0.025] p-3">
                     <div className={`truncate text-lg font-light md:text-xl ${item.tone ? `rounded-sm border px-2 py-1 text-sm uppercase tracking-[0.12em] ${item.tone}` : 'text-white'}`}>
