@@ -4,7 +4,9 @@
  * ============================================
  * 
  * 
- * Last Modified: v2.0 - Business narrative optimization
+ * Last Modified: v2.1 - Reframed the section from generic cloud payment
+ * automation into AeroNyx's privacy coordination protocol: blind relay,
+ * signed peer state, encrypted memory, and agent-native service access.
  * ============================================
  */
 
@@ -23,53 +25,53 @@ const HowAILWorks = () => {
   const steps = [
     {
       phase: "The Problem",
-      title: "AI Agents Can't Use Infrastructure",
-      description: "Current cloud services require humans to sign up, verify emails, and manage credit cards. AI agents can't do any of this, blocking 99% of automation potential.",
-      businessContext: "Every AI agent hitting AWS Lambda needs a human to set up the account. This breaks the promise of autonomous systems.",
+      title: "Coordination Still Requires Trust",
+      description: "Humans, apps, and AI agents need to route traffic, exchange messages, and preserve memory. Today those flows usually pass through services that can observe content, metadata, or relationships.",
+      businessContext: "The next internet needs private coordination primitives, not another centralized account system that sees who talks to whom.",
       technical: [
-        "No API can create accounts autonomously",
-        "CAPTCHA blocks non-human access",
-        "Credit card verification requires humans",
-        "Monthly billing doesn't work for agents"
+        "Central relays can become surveillance points",
+        "App servers often mix routing, identity, and content access",
+        "Agent workflows need machine-readable access control",
+        "Private memory should travel without vendor lock-in"
       ],
       visual: <ProblemVisual />
     },
     {
       phase: "The Protocol",
-      title: "HTTP 402: The Missing Status Code",
-      description: "Designed in 1997 but never implemented. We built x402 - a protocol that lets any API request include instant payment, enabling true machine-to-machine commerce.",
-      businessContext: "With x402, infrastructure becomes pay-per-use by default. No accounts, no subscriptions, just instant transactions.",
+      title: "Blind Privacy Fabric",
+      description: "AeroNyx Rust nodes exchange signed peer summaries, route encrypted payloads, and report only aggregate health. Nodes can help move data without reading user content.",
+      businessContext: "This is the trust boundary investors and users can understand: the protocol coordinates work, but the infrastructure is intentionally blind.",
       technical: [
-        "HTTP 402 + Lightning/USDC payments",
-        "Request → Price quote → Payment → Access",
-        "Works with existing HTTP infrastructure",
-        "Sub-second settlement on Base"
+        "Persistent peer store with lifecycle recovery",
+        "Heartbeat summaries for privacy-safe public status",
+        "Encrypted packet and traffic counters only in aggregate",
+        "Foundation for future multi-hop routing"
       ],
       visual: <ProtocolVisual />
     },
     {
-      phase: "The Trust Layer",
-      title: "Zero-Knowledge Hardware Proofs",
-      description: "Every node cryptographically proves its hardware capabilities without revealing sensitive information. Agents can verify quality before paying.",
-      businessContext: "Eliminates fake nodes and ensures service quality. Users always get what they pay for, guaranteed by mathematics.",
+      phase: "The State Layer",
+      title: "Memory Chain Travels With The User",
+      description: "Memory Chain is designed as an encrypted, signed, append-only record for private context. Clients and agents can sync useful state without handing raw history to an operator.",
+      businessContext: "If personal AI becomes important, private memory becomes infrastructure. AeroNyx treats it as user-owned protocol state.",
       technical: [
-        "Hardware attestation via TEE",
-        "ZK-proofs of compute capacity",
-        "Privacy-preserving verification",
-        "On-chain reputation system"
+        "Ed25519 signed memory facts",
+        "Hash-linked versions for auditability",
+        "Encrypted storage and sync channels",
+        "Coordinator cannot read raw content"
       ],
       visual: <TrustVisual />
     },
     {
-      phase: "The Impact",
-      title: "Real-Time Economic Settlement",
-      description: "Payments flow instantly as services are consumed. No invoices, no delays, no disputes. Just pure, frictionless machine commerce.",
-      businessContext: "Node operators earn in real-time. AI agents pay only for what they use. The economy moves at the speed of code.",
+      phase: "The Service Layer",
+      title: "Agent-Native Services",
+      description: "x402-compatible payment flows let services quote access, receive payment, and execute work in a format autonomous agents can understand.",
+      businessContext: "AeroNyx can become the private service layer where agents route, remember, pay, and coordinate without defaulting to human-operated SaaS accounts.",
       technical: [
-        "Microsecond payment verification",
-        "Automatic resource allocation",
-        "Dynamic pricing based on demand",
-        "Instant revenue for node operators"
+        "Request, quote, payment, execution lifecycle",
+        "Wallet-based identity and service permissions",
+        "Privacy protocol services before generic marketplaces",
+        "Nodeboard and public stats expose health, not user data"
       ],
       visual: <ImpactVisual />
     }
@@ -92,8 +94,8 @@ const HowAILWorks = () => {
                 From Problem to Protocol
               </h2>
               <p className="text-base md:text-xl text-white/60 max-w-3xl leading-relaxed">
-                How we're solving the AI infrastructure paradox with HTTP 402 payments 
-                and zero-knowledge proofs — making infrastructure truly autonomous.
+                AeroNyx is the privacy coordination protocol for encrypted routing,
+                private memory, and agent-to-agent services.
               </p>
             </motion.div>
           </div>
@@ -164,7 +166,7 @@ const HowAILWorks = () => {
                 {/* Business context - NEW: Adds commercial value */}
                 <div className="bg-white/5 border-l-2 border-white/20 pl-4 py-3 mb-6">
                   <div className="text-xs uppercase tracking-wider text-white/40 mb-1">
-                    Business Impact
+                    Protocol Impact
                   </div>
                   <p className="text-sm text-white/80 leading-relaxed">
                     {steps[activeStep].businessContext}
@@ -265,11 +267,11 @@ const ProblemVisual = () => (
       >
         <div className="text-4xl mb-2">❌</div>
         <div className="text-sm text-white/60 max-w-xs">
-          "Please verify email"
+          "Route this privately"
           <br />
-          "Enter credit card"
+          "Keep memory encrypted"
           <br />
-          "Complete CAPTCHA"
+          "Do not expose the graph"
         </div>
       </motion.div>
       
@@ -280,7 +282,7 @@ const ProblemVisual = () => (
         transition={{ delay: 0.6 }}
         className="text-xs text-white/40"
       >
-        Infrastructure (Unreachable)
+        Trusted infrastructure boundary
       </motion.div>
     </div>
   </div>
@@ -297,8 +299,8 @@ const ProtocolVisual = () => (
         transition={{ delay: 0 }}
         className="bg-white/5 rounded p-2 sm:p-3 border border-white/10"
       >
-        <div className="text-xs text-white/40 mb-1">1. Request</div>
-        <code className="text-xs break-all">GET /bandwidth</code>
+        <div className="text-xs text-white/40 mb-1">1. Peer Summary</div>
+        <code className="text-xs break-all">signed peer view</code>
       </motion.div>
       
       {/* 402 Response */}
@@ -308,9 +310,9 @@ const ProtocolVisual = () => (
         transition={{ delay: 0.3 }}
         className="bg-white/5 rounded p-2 sm:p-3 border border-purple-500/30"
       >
-        <div className="text-xs text-purple-400 mb-1">2. Price Quote</div>
-        <code className="text-xs break-all">402 Payment Required</code>
-        <div className="text-xs text-white/60 mt-1">Price: $0.008</div>
+        <div className="text-xs text-purple-400 mb-1">2. Health Sync</div>
+        <code className="text-xs break-all">heartbeat aggregate</code>
+        <div className="text-xs text-white/60 mt-1">No user payloads</div>
       </motion.div>
       
       {/* Payment */}
@@ -320,8 +322,8 @@ const ProtocolVisual = () => (
         transition={{ delay: 0.6 }}
         className="bg-white/5 rounded p-2 sm:p-3 border border-green-500/30"
       >
-        <div className="text-xs text-green-400 mb-1">3. Instant Payment</div>
-        <code className="text-xs break-all">X-PAYMENT: 0x...</code>
+        <div className="text-xs text-green-400 mb-1">3. Blind Relay</div>
+        <code className="text-xs break-all">ciphertext packet</code>
       </motion.div>
       
       {/* Access Granted */}
@@ -331,8 +333,8 @@ const ProtocolVisual = () => (
         transition={{ delay: 0.9 }}
         className="bg-white/5 rounded p-2 sm:p-3 border border-white/10"
       >
-        <div className="text-xs text-white/40 mb-1">4. Access Granted</div>
-        <code className="text-xs break-all">200 OK + Resource</code>
+        <div className="text-xs text-white/40 mb-1">4. Public Status</div>
+        <code className="text-xs break-all">aggregate network stats</code>
       </motion.div>
       
       <motion.div
@@ -341,7 +343,7 @@ const ProtocolVisual = () => (
         transition={{ delay: 1.2 }}
         className="text-center text-xs text-white/40 pt-2"
       >
-        Total time: &lt;200ms
+        Nodes coordinate without reading content
       </motion.div>
     </div>
   </div>
@@ -359,8 +361,8 @@ const TrustVisual = () => (
         transition={{ duration: 0.5 }}
       >
         <div className="text-center">
-          <div className="text-sm md:text-base text-white/80 font-mono">ZK</div>
-          <div className="text-xs text-white/40">Verified</div>
+          <div className="text-sm md:text-base text-white/80 font-mono">MC</div>
+          <div className="text-xs text-white/40">Encrypted</div>
         </div>
       </motion.div>
       
@@ -383,7 +385,7 @@ const TrustVisual = () => (
         />
       ))}
       
-      {/* Hardware specs (proven without revealing) */}
+      {/* Memory facts stay encrypted while versions remain auditable. */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -391,9 +393,9 @@ const TrustVisual = () => (
         className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-center w-full"
       >
         <div className="text-xs text-white/40">
-          Proven: 32GB RAM, 8-core CPU
+          Signed facts, hash-linked versions
           <br />
-          <span className="text-white/60">Without revealing identity</span>
+          <span className="text-white/60">Without exposing raw history</span>
         </div>
       </motion.div>
     </div>
@@ -406,7 +408,7 @@ const ImpactVisual = () => (
     <div className="space-y-4 w-full">
       {/* Transaction flow */}
       <div className="text-center mb-6">
-        <div className="text-sm text-white/40 mb-4">Live Settlement</div>
+        <div className="text-sm text-white/40 mb-4">Service Lifecycle</div>
         
         {/* Animated transactions */}
         {[1, 2, 3].map((i) => (
@@ -419,9 +421,9 @@ const ImpactVisual = () => (
           >
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-400" />
-              <span className="text-xs text-white/60">Node {i}</span>
+              <span className="text-xs text-white/60">Step {i}</span>
             </div>
-            <span className="text-xs text-green-400">+$0.008</span>
+            <span className="text-xs text-green-400">{['quote', 'pay', 'run'][i - 1]}</span>
           </motion.div>
         ))}
       </div>
@@ -435,16 +437,16 @@ const ImpactVisual = () => (
       >
         <div className="text-center">
           <div className="text-2xl font-light text-white mb-1">
-            <span className="text-green-400">&lt;1s</span>
+            <span className="text-green-400">402</span>
           </div>
-          <div className="text-xs text-white/40">Settlement Time</div>
+          <div className="text-xs text-white/40">Payment Flow</div>
         </div>
         
         <div className="text-center">
           <div className="text-2xl font-light text-white mb-1">
-            <span className="text-green-400">$0</span>
+            <span className="text-green-400">E2E</span>
           </div>
-          <div className="text-xs text-white/40">Disputes</div>
+          <div className="text-xs text-white/40">Payload Privacy</div>
         </div>
       </motion.div>
     </div>

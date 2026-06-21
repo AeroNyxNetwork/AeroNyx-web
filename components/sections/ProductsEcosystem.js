@@ -7,8 +7,9 @@
  * dedicated visual, OpenClaw integration callout, and memory chain
  * block visualization.
  * 
- * Last Modified: v2.2 - Reframed consumer privacy access and MemChain sync
- * around the AeroNyx privacy protocol instead of generic VPN positioning.
+ * Last Modified: v2.3 - Removed unverified scale/cost claims and reframed
+ * the product system as privacy protocol applications, agent payment rails,
+ * encrypted service relay, protocol foundation, and Memory Chain.
  * ============================================
  */
 
@@ -53,27 +54,27 @@ const ProductsEcosystem = () => {
     },
     {
       id: 'compute',
-      name: 'Distributed Compute',
-      category: 'For AI Developers',
-      tagline: 'GPU power on demand',
+      name: 'Agent Payment Rails',
+      category: 'Protocol Services',
+      tagline: 'Machine-readable access for autonomous work',
       
       useCase: {
-        pain: 'AWS charges $100/month even when you use 5 days',
-        solution: 'Rent GPU power by the hour via x402 instant payments',
-        savings: 'Pay $20 for what you actually use — 80% cost reduction'
+        pain: 'Agents still need human-owned accounts, API keys, billing pages, and trusted middlemen to use paid services',
+        solution: 'AeroNyx prepares x402-compatible flows where a service quotes, an agent pays, and access is granted per request',
+        savings: 'Turn paid access into a protocol primitive instead of another SaaS account.'
       },
       
       features: [
-        'H100 & A100 GPUs available globally',
-        'ZKP-verified hardware capabilities',
-        'Pay only for compute time used',
-        'Scale from 1 to 1000 GPUs instantly'
+        'Request, quote, payment, and execution lifecycle',
+        'Wallet-based identity for humans, apps, and agents',
+        'Built for privacy-preserving service access',
+        'Compatible with future node-operated protocol services'
       ],
       
       comparison: {
-        traditional: 'AWS Lambda: $0.20/GB-hour',
-        aeronyx: 'AeroNyx: $0.05/GB-hour',
-        savings: 'Save 75%'
+        traditional: 'Traditional API: account + billing portal',
+        aeronyx: 'AeroNyx: quote + pay + execute',
+        savings: 'Agent-native access'
       },
       
       status: 'beta',
@@ -84,27 +85,27 @@ const ProductsEcosystem = () => {
     },
     {
       id: 'cdn',
-      name: 'Decentralized CDN',
-      category: 'For Enterprises',
-      tagline: 'Global content delivery',
+      name: 'Encrypted Service Relay',
+      category: 'Developer Layer',
+      tagline: 'Private routing for app and agent traffic',
       
       useCase: {
-        pain: 'Cloudflare charges $10K/month for global CDN',
-        solution: 'Distributed nodes deliver content with x402 pay-per-request pricing',
-        savings: 'Cut CDN costs by 70% with our decentralized network'
+        pain: 'Apps and agents need to exchange data without exposing content, social graphs, or user-level telemetry to infrastructure operators',
+        solution: 'AeroNyx nodes relay ciphertext and signed metadata while public dashboards only expose aggregate protocol health',
+        savings: 'Ship privacy-preserving services without running a centralized trust boundary.'
       },
       
       features: [
-        '15,000+ edge nodes in 147 countries',
-        'Sub-50ms latency worldwide',
-        'DDoS protection via network distribution',
-        'Pay per GB transferred, not monthly fees'
+        'Blind relay boundary for encrypted payloads',
+        'Offline delivery primitives for secure messaging',
+        'Privacy-safe lifecycle and peer health reporting',
+        'Foundation for future multi-hop routing'
       ],
       
       comparison: {
-        traditional: 'Cloudflare: $200/TB',
-        aeronyx: 'AeroNyx: $50/TB',
-        savings: 'Save 75%'
+        traditional: 'Central relay: operator sees the trust boundary',
+        aeronyx: 'AeroNyx: nodes route ciphertext only',
+        savings: 'Lower metadata exposure'
       },
       
       status: 'coming-soon',
@@ -115,27 +116,27 @@ const ProductsEcosystem = () => {
     },
     {
       id: 'foundation',
-      name: 'Privacy Network',
+      name: 'Privacy Protocol Foundation',
       category: 'Foundation Layer',
-      tagline: 'The infrastructure beneath',
+      tagline: 'Open Rust nodes, signed peer state, public health',
       
       useCase: {
-        pain: 'Building privacy infrastructure from scratch costs millions',
-        solution: 'Build on our battle-tested network with 15,000+ verified nodes',
-        savings: 'Skip 2+ years of development and millions in costs'
+        pain: 'Privacy products fail when every feature depends on a centralized service that can observe or be forced to disclose user behavior',
+        solution: 'AeroNyx separates protocol state, node operations, public aggregates, and user-encrypted payloads from the start',
+        savings: 'Build on an auditable privacy boundary instead of retrofitting one later.'
       },
       
       features: [
-        'Zero-knowledge proof verification',
-        'End-to-end encrypted communications',
-        'Decentralized node network',
-        'Privacy-preserving routing'
+        'Rust node peer discovery and persistent peer store',
+        'Privacy-safe heartbeat and lifecycle event reporting',
+        'Nodeboard operations for health, capacity, and incidents',
+        'Public network stats without user-level surveillance'
       ],
       
       comparison: {
-        traditional: 'Build from scratch: $2M+ dev cost',
-        aeronyx: 'AeroNyx SDK: Start building today',
-        savings: 'Save 2+ years'
+        traditional: 'App stack: centralized observability first',
+        aeronyx: 'AeroNyx: protocol privacy boundary first',
+        savings: 'Credible by design'
       },
       
       status: 'live',
@@ -147,24 +148,24 @@ const ProductsEcosystem = () => {
     {
       id: 'memchain',
       name: 'MemChain',
-      category: 'AI Memory Layer',
-      tagline: 'Blockchain for AI memories',
+      category: 'Encrypted Memory Layer',
+      tagline: 'Versioned private memory for humans and agents',
       
       useCase: {
         pain: 'AI memories are trapped in vendor silos — switch tools, lose everything',
-        solution: 'A personal, encrypted memory chain that your AI carries across any platform',
-        savings: 'Own your AI\'s knowledge forever. No vendor lock-in.'
+        solution: 'A personal, encrypted append-only memory chain that can travel across clients and agent tools',
+        savings: 'Own the private context layer without exposing raw conversation history.'
       },
       
       features: [
         'Ed25519 signed, SHA-256 hashed memory facts',
         'Merkle tree blocks mined every hour',
         'Cross-device sync via encrypted protocol channels',
-        'OpenClaw AI integration with wallet-based identity'
+        'Agent integration with wallet-based identity'
       ],
       
       comparison: {
-        traditional: 'ChatGPT memory: Owned by OpenAI',
+        traditional: 'Vendor memory: locked to one platform',
         aeronyx: 'MemChain: Owned by you, on your devices',
         savings: 'Total data sovereignty'
       },
@@ -208,11 +209,11 @@ const ProductsEcosystem = () => {
           {/* Header */}
           <div className="text-center mb-8 md:mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-light mb-4 md:mb-6">
-              Products & Use Cases
+              Protocol Layers & Products
             </h2>
             <p className="text-base md:text-xl text-white/60 max-w-3xl mx-auto px-4">
-              From consumer privacy to enterprise infrastructure — all enabled by 
-              x402 instant payments and zero-knowledge verification.
+              AeroNyx separates the open privacy protocol from the products built on
+              top: privacy access, encrypted relay, Memory Chain, and agent-native services.
             </p>
           </div>
           
@@ -276,7 +277,7 @@ const ProductsEcosystem = () => {
                           <p className="text-sm text-white/70">{product.useCase.solution}</p>
                         </div>
                         <div>
-                          <div className="text-xs uppercase tracking-wider text-green-400 mb-1">Savings</div>
+                          <div className="text-xs uppercase tracking-wider text-green-400 mb-1">Protocol Value</div>
                           <p className="text-sm text-green-400 font-medium">{product.useCase.savings}</p>
                         </div>
                       </div>
@@ -284,7 +285,7 @@ const ProductsEcosystem = () => {
                     
                     {/* Value Comparison */}
                     <div className="mb-6 md:mb-8 p-4 bg-black/50 border border-white/10 rounded-lg">
-                      <div className="text-xs uppercase tracking-wider text-white/40 mb-3">Cost Comparison</div>
+                      <div className="text-xs uppercase tracking-wider text-white/40 mb-3">Architecture Comparison</div>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-white/60">Traditional</span>
@@ -342,12 +343,12 @@ const ProductsEcosystem = () => {
             className="mt-12 md:mt-16 text-center p-6 md:p-8 bg-white/5 border border-white/10 rounded-xl"
           >
             <h3 className="text-xl md:text-2xl font-light mb-3">
-              Why x402 Makes This Possible
+              Why This Belongs At The Protocol Layer
             </h3>
             <p className="text-sm md:text-base text-white/60 max-w-2xl mx-auto">
-              Traditional infrastructure requires monthly commitments because processing payments 
-              is expensive. With x402 instant settlements, we can offer true pay-per-use pricing — 
-              you only pay for the exact resources you consume, down to the millisecond.
+              Privacy access, encrypted messaging, private memory, and agent-to-agent services all
+              need the same invariant: infrastructure can route, meter, and coordinate work without
+              reading user content or turning public health data into user surveillance.
             </p>
           </motion.div>
           
@@ -415,7 +416,7 @@ const VPNVisual = () => (
           </svg>
         </div>
       </div>
-      <div className="text-sm text-white/60">Secure • Private • Fast</div>
+      <div className="text-sm text-white/60">Blind • Private • Verifiable</div>
     </div>
   </div>
 );
@@ -431,7 +432,7 @@ const ComputeVisual = () => (
           animate={{ opacity: 1 }}
           transition={{ delay: i * 0.1 }}
         >
-          <div className="text-xs text-white/40">GPU</div>
+          <div className="text-xs text-white/40">402</div>
         </motion.div>
       ))}
     </div>
@@ -461,7 +462,7 @@ const CDNVisual = () => (
           );
         })}
       </motion.div>
-      <div className="mt-4 text-xs text-white/40">Global Network</div>
+      <div className="mt-4 text-xs text-white/40">Encrypted Relay</div>
     </div>
   </div>
 );
@@ -496,7 +497,7 @@ const MemChainProductVisual = () => (
       </div>
       
       <div className="text-center pt-4 text-xs text-white/40">
-        🧠 Immutable AI Memory Chain
+        Private Memory Chain
       </div>
     </div>
   </div>
