@@ -29,6 +29,10 @@
  * Last Modified: v4.3 - Replaced the crowded seven-column protocol debug
  * cards with a compact signed peer fabric panel. The homepage now shows a
  * single protocol story with four readable metrics and a node-link visual.
+ * Last Modified: v4.4 - Added public blind relay proof display sourced from
+ * protocol_status.peer_store.blind_relay. The homepage now emphasizes actual
+ * encrypted relay probe evidence instead of presenting lifecycle events as a
+ * primary product claim.
  * ============================================
  */
 
@@ -151,6 +155,8 @@ const protocolStatusTone = (status) => {
   return 'border-white/15 bg-white/5 text-white/60';
 };
 
+const protocolText = (protocolCopy, key, fallback) => protocolCopy[key] || fallback;
+
 const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   // Live homepage counters are sourced from:
   //   GET /api/privacy_network/vpn/public/network-stats/
@@ -189,6 +195,11 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     || protocolCopy.networkStoryStatusLabels?.syncing
     || copy.homeStats.syncing
   );
+  const blindRelayStatusLabel = (
+    protocolCopy.blindRelayStatusLabels?.[stats.protocolBlindRelayStatus]
+    || protocolCopy.blindRelayStatusLabels?.syncing
+    || copy.homeStats.syncing
+  );
   const recoverySources = (stats.protocolRecoverySources || [])
     .map((source) => protocolCopy.recoverySources[source] || source.replace(/_/g, ' '))
     .join(' · ');
@@ -201,6 +212,20 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
       .replace('{rejected}', formatCompactCount(peerLifecycleOutcomes.rejected || 0))
       .replace('{nodes}', formatCompactCount(stats.protocolPeerLifecycleReportedNodes))
     : protocolCopy.peerLifecyclePending;
+  const blindRelayFailures = (
+    Number(stats.protocolBlindRelayRejected || 0)
+    + Number(stats.protocolBlindRelayForwardFailed || 0)
+    + Number(stats.protocolBlindRelayNoRoute || 0)
+  );
+  const blindRelayProofDetail = protocolText(
+    protocolCopy,
+    'blindRelayProofDetail',
+    '{forwarded} forwarded · {terminal} terminal · {failures} failures across {nodes} nodes'
+  )
+    .replace('{forwarded}', formatCompactCount(stats.protocolBlindRelayForwarded))
+    .replace('{terminal}', formatCompactCount(stats.protocolBlindRelayTerminal))
+    .replace('{failures}', formatCompactCount(blindRelayFailures))
+    .replace('{nodes}', formatCompactCount(stats.protocolBlindRelayReportedNodes));
   const fabricMetrics = [
     {
       label: protocolCopy.mesh,
@@ -208,9 +233,9 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
       detail: protocolCopy.meshDetail,
     },
     {
-      label: protocolCopy.peerSync,
-      value: formatCompactCount(stats.protocolValidPeerCount),
-      detail: protocolCopy.peerSyncDetail,
+      label: protocolText(protocolCopy, 'blindRelayProof', 'Relay Proof'),
+      value: `${formatCompactCount(stats.protocolBlindRelayForwarded)} / ${formatCompactCount(stats.protocolBlindRelayTerminal)}`,
+      detail: blindRelayProofDetail,
     },
     {
       label: protocolCopy.peerLifecycle,
@@ -292,6 +317,9 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                   <span className="border border-white/10 bg-white/[0.025] px-2.5 py-1">
                     {formatCompactCount(stats.protocolNetworkStoryMaxValidNodes)} {protocolCopy.peerSync}
                   </span>
+                  <span className={`border px-2.5 py-1 ${protocolStatusTone(stats.protocolBlindRelayStatus)}`}>
+                    {blindRelayStatusLabel} · {protocolText(protocolCopy, 'blindRelayProof', 'Relay Proof')}
+                  </span>
                 </div>
               </div>
 
@@ -317,11 +345,22 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                         {index === 0
                           ? protocolCopy.mesh
                           : index === meshNodeCount - 1
-                            ? protocolCopy.restartRecovery
+                            ? protocolText(protocolCopy, 'blindRelayProof', 'Relay Proof')
                             : protocolCopy.peerSync}
                       </div>
                     </div>
                   ))}
+                </div>
+                <div className="absolute bottom-4 left-5 right-5 z-10 grid gap-2 text-[10px] uppercase tracking-[0.14em] text-white/35 sm:grid-cols-3">
+                  <span className="border border-white/10 bg-black/40 px-2.5 py-2">
+                    {formatCompactCount(stats.protocolBlindRelayForwarded)} {protocolText(protocolCopy, 'blindRelayForwarded', 'forwarded')}
+                  </span>
+                  <span className="border border-white/10 bg-black/40 px-2.5 py-2">
+                    {formatCompactCount(stats.protocolBlindRelayTerminal)} {protocolText(protocolCopy, 'blindRelayTerminal', 'terminal')}
+                  </span>
+                  <span className="border border-white/10 bg-black/40 px-2.5 py-2">
+                    {formatCompactCount(blindRelayFailures)} {protocolText(protocolCopy, 'blindRelayFailures', 'failures')}
+                  </span>
                 </div>
               </div>
             </div>
