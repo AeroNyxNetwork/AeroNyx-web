@@ -7,7 +7,8 @@
  * real typewriter effect (character-by-character, blinking cursor,
  * realistic inter-line delays). Added staggered pillar entrance.
  * 
- * Last Modified: v2.0 - Typewriter terminal + stagger animations
+ * Last Modified: v2.1 - Reframed Memory Chain sync as encrypted protocol
+ * channels over the AeroNyx privacy fabric instead of VPN-tunnel positioning.
  * ============================================
  */
 
@@ -49,7 +50,7 @@ const MemChainShowcase = () => {
             <p className="text-base md:text-xl text-white/60 max-w-3xl mx-auto leading-relaxed">
               Every conversation, every preference, every insight — stored as 
               cryptographically signed facts on your personal memory chain. 
-              Synced across all your devices through the encrypted VPN tunnel.
+              Synced across your devices through encrypted AeroNyx protocol channels.
               <span className="text-white font-medium"> No cloud. No third party. Just you.</span>
             </p>
           </motion.div>
@@ -106,8 +107,8 @@ const MemChainShowcase = () => {
                 {
                   icon: "👻",
                   title: "Invisible",
-                  description: "Memory sync hides inside normal VPN traffic. Network observers see nothing unusual.",
-                  detail: "0xAE multiplexing inside ChaCha20-Poly1305 tunnel"
+                  description: "Memory sync travels as encrypted protocol traffic. Network observers see ciphertext, not meaning.",
+                  detail: "0xAE multiplexing inside ChaCha20-Poly1305 protocol frames"
                 }
               ].map((pillar, i) => (
                 <motion.div
@@ -420,7 +421,7 @@ const SyncArrows = () => (
         <path d="M0 8h28M20 2l8 6-8 6" stroke="currentColor" strokeWidth="2" />
       </svg>
     </motion.div>
-    <div className="text-xs text-white/30">encrypted tunnel</div>
+    <div className="text-xs text-white/30">encrypted protocol channel</div>
     <motion.div animate={{ x: [0, -8, 0] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }} className="text-purple-400">
       <svg width="32" height="16" viewBox="0 0 32 16" fill="none">
         <path d="M32 8H4M12 2L4 8l8 6" stroke="currentColor" strokeWidth="2" />
@@ -465,14 +466,14 @@ const OpenClawTeaser = () => (
       <div className="p-6 md:p-8">
         <h3 className="text-xl md:text-2xl font-light mb-3">AI That Truly Knows You</h3>
         <p className="text-sm text-white/60 leading-relaxed mb-6">
-          OpenClaw connects to your personal MemChain through the AeroNyx VPN. 
+          OpenClaw connects to your personal MemChain through the AeroNyx privacy fabric. 
           Your AI assistant builds genuine understanding over time — and that 
           knowledge belongs to you, not a corporation.
         </p>
         
         <div className="space-y-3 mb-6">
           <IntegrationPoint text="Wallet-derived identity — backup your wallet, backup your memories" />
-          <IntegrationPoint text="VPN tunnel carries memories invisibly alongside normal traffic" />
+          <IntegrationPoint text="Encrypted protocol channels carry memories as ciphertext" />
           <IntegrationPoint text="Switch AI models anytime — your memory chain stays with you" />
           <IntegrationPoint text="Local-first: works offline, syncs when connected" />
         </div>

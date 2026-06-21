@@ -7,7 +7,8 @@
  * dedicated visual, OpenClaw integration callout, and memory chain
  * block visualization.
  * 
- * Last Modified: v2.1 - Added MemChain product
+ * Last Modified: v2.2 - Reframed consumer privacy access and MemChain sync
+ * around the AeroNyx privacy protocol instead of generic VPN positioning.
  * ============================================
  */
 
@@ -21,32 +22,32 @@ const ProductsEcosystem = () => {
   const products = [
     {
       id: 'vpn',
-      name: 'AeroNyx VPN',
-      category: 'Consumer Application',
-      tagline: 'Privacy without compromise',
+      name: 'AeroNyx Privacy Access',
+      category: 'Protocol Application',
+      tagline: 'Private routing without trusting a company',
       
       useCase: {
-        pain: 'Traditional VPNs log your data and sell it to advertisers',
-        solution: 'Zero-knowledge architecture ensures we cannot see your data, even if we wanted to',
-        savings: 'Pay only when you use it. No monthly subscriptions.'
+        pain: 'Centralized privacy apps ask users to trust one company with all routing metadata',
+        solution: 'AeroNyx routes through a blind privacy protocol where nodes see encrypted operations, not user content',
+        savings: 'Use privacy as a protocol primitive, not another subscription silo.'
       },
       
       features: [
-        'Cryptographically enforced no-logs guarantee',
-        'Distributed exit nodes across 50+ countries',
-        'AI-optimized routing for best performance',
-        'Pay with crypto for full anonymity'
+        'Blind relay fabric for encrypted routing',
+        'Public aggregate network health without user-level telemetry',
+        'Privacy access for humans, apps, and autonomous agents',
+        'x402-ready payment rails for protocol services'
       ],
       
       comparison: {
-        traditional: 'ExpressVPN: $12.95/month',
-        aeronyx: 'AeroNyx: Pay per use, ~$3-5/month',
-        savings: 'Save 60-70%'
+        traditional: 'Centralized VPN: trust the provider',
+        aeronyx: 'AeroNyx: verify the protocol boundary',
+        savings: 'Own the privacy layer'
       },
       
       status: 'live',
       cta: {
-        text: 'Download VPN',
+        text: 'Get Privacy Access',
         link: '#download-vpn'
       }
     },
@@ -158,7 +159,7 @@ const ProductsEcosystem = () => {
       features: [
         'Ed25519 signed, SHA-256 hashed memory facts',
         'Merkle tree blocks mined every hour',
-        'Cross-device sync via encrypted VPN tunnel',
+        'Cross-device sync via encrypted protocol channels',
         'OpenClaw AI integration with wallet-based identity'
       ],
       

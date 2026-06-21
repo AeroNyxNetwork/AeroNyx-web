@@ -65,7 +65,9 @@ const VPNDownloadSection = () => {
   );
 };
 
-// VPN App Visual - Responsive
+// Privacy Access app visual - responsive.
+// Visible copy uses AeroNyx Privacy Network language while preserving the
+// existing component contract consumed by the homepage.
 const VPNAppVisual = ({ copy }) => {
   const [isConnected, setIsConnected] = useState(false);
   
@@ -87,7 +89,7 @@ const VPNAppVisual = ({ copy }) => {
           <div className="flex-1 flex flex-col">
             {/* Logo */}
             <div className="text-center mb-6 md:mb-8">
-              <div className="text-xl md:text-2xl font-light mb-1 md:mb-2">AeroNyx VPN</div>
+              <div className="text-xl md:text-2xl font-light mb-1 md:mb-2">AeroNyx Privacy Access</div>
               <div className="text-xs md:text-sm text-white/40">{copy.privacyNetwork}</div>
             </div>
             
