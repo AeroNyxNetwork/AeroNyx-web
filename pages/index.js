@@ -26,6 +26,9 @@
  * protocol_status.peer_store.peer_lifecycle. The homepage shows aggregate
  * accepted/refreshed/rejected peer events only, never node IDs, endpoints,
  * routes, public keys, encrypted payloads, or social graph edges.
+ * Last Modified: v4.3 - Replaced the crowded seven-column protocol debug
+ * cards with a compact signed peer fabric panel. The homepage now shows a
+ * single protocol story with four readable metrics and a node-link visual.
  * ============================================
  */
 
@@ -148,17 +151,6 @@ const protocolStatusTone = (status) => {
   return 'border-white/15 bg-white/5 text-white/60';
 };
 
-const formatBlockerSummary = (blockerCounts) => {
-  const entries = Object.entries(blockerCounts || {})
-    .filter(([, count]) => Number(count) > 0)
-    .sort((left, right) => Number(right[1]) - Number(left[1]) || left[0].localeCompare(right[0]))
-    .slice(0, 2);
-
-  return entries
-    .map(([key, count]) => `${key.replace(/_/g, ' ')} ${formatCompactCount(count)}`)
-    .join(' · ');
-};
-
 const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   // Live homepage counters are sourced from:
   //   GET /api/privacy_network/vpn/public/network-stats/
@@ -192,11 +184,6 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     protocolCopy.statusLabels[stats.protocolStatus]
     || protocolCopy.statusLabels.syncing
   );
-  const localRelayStatusLabel = (
-    protocolCopy.localRelayStatusLabels?.[stats.protocolLocalRelayStatus]
-    || protocolCopy.localRelayStatusLabels?.syncing
-    || copy.homeStats.syncing
-  );
   const networkStoryStatusLabel = (
     protocolCopy.networkStoryStatusLabels?.[stats.protocolNetworkStoryStatus]
     || protocolCopy.networkStoryStatusLabels?.syncing
@@ -205,17 +192,8 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const recoverySources = (stats.protocolRecoverySources || [])
     .map((source) => protocolCopy.recoverySources[source] || source.replace(/_/g, ' '))
     .join(' · ');
-  const localRelayBlockers = formatBlockerSummary(stats.protocolLocalRelayBlockerCounts);
-  const localRelayDetail = localRelayBlockers
-    ? `${localRelayStatusLabel} · ${localRelayBlockers}`
-    : `${localRelayStatusLabel} · safe ${formatCompactCount(stats.protocolLocalRelaySafeToAdvertiseNodes)} / ${formatCompactCount(stats.protocolReportedNodes)} · runtime ${formatCompactCount(stats.protocolLocalRelayRuntimeReadyNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`;
   const peerLifecycleOutcomes = stats.protocolPeerLifecycleOutcomeCounts || {};
   const peerLifecycleEventCounts = stats.protocolPeerLifecycleEventCounts || {};
-  const peerLifecycleStatusLabel = (
-    protocolCopy.peerLifecycleStatusLabels?.[stats.protocolPeerLifecycleStatus]
-    || protocolCopy.peerLifecycleStatusLabels?.syncing
-    || copy.homeStats.syncing
-  );
   const peerLifecycleDetail = stats.protocolPeerLifecycleRecentEvents > 0
     ? protocolCopy.peerLifecycleDetail
       .replace('{accepted}', formatCompactCount(peerLifecycleOutcomes.accepted || 0))
@@ -223,17 +201,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
       .replace('{rejected}', formatCompactCount(peerLifecycleOutcomes.rejected || 0))
       .replace('{nodes}', formatCompactCount(stats.protocolPeerLifecycleReportedNodes))
     : protocolCopy.peerLifecyclePending;
-  const protocolCards = [
-    {
-      label: protocolCopy.networkStory,
-      value: networkStoryStatusLabel,
-      detail: protocolCopy.networkStoryDetail
-        .replace('{nodes}', formatCompactCount(stats.protocolNetworkStoryReportedNodes))
-        .replace('{valid}', formatCompactCount(stats.protocolNetworkStoryMaxValidNodes))
-        .replace('{relays}', formatCompactCount(stats.protocolNetworkStoryMaxRouteableChatRelays))
-        .replace('{onion}', formatCompactCount(stats.protocolNetworkStoryMaxRouteableOnionHops)),
-      tone: protocolStatusTone(stats.protocolNetworkStoryStatus),
-    },
+  const fabricMetrics = [
     {
       label: protocolCopy.mesh,
       value: `${formatCompactCount(stats.protocolHealthyNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
@@ -246,28 +214,16 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     },
     {
       label: protocolCopy.peerLifecycle,
-      value: isLoading
-        ? ''
-        : `${formatCompactCount(stats.protocolPeerLifecycleRecentEvents)} ${peerLifecycleStatusLabel}`,
+      value: formatCompactCount(stats.protocolPeerLifecycleRecentEvents),
       detail: peerLifecycleDetail,
-      tone: protocolStatusTone(stats.protocolPeerLifecycleStatus),
-    },
-    {
-      label: protocolCopy.localRelay,
-      value: `${formatCompactCount(stats.protocolLocalRelaySafeToAdvertiseNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
-      detail: localRelayDetail,
     },
     {
       label: protocolCopy.restartRecovery,
       value: `${formatCompactCount(stats.protocolCacheRecoveredNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
       detail: recoverySources || protocolCopy.recoveryPending,
     },
-    {
-      label: protocolCopy.memoryChain,
-      value: protocolCopy.memoryChainMode,
-      detail: protocolCopy.memoryChainDetail,
-    },
   ];
+  const meshNodeCount = Math.max(2, Math.min(4, Number(stats.protocolNetworkStoryReportedNodes || stats.protocolReportedNodes || 2)));
 
   return (
     <section aria-label={copy.homeStats.ariaLabel} className="relative z-20 -mt-6 md:-mt-10 pb-10 md:pb-16">
@@ -313,8 +269,8 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
             </div>
           </div>
           <div className="border-t border-white/10 p-5 md:p-6">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <div className="max-w-2xl">
+            <div className="grid gap-6 lg:grid-cols-[0.95fr_1.25fr] lg:items-stretch">
+              <div className="flex min-w-0 flex-col justify-between">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] ${protocolStatusTone(stats.protocolStatus)}`}>
                     {protocolStatusLabel}
@@ -323,29 +279,71 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                     {protocolCopy.eyebrow}
                   </span>
                 </div>
-                <p className="mt-3 text-sm leading-relaxed text-white/55">
+                <h2 className="mt-4 text-2xl font-light tracking-normal text-white md:text-3xl">
+                  {protocolCopy.networkStory}
+                </h2>
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/55">
                   {protocolCopy.description}
                 </p>
+                <div className="mt-5 flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.14em] text-white/35">
+                  <span className="border border-white/10 bg-white/[0.025] px-2.5 py-1">
+                    {networkStoryStatusLabel}
+                  </span>
+                  <span className="border border-white/10 bg-white/[0.025] px-2.5 py-1">
+                    {formatCompactCount(stats.protocolNetworkStoryMaxValidNodes)} {protocolCopy.peerSync}
+                  </span>
+                </div>
               </div>
-              <div className="grid w-full gap-2 sm:grid-cols-2 lg:max-w-4xl xl:grid-cols-7">
-                {protocolCards.map((item) => (
-                  <div key={item.label} className="min-w-0 border border-white/10 bg-white/[0.025] p-3">
-                    <div className={`truncate text-lg font-light md:text-xl ${item.tone ? `rounded-sm border px-2 py-1 text-sm uppercase tracking-[0.12em] ${item.tone}` : 'text-white'}`}>
-                      {isLoading ? (
-                        <span className="block h-6 w-16 animate-pulse bg-white/10" />
-                      ) : (
-                        item.value || copy.homeStats.syncing
-                      )}
+
+              <div className="relative min-h-[13rem] overflow-hidden border border-white/10 bg-white/[0.018] p-5">
+                <div
+                  className="absolute inset-0 opacity-[0.05]"
+                  style={{
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.24) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.24) 1px, transparent 1px)',
+                    backgroundSize: '28px 28px',
+                  }}
+                />
+                <div className="absolute left-[14%] right-[14%] top-1/2 h-px bg-gradient-to-r from-transparent via-green-300/45 to-transparent" />
+                <div className="absolute left-[24%] right-[24%] top-[39%] h-px -rotate-6 bg-gradient-to-r from-transparent via-cyan-300/20 to-transparent" />
+                <div className="absolute left-[24%] right-[24%] top-[61%] h-px rotate-6 bg-gradient-to-r from-transparent via-cyan-300/20 to-transparent" />
+                <div className="relative z-10 flex h-full min-h-[11rem] items-center justify-between gap-4">
+                  {Array.from({ length: meshNodeCount }).map((_, index) => (
+                    <div key={index} className="flex min-w-0 flex-1 flex-col items-center">
+                      <div className="relative flex h-14 w-14 items-center justify-center rounded-full border border-green-300/25 bg-green-300/[0.06] shadow-[0_0_28px_rgba(74,222,128,0.12)]">
+                        <span className="h-2.5 w-2.5 rounded-full bg-green-300 shadow-[0_0_18px_rgba(134,239,172,0.85)]" />
+                        <span className="absolute inset-2 rounded-full border border-green-300/10" />
+                      </div>
+                      <div className="mt-3 max-w-[8rem] text-center text-[10px] uppercase leading-4 tracking-[0.16em] text-white/38">
+                        {index === 0
+                          ? protocolCopy.mesh
+                          : index === meshNodeCount - 1
+                            ? protocolCopy.restartRecovery
+                            : protocolCopy.peerSync}
+                      </div>
                     </div>
-                    <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/40">
-                      {item.label}
-                    </div>
-                    <p className="mt-2 text-[11px] leading-4 text-white/35">
-                      {item.detail}
-                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {fabricMetrics.map((item) => (
+                <div key={item.label} className="min-w-0 border border-white/10 bg-white/[0.02] p-4">
+                  <div className="text-2xl font-light tracking-normal text-white md:text-3xl">
+                    {isLoading ? (
+                      <span className="block h-8 w-20 animate-pulse bg-white/10" />
+                    ) : (
+                      item.value || copy.homeStats.syncing
+                    )}
                   </div>
-                ))}
-              </div>
+                  <div className="mt-2 text-[10px] uppercase leading-relaxed tracking-[0.16em] text-white/42">
+                    {item.label}
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-white/38">
+                    {item.detail}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
