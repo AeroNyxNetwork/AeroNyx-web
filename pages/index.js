@@ -33,6 +33,10 @@
  * protocol_status.peer_store.blind_relay. The homepage now emphasizes actual
  * encrypted relay probe evidence instead of presenting lifecycle events as a
  * primary product claim.
+ * Last Modified: v4.5 - Reframed the homepage protocol panel around
+ * protocol_foundation readiness. The public view now shows four product-level
+ * checks instead of lifecycle/debug counters while keeping all private node,
+ * route, endpoint, payload, and social graph data out of the UI.
  * ============================================
  */
 
@@ -150,8 +154,8 @@ const formatCompactCount = (value) => (
 );
 
 const protocolStatusTone = (status) => {
-  if (['healthy', 'peer_view_ready', 'relay_ready', 'onion_ready', 'observed'].includes(status)) return 'border-green-400/30 bg-green-400/10 text-green-200';
-  if (['degraded', 'attention'].includes(status)) return 'border-yellow-400/30 bg-yellow-400/10 text-yellow-200';
+  if (['ready', 'live', 'healthy', 'peer_view_ready', 'relay_ready', 'onion_ready', 'observed'].includes(status)) return 'border-green-400/30 bg-green-400/10 text-green-200';
+  if (['forming', 'degraded', 'attention'].includes(status)) return 'border-yellow-400/30 bg-yellow-400/10 text-yellow-200';
   return 'border-white/15 bg-white/5 text-white/60';
 };
 
@@ -187,11 +191,13 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   ];
   const protocolCopy = copy.homeStats.protocol;
   const protocolStatusLabel = (
-    protocolCopy.statusLabels[stats.protocolStatus]
+    protocolCopy.foundationStatusLabels?.[stats.protocolFoundationStatus]
+    || protocolCopy.statusLabels[stats.protocolStatus]
     || protocolCopy.statusLabels.syncing
   );
-  const networkStoryStatusLabel = (
-    protocolCopy.networkStoryStatusLabels?.[stats.protocolNetworkStoryStatus]
+  const foundationStageLabel = (
+    protocolCopy.foundationStageLabels?.[stats.protocolFoundationStage]
+    || protocolCopy.networkStoryStatusLabels?.[stats.protocolNetworkStoryStatus]
     || protocolCopy.networkStoryStatusLabels?.syncing
     || copy.homeStats.syncing
   );
@@ -203,15 +209,6 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const recoverySources = (stats.protocolRecoverySources || [])
     .map((source) => protocolCopy.recoverySources[source] || source.replace(/_/g, ' '))
     .join(' · ');
-  const peerLifecycleOutcomes = stats.protocolPeerLifecycleOutcomeCounts || {};
-  const peerLifecycleEventCounts = stats.protocolPeerLifecycleEventCounts || {};
-  const peerLifecycleDetail = stats.protocolPeerLifecycleRecentEvents > 0
-    ? protocolCopy.peerLifecycleDetail
-      .replace('{accepted}', formatCompactCount(peerLifecycleOutcomes.accepted || 0))
-      .replace('{refreshed}', formatCompactCount(peerLifecycleEventCounts.peer_refreshed || 0))
-      .replace('{rejected}', formatCompactCount(peerLifecycleOutcomes.rejected || 0))
-      .replace('{nodes}', formatCompactCount(stats.protocolPeerLifecycleReportedNodes))
-    : protocolCopy.peerLifecyclePending;
   const blindRelayFailures = (
     Number(stats.protocolBlindRelayRejected || 0)
     + Number(stats.protocolBlindRelayForwardFailed || 0)
@@ -226,21 +223,64 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     .replace('{terminal}', formatCompactCount(stats.protocolBlindRelayTerminal))
     .replace('{failures}', formatCompactCount(blindRelayFailures))
     .replace('{nodes}', formatCompactCount(stats.protocolBlindRelayReportedNodes));
+  const foundationChecksLabel = protocolText(
+    protocolCopy,
+    'foundationChecks',
+    '{passed}/{total} checks'
+  )
+    .replace('{passed}', formatCompactCount(stats.protocolFoundationChecksPassed))
+    .replace('{total}', formatCompactCount(stats.protocolFoundationChecksTotal || 4));
+  const foundationHeadline = (
+    protocolText(protocolCopy, 'foundationTitle', '')
+    || stats.protocolFoundationHeadline
+    || protocolCopy.networkStory
+  );
+  const foundationDescription = protocolText(
+    protocolCopy,
+    'foundationDescription',
+    protocolCopy.description
+  );
+  const foundationChecks = [
+    {
+      label: protocolText(protocolCopy, 'foundationLocalRelay', 'Local relay'),
+      ready: stats.protocolFoundationLocalRelayReady,
+      detail: protocolText(protocolCopy, 'foundationLocalRelayDetail', 'node can advertise blind relay capability'),
+      value: `${formatCompactCount(stats.protocolLocalRelaySafeToAdvertiseNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
+    },
+    {
+      label: protocolText(protocolCopy, 'foundationPeerMesh', 'Peer mesh'),
+      ready: stats.protocolFoundationPeerMeshReady,
+      detail: protocolText(protocolCopy, 'foundationPeerMeshDetail', 'verified peer view and route candidates are available'),
+      value: formatCompactCount(stats.protocolFoundationVerifiedPeerCount || stats.protocolNetworkStoryMaxValidNodes),
+    },
+    {
+      label: protocolText(protocolCopy, 'foundationBlindRelay', 'Blind relay proof'),
+      ready: stats.protocolFoundationBlindRelayReady,
+      detail: blindRelayProofDetail,
+      value: `${formatCompactCount(stats.protocolBlindRelayForwarded)} / ${formatCompactCount(stats.protocolBlindRelayTerminal)}`,
+    },
+    {
+      label: protocolText(protocolCopy, 'foundationRecovery', 'Restart recovery'),
+      ready: stats.protocolFoundationRestartRecoveryReady,
+      detail: recoverySources || protocolCopy.recoveryPending,
+      value: `${formatCompactCount(stats.protocolCacheRecoveredNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
+    },
+  ];
   const fabricMetrics = [
     {
-      label: protocolCopy.mesh,
-      value: `${formatCompactCount(stats.protocolHealthyNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
-      detail: protocolCopy.meshDetail,
+      label: protocolText(protocolCopy, 'foundationPeerMesh', protocolCopy.peerSync),
+      value: formatCompactCount(stats.protocolFoundationVerifiedPeerCount || stats.protocolNetworkStoryMaxValidNodes),
+      detail: protocolText(protocolCopy, 'foundationPeerMeshDetail', protocolCopy.peerSyncDetail),
+    },
+    {
+      label: protocolText(protocolCopy, 'foundationRouteableRelays', 'Routeable relays'),
+      value: formatCompactCount(stats.protocolFoundationRouteableRelayCount || stats.protocolNetworkStoryMaxRouteableChatRelays),
+      detail: protocolText(protocolCopy, 'foundationRouteableRelaysDetail', 'privacy relay candidates ready for encrypted routing'),
     },
     {
       label: protocolText(protocolCopy, 'blindRelayProof', 'Relay Proof'),
       value: `${formatCompactCount(stats.protocolBlindRelayForwarded)} / ${formatCompactCount(stats.protocolBlindRelayTerminal)}`,
       detail: blindRelayProofDetail,
-    },
-    {
-      label: protocolCopy.peerLifecycle,
-      value: formatCompactCount(stats.protocolPeerLifecycleRecentEvents),
-      detail: peerLifecycleDetail,
     },
     {
       label: protocolCopy.restartRecovery,
@@ -297,7 +337,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
             <div className="grid gap-6 lg:grid-cols-[0.95fr_1.25fr] lg:items-stretch">
               <div className="flex min-w-0 flex-col justify-between">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] ${protocolStatusTone(stats.protocolStatus)}`}>
+                  <span className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] ${protocolStatusTone(stats.protocolFoundationStatus)}`}>
                     {protocolStatusLabel}
                   </span>
                   <span className="text-xs uppercase tracking-[0.16em] text-white/35">
@@ -305,21 +345,36 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                   </span>
                 </div>
                 <h2 className="mt-4 text-2xl font-light tracking-normal text-white md:text-3xl">
-                  {protocolCopy.networkStory}
+                  {foundationHeadline}
                 </h2>
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/55">
-                  {protocolCopy.description}
+                  {foundationDescription}
                 </p>
                 <div className="mt-5 flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.14em] text-white/35">
                   <span className="border border-white/10 bg-white/[0.025] px-2.5 py-1">
-                    {networkStoryStatusLabel}
+                    {foundationStageLabel}
                   </span>
                   <span className="border border-white/10 bg-white/[0.025] px-2.5 py-1">
-                    {formatCompactCount(stats.protocolNetworkStoryMaxValidNodes)} {protocolCopy.peerSync}
+                    {foundationChecksLabel}
                   </span>
                   <span className={`border px-2.5 py-1 ${protocolStatusTone(stats.protocolBlindRelayStatus)}`}>
                     {blindRelayStatusLabel} · {protocolText(protocolCopy, 'blindRelayProof', 'Relay Proof')}
                   </span>
+                </div>
+                <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                  {foundationChecks.map((check) => (
+                    <div key={check.label} className="min-w-0 border border-white/10 bg-white/[0.018] p-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="truncate text-[10px] uppercase tracking-[0.14em] text-white/45">
+                          {check.label}
+                        </span>
+                        <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${check.ready ? 'bg-green-300 shadow-[0_0_14px_rgba(134,239,172,0.7)]' : 'bg-white/20'}`} />
+                      </div>
+                      <div className="mt-2 text-lg font-light text-white">
+                        {check.value || copy.homeStats.syncing}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -343,10 +398,10 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                       </div>
                       <div className="mt-3 max-w-[8rem] text-center text-[10px] uppercase leading-4 tracking-[0.16em] text-white/38">
                         {index === 0
-                          ? protocolCopy.mesh
+                          ? protocolText(protocolCopy, 'foundationLocalRelay', protocolCopy.mesh)
                           : index === meshNodeCount - 1
                             ? protocolText(protocolCopy, 'blindRelayProof', 'Relay Proof')
-                            : protocolCopy.peerSync}
+                            : protocolText(protocolCopy, 'foundationPeerMesh', protocolCopy.peerSync)}
                       </div>
                     </div>
                   ))}
