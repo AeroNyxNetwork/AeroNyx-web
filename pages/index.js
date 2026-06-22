@@ -214,6 +214,12 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     || stats.protocolFoundationRelayEvidenceMode
     || copy.homeStats.syncing
   );
+  const readinessReasonLabel = (
+    protocolCopy.readinessReasonLabels?.[stats.protocolFoundationRelayReadinessReason]
+    || protocolCopy.readinessReasonLabels?.idle_waiting_for_relay
+    || stats.protocolFoundationRelayReadinessReason
+    || copy.homeStats.syncing
+  );
   const recoverySources = (stats.protocolRecoverySources || [])
     .map((source) => protocolCopy.recoverySources[source] || source.replace(/_/g, ' '))
     .join(' · ');
@@ -234,9 +240,10 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const relayEvidenceDetail = protocolText(
     protocolCopy,
     'foundationEvidenceDetail',
-    '{mode} · real {real} · probe {probe}'
+    '{mode} · {reason} · real {real} · probe {probe}'
   )
     .replace('{mode}', evidenceModeLabel)
+    .replace('{reason}', readinessReasonLabel)
     .replace('{real}', formatCompactCount(stats.protocolFoundationRealRelayReadyNodes))
     .replace('{probe}', formatCompactCount(stats.protocolFoundationSyntheticProbeReadyNodes));
   const foundationChecksLabel = protocolText(
