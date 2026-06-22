@@ -37,6 +37,8 @@
  * protocol_foundation readiness. The public view now shows four product-level
  * checks instead of lifecycle/debug counters while keeping all private node,
  * route, endpoint, payload, and social graph data out of the UI.
+ * Last Modified: v4.6 - Added relay evidence mode display so public surfaces
+ * distinguish real encrypted relay traffic from synthetic route probes.
  * ============================================
  */
 
@@ -206,6 +208,12 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     || protocolCopy.blindRelayStatusLabels?.syncing
     || copy.homeStats.syncing
   );
+  const evidenceModeLabel = (
+    protocolCopy.evidenceModeLabels?.[stats.protocolFoundationRelayEvidenceMode]
+    || protocolCopy.evidenceModeLabels?.idle
+    || stats.protocolFoundationRelayEvidenceMode
+    || copy.homeStats.syncing
+  );
   const recoverySources = (stats.protocolRecoverySources || [])
     .map((source) => protocolCopy.recoverySources[source] || source.replace(/_/g, ' '))
     .join(' · ');
@@ -223,6 +231,14 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     .replace('{terminal}', formatCompactCount(stats.protocolBlindRelayTerminal))
     .replace('{failures}', formatCompactCount(blindRelayFailures))
     .replace('{nodes}', formatCompactCount(stats.protocolBlindRelayReportedNodes));
+  const relayEvidenceDetail = protocolText(
+    protocolCopy,
+    'foundationEvidenceDetail',
+    '{mode} · real {real} · probe {probe}'
+  )
+    .replace('{mode}', evidenceModeLabel)
+    .replace('{real}', formatCompactCount(stats.protocolFoundationRealRelayReadyNodes))
+    .replace('{probe}', formatCompactCount(stats.protocolFoundationSyntheticProbeReadyNodes));
   const foundationChecksLabel = protocolText(
     protocolCopy,
     'foundationChecks',
@@ -256,8 +272,8 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     {
       label: protocolText(protocolCopy, 'foundationBlindRelay', 'Blind relay proof'),
       ready: stats.protocolFoundationBlindRelayReady,
-      detail: blindRelayProofDetail,
-      value: `${formatCompactCount(stats.protocolBlindRelayForwarded)} / ${formatCompactCount(stats.protocolBlindRelayTerminal)}`,
+      detail: relayEvidenceDetail,
+      value: evidenceModeLabel,
     },
     {
       label: protocolText(protocolCopy, 'foundationRecovery', 'Restart recovery'),
@@ -278,9 +294,9 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
       detail: protocolText(protocolCopy, 'foundationRouteableRelaysDetail', 'privacy relay candidates ready for encrypted routing'),
     },
     {
-      label: protocolText(protocolCopy, 'blindRelayProof', 'Relay Proof'),
-      value: `${formatCompactCount(stats.protocolBlindRelayForwarded)} / ${formatCompactCount(stats.protocolBlindRelayTerminal)}`,
-      detail: blindRelayProofDetail,
+      label: protocolText(protocolCopy, 'foundationEvidence', 'Relay evidence'),
+      value: evidenceModeLabel,
+      detail: relayEvidenceDetail,
     },
     {
       label: protocolCopy.restartRecovery,
@@ -357,6 +373,9 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                   <span className="border border-white/10 bg-white/[0.025] px-2.5 py-1">
                     {foundationChecksLabel}
                   </span>
+                  <span className="border border-green-300/20 bg-green-300/[0.05] px-2.5 py-1 text-green-200/75">
+                    {protocolText(protocolCopy, 'foundationEvidence', 'Relay evidence')} · {evidenceModeLabel}
+                  </span>
                   <span className={`border px-2.5 py-1 ${protocolStatusTone(stats.protocolBlindRelayStatus)}`}>
                     {blindRelayStatusLabel} · {protocolText(protocolCopy, 'blindRelayProof', 'Relay Proof')}
                   </span>
@@ -370,7 +389,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                         </span>
                         <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${check.ready ? 'bg-green-300 shadow-[0_0_14px_rgba(134,239,172,0.7)]' : 'bg-white/20'}`} />
                       </div>
-                      <div className="mt-2 text-lg font-light text-white">
+                      <div className="mt-2 truncate text-lg font-light text-white">
                         {check.value || copy.homeStats.syncing}
                       </div>
                     </div>
@@ -408,13 +427,13 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                 </div>
                 <div className="absolute bottom-4 left-5 right-5 z-10 grid gap-2 text-[10px] uppercase tracking-[0.14em] text-white/35 sm:grid-cols-3">
                   <span className="border border-white/10 bg-black/40 px-2.5 py-2">
-                    {formatCompactCount(stats.protocolBlindRelayForwarded)} {protocolText(protocolCopy, 'blindRelayForwarded', 'forwarded')}
+                    {evidenceModeLabel}
                   </span>
                   <span className="border border-white/10 bg-black/40 px-2.5 py-2">
-                    {formatCompactCount(stats.protocolBlindRelayTerminal)} {protocolText(protocolCopy, 'blindRelayTerminal', 'terminal')}
+                    {formatCompactCount(stats.protocolFoundationRealRelayReadyNodes)} {protocolText(protocolCopy, 'realRelayNodes', 'real')}
                   </span>
                   <span className="border border-white/10 bg-black/40 px-2.5 py-2">
-                    {formatCompactCount(blindRelayFailures)} {protocolText(protocolCopy, 'blindRelayFailures', 'failures')}
+                    {formatCompactCount(stats.protocolFoundationSyntheticProbeReadyNodes)} {protocolText(protocolCopy, 'syntheticProbeNodes', 'probe')}
                   </span>
                 </div>
               </div>
