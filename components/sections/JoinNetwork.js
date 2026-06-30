@@ -6,15 +6,56 @@ import AnimatedMessageCounter from '../ui/AnimatedMessageCounter';
 import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 import useNetworkStats from '../../lib/hooks/useNetworkStats';
 
+const humanizeStatus = (value) => (
+  String(value || 'syncing')
+    .replaceAll('_', ' ')
+    .replace(/\b\w/g, (match) => match.toUpperCase())
+);
+
+const formatTemplate = (template, values) => (
+  String(template || '').replace(/\{(\w+)\}/g, (match, key) => (
+    values[key] ?? match
+  ))
+);
+
 const JoinNetwork = () => {
   const [activeStep, setActiveStep] = useState(0);
   const { locale } = useRouter();
-  const copy = getMessages(locale || DEFAULT_LOCALE).join;
+  const messages = getMessages(locale || DEFAULT_LOCALE);
+  const copy = messages.join;
+  const protocolCopy = messages.homeStats?.protocol || {};
   const { stats, isLoading } = useNetworkStats({
     period: '30d',
     autoRefresh: true,
     refreshInterval: 30000
   });
+
+  const protocolHealthStatus = stats.protocolFoundationStatus || stats.protocolStatus || 'syncing';
+  const protocolHealthStage = stats.protocolFoundationStage || 'bootstrap';
+  const protocolHealthValue = (
+    protocolCopy.foundationStatusLabels?.[protocolHealthStatus]
+    || protocolCopy.statusLabels?.[protocolHealthStatus]
+    || humanizeStatus(protocolHealthStatus)
+  );
+  const protocolHealthStageLabel = (
+    protocolCopy.foundationStageLabels?.[protocolHealthStage]
+    || humanizeStatus(protocolHealthStage)
+  );
+  const protocolHealthEvidence = formatTemplate(
+    copy.stats.protocolHealthEvidence || '{ready}/{reported} proof nodes · {percent}% accepted',
+    {
+      ready: stats.protocolFoundationTwoHopProofReadyNodes || 0,
+      reported: stats.protocolFoundationTwoHopProofReportedNodes || 0,
+      percent: stats.protocolFoundationTwoHopProofSuccessPercent || 0,
+    }
+  );
+  const protocolHealthSource = formatTemplate(
+    copy.stats.protocolHealthSource || 'Rust summary {summary} · {stage}',
+    {
+      summary: stats.protocolDiscoverySummaryReportedNodes || 0,
+      stage: protocolHealthStageLabel,
+    }
+  );
 
   // Join section live counters use the public aggregate privacy endpoint:
   //   GET /api/privacy_network/vpn/public/network-stats/
@@ -128,8 +169,9 @@ const JoinNetwork = () => {
               {
                 label: copy.stats.protocolHealth || 'Protocol Health',
                 description: copy.stats.protocolHealthDescription || 'Two-hop path proof readiness across live AeroNyx Privacy Protocol nodes.',
-                value: `${stats.protocolFoundationTwoHopProofReadyNodes || 0} / ${stats.protocolFoundationTwoHopProofReportedNodes || 0}`,
-                detail: `${stats.protocolFoundationTwoHopProofSuccessPercent || 0}% accepted · ${stats.protocolFoundationTwoHopProofFreshness || 'syncing'}`,
+                value: protocolHealthValue,
+                detail: protocolHealthEvidence,
+                source: protocolHealthSource,
                 isLiveCounter: false
               }
             ].map((item) => (
@@ -137,7 +179,7 @@ const JoinNetwork = () => {
                 key={item.label}
                 className="min-w-0 border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm md:p-5"
               >
-                <div className="min-h-[2.65rem] min-w-0 font-light text-white">
+                <div className="min-h-[2.65rem] min-w-0 font-light leading-none text-white">
                   {isLoading ? (
                     <span className="block h-8 w-28 bg-white/10 animate-pulse" />
                   ) : item.isLiveCounter ? (
@@ -149,7 +191,9 @@ const JoinNetwork = () => {
                       defaultStep={item.defaultStep}
                     />
                   ) : (
-                    item.value
+                    <span className="block truncate text-[clamp(2rem,6vw,3.6rem)] tracking-normal">
+                      {item.value}
+                    </span>
                   )}
                 </div>
                 <div className="mt-1 text-[11px] md:text-xs uppercase tracking-[0.18em] text-white/40">
@@ -161,6 +205,11 @@ const JoinNetwork = () => {
                 {item.detail && (
                   <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-primary/70">
                     {item.detail}
+                  </p>
+                )}
+                {item.source && (
+                  <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-white/35">
+                    {item.source}
                   </p>
                 )}
               </div>
