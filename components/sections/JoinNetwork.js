@@ -100,7 +100,7 @@ const JoinNetwork = () => {
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 mb-10 md:mb-14"
+            className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4 mb-10 md:mb-14"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -124,6 +124,13 @@ const JoinNetwork = () => {
                 isLiveCounter: true,
                 suffix: copy.stats.packetsUnit,
                 defaultStep: 1
+              },
+              {
+                label: copy.stats.protocolHealth || 'Protocol Health',
+                description: copy.stats.protocolHealthDescription || 'Two-hop path proof readiness across live AeroNyx Privacy Protocol nodes.',
+                value: `${stats.protocolFoundationTwoHopProofReadyNodes || 0} / ${stats.protocolFoundationTwoHopProofReportedNodes || 0}`,
+                detail: `${stats.protocolFoundationTwoHopProofSuccessPercent || 0}% accepted · ${stats.protocolFoundationTwoHopProofFreshness || 'syncing'}`,
+                isLiveCounter: false
               }
             ].map((item) => (
               <div
@@ -151,6 +158,11 @@ const JoinNetwork = () => {
                 <p className="mt-2 max-w-[34rem] text-xs leading-relaxed text-white/45">
                   {item.description}
                 </p>
+                {item.detail && (
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-primary/70">
+                    {item.detail}
+                  </p>
+                )}
               </div>
             ))}
           </motion.div>
