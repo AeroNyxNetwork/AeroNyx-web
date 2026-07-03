@@ -1,6 +1,6 @@
 /**
  * ============================================
- * File: components/sections/ProductsEcosystem.jsx
+ * File: components/sections/ProductsEcosystem.js
  * ============================================
  * Modification Reason: v3.0 — 2026 brand/aesthetic + interaction pass.
  *   1. Brand: all green/yellow semantic colors migrated to the token
@@ -253,7 +253,6 @@ const ProductsEcosystem = () => {
                       : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'
                   }`}
                 >
-                  {/* Active indicator — readable while scrolling on mobile */}
                   {active && (
                     <span aria-hidden="true" className="absolute left-0 top-0 h-full w-0.5 bg-brand-light" />
                   )}
