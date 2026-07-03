@@ -2,61 +2,59 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 7.0.0
+ * Version: 8.0.0
  *
  * Modification Reason:
- *   v7.0 — Full replacement of the v6 "question list" hero with the
- *   cinematic Act I: the Privacy Lens (signature interaction) over a live
- *   Watcher Field background. A draggable divider splits one warm scene
- *   (you + your AI agent booking a flight, paying via x402) from the same
- *   scene as the network sees it (unreadable ciphertext). As the encryption
- *   frontier advances, the watching eyes behind it go dark — privacy is the
- *   visitor turning the watchers off.
+ *   v8.0 — Foreground rebuilt copy-first for the approved top-tier pass.
+ *   The Lens demonstrates "the network sees only ciphertext"; the headline
+ *   now IS that claim ("Built to see nothing"), so the interaction proves
+ *   the copy instead of sitting beside it.
+ *   NEW: staged entrance choreography; keyboard-driven Lens (role=slider,
+ *   arrow keys); earned payoff stamp "PLAINTEXT RECOVERED: 0 B" at >92%
+ *   manual drag; live encrypted-traffic counter embedded as on-page proof;
+ *   Instrument Serif display headline; geometry aligned to 2/4/6px tokens.
+ *   REMOVED: the three feature chips (clutter; their content lives in
+ *   ProductsEcosystem) and the weak "◂ drag ▸" mono hint (elevated into
+ *   the caption copy). Recoverable from v7.5 in version history.
  *
- * Main Functionality:
- *   - WatcherField: section-scoped canvas of eyes that blink (asymmetric),
- *     track the cursor (spring-lagged pupils), and get blinded by the
- *     encryption frontier. Relay mesh + hex packets travel between them.
- *   - Privacy Lens: auto-sweeps until the visitor drags; stamps
- *     "PLAINTEXT RECOVERED: 0 B" at the cipher end.
- *   - Eye silencing is driven by the Lens split via splitRef (shared ref),
- *     read fresh every animation frame — no React re-render in the hot loop.
+ * PRESERVED VERBATIM (do not touch):
+ *   - WatcherField canvas engine (eyes, blink physics, pupil springs,
+ *     packet mesh, splitRef contract, reduced-motion static branch)
+ *   - Lens auto-sweep + pointer/touch drag logic
+ *   - CONVO/CIPHER scene data, SSR-safe reduced-motion detection
  *
  * Dependencies:
- *   - framer-motion (already in project)
- *   - ../ui/Container (project layout primitive)
- *   Provides: the <NarrativeHero /> section consumed by pages/index.js
- *
- * Main Logical Flow:
- *   1. WatcherField builds eyes/nodes/edges sized to the section, runs rAF.
- *   2. Hero owns `split` state; splitRef mirrors it each render.
- *   3. Each frame: frontierX = split% × canvasWidth → eyes left of it close.
- *   4. Auto-sweep animates split; pointer drag overrides it.
+ *   - framer-motion, ../ui/Container, ../ui/AnimatedMessageCounter (v2.0),
+ *     ../../lib/hooks/useNetworkStats (already multi-consumer safe:
+ *     Home + JoinNetwork call it concurrently)
+ *   - pages/_app.js v2.2 (--font-display = Instrument Serif)
  *
  * ⚠️ Important Notes for Next Developer:
- *   - The eyes canvas is position:absolute (section-scoped) and sits ABOVE
- *     the global MinimalAILBackground via a solid section backdrop. Do NOT
- *     make it fixed/inset-0 again or it will cover the whole site.
+ *   - The eyes canvas is position:absolute (section-scoped). Do NOT make
+ *     it fixed/inset-0 or it will cover the whole site.
  *   - Brand palette only: purple #7762F3 / #9788F7, blue #5FBBF7. No green.
- *   - prefers-reduced-motion: eyes freeze half-open, packets off, Lens is a
- *     static 50/50 split. Keep this branch intact for accessibility.
- *   - splitRef.current is assigned during render on purpose (cheap, keeps the
- *     rAF loop dependency-free). Do not move it into the hot loop's deps.
+ *   - Instrument Serif has weight 400 only — never bold the headline;
+ *     emphasis = italic + ACCENT_LT.
+ *   - splitRef.current is assigned during render on purpose. Keep it.
+ *   - The payoff stamp must remain earned (manual drag only, >92%) — do
+ *     not show it during auto-sweep or it loses all meaning.
  *
- * Last Modified: v7.5.0 — Protocol positioning pass for investor-grade
- *   homepage narrative. The hero now frames AeroNyx as an open privacy
- *   coordination protocol for humans, applications, and autonomous agents,
- *   while preserving the Lens interaction as the blind-relay proof point.
+ * Last Modified: v8.0.0 — Copy-first foreground rebuild
  * ============================================================================
  */
 
 import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Container from '../ui/Container';
+import AnimatedMessageCounter from '../ui/AnimatedMessageCounter';
+import useNetworkStats from '../../lib/hooks/useNetworkStats';
 
 // ---- Brand palette (no green) ----
-const ACCENT = '#7762F3';     // brand purple — packets, verified, primary CTA
-const ACCENT_LT = '#9788F7';  // light purple — glow accents
-const SCAN = '#5FBBF7';       // brand blue — Lens divider / cipher view
+const ACCENT = '#7762F3';
+const ACCENT_LT = '#9788F7';
+const SCAN = '#5FBBF7';
+
+const EASE = [0.16, 1, 0.3, 1];
 
 const HEXC = '0123456789abcdef';
 const rhex = (n) =>
@@ -75,7 +73,7 @@ const CIPHER = CONVO.map((m) => ({
 }));
 
 // ============================================================================
-// BACKGROUND — WatcherField (section-scoped canvas of eyes)
+// BACKGROUND — WatcherField (PRESERVED VERBATIM from v7.5)
 // ============================================================================
 function WatcherField({ reduced, splitRef }) {
   const canvasRef = useRef(null);
@@ -99,8 +97,6 @@ function WatcherField({ reduced, splitRef }) {
     };
 
     const build = () => {
-      // Eye count self-scales with area; sparse on purpose — peripheral unease,
-      // not foreground noise. Desktop ~8-12, mobile ~4-6.
       eyes = [];
       const n = Math.max(4, Math.floor((W * H) / 110000));
       for (let i = 0; i < n; i++) {
@@ -150,7 +146,6 @@ function WatcherField({ reduced, splitRef }) {
       ctx.quadraticCurveTo(e.x, e.y + h * 2, e.x - e.s, e.y);
     };
 
-    // Static render for reduced-motion: frozen half-open eyes, no packets.
     const renderStatic = () => {
       ctx.clearRect(0, 0, W, H);
       ctx.lineWidth = 1;
@@ -181,14 +176,11 @@ function WatcherField({ reduced, splitRef }) {
       last = now;
       ctx.clearRect(0, 0, W, H);
 
-      // Encryption frontier: the Lens split (0-100%) mapped to canvas x.
-      // Everything left of it is "encrypted" → those eyes go blind.
       const frontierX = (splitRef.current / 100) * W;
       const idle = !mouse.current.active && now - lastMove.current > 10000;
       const idlePhase = idle ? Math.min((now - lastMove.current - 10000) / 1000, 1) : 0;
       const cx = W / 2, cy = H / 2;
 
-      // --- mesh edges ---
       ctx.lineWidth = 1;
       ctx.strokeStyle = 'rgba(119,98,243,0.05)';
       edges.forEach((e) => {
@@ -197,7 +189,6 @@ function WatcherField({ reduced, splitRef }) {
         ctx.lineTo(nodes[e.b].x, nodes[e.b].y);
         ctx.stroke();
       });
-      // --- relay nodes ---
       nodes.forEach((nd) => {
         ctx.beginPath();
         ctx.arc(nd.x, nd.y, 2, 0, Math.PI * 2);
@@ -205,7 +196,6 @@ function WatcherField({ reduced, splitRef }) {
         ctx.fill();
       });
 
-      // --- packets (hex ciphertext travelling the relay mesh) — quiet, no glow ---
       if (packets.length < 5 && Math.random() < 0.02) spawnPacket();
       packets = packets.filter((p) => p.t <= 1);
       packets.forEach((p) => {
@@ -229,13 +219,11 @@ function WatcherField({ reduced, splitRef }) {
         }
       });
 
-      // --- eyes ---
       eyes.forEach((e) => {
-        // Eyes inside the encrypted region go dark; reopen if frontier recedes.
         const blinded = e.x <= frontierX;
 
         if (blinded) {
-          e.target = 0; // encrypted: nothing to see, eye closes
+          e.target = 0;
         } else if (now > e.nextBlink) {
           e.target = 0;
           if (e.open < 0.06) {
@@ -246,12 +234,10 @@ function WatcherField({ reduced, splitRef }) {
           e.target = 1;
         }
 
-        // Asymmetric blink: close fast, open slow (blinded = calm shutdown).
         const closing = e.target < e.open;
         const lidSpeed = closing ? (blinded ? 13 : 22) : 7;
         e.open += (e.target - e.open) * Math.min(dt * lidSpeed, 1);
 
-        // Gaze target: idle-converge → cursor → nearest packet → wander.
         let gx, gy, interest = 0;
         if (idlePhase > 0) {
           gx = e.x + (cx - e.x) * idlePhase;
@@ -276,7 +262,6 @@ function WatcherField({ reduced, splitRef }) {
         }
         e.glow += ((0.08 + interest * 0.38) - e.glow) * Math.min(dt * 5, 1);
 
-        // Pupil spring: ~150ms lag + slight overshoot = lifelike.
         const dx = gx - e.x, dy = gy - e.y;
         const d = Math.hypot(dx, dy) || 1;
         const m = e.s * 0.24;
@@ -314,7 +299,6 @@ function WatcherField({ reduced, splitRef }) {
       raf = requestAnimationFrame(frame);
     };
 
-    // NOTE: section-scoped → use offset coords relative to the canvas rect.
     const onMove = (ev) => {
       const r = cv.getBoundingClientRect();
       mouse.current = { x: ev.clientX - r.left, y: ev.clientY - r.top, active: true };
@@ -349,21 +333,21 @@ function WatcherField({ reduced, splitRef }) {
 }
 
 // ============================================================================
-// FOREGROUND — Privacy Lens scene (warm) / cipher view (cold)
+// FOREGROUND — scene bubbles (radii aligned to tokens in v8.0)
 // ============================================================================
 function Bubble({ msg, cipher, idx }) {
   const isYou = msg.from === 'you';
   if (cipher)
     return (
       <div className={`flex ${isYou ? 'justify-end' : 'justify-start'} mb-3`}>
-        <div className="max-w-[78%] rounded-2xl px-4 py-3"
+        <div className="max-w-[78%] rounded-md px-4 py-3"
           style={{ background: 'rgba(95,187,247,0.04)', border: '1px solid rgba(95,187,247,0.14)' }}>
           <div className="text-[9px] break-all leading-relaxed"
-            style={{ fontFamily: 'monospace', color: 'rgba(95,187,247,0.45)' }}>
+            style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(95,187,247,0.45)' }}>
             {CIPHER[idx].hex}
           </div>
           <div className="text-[8px] mt-1.5 tracking-wider"
-            style={{ fontFamily: 'monospace', color: 'rgba(95,187,247,0.3)' }}>
+            style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(95,187,247,0.3)' }}>
             TLS 1.3 · {CIPHER[idx].size} B · sender unknown
           </div>
         </div>
@@ -372,7 +356,7 @@ function Bubble({ msg, cipher, idx }) {
   if (msg.receipt)
     return (
       <div className="flex justify-start mb-3">
-        <div className="max-w-[78%] rounded-2xl px-4 py-3"
+        <div className="max-w-[78%] rounded-md px-4 py-3"
           style={{ background: 'rgba(119,98,243,0.08)', border: '1px solid rgba(119,98,243,0.28)' }}>
           <div className="flex items-center gap-2 mb-1.5">
             <span className="w-4 h-4 rounded-full flex items-center justify-center text-[9px]"
@@ -383,7 +367,7 @@ function Bubble({ msg, cipher, idx }) {
             NH 854 · Fri 09:40 → 16:10
           </div>
           <div className="text-[9px] mt-1.5 tracking-wide"
-            style={{ fontFamily: 'monospace', color: 'rgba(255,255,255,0.35)' }}>
+            style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(255,255,255,0.35)' }}>
             548 USDC · x402 · signed Ed25519 ✓
           </div>
         </div>
@@ -391,7 +375,7 @@ function Bubble({ msg, cipher, idx }) {
     );
   return (
     <div className={`flex ${isYou ? 'justify-end' : 'justify-start'} mb-3`}>
-      <div className="max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed"
+      <div className="max-w-[78%] rounded-md px-4 py-2.5 text-sm leading-relaxed"
         style={isYou
           ? { background: 'rgba(119,98,243,0.12)', border: '1px solid rgba(119,98,243,0.2)', color: 'rgba(255,255,255,0.92)' }
           : { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)' }}>
@@ -408,7 +392,7 @@ function Scene({ cipher }) {
         style={{ borderColor: cipher ? 'rgba(95,187,247,0.1)' : 'rgba(255,255,255,0.07)' }}>
         {cipher ? (
           <span className="text-[10px] tracking-widest"
-            style={{ fontFamily: 'monospace', color: 'rgba(95,187,247,0.45)' }}>
+            style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(95,187,247,0.45)' }}>
             INTERCEPT — udp :51820 · classified: HTTPS
           </span>
         ) : (
@@ -417,8 +401,8 @@ function Scene({ cipher }) {
               style={{ background: 'rgba(119,98,243,0.18)', color: ACCENT_LT }}>A</div>
             <div>
               <div className="text-sm font-medium">Aria — your agent</div>
-              <div className="text-[9px] tracking-wide" style={{ color: ACCENT_LT, fontFamily: 'monospace' }}>
-                🔒 end-to-end encrypted · verified
+              <div className="text-[9px] tracking-wide" style={{ color: ACCENT_LT, fontFamily: 'var(--font-mono), monospace' }}>
+                end-to-end encrypted · verified
               </div>
             </div>
           </div>
@@ -432,14 +416,23 @@ function Scene({ cipher }) {
 }
 
 // ============================================================================
-// NarrativeHero — Act I
+// NarrativeHero — v8.0
 // ============================================================================
+
+// Entrance choreography: eyes wake first (canvas), then copy rises in order.
+const stageContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.35 } },
+};
+const stageItem = {
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
+};
+
 const NarrativeHero = () => {
-  // SSR-safe: assume motion on the server, detect reduced-motion after mount
-  // to avoid hydration mismatch. WatcherField re-inits when `reduced` flips.
   const [reduced, setReduced] = useState(false);
   const [split, setSplit] = useState(50);
-  const [hint, setHint] = useState(true);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   const boxRef = useRef(null);
   const scrub = useRef(false);
@@ -447,25 +440,29 @@ const NarrativeHero = () => {
   const dir = useRef(1);
   const splitRef = useRef(50);
 
-  // Mirror split into a ref so the rAF loop reads it without re-subscribing.
   splitRef.current = split;
 
-  // Detect reduced-motion preference once mounted (client only).
+  const { stats } = useNetworkStats({
+    period: '30d',
+    autoRefresh: true,
+    refreshInterval: 30000,
+  });
+
+  // SSR-safe reduced-motion detection (preserved from v7.5)
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return;
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
     setReduced(mq.matches);
     const onChange = (e) => setReduced(e.matches);
     if (mq.addEventListener) mq.addEventListener('change', onChange);
-    else if (mq.addListener) mq.addListener(onChange); // Safari < 14
+    else if (mq.addListener) mq.addListener(onChange);
     return () => {
       if (mq.removeEventListener) mq.removeEventListener('change', onChange);
       else if (mq.removeListener) mq.removeListener(onChange);
     };
   }, []);
 
-  // Auto-sweep the Lens gently until the visitor interacts. Quiet loop —
-  // no stamp/ceremony, just a slow back-and-forth so the idea reads itself.
+  // Auto-sweep (preserved) — pauses forever once the visitor takes over.
   useEffect(() => {
     if (reduced) { setSplit(50); return; }
     let raf, segStart = performance.now();
@@ -488,9 +485,7 @@ const NarrativeHero = () => {
     return () => cancelAnimationFrame(raf);
   }, [reduced]);
 
-  // Drag the divider → manual control. Pointer events cover mouse + most
-  // touch; explicit touch listeners are the iOS Safari fallback (non-passive
-  // so we can preventDefault and stop the page from scrolling mid-drag).
+  // Pointer + touch drag (preserved from v7.5)
   useEffect(() => {
     if (reduced) return;
     const moveTo = (cx) => {
@@ -502,7 +497,7 @@ const NarrativeHero = () => {
 
     const down = (e) => {
       if (!inside(e.target)) return;
-      scrub.current = true; auto.current = false; setHint(false);
+      scrub.current = true; auto.current = false; setHasInteracted(true);
       moveTo(e.clientX);
     };
     const move = (e) => { if (scrub.current) moveTo(e.clientX); };
@@ -510,7 +505,7 @@ const NarrativeHero = () => {
 
     const tStart = (e) => {
       if (!inside(e.target)) return;
-      scrub.current = true; auto.current = false; setHint(false);
+      scrub.current = true; auto.current = false; setHasInteracted(true);
       moveTo(e.touches?.[0]?.clientX);
     };
     const tMove = (e) => {
@@ -536,31 +531,41 @@ const NarrativeHero = () => {
     };
   }, [reduced]);
 
+  // Keyboard-driven Lens (v8.0): focus the card, arrow keys sweep.
+  const onLensKeyDown = (e) => {
+    if (reduced) return;
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    auto.current = false;
+    setHasInteracted(true);
+    setSplit((s) => Math.max(0, Math.min(100, s + (e.key === 'ArrowRight' ? 4 : -4))));
+  };
+
+  // Earned payoff: only after MANUAL interaction, at near-full cipher view.
+  const showStamp = hasInteracted && split > 92;
+
   return (
-    <section
-      className="relative overflow-hidden"
-      style={{ background: '#05050a' }}
-    >
-      {/* Solid backdrop: covers the global star background within this section. */}
-      <div className="absolute inset-0" style={{ background: '#05050a', zIndex: 0 }} />
+    <section className="relative overflow-hidden" style={{ background: 'var(--surface-0, #08080D)' }}>
+      {/* Solid backdrop covers the global background within this section. */}
+      <div className="absolute inset-0" style={{ background: 'var(--surface-0, #08080D)', zIndex: 0 }} />
 
       {/* Eyes background (section-scoped) */}
       <WatcherField reduced={reduced} splitRef={splitRef} />
 
-      <style>{`
-        @keyframes nh-nudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(7px); } }
-      `}</style>
-
       <Container className="relative">
         <div className="relative pt-28 sm:pt-32 md:pt-28 pb-16 md:pb-24" style={{ zIndex: 10 }}>
-
-          {/* Desktop: two columns (copy left, Lens right). Mobile: stacked. */}
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
 
-            {/* ---- Left: copy + CTAs ---- */}
-            <div className="text-center lg:text-left order-1">
-              <div
-                className="inline-flex items-center gap-2 border px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] mb-5"
+            {/* ---- Left: the claim ---- */}
+            <motion.div
+              className="text-center lg:text-left order-1"
+              variants={stageContainer}
+              initial={reduced ? false : 'hidden'}
+              animate="show"
+            >
+              <motion.div
+                variants={stageItem}
+                className="inline-flex items-center gap-2 border px-3 py-1.5 text-[10px] uppercase tracking-eyebrow mb-6 rounded-sm"
                 style={{
                   borderColor: 'rgba(151,136,247,0.22)',
                   background: 'rgba(119,98,243,0.06)',
@@ -568,67 +573,96 @@ const NarrativeHero = () => {
                 }}
               >
                 Open privacy coordination protocol
-              </div>
+              </motion.div>
 
-              <h1 className="font-light leading-[1.05] mb-6"
-                style={{ fontSize: 'clamp(2.25rem, 4.15vw, 4.45rem)', letterSpacing: '-0.025em' }}>
-                The encrypted
-                <br className="hidden sm:block" /> coordination layer
+              <motion.h1
+                variants={stageItem}
+                className="mb-6"
+                style={{
+                  fontFamily: 'var(--font-display), Georgia, serif',
+                  fontWeight: 400,
+                  fontSize: 'clamp(2.6rem, 5.2vw, 5rem)',
+                  lineHeight: 1.04,
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                The network built
                 <br />
-                <span className="font-semibold">
-                  for autonomous <span style={{ color: ACCENT_LT }}>agents</span>.
+                to see{' '}
+                <em style={{ color: ACCENT_LT, fontStyle: 'italic' }}>nothing.</em>
+              </motion.h1>
+
+              <motion.p
+                variants={stageItem}
+                className="text-base sm:text-lg font-light leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0"
+                style={{ color: 'rgba(255,255,255,0.6)' }}
+              >
+                Encrypted routing, private memory, and agent-native payments —
+                coordinated over a blind relay fabric.{' '}
+                <span style={{ color: 'rgba(255,255,255,0.85)' }}>
+                  What the network can't see, it can't leak, sell, or surrender.
                 </span>
-              </h1>
+              </motion.p>
 
-              <p className="text-base sm:text-lg font-light leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0"
-                style={{ color: 'rgba(255,255,255,0.6)' }}>
-                AeroNyx lets humans, apps, and AI agents route traffic, exchange encrypted messages,
-                preserve private memory, and coordinate work through a blind, open protocol.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-10 max-w-xl mx-auto lg:mx-0">
-                {[
-                  'Blind relay fabric',
-                  'Encrypted Memory Chain',
-                  'Agent-to-agent services',
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="border px-3 py-2 text-[10px] uppercase leading-4 tracking-[0.14em]"
-                    style={{
-                      borderColor: 'rgba(255,255,255,0.08)',
-                      background: 'rgba(255,255,255,0.025)',
-                      color: 'rgba(255,255,255,0.48)',
-                    }}
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 items-center lg:items-start justify-center lg:justify-start">
+              <motion.div
+                variants={stageItem}
+                className="flex flex-col sm:flex-row gap-4 items-center lg:items-start justify-center lg:justify-start mb-8"
+              >
                 <a href="#how-it-works"
-                  className="px-7 py-3.5 rounded-lg text-sm font-medium tracking-wide transition-transform hover:scale-[1.03]"
-                  style={{ background: ACCENT, color: '#fff', boxShadow: `0 0 30px ${ACCENT}55` }}>
+                  className="px-7 py-3.5 rounded text-sm font-medium tracking-wide transition-transform duration-fast hover:scale-[1.02]"
+                  style={{ background: ACCENT, color: '#fff', boxShadow: `0 0 30px ${ACCENT}40` }}>
                   Explore the protocol
                 </a>
                 <a href="#join-network"
-                  className="px-7 py-3.5 rounded-lg text-sm tracking-wide border transition-colors hover:border-white/40"
+                  className="px-7 py-3.5 rounded text-sm tracking-wide border transition-colors duration-fast hover:border-white/40"
                   style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.75)' }}>
                   Run a node
                 </a>
-              </div>
-            </div>
+              </motion.div>
 
-            {/* ---- Right: the Privacy Lens ---- */}
-            <div className="order-2">
-              <p className="text-center text-[11px] sm:text-xs tracking-wide mb-3"
-                style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>
-                ◂ drag the line · see what the network sees ▸
+              {/* Live proof (v8.0): the claim, happening right now */}
+              <motion.div
+                variants={stageItem}
+                className="inline-block border border-white/10 rounded bg-white/[0.02] px-4 py-3 text-left"
+              >
+                <div className="flex items-center gap-2 text-[9px] uppercase tracking-eyebrow text-white/35 mb-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT_LT }} />
+                  Live — encrypted traffic relayed
+                </div>
+                <div className="max-w-[16rem]">
+                  <AnimatedMessageCounter
+                    value={stats.encryptedTrafficBytes}
+                    fallback={stats.encryptedTraffic || 'Syncing'}
+                    suffix="bytes"
+                    pulseLabel="live"
+                    defaultStep={1024}
+                  />
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* ---- Right: the proof ---- */}
+            <motion.div
+              className="order-2"
+              initial={reduced ? false : { opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7, ease: EASE }}
+            >
+              {/* Caption elevated from hint to narrative (v8.0) */}
+              <p className="text-center text-xs tracking-wide mb-3" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                Drag the lens — <span style={{ color: 'rgba(138,209,255,0.75)' }}>see what the network sees.</span>
               </p>
 
-              <div ref={boxRef}
-                className="relative w-full rounded-2xl border overflow-hidden select-none mx-auto"
+              <div
+                ref={boxRef}
+                role="slider"
+                tabIndex={0}
+                aria-label="Privacy lens: reveal what the network sees. Use left and right arrow keys."
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(split)}
+                onKeyDown={onLensKeyDown}
+                className="relative w-full rounded-md border overflow-hidden select-none mx-auto outline-none focus-visible:ring-1"
                 style={{
                   maxWidth: '560px',
                   borderColor: 'rgba(255,255,255,0.1)',
@@ -639,9 +673,9 @@ const NarrativeHero = () => {
                   touchAction: 'none',
                   cursor: reduced ? 'default' : 'ew-resize',
                   boxShadow: '0 0 80px rgba(0,0,0,0.8)',
-                }}>
+                }}
+              >
                 <Scene cipher={false} />
-                {/* clipPath inset() — fully supported in all evergreen browsers */}
                 <div className="absolute inset-0"
                   style={{ clipPath: `inset(0 0 0 ${split}%)`, background: '#070c10' }}>
                   <Scene cipher />
@@ -660,15 +694,29 @@ const NarrativeHero = () => {
                   </div>
                 </div>
 
-                {hint && !reduced && (
-                  <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none text-[9px] sm:text-[10px] tracking-widest whitespace-nowrap"
-                    style={{ bottom: '20px', color: 'rgba(255,255,255,0.35)', fontFamily: 'monospace',
-                      animation: 'nh-nudge 1.6s ease-in-out infinite' }}>
-                    ◂ DRAG ▸
-                  </div>
-                )}
+                {/* Earned payoff stamp (v8.0): manual full-cipher view only */}
+                <AnimatePresence>
+                  {showStamp && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      transition={{ duration: 0.35, ease: EASE }}
+                      className="absolute top-4 right-4 px-2.5 py-1.5 text-[10px] tracking-[0.14em] rounded-sm border"
+                      style={{
+                        fontFamily: 'var(--font-mono), monospace',
+                        color: SCAN,
+                        borderColor: `${SCAN}55`,
+                        background: 'rgba(7,12,16,0.9)',
+                        boxShadow: `0 0 16px ${SCAN}22`,
+                      }}
+                    >
+                      PLAINTEXT RECOVERED: 0 B
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            </div>
+            </motion.div>
 
           </div>
         </div>
