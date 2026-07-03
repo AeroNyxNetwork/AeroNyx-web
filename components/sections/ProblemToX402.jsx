@@ -311,16 +311,16 @@ const X402Flow = () => (
 const TraditionalCode = () => (
   <pre className="text-xs leading-relaxed whitespace-pre-wrap break-words">
     <code className="block">
-      <span className="text-white/35">// Human signs up, adds card, gets key</span>{'\n'}
+      <span className="text-white/35">{'// Human signs up, adds card, gets key'}</span>{'\n'}
       {'\n'}
-      <span className="text-brand-light">const</span> <span className="text-cipher-light">apiKey</span> = <span className="text-cipher">'sk_live_...'</span>;{'\n'}
+      <span className="text-brand-light">const</span> <span className="text-cipher-light">apiKey</span> = <span className="text-cipher">{"'sk_live_...'"}</span>;{'\n'}
       {'\n'}
-      <span className="text-brand-light">const</span> <span className="text-cipher-light">res</span> = <span className="text-brand-light">await</span> <span className="text-white/80">fetch</span>(<span className="text-cipher">'https://api.example.com'</span>, {'{'}{'\n'}
-      {'  '}<span className="text-cipher-light">headers</span>: {'{'} <span className="text-cipher">'Authorization'</span>: <span className="text-cipher">`Bearer ${'{'}apiKey{'}'}`</span> {'}'}{'\n'}
+      <span className="text-brand-light">const</span> <span className="text-cipher-light">res</span> = <span className="text-brand-light">await</span> <span className="text-white/80">fetch</span>(<span className="text-cipher">{"'https://api.example.com'"}</span>, {'{'}{'\n'}
+      {'  '}<span className="text-cipher-light">headers</span>: {'{'} <span className="text-cipher">{"'Authorization'"}</span>: <span className="text-cipher">{'`Bearer ${apiKey}`'}</span> {'}'}{'\n'}
       {'}'});{'\n'}
       {'\n'}
-      <span className="text-white/35">// Agents can't obtain apiKey</span>{'\n'}
-      <span className="text-white/35">// Requires human intervention</span>
+      <span className="text-white/35">{"// Agents can't obtain apiKey"}</span>{'\n'}
+      <span className="text-white/35">{'// Requires human intervention'}</span>
     </code>
   </pre>
 );
@@ -328,18 +328,17 @@ const TraditionalCode = () => (
 const X402Code = () => (
   <pre className="text-xs leading-relaxed whitespace-pre-wrap break-words">
     <code className="block">
-      <span className="text-white/35">// No sign-up. No card on file.</span>{'\n'}
+      <span className="text-white/35">{'// No sign-up. No card on file.'}</span>{'\n'}
       {'\n'}
-      <span className="text-brand-light">const</span> <span className="text-cipher-light">res</span> = <span className="text-brand-light">await</span> <span className="text-white/80">fetch</span>(<span className="text-cipher">'https://aeronyx.network/compute'</span>, {'{'}{'\n'}
+      <span className="text-brand-light">const</span> <span className="text-cipher-light">res</span> = <span className="text-brand-light">await</span> <span className="text-white/80">fetch</span>(<span className="text-cipher">{"'https://aeronyx.network/compute'"}</span>, {'{'}{'\n'}
       {'  '}<span className="text-cipher-light">headers</span>: {'{'}{'\n'}
-      {'    '}<span className="text-cipher">'X-Payment'</span>: <span className="text-brand-light">await</span> wallet.<span className="text-white/80">signPayment</span>(){'\n'}
+      {'    '}<span className="text-cipher">{"'X-Payment'"}</span>: <span className="text-brand-light">await</span> wallet.<span className="text-white/80">signPayment</span>(){'\n'}
       {'  }'}{'\n'}
       {'}'});{'\n'}
       {'\n'}
-      <span className="text-white/35">// Fully autonomous · pay per request</span>{'\n'}
-      <span className="text-white/35">// 402 -> wallet signs -> retried -> served</span>
+      <span className="text-white/35">{'// Fully autonomous · pay per request'}</span>{'\n'}
+      <span className="text-white/35">{'// 402 → wallet signs → retried → served'}</span>
     </code>
   </pre>
 );
-
 export default ProblemToX402;
