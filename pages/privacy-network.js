@@ -4,7 +4,13 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v1.0 - New secondary page for Privacy Access.
+ * Modification Reason: v1.1 - Apple-grade product page polish.
+ *   Tightened hero spacing, stabilized CTA labels, and unified product cards
+ *   with globals.css v3.3 page-surface/page-card utilities so the page feels
+ *   calmer on iPhone, iPad, macOS, Windows, and Android.
+ *
+ * Historical Notes:
+ *   v1.0 - New secondary page for Privacy Access.
  * Main Functionality:
  *   - Presents AeroNyx Privacy Network / Privacy Access as an application
  *     built on the AeroNyx Privacy Protocol.
@@ -29,7 +35,7 @@
  *   - The Rust/backend endpoint path still contains vpn for backward
  *     compatibility; do not rename API paths without coordinating clients.
  *
- * Last Modified: v1.0 - Dedicated Privacy Network page
+ * Last Modified: v1.1 - Responsive typography and card polish
  * ============================================
  */
 
@@ -123,7 +129,7 @@ export default function PrivacyNetworkPage() {
 
       <AILHeader />
 
-      <main className="relative z-10 pt-28 md:pt-36">
+      <main className="relative z-10 pt-24 md:pt-32">
         <Hero />
         <LiveProtocolStats stats={stats} isLoading={isLoading} copy={copy} healthPercent={healthPercent} />
         <ProtectionSignals />
@@ -137,7 +143,7 @@ export default function PrivacyNetworkPage() {
 }
 
 const Hero = () => (
-  <section className="pb-14 md:pb-24">
+  <section className="pb-12 md:pb-24">
     <Container>
       <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
         <motion.div
@@ -159,13 +165,13 @@ const Hero = () => (
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
               href="#download-vpn"
-              className="inline-flex min-h-[44px] items-center justify-center bg-white px-6 py-3 text-sm uppercase tracking-eyebrow text-black transition-colors hover:bg-white/90"
+              className="inline-flex min-h-[44px] items-center justify-center bg-white px-6 py-3 text-center text-xs uppercase leading-none tracking-eyebrow text-black transition-colors hover:bg-white/90 md:text-sm"
             >
               Download Privacy Access
             </a>
             <a
               href="#protocol-stats"
-              className="inline-flex min-h-[44px] items-center justify-center border border-white/10 px-6 py-3 text-sm uppercase tracking-eyebrow text-white/60 transition-colors hover:border-brand-line hover:text-white"
+              className="inline-flex min-h-[44px] items-center justify-center border border-white/10 px-6 py-3 text-center text-xs uppercase leading-none tracking-eyebrow text-white/60 transition-colors hover:border-brand-line hover:text-white md:text-sm"
             >
               View protocol health
             </a>
@@ -176,7 +182,7 @@ const Hero = () => (
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 0.12, ease: EASE }}
-          className="border border-white/10 bg-black/60 p-5 backdrop-blur-md"
+          className="page-surface border p-4 md:p-5"
         >
           <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
             <span className="text-[10px] uppercase tracking-eyebrow text-white/36">connection assurance</span>
@@ -184,8 +190,8 @@ const Hero = () => (
           </div>
           <div className="space-y-4">
             {['Encrypted route established', 'Public IP hidden', 'No destinations in public telemetry', 'Protocol health verified'].map((item) => (
-              <div key={item} className="flex items-center justify-between border border-white/10 bg-white/[0.025] p-4">
-                <span className="text-sm text-white/70">{item}</span>
+              <div key={item} className="flex items-center justify-between gap-4 border border-white/10 bg-white/[0.025] p-4">
+                <span className="min-w-0 text-sm text-white/70">{item}</span>
                 <span className="h-2.5 w-2.5 rounded-pill bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.75)]" />
               </div>
             ))}
@@ -235,7 +241,7 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
         </div>
         <div className="grid gap-4 lg:grid-cols-3">
           {metrics.map((item) => (
-            <article key={item.label} className="min-w-0 border border-white/10 bg-black/50 p-5">
+            <article key={item.label} className="page-card min-w-0 border p-4 md:p-5">
               <div className="min-h-[3rem] font-light text-white">
                 {isLoading ? (
                   <span className="block h-8 w-28 animate-pulse bg-white/10" />
@@ -247,7 +253,7 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
                     defaultStep={item.defaultStep}
                   />
                 ) : (
-                  <span className="text-4xl">{item.fallback}</span>
+                  <span className="text-3xl md:text-4xl">{item.fallback}</span>
                 )}
               </div>
               <div className="mt-3 text-[10px] uppercase tracking-eyebrow text-white/42">{item.label}</div>
@@ -273,7 +279,7 @@ const ProtectionSignals = () => (
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         {protectionSignals.map((item) => (
-          <article key={item.title} className="border border-white/10 bg-white/[0.025] p-5">
+          <article key={item.title} className="page-card border p-4 md:p-5">
             <h2 className="text-xl font-light text-white">{item.title}</h2>
             <p className="mt-3 text-sm leading-relaxed text-white/56">{item.description}</p>
           </article>
@@ -297,7 +303,7 @@ const PrivacyBoundary = () => (
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {privacyBoundaries.map((item) => (
-            <div key={item} className="border border-white/10 bg-white/[0.025] p-4 text-sm text-white/62">
+            <div key={item} className="page-card border p-4 text-sm text-white/62">
               {item}
             </div>
           ))}

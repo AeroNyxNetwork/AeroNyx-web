@@ -2,7 +2,15 @@
  * ============================================
  * File: styles/globals.css
  * ============================================
- * Modification Reason: v3.2 — Apple-grade homepage typography compatibility.
+ * Modification Reason: v3.3 — Apple-grade interaction and secondary-page polish.
+ *   1. Added baseline touch-action and text-size stability for interactive
+ *      controls so iOS/Android taps feel immediate and do not trigger
+ *      accidental text scaling.
+ *   2. Added page-surface utility rules used by the new MemChain and Privacy
+ *      Network pages for quieter card rhythm and consistent mobile spacing.
+ *
+ * Historical Notes:
+ *   v3.2 — Apple-grade homepage typography compatibility.
  *   1. Added fixed breakpoint display scales for desktop/tablet/phone instead
  *      of fluid viewport-driven text. This keeps headings predictable across
  *      Safari, iOS, macOS, Windows, and Android.
@@ -66,7 +74,7 @@
  *     referenced by older sections — do not delete.
  *   - Heading text-shadow must stay neutral black. No colored glows.
  *
- * Last Modified: v3.2 — Apple-compatible type scale and locale fallback
+ * Last Modified: v3.3 — Interaction and secondary-page polish
  * ============================================
  */
 
@@ -175,6 +183,10 @@ h1, h2, h3, h4, h5, h6, p, span, a, button {
   text-rendering: optimizeLegibility;
 }
 
+a, button {
+  touch-action: manipulation;
+}
+
 h1, h2, h3, .heading-text {
   font-family: var(--font-display), var(--font-sans), var(--font-apple-ui);
   letter-spacing: 0;
@@ -258,6 +270,17 @@ pre {
   letter-spacing: 0;
 }
 
+.page-surface {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(16px);
+}
+
+.page-card {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.025);
+}
+
 @media (max-width: 1024px) {
   :root {
     --type-display-xl: 3.375rem;
@@ -298,6 +321,12 @@ pre {
   a[class*='px-'],
   button[class*='px-'] {
     min-height: 44px;
+  }
+
+  .page-surface,
+  .page-card {
+    border-left-width: 1px;
+    border-right-width: 1px;
   }
 }
 

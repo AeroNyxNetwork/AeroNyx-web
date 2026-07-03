@@ -5,7 +5,13 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
- * Modification Reason: v1.0 - New page for node-blind AI memory positioning.
+ * Modification Reason: v1.1 - Apple-grade page rhythm and mobile polish.
+ *   Tightened the hero visual on phone widths, unified card surfaces through
+ *   globals.css v3.3 utilities, and adjusted CTA/text rhythm so the page feels
+ *   premium without sacrificing the claim-safe MemChain story.
+ *
+ * Historical Notes:
+ *   v1.0 - New page for node-blind AI memory positioning.
  * Main Functionality:
  *   - Explains MemChain as a local-first, node-blind AI memory layer.
  *   - Shows the remember/store/recall pipeline, privacy boundary, benchmark
@@ -29,7 +35,7 @@
  *   - Any future accuracy claim above the measured 66-68 percent end-to-end
  *     range must be backed by a fresh benchmark before it appears here.
  *
- * Last Modified: v1.0 - Dedicated MemChain page
+ * Last Modified: v1.1 - Secondary page typography polish
  * ============================================
  */
 
@@ -183,7 +189,7 @@ export default function MemChainPage() {
 
       <AILHeader />
 
-      <main className="relative z-10 pt-28 md:pt-36">
+      <main className="relative z-10 pt-24 md:pt-32">
         <Hero />
         <Pipeline />
         <Pillars />
@@ -199,7 +205,7 @@ export default function MemChainPage() {
 }
 
 const Hero = () => (
-  <section className="pb-14 md:pb-24">
+  <section className="pb-12 md:pb-24">
     <Container>
       <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <motion.div
@@ -221,13 +227,13 @@ const Hero = () => (
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               href="/privacy-network"
-              className="inline-flex min-h-[44px] items-center justify-center border border-white/20 px-6 py-3 text-sm uppercase tracking-eyebrow text-white transition-colors hover:border-brand-line hover:bg-brand-faint"
+              className="inline-flex min-h-[44px] items-center justify-center border border-white/20 px-6 py-3 text-center text-xs uppercase leading-none tracking-eyebrow text-white transition-colors hover:border-brand-line hover:bg-brand-faint md:text-sm"
             >
               Explore privacy network
             </Link>
             <a
               href="#privacy-boundary"
-              className="inline-flex min-h-[44px] items-center justify-center border border-white/10 px-6 py-3 text-sm uppercase tracking-eyebrow text-white/60 transition-colors hover:text-white"
+              className="inline-flex min-h-[44px] items-center justify-center border border-white/10 px-6 py-3 text-center text-xs uppercase leading-none tracking-eyebrow text-white/60 transition-colors hover:text-white md:text-sm"
             >
               Read privacy boundary
             </a>
@@ -247,10 +253,10 @@ const Hero = () => (
 );
 
 const MemoryVisual = () => (
-  <div className="relative min-h-[32rem] overflow-hidden border border-white/10 bg-black/60 p-5 backdrop-blur-md">
+  <div className="page-surface relative min-h-[26rem] overflow-hidden border p-4 md:min-h-[32rem] md:p-5">
     <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.24) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.24) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-    <div className="relative z-10 flex h-full min-h-[29rem] flex-col justify-between">
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
+    <div className="relative z-10 flex h-full min-h-[23rem] flex-col justify-between md:min-h-[29rem]">
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
         <span className="font-mono text-xs uppercase tracking-eyebrow text-white/35">device hippocampus</span>
         <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">local first</span>
       </div>
@@ -261,10 +267,10 @@ const MemoryVisual = () => (
             initial={{ opacity: 0, x: -14 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.45, delay: 0.2 + index * 0.08, ease: EASE }}
-            className="grid grid-cols-[auto_1fr_auto] items-center gap-3 border border-white/10 bg-white/[0.035] p-3"
+            className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border border-white/10 bg-white/[0.035] p-3"
           >
             <span className="h-2 w-2 rounded-pill bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.75)]" />
-            <span className="text-sm text-white/72">{item}</span>
+            <span className="min-w-0 text-sm text-white/72">{item}</span>
             <span className="font-mono text-[10px] uppercase tracking-eyebrow text-cipher-light">sealed</span>
           </motion.div>
         ))}
@@ -282,7 +288,7 @@ const MemoryVisual = () => (
 );
 
 const Pipeline = () => (
-  <section className="border-y border-white/10 bg-white/[0.015] py-14 md:py-20">
+  <section className="border-y border-white/10 bg-white/[0.015] py-12 md:py-20">
     <Container>
       <SectionHeader
         eyebrow="Pipeline"
@@ -297,7 +303,7 @@ const Pipeline = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.08, ease: EASE }}
-            className="border border-white/10 bg-black/50 p-5"
+            className="page-card border p-4 md:p-5"
           >
             <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{item.label}</div>
             <h2 className="mt-4 text-2xl font-light text-white">{item.title}</h2>
@@ -327,7 +333,7 @@ const Pillars = () => (
       />
       <div className="mt-10 grid gap-4 lg:grid-cols-3">
         {pillars.map((pillar) => (
-          <article key={pillar.title} className="border border-white/10 bg-white/[0.025] p-5">
+          <article key={pillar.title} className="page-card border p-4 md:p-5">
             <h2 className="text-2xl font-light text-white">{pillar.title}</h2>
             <p className="mt-3 text-sm leading-relaxed text-white/58">{pillar.description}</p>
             <div className="mt-5 border border-brand-line bg-brand-faint p-3 text-xs leading-relaxed text-brand-light/88">
@@ -350,8 +356,8 @@ const Benchmarks = () => (
       />
       <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {benchmarkCards.map((item) => (
-          <div key={item.label} className="border border-white/10 bg-white/[0.025] p-5">
-            <div className="font-mono text-4xl font-light text-white">{item.value}</div>
+          <div key={item.label} className="page-card border p-4 md:p-5">
+            <div className="font-mono text-3xl font-light text-white md:text-4xl">{item.value}</div>
             <div className="mt-3 text-[10px] uppercase tracking-eyebrow text-white/42">{item.label}</div>
             <p className="mt-3 text-xs leading-relaxed text-white/46">{item.note}</p>
           </div>
@@ -433,7 +439,7 @@ const FAQ = () => (
       />
       <div className="mt-10 grid gap-4 md:grid-cols-2">
         {faqs.map((item) => (
-          <article key={item.q} className="border border-white/10 bg-black/45 p-5">
+          <article key={item.q} className="page-card border p-4 md:p-5">
             <h2 className="text-lg font-medium text-white">{item.q}</h2>
             <p className="mt-3 text-sm leading-relaxed text-white/58">{item.a}</p>
           </article>

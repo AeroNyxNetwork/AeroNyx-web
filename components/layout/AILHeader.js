@@ -2,7 +2,14 @@
  * ============================================
  * File: components/layout/AILHeader.js
  * ============================================
- * Modification Reason: v2.1 - Protocol-first navigation restructure.
+ * Modification Reason: v2.2 - Apple-grade responsive header polish.
+ *   Desktop navigation now starts at the lg breakpoint instead of md so iPad
+ *   and narrow tablet widths use the mobile menu rather than squeezing long
+ *   protocol/product labels into one row. CTA/link tap targets keep the
+ *   44px minimum interaction geometry.
+ *
+ * Historical Notes:
+ *   v2.1 - Protocol-first navigation restructure.
  *   The homepage now focuses on the AeroNyx protocol layer, while MemChain
  *   and Privacy Network live on dedicated secondary pages. Header links use
  *   Next.js Link for internal routes so locale prefixes remain compatible.
@@ -19,7 +26,7 @@
  *   - Do not point the CTA back to #download-vpn on the homepage. The product
  *     download area now belongs to pages/privacy-network.js.
  *
- * Last Modified: v2.1 - Protocol-first navigation
+ * Last Modified: v2.2 - Tablet-safe header navigation
  * ============================================
  */
 
@@ -100,18 +107,18 @@ const AILHeader = () => {
       
       {/* Navbar content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-16 lg:h-[4.5rem]">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" locale={locale} className="flex items-center space-x-2">
               <AeroNyxLogo width={32} height={32} />
-              <span className="text-xl font-light">AeroNyx</span>
+              <span className="text-lg font-light tracking-normal lg:text-xl">AeroNyx</span>
             </Link>
           </div>
           
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <nav className="flex items-center space-x-6">
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8">
+            <nav className="flex items-center gap-4 xl:gap-6">
               {navLinks.map((link) => (
                 link.external ? (
                   <a
@@ -119,7 +126,7 @@ const AILHeader = () => {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-white/60 hover:text-white transition-colors text-sm uppercase tracking-wider"
+                    className="inline-flex min-h-[44px] items-center text-xs uppercase tracking-eyebrow text-white/60 transition-colors hover:text-white xl:text-sm"
                   >
                     {link.label}
                   </a>
@@ -128,7 +135,7 @@ const AILHeader = () => {
                     key={link.href}
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.href)}
-                    className="text-white/60 hover:text-white transition-colors text-sm uppercase tracking-wider"
+                    className="inline-flex min-h-[44px] items-center text-xs uppercase tracking-eyebrow text-white/60 transition-colors hover:text-white xl:text-sm"
                   >
                     {link.label}
                   </a>
@@ -137,7 +144,7 @@ const AILHeader = () => {
                     key={link.href}
                     href={link.href}
                     locale={locale}
-                    className="text-white/60 hover:text-white transition-colors text-sm uppercase tracking-wider"
+                    className="inline-flex min-h-[44px] items-center text-xs uppercase tracking-eyebrow text-white/60 transition-colors hover:text-white xl:text-sm"
                   >
                     {link.label}
                   </Link>
@@ -147,7 +154,7 @@ const AILHeader = () => {
             
             <div className="relative" data-language-menu>
               <button
-                className="px-3 py-2 text-white/60 hover:text-white transition-colors text-sm uppercase tracking-wider"
+                className="min-h-[44px] px-3 py-2 text-xs uppercase tracking-eyebrow text-white/60 transition-colors hover:text-white xl:text-sm"
                 aria-label={copy.nav.language}
                 aria-expanded={isLanguageOpen}
                 onClick={() => setIsLanguageOpen((value) => !value)}
@@ -177,11 +184,11 @@ const AILHeader = () => {
 
             <div>
               <motion.div
-                className="relative px-6 py-2.5 border border-white/20 hover:border-white/40 transition-all"
+                className="relative flex min-h-[44px] items-center border border-white/20 px-5 py-2.5 transition-all hover:border-white/40 xl:px-6"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Link href="/privacy-network" locale={locale} className="relative z-10 text-sm uppercase tracking-wider">
+                <Link href="/privacy-network" locale={locale} className="relative z-10 text-xs uppercase tracking-eyebrow xl:text-sm">
                   {copy.nav.privacyAccess || copy.nav.downloads}
                 </Link>
               </motion.div>
@@ -189,7 +196,7 @@ const AILHeader = () => {
           </div>
           
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <button
               className="p-2 text-white/60 hover:text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
               onClick={() => setIsOpen(!isOpen)}
@@ -211,7 +218,7 @@ const AILHeader = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="md:hidden relative z-20"
+            className="lg:hidden relative z-20"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
