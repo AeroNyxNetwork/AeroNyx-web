@@ -1,6 +1,6 @@
 /**
  * ============================================
- * index.js - Homepage with MemChain Integration
+ * index.js - Homepage with Encrypted Coordination Layer Narrative
  * ============================================
  *
  * Modification Reason: v4.0 - Added MemChainShowcase section between
@@ -46,6 +46,11 @@
  * and evidence chips restyled. Eyebrow tracking unified to tracking-eyebrow.
  * ALL data logic, stats fields, i18n fallback chains, and privacy boundaries
  * are preserved verbatim.
+ * Last Modified: v5.1 - Aligned homepage narrative with the approved thesis:
+ * "The encrypted coordination layer for autonomous agents." The first
+ * viewport, SEO copy, and public protocol statistics now frame AeroNyx as a
+ * blind open protocol for humans, apps, and AI agents to route traffic,
+ * exchange encrypted messages, preserve private memory, and coordinate work.
  * ============================================
  */
 

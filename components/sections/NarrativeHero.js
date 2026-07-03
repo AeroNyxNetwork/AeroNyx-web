@@ -2,9 +2,16 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.0.0
+ * Version: 8.1.0
  *
  * Modification Reason:
+ *   v8.1 — Reframed the first viewport around the approved product thesis:
+ *   "The encrypted coordination layer for autonomous agents." The hero now
+ *   connects humans, apps, and AI agents across routing, encrypted messages,
+ *   private memory, and blind protocol coordination while preserving the Lens
+ *   interaction as proof that infrastructure only sees ciphertext.
+ *
+ * Historical Notes:
  *   v8.0 — Foreground rebuilt copy-first for the approved top-tier pass.
  *   The Lens demonstrates "the network sees only ciphertext"; the headline
  *   now IS that claim ("Built to see nothing"), so the interaction proves
@@ -27,19 +34,19 @@
  *   - framer-motion, ../ui/Container, ../ui/AnimatedMessageCounter (v2.0),
  *     ../../lib/hooks/useNetworkStats (already multi-consumer safe:
  *     Home + JoinNetwork call it concurrently)
- *   - pages/_app.js v2.2 (--font-display = Instrument Serif)
+ *   - pages/_app.js v2.3 (--font-display = Inter/readable UI stack)
  *
  * ⚠️ Important Notes for Next Developer:
  *   - The eyes canvas is position:absolute (section-scoped). Do NOT make
  *     it fixed/inset-0 or it will cover the whole site.
  *   - Brand palette only: purple #7762F3 / #9788F7, blue #5FBBF7. No green.
- *   - Instrument Serif has weight 400 only — never bold the headline;
- *     emphasis = italic + ACCENT_LT.
+ *   - The homepage headline is a product thesis, not decorative copy. Keep it
+ *     readable, with zero letter-spacing and no condensed display gimmicks.
  *   - splitRef.current is assigned during render on purpose. Keep it.
  *   - The payoff stamp must remain earned (manual drag only, >92%) — do
  *     not show it during auto-sweep or it loses all meaning.
  *
- * Last Modified: v8.0.0 — Copy-first foreground rebuild
+ * Last Modified: v8.1.0 — Autonomous-agent coordination thesis
  * ============================================================================
  */
 
@@ -572,7 +579,7 @@ const NarrativeHero = () => {
                   color: 'rgba(210,205,255,0.78)',
                 }}
               >
-                Open privacy coordination protocol
+                Blind open coordination protocol
               </motion.div>
 
               <motion.h1
@@ -581,15 +588,12 @@ const NarrativeHero = () => {
                 style={{
                   fontFamily: 'var(--font-display), Georgia, serif',
                   fontWeight: 400,
-                  fontSize: 'clamp(2.6rem, 5.2vw, 5rem)',
-                  lineHeight: 1.04,
-                  letterSpacing: '-0.01em',
+                  fontSize: 'clamp(2.4rem, 5vw, 4.6rem)',
+                  lineHeight: 1.08,
+                  letterSpacing: 0,
                 }}
               >
-                The network built
-                <br />
-                to see{' '}
-                <em style={{ color: ACCENT_LT, fontStyle: 'italic' }}>nothing.</em>
+                The encrypted coordination layer for autonomous agents.
               </motion.h1>
 
               <motion.p
@@ -597,11 +601,8 @@ const NarrativeHero = () => {
                 className="text-base sm:text-lg font-light leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0"
                 style={{ color: 'rgba(255,255,255,0.6)' }}
               >
-                Encrypted routing, private memory, and agent-native payments —
-                coordinated over a blind relay fabric.{' '}
-                <span style={{ color: 'rgba(255,255,255,0.85)' }}>
-                  What the network can't see, it can't leak, sell, or surrender.
-                </span>
+                AeroNyx lets humans, apps, and AI agents route traffic, exchange encrypted messages,
+                preserve private memory, and coordinate work through a blind, open protocol.
               </motion.p>
 
               <motion.div
@@ -611,12 +612,12 @@ const NarrativeHero = () => {
                 <a href="#how-it-works"
                   className="px-7 py-3.5 rounded text-sm font-medium tracking-wide transition-transform duration-fast hover:scale-[1.02]"
                   style={{ background: ACCENT, color: '#fff', boxShadow: `0 0 30px ${ACCENT}40` }}>
-                  Explore the protocol
+                  Explore the coordination layer
                 </a>
                 <a href="#join-network"
                   className="px-7 py-3.5 rounded text-sm tracking-wide border transition-colors duration-fast hover:border-white/40"
                   style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.75)' }}>
-                  Run a node
+                  Join the protocol
                 </a>
               </motion.div>
 
@@ -627,7 +628,7 @@ const NarrativeHero = () => {
               >
                 <div className="flex items-center gap-2 text-[9px] uppercase tracking-eyebrow text-white/35 mb-1.5">
                   <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT_LT }} />
-                  Live — encrypted traffic relayed
+                  Live — encrypted coordination traffic
                 </div>
                 <div className="max-w-[16rem]">
                   <AnimatedMessageCounter
@@ -650,7 +651,7 @@ const NarrativeHero = () => {
             >
               {/* Caption elevated from hint to narrative (v8.0) */}
               <p className="text-center text-xs tracking-wide mb-3" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                Drag the lens — <span style={{ color: 'rgba(138,209,255,0.75)' }}>see what the network sees.</span>
+                Drag the lens — <span style={{ color: 'rgba(138,209,255,0.75)' }}>infrastructure only sees ciphertext.</span>
               </p>
 
               <div
