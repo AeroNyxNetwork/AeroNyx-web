@@ -40,7 +40,13 @@
  *   - Section headline uses the shared text-display-lg token. Do not add
  *     ad hoc serif styling or negative letter-spacing.
  *
+ * Modification Reason: v1.4 - Mobile narrative and code-panel polish.
+ *   Blocker cards now stay single-column until desktop/tablet widths, and
+ *   the code tabs become a full-width two-option control on mobile so the
+ *   x402 proof remains readable without horizontal squeeze.
+ *
  * Last Modified: v1.3 — Memory-before-payment narrative and touch polish
+ * Last Modified: v1.4 - iPhone-safe blocker grid and code tabs
  * ============================================
  */
 
@@ -124,7 +130,7 @@ const ProblemToX402 = () => {
           </motion.div>
 
           {/* Three blockers */}
-          <div className="mb-10 grid gap-4 sm:grid-cols-3 md:mb-12 md:gap-5">
+          <div className="mb-10 grid gap-4 md:mb-12 md:grid-cols-3 md:gap-5">
             {blockers.map((b, index) => (
               <motion.div
                 key={b.title}
@@ -182,7 +188,7 @@ const ProblemToX402 = () => {
 
               {/* Code panel */}
               <div className="p-5 md:p-8">
-                <div className="mb-4 inline-flex rounded border border-white/10 bg-white/[0.03] p-1">
+                <div className="mb-4 grid w-full grid-cols-2 rounded border border-white/10 bg-white/[0.03] p-1 sm:inline-grid sm:w-auto">
                   {[
                     { id: 'traditional', label: 'Traditional API' },
                     { id: 'x402', label: 'With x402' },
@@ -190,7 +196,7 @@ const ProblemToX402 = () => {
                     <button
                       key={tab.id}
                       onClick={() => setCodeTab(tab.id)}
-                      className={`min-h-[40px] rounded-sm px-4 py-2 text-xs font-medium transition-colors duration-fast sm:text-sm ${
+                      className={`min-h-[44px] rounded-sm px-3 py-2 text-xs font-medium transition-colors duration-fast sm:min-h-[40px] sm:px-4 sm:text-sm ${
                         codeTab === tab.id ? 'bg-white text-black' : 'text-white/60 hover:text-white'
                       }`}
                     >

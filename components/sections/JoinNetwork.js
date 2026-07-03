@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/JoinNetwork.jsx
  * ============================================
- * Modification Reason: v2.1 — SSR fix + protocol-node credibility pass.
+ * Modification Reason: v2.4 - Mobile operator journey polish.
+ *   The node-operator journey now reads text-first on phones, uses compact
+ *   4:3 visuals before expanding to square cards, and keeps the progress
+ *   controls at 44px touch geometry without forcing horizontal compression.
+ *
+ * Historical Notes:
+ * v2.1 — SSR fix + protocol-node credibility pass.
  *   1. FIX (hydration): NetworkBackground generated line coordinates
  *      with Math.random() during render — server and client produced
  *      different values (React hydration mismatch + first-paint flicker).
@@ -30,6 +36,7 @@
  *   - Brand rule: no green, no emojis.
  *
  * Last Modified: v2.3 — Apple-grade operator journey control polish
+ * Last Modified: v2.4 - iPhone-safe journey order and control sizing
  * ============================================
  */
 
@@ -247,7 +254,7 @@ const JoinNetwork = () => {
                   <button
                     onClick={() => setActiveStep(index)}
                     aria-label={`Step ${index + 1}: ${step.title}`}
-                    className={`flex-shrink-0 rounded-sm transition-all duration-base ease-out-brand ${
+                    className={`flex min-h-[44px] min-w-[44px] flex-shrink-0 items-center justify-center rounded-sm transition-all duration-base ease-out-brand ${
                       index === activeStep
                         ? 'scale-110'
                         : index < activeStep
@@ -255,7 +262,7 @@ const JoinNetwork = () => {
                           : 'opacity-30'
                     }`}
                   >
-                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded border flex items-center justify-center font-mono ${
+                    <div className={`flex h-10 w-10 items-center justify-center rounded border font-mono md:h-12 md:w-12 ${
                       index === activeStep
                         ? 'border-brand-light bg-brand-faint text-brand-light'
                         : index < activeStep
@@ -266,7 +273,7 @@ const JoinNetwork = () => {
                     </div>
                   </button>
                   {index < steps.length - 1 && (
-                    <div className={`mx-2 h-px w-10 flex-shrink-0 transition-all duration-base md:mx-0 md:w-24 ${
+                    <div className={`mx-1 h-px w-8 flex-shrink-0 transition-all duration-base sm:mx-2 sm:w-10 md:mx-0 md:w-24 ${
                       index < activeStep ? 'bg-brand-light/50' : 'bg-white/15'
                     }`} />
                   )}
@@ -283,7 +290,7 @@ const JoinNetwork = () => {
             transition={{ duration: 0.4, ease: EASE }}
             className="grid items-center gap-8 md:grid-cols-2 md:gap-12"
           >
-            <div className="order-2 md:order-1">
+            <div className="order-1">
               <div className="mb-6">
                 <div className="text-5xl md:text-6xl font-extralight text-white/15 mb-2 font-mono">
                   {steps[activeStep].number}
@@ -314,7 +321,7 @@ const JoinNetwork = () => {
                   href={steps[activeStep].cta.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex min-h-[46px] items-center gap-2 rounded border border-white/20 px-6 py-3 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
+                  className="group inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded border border-white/20 px-6 py-3 text-center transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint sm:w-auto"
                 >
                   <span className="text-sm uppercase tracking-eyebrow">
                     {steps[activeStep].cta.text}
@@ -330,8 +337,8 @@ const JoinNetwork = () => {
               )}
             </div>
 
-            <div className="order-1 md:order-2">
-              <div className="page-card aspect-square rounded border p-6 backdrop-blur-sm md:p-8">
+            <div className="order-2">
+              <div className="page-card aspect-[4/3] rounded border p-5 backdrop-blur-sm sm:aspect-square md:p-8">
                 {steps[activeStep].visual}
               </div>
             </div>

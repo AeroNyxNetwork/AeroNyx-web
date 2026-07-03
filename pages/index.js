@@ -3,10 +3,11 @@
  * index.js - Homepage with Encrypted Coordination Layer Narrative
  * ============================================
  *
- * Modification Reason: v5.4 - Homepage narrative order correction.
- *   Privacy Network and MemChain now appear before the x402/payment story.
- *   This keeps the homepage product hierarchy grounded in AeroNyx's live
- *   privacy and memory layers before introducing agent payment rails.
+ * Modification Reason: v5.5 - Mobile evidence layout polish.
+ *   The public protocol stats panel now prioritizes single-column mobile
+ *   reading for long counters, readiness checks, and fabric metrics. This
+ *   keeps full values visible on iPhone-class widths without turning the
+ *   homepage into a cramped engineering dashboard.
  *
  * Historical Notes:
  * v5.3 - Homepage module polish pass.
@@ -66,6 +67,7 @@
  * Last Modified: v5.2 - Product deep-dives moved to secondary pages.
  * Last Modified: v5.3 - Homepage module rhythm and responsive evidence polish.
  * Last Modified: v5.4 - Product layers moved before x402 payment narrative.
+ * Last Modified: v5.5 - iPhone-safe public evidence layout
  * ============================================
  */
 
@@ -338,7 +340,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const meshNodeCount = Math.max(2, Math.min(4, Number(stats.protocolNetworkStoryReportedNodes || stats.protocolReportedNodes || 2)));
 
   return (
-    <section aria-label={copy.homeStats.ariaLabel} className="relative z-20 -mt-6 pb-10 md:-mt-10 md:pb-16">
+    <section aria-label={copy.homeStats.ariaLabel} className="relative z-20 -mt-4 pb-10 md:-mt-10 md:pb-16">
       <Container>
         <div className="page-surface mx-auto max-w-6xl overflow-hidden border">
           <div className="grid gap-0 xl:grid-cols-[0.86fr_2.14fr]">
@@ -411,7 +413,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                     {blindRelayStatusLabel} · {protocolText(protocolCopy, 'blindRelayProof', 'Relay Proof')}
                   </span>
                 </div>
-                <div className="mt-5 grid grid-cols-2 gap-2.5">
+                <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                   {foundationChecks.map((check) => (
                     <div key={check.label} className="page-card min-w-0 border p-3 md:p-3.5">
                       <div className="flex items-center justify-between gap-3">
@@ -473,7 +475,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
               </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {fabricMetrics.map((item) => (
                 <div key={item.label} className="page-card min-w-0 border p-3.5 md:p-5">
                   <div className="break-words text-xl font-light leading-tight tracking-normal text-white md:text-3xl">
