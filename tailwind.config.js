@@ -1,88 +1,70 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: '#7762F3', // RGB 119, 98, 243 (Purple)
-          light: '#9788F7',   // Lighter purple
-          dark: '#5945C4',    // Darker purple
+        // ---- Brand (唯一真源,全站禁止出現 green 語義色) ----
+        brand: {
+          DEFAULT: '#7762F3',
+          light: '#9788F7',
+          dark: '#5945C4',
+          faint: 'rgba(119, 98, 243, 0.08)',   // 卡片底、badge 底
+          line: 'rgba(119, 98, 243, 0.22)',    // 強調邊框
         },
-        secondary: {
-          DEFAULT: '#5FBBF7', // Complementary blue
-          light: '#8AD1FF',   // Lighter blue
-          dark: '#368AD1',    // Darker blue
+        cipher: {
+          DEFAULT: '#5FBBF7',                   // 只用於「網路視角/密文」語境
+          light: '#8AD1FF',
         },
-        neutral: {
-          100: '#E6E6F0',
-          200: '#C9C9D9',
-          300: '#9E9EB3',
-          400: '#7C7C99',
-          500: '#5C5C7B',
-          600: '#363658',
-          700: '#252542',
-          800: '#151528',
-          900: '#0D0D18',
+        // ---- Surface 階梯(帶一點冷紫的暖黑,不用純 #000) ----
+        surface: {
+          0: '#08080D',    // 頁面底色
+          1: '#0C0C13',    // section 交替底
+          2: '#111118',    // 卡片
+          3: '#16161F',    // 卡片 hover / 浮層
         },
-        accent: {
-          success: '#67E8B6', // Teal - works well with purple
-          warning: '#FFB86C', // Orange - complements purple
-          error: '#FF7EB6',   // Pink - harmonizes with purple theme
-          info: '#5FBBF7',    // Blue - cohesive with secondary color
-        },
+        // ---- 語義狀態(取代 green/red 的直接使用) ----
+        ok: '#9788F7',     // 「就緒/正常」用品牌淺紫,不用綠
+        warn: '#D4B483',   // 低飽和琥珀
+        // 文字一律用 white/α,不再需要 neutral 色板
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'var(--font-sans)', 'sans-serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
-      animation: {
-        'float': 'float 6s ease-in-out infinite',
+      fontSize: {
+        // Display 階梯,clamp 內建,section 標題只准從這裡拿
+        'display-xl': ['clamp(2.5rem, 5vw, 4.75rem)', { lineHeight: '1.04', letterSpacing: '-0.03em' }],
+        'display-lg': ['clamp(2rem, 3.6vw, 3.25rem)', { lineHeight: '1.08', letterSpacing: '-0.025em' }],
+        'display-md': ['clamp(1.5rem, 2.4vw, 2.125rem)', { lineHeight: '1.15', letterSpacing: '-0.02em' }],
       },
-      keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-20px)' },
-        },
+      borderRadius: {
+        // 全站幾何語言:銳利。禁用 rounded-xl/2xl/3xl
+        DEFAULT: '4px',
+        sm: '2px',
+        md: '6px',
+        pill: '999px',   // 只給 status dot / badge
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      transitionTimingFunction: {
+        out: 'cubic-bezier(0.16, 1, 0.3, 1)',      // 主 easing,所有 reveal/hover
+        inout: 'cubic-bezier(0.65, 0, 0.35, 1)',   // 只給 Lens 這類往返動畫
       },
-      // Text shadow utilities
-      textShadow: {
-        'sm': '0 1px 2px rgba(0, 0, 0, 0.2)',
-        'DEFAULT': '0 2px 4px rgba(0, 0, 0, 0.3)',
-        'lg': '0 4px 8px rgba(0, 0, 0, 0.4)',
+      transitionDuration: {
+        fast: '150ms',    // hover、按下
+        base: '300ms',    // 一般狀態切換
+        slow: '600ms',    // section reveal
       },
-      // Z-index utilities
-      zIndex: {
-        '-10': '-10',
-        '-1': '-1',
-        '60': '60',
-        '70': '70',
+      letterSpacing: {
+        eyebrow: '0.16em', // eyebrow 統一值,不再出現 0.14/0.16/0.18 混用
+      },
+      maxWidth: {
+        copy: '38rem',     // 正文段落最大寬
       },
     },
   },
-  plugins: [
-    // Custom plugin for text-shadow utilities
-    function({ addUtilities }) {
-      const newUtilities = {
-        '.text-shadow-sm': {
-          textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
-        },
-        '.text-shadow': {
-          textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
-        },
-        '.text-shadow-lg': {
-          textShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
-        },
-        '.text-shadow-none': {
-          textShadow: 'none',
-        },
-      };
-      addUtilities(newUtilities);
-    },
-  ],
+  plugins: [],
 };
