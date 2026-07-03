@@ -2,41 +2,35 @@
  * ============================================
  * File: pages/_app.js
  * ============================================
- * Modification Reason: v2.2 — Display typeface wired. Instrument Serif
- *   (Google Fonts, OFL) now drives --font-display for h1/h2 via the
- *   text-display-* scale; body remains Inter, code remains JetBrains
- *   Mono. This is the single highest-leverage "premium" change: the
- *   engineering-sans-body + characterful-serif-display pairing.
+ * Modification Reason: v2.3 — Display typeface simplified for readability.
+ *   --font-display now resolves to Inter instead of Instrument Serif so
+ *   homepage hero and section headlines feel cleaner, more legible, and more
+ *   product-grade across desktop/mobile. Body remains Inter, code remains
+ *   JetBrains Mono. This keeps the existing type scale while removing the
+ *   hard-to-read editorial serif treatment.
  *   (v2.0/v2.1 changes retained: delegated smooth scroll, zoom unlock,
  *   orientationchange --vh, next/font self-hosting.)
  *
  * ⚠️ Important Notes for Next Developer:
- *   - Instrument Serif has weight 400 only — display headings must not
- *     request bold; use size/tracking for hierarchy.
- *   - To revert to a single-typeface look, change ONLY the
- *     --font-display line back to var(--font-inter).
+ *   - Keep --font-display on var(--font-inter) unless a future design pass
+ *     explicitly reintroduces a tested display face with mobile screenshots.
+ *   - Several sections reference var(--font-display) inline; this file is the
+ *     central switch for homepage headline readability.
  *
- * Last Modified: v2.2 — Instrument Serif display wiring
+ * Last Modified: v2.3 — Display font normalized to Inter
  * ============================================
  */
 
 import { useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import Head from 'next/head';
-import { Inter, JetBrains_Mono, Instrument_Serif } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import '../styles/globals.css';
 import '../styles/scrollbar.css';
 import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
 const mono = JetBrains_Mono({ subsets: ['latin'], display: 'swap', variable: '--font-jbmono' });
-const display = Instrument_Serif({
-  weight: '400',
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-instrument',
-});
-
 function MyApp({ Component, pageProps, router }) {
   const locale = router.locale || DEFAULT_LOCALE;
   const copy = getMessages(locale);
@@ -82,10 +76,10 @@ function MyApp({ Component, pageProps, router }) {
 
   return (
     <div
-      className={`${inter.variable} ${mono.variable} ${display.variable}`}
+      className={`${inter.variable} ${mono.variable}`}
       style={{
         '--font-sans': 'var(--font-inter)',
-        '--font-display': 'var(--font-instrument)',
+        '--font-display': 'var(--font-inter)',
         '--font-mono': 'var(--font-jbmono)',
       }}
     >
