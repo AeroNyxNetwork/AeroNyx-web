@@ -46,7 +46,7 @@
  *   - Brand rule: no green, no emojis. Status colors come from the
  *     STATUS_BADGES map only.
  *
- * Last Modified: v3.0 — Token restyle, tab a11y, reduced-motion
+ * Last Modified: v3.1 — 2026 typography consistency pass
  * ============================================
  */
 
@@ -84,7 +84,7 @@ const ProductsEcosystem = () => {
         'x402-ready payment rails for protocol services',
       ],
       comparison: {
-        traditional: 'Centralized VPN: trust the provider',
+        traditional: 'Centralized privacy app: trust the provider',
         aeronyx: 'AeroNyx: verify the protocol boundary',
         savings: 'Own the privacy layer',
       },
@@ -283,7 +283,7 @@ const ProductsEcosystem = () => {
               {/* Content */}
               <div className="order-1 md:order-2">
                 <div className="flex items-center gap-3 md:gap-4 mb-3">
-                  <h3 className="text-2xl md:text-3xl font-light">{activeProduct.name}</h3>
+                  <h3 className="text-display-md font-light">{activeProduct.name}</h3>
                   {getStatusBadge(activeProduct.status)}
                 </div>
 
@@ -366,7 +366,7 @@ const ProductsEcosystem = () => {
             transition={{ duration: 0.6, ease: EASE }}
             className="mt-12 md:mt-16 text-center p-6 md:p-8 border border-white/10 rounded-md bg-white/[0.03]"
           >
-            <h3 className="text-xl md:text-2xl font-light mb-3">
+            <h3 className="text-display-md font-light mb-3">
               Why this belongs at the protocol layer
             </h3>
             <p className="text-sm md:text-base text-white/60 max-w-copy mx-auto">

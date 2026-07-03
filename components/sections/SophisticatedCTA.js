@@ -16,7 +16,7 @@
  *   - Keep whileInView here — do not revert to animate.
  *   - Whitepaper URL must match Footer; change both together.
  *
- * Last Modified: v2.0 — whileInView fix, URL alignment
+ * Last Modified: v2.1 — 2026 trust typography alignment
  * ============================================
  */
 
@@ -44,12 +44,12 @@ const SophisticatedCTA = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: EASE }}
           >
-            <h2 className="text-display-xl font-extralight mb-4 md:mb-6 px-4">
+            <h2 className="text-display-xl font-light mb-4 md:mb-6 px-4">
               {copy.line1}
-              <span className="block font-normal">{copy.line2}</span>
+              <span className="block font-medium">{copy.line2}</span>
             </h2>
 
-            <p className="text-base md:text-xl text-white/40 font-light max-w-copy mx-auto px-4">
+            <p className="text-base md:text-xl text-white/50 font-light max-w-copy mx-auto px-4 leading-relaxed">
               {copy.description}
             </p>
           </motion.div>

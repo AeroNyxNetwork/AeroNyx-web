@@ -16,7 +16,7 @@
  *   - Keep the copy contract (VPNAppVisual receives `copy`).
  *   - Brand rule: no green, no emojis. Connected = brand purple.
  *
- * Last Modified: v2.0 — Token restyle, emoji removal
+ * Last Modified: v2.1 — 2026 typography and privacy-network framing
  * ============================================
  */
 
@@ -40,7 +40,7 @@ const VPNDownloadSection = () => {
           <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Content */}
             <div className="order-2 lg:order-1">
-              <h2 className="text-3xl md:text-4xl font-light mb-4 md:mb-6">
+              <h2 className="text-display-md font-light mb-4 md:mb-6">
                 {copy.title}
                 <span className="block text-lg md:text-xl text-white/40 mt-2">
                   {copy.subtitle}

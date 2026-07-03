@@ -11,7 +11,7 @@
  *      render work on low-end Android.
  *   3. A11y: prefers-reduced-motion renders the full transcript
  *      instantly, no animation loop.
- *   4. Brand: all emojis removed (pillars/devices/OpenClaw → minimal
+ *   4. Brand: all emojis removed (pillars/devices/agent teaser → minimal
  *      SVG); green/yellow/blue semantics → brand/cipher/warn tokens
  *      (homepage "no green" rule); radii unified to 2/4/6px; shared
  *      easing curve.
@@ -19,7 +19,7 @@
  * Main Functionality:
  *   - MemChain deep-dive: header, memory-pool + sealed-blocks visual,
  *     live-typing API terminal, three protection pillars, cross-device
- *     sync visual, OpenClaw integration teaser.
+ *     sync visual, neutral agent-memory integration teaser.
  *
  * Dependencies:
  *   - components/ui/Container
@@ -29,17 +29,17 @@
  * Main Logical Flow:
  *   1. Section reveals on scroll (shared 600ms / EASE)
  *   2. Terminal starts typing on viewport enter (once), line-buffered
- *   3. Pillars stagger in; sync + OpenClaw blocks follow
+ *   3. Pillars stagger in; sync + agent-memory blocks follow
  *
  * ⚠️ Important Notes for Next Developer:
  *   - Keep the `alive` ref guard in TypewriterTerminal; async loops
  *     MUST check it before every setState.
  *   - Brand rule: no green, no emojis. Terminal palette: prompt/success
- *     = brand-light, data = cipher, mining = warn, muted = white/α.
+ *     = brand-light, data = cipher, block packing = warn, muted = white/α.
  *   - v2.1 positioning stands: sync is "encrypted protocol channels",
  *     not VPN tunnels.
  *
- * Last Modified: v3.0 — Cancel-safe typewriter, token restyle
+ * Last Modified: v3.1 — Neutral agent-memory framing, named-agent UI copy removed
  * ============================================
  */
 
@@ -69,14 +69,14 @@ const MemChainShowcase = () => {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-brand-line bg-brand-faint mb-6">
               <span className="text-[10px] uppercase tracking-eyebrow text-brand-light">
-                MemChain — AI Memory Blockchain
+                Memory Chain — private agent memory
               </span>
             </div>
 
             <h2 className="text-display-lg font-light mb-4 md:mb-6">
               Your AI remembers.
               <br />
-              <span className="font-semibold">Forever. Everywhere. Privately.</span>
+              <span className="font-medium">Portable. Encrypted. User-owned.</span>
             </h2>
 
             <p className="text-base md:text-xl text-white/60 max-w-copy mx-auto leading-relaxed">
@@ -167,14 +167,14 @@ const MemChainShowcase = () => {
             <CrossDeviceSyncVisual />
           </motion.div>
 
-          {/* OpenClaw Teaser */}
+          {/* Agent memory interface */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE }}
           >
-            <OpenClawTeaser />
+            <AgentMemoryTeaser />
           </motion.div>
 
         </div>
@@ -188,7 +188,7 @@ const MemChainShowcase = () => {
 // ============================================
 
 /* Terminal palette (brand rule): prompt/success = brand-light,
-   data = cipher, mining = warn, muted = white/α. */
+   data = cipher, block packing = warn, muted = white/α. */
 const SCRIPT = [
   { text: '$ curl -X POST /api/fact \\', color: 'text-brand-light', delay: 30 },
   { text: '  -d \'{"subject":"user","predicate":"loves","object":"Rust"}\'', color: 'text-white/50', delay: 20 },
@@ -528,17 +528,17 @@ const DeviceCard = ({ icon, name, status, memories, statusColor }) => (
   </div>
 );
 
-const OpenClawTeaser = () => (
+const AgentMemoryTeaser = () => (
   <div className="border border-white/10 rounded-md overflow-hidden" style={{ background: 'var(--surface-1, #0C0C13)' }}>
     <div className="grid md:grid-cols-2">
       <div className="p-6 md:p-8 border-b md:border-b-0 md:border-r border-white/10">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-8 h-8 rounded-sm border border-brand-line bg-brand-faint flex items-center justify-center text-xs font-semibold text-brand-light">
-            OC
+            AM
           </div>
           <div>
-            <div className="text-sm font-medium">OpenClaw AI</div>
-            <div className="text-xs text-ok">Connected to MemChain</div>
+            <div className="text-sm font-medium">Agent Memory Interface</div>
+            <div className="text-xs text-ok">Connected to Memory Chain</div>
           </div>
         </div>
 
@@ -555,11 +555,11 @@ const OpenClawTeaser = () => (
       </div>
 
       <div className="p-6 md:p-8">
-        <h3 className="text-xl md:text-2xl font-light mb-3">AI that truly knows you</h3>
+        <h3 className="text-display-md font-light mb-3">Memory that survives the app</h3>
         <p className="text-sm text-white/60 leading-relaxed mb-6">
-          OpenClaw connects to your personal MemChain through the AeroNyx privacy fabric.
-          Your AI assistant builds genuine understanding over time — and that
-          knowledge belongs to you, not a corporation.
+          Any compatible agent or client can connect to your personal Memory Chain through
+          the AeroNyx privacy fabric. The assistant can remember context over time, while
+          the memory stays encrypted, portable, and owned by the user.
         </p>
 
         <div className="space-y-3 mb-6">
@@ -575,7 +575,7 @@ const OpenClawTeaser = () => (
           rel="noopener noreferrer"
           className="inline-block px-6 py-3 rounded border border-brand-line bg-brand-faint hover:border-brand-light/50 transition-colors duration-fast"
         >
-          <span className="text-sm font-medium text-brand-light">Learn More About OpenClaw</span>
+          <span className="text-sm font-medium text-brand-light">Read Memory Chain Docs</span>
         </a>
       </div>
     </div>

@@ -24,7 +24,7 @@
  *
  * Dependencies:
  *   - components/ui/Container; framer-motion
- *   - tailwind.config.js v2.0 tokens; _app.js v2.2 (Instrument Serif)
+ *   - tailwind.config.js v2.1 tokens; _app.js v2.4 (Inter Tight display)
  *   - Section anchor #how-it-works (AILHeader nav + hero CTA target)
  *
  * Main Logical Flow:
@@ -40,9 +40,10 @@
  *     Protocol + Service steps. Do not re-add the Problem/State steps here
  *     — they live in ProblemToX402 and MemChainShowcase respectively.
  *   - Brand rule: no green, no emojis; visuals use brand/cipher/white-α.
- *   - Instrument Serif headline is weight 400 — never bold.
+ *   - Section headline uses the shared text-display-lg token. Keep the
+ *     architecture tone precise and avoid decorative display styling.
  *
- * Last Modified: v4.0 — Two-pillar compression
+ * Last Modified: v4.1 — 2026 trust typography alignment
  * ============================================
  */
 
@@ -99,16 +100,7 @@ const HowAILWorks = () => {
             transition={{ duration: 0.6, ease: EASE }}
             className="mb-12 md:mb-20 max-w-3xl"
           >
-            <h2
-              className="mb-4 md:mb-6"
-              style={{
-                fontFamily: 'var(--font-display), Georgia, serif',
-                fontWeight: 400,
-                fontSize: 'clamp(2rem, 3.8vw, 3.4rem)',
-                lineHeight: 1.08,
-                letterSpacing: '-0.015em',
-              }}
-            >
+            <h2 className="text-display-lg font-light mb-4 md:mb-6">
               Two layers. One <em className="text-brand-light" style={{ fontStyle: 'italic' }}>invariant.</em>
             </h2>
             <p className="text-base md:text-xl text-white/60 leading-relaxed">
@@ -142,7 +134,7 @@ const HowAILWorks = () => {
                   <div className="text-[10px] uppercase tracking-eyebrow text-brand-light mb-2">
                     {pillar.tag}
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-light mb-4">
+                  <h3 className="text-display-md font-light mb-4">
                     {pillar.title}
                   </h3>
                   <p className="text-sm md:text-base text-white/70 leading-relaxed mb-5">

@@ -2,15 +2,15 @@
  * ============================================
  * File: components/sections/JoinNetwork.jsx
  * ============================================
- * Modification Reason: v2.0 — SSR fix + brand/credibility pass.
+ * Modification Reason: v2.1 — SSR fix + protocol-node credibility pass.
  *   1. FIX (hydration): NetworkBackground generated line coordinates
  *      with Math.random() during render — server and client produced
  *      different values (React hydration mismatch + first-paint flicker).
  *      Lines are now generated once on mount.
- *   2. Credibility: ResourceVisual/AIVisual earnings figures are demo
- *      values — now labeled "Simulated" so illustrative numbers cannot
- *      be read as claims.
- *   3. Brand: green earnings text / green pulse → brand tokens; step
+ *   2. Credibility: old earnings/GPU/mining demo visuals were replaced
+ *      with protocol-node states: peer store, blind relay, restart recovery,
+ *      Memory Chain, and aggregate relay evidence.
+ *   3. Brand: old green status text / green pulse → brand tokens; step
  *      content transition → 8px rise + fade; radii → 2/4/6px; external
  *      CTAs get target=_blank rel=noopener.
  *
@@ -25,11 +25,11 @@
  * ⚠️ Important Notes for Next Developer:
  *   - Live counters source ONLY privacy-safe aggregates. Never surface
  *     node IDs/endpoints here.
- *   - Demo visuals must keep the "Simulated" label if they show money
- *     or performance figures.
+ *   - Visuals must describe protocol-node capabilities, never speculative
+ *     earnings, mining, or performance claims.
  *   - Brand rule: no green, no emojis.
  *
- * Last Modified: v2.0 — Hydration fix, token restyle, demo labeling
+ * Last Modified: v2.1 — Protocol-node narrative and visual polish
  * ============================================
  */
 
@@ -106,7 +106,7 @@ const JoinNetwork = () => {
       subtitle: copy.steps[0].subtitle,
       description: copy.steps[0].description,
       features: copy.steps[0].features,
-      cta: { text: copy.steps[0].cta, link: 'https://docs.aeronyx.network/node-setup' },
+      cta: { text: copy.steps[0].cta, link: 'https://docs.aeronyx.network/node-operators/rust-node-operations-and-health-checks' },
       visual: <NodeVisual />,
     },
     {
@@ -115,7 +115,7 @@ const JoinNetwork = () => {
       subtitle: copy.steps[1].subtitle,
       description: copy.steps[1].description,
       features: copy.steps[1].features,
-      cta: { text: copy.steps[1].cta, link: 'https://docs.aeronyx.network/mcp-ai' },
+      cta: { text: copy.steps[1].cta, link: 'https://docs.aeronyx.network/' },
       visual: <AIVisual />,
     },
     {
@@ -124,7 +124,7 @@ const JoinNetwork = () => {
       subtitle: copy.steps[2].subtitle,
       description: copy.steps[2].description,
       features: copy.steps[2].features,
-      cta: { text: copy.steps[2].cta, link: 'https://aeronyx.network/calculator' },
+      cta: { text: copy.steps[2].cta, link: 'https://app.aeronyx.network' },
       visual: <ResourceVisual />,
     },
     {
@@ -405,7 +405,7 @@ const AIVisual = () => (
     <div className="w-full max-w-sm">
       <div className="flex justify-end mb-3">
         <span className="text-[9px] uppercase tracking-eyebrow text-white/30 border border-white/10 rounded-sm px-2 py-0.5">
-          Simulated
+          Protocol view
         </span>
       </div>
       <div className="space-y-4">
@@ -415,8 +415,8 @@ const AIVisual = () => (
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, ease: EASE }}
         >
-          <div className="text-brand-light mb-1">You:</div>
-          <div className="text-white/80">Optimize for maximum earnings</div>
+          <div className="text-brand-light mb-1">App:</div>
+          <div className="text-white/80">Route this agent request through a blind relay path.</div>
         </motion.div>
 
         <motion.div
@@ -425,8 +425,8 @@ const AIVisual = () => (
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, ease: EASE }}
         >
-          <div className="text-brand-light mb-1">AI:</div>
-          <div className="text-white/80">Analyzing network demand... Reallocating 70% GPU to AI tasks, 30% to mining. Estimated earnings increase: 45%</div>
+          <div className="text-brand-light mb-1">AeroNyx:</div>
+          <div className="text-white/80">Peer view verified. Relay candidate selected. Payload remains ciphertext.</div>
         </motion.div>
 
         <motion.div
@@ -436,7 +436,7 @@ const AIVisual = () => (
           transition={{ delay: 1 }}
         >
           <div className="w-2 h-2 bg-brand-light rounded-pill animate-pulse" />
-          AI is managing your infrastructure
+          blind coordination path ready
         </motion.div>
       </div>
     </div>
@@ -448,15 +448,15 @@ const ResourceVisual = () => (
     <div className="w-full">
       <div className="flex justify-end mb-3">
         <span className="text-[9px] uppercase tracking-eyebrow text-white/30 border border-white/10 rounded-sm px-2 py-0.5">
-          Simulated
+          Nodeboard
         </span>
       </div>
       <div className="space-y-4">
         {[
-          { name: 'CPU', usage: 35, earning: '$0.42/hr' },
-          { name: 'GPU', usage: 78, earning: '$2.15/hr' },
-          { name: 'Storage', usage: 45, earning: '$0.18/hr' },
-          { name: 'Bandwidth', usage: 62, earning: '$0.95/hr' },
+          { name: 'Peer Store', usage: 82, state: 'synced' },
+          { name: 'Blind Relay', usage: 64, state: 'ready' },
+          { name: 'Restart Recovery', usage: 76, state: 'proved' },
+          { name: 'Memory Chain', usage: 38, state: 'local' },
         ].map((resource, i) => (
           <motion.div
             key={resource.name}
@@ -466,7 +466,7 @@ const ResourceVisual = () => (
           >
             <div className="flex justify-between items-center mb-1">
               <span className="text-sm text-white/60">{resource.name}</span>
-              <span className="text-xs text-brand-light font-mono">{resource.earning}</span>
+              <span className="text-xs text-brand-light font-mono">{resource.state}</span>
             </div>
             <div className="w-full h-1.5 bg-white/10 rounded-pill overflow-hidden">
               <motion.div
@@ -485,8 +485,8 @@ const ResourceVisual = () => (
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
         >
-          <div className="text-xs text-white/40">Total earnings</div>
-          <div className="text-2xl font-light text-brand-light font-mono">$3.70/hr</div>
+          <div className="text-xs text-white/40">Protocol evidence</div>
+          <div className="text-2xl font-light text-brand-light font-mono">observed</div>
         </motion.div>
       </div>
     </div>

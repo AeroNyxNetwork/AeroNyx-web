@@ -25,7 +25,7 @@
  *
  * Dependencies:
  *   - components/ui/Container; framer-motion
- *   - tailwind.config.js v2.0 tokens; _app.js v2.2 (Instrument Serif)
+ *   - tailwind.config.js v2.1 tokens; _app.js v2.4 (Inter Tight display)
  *   - pages/index.js must import THIS instead of ProblemStatement +
  *     X402Showcase (see the updated import block delivered alongside).
  *
@@ -37,10 +37,10 @@
  * ⚠️ Important Notes for Next Developer:
  *   - No unsourced statistics (site-wide rule since ProductsEcosystem
  *     v2.3). No green, no emojis. Keep the Coinbase x402 attribution.
- *   - Instrument Serif headline is weight 400 — never bold; emphasis is
- *     italic + brand color.
+ *   - Section headline uses the shared text-display-lg token. Do not add
+ *     ad hoc serif styling or negative letter-spacing.
  *
- * Last Modified: v1.0 — Initial merge
+ * Last Modified: v1.1 — 2026 trust typography alignment
  * ============================================
  */
 
@@ -112,16 +112,7 @@ const ProblemToX402 = () => {
             transition={{ duration: 0.6, ease: EASE }}
             className="text-center mb-12 md:mb-16"
           >
-            <h2
-              className="mb-5"
-              style={{
-                fontFamily: 'var(--font-display), Georgia, serif',
-                fontWeight: 400,
-                fontSize: 'clamp(2rem, 3.8vw, 3.4rem)',
-                lineHeight: 1.08,
-                letterSpacing: '-0.015em',
-              }}
-            >
+            <h2 className="text-display-lg font-light mb-5">
               We built agents that can think.
               <br />
               Then locked them <em className="text-brand-light" style={{ fontStyle: 'italic' }}>out.</em>

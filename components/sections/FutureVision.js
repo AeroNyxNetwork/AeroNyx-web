@@ -23,7 +23,7 @@
  *   - Roadmap items are stated as intentions ("we aim", "designed to"),
  *     never as guarantees. Keep it that way.
  *
- * Last Modified: v2.0 — Roadmap-tone copy, token restyle
+ * Last Modified: v2.1 — Typography consistency and coordination framing
  * ============================================
  */
 
@@ -107,7 +107,7 @@ const FutureVision = () => {
                 </div>
 
                 <div className="md:col-span-2">
-                  <h3 className="text-xl md:text-2xl font-light mb-3 md:mb-4">{vision.title}</h3>
+                  <h3 className="text-display-md font-light mb-3 md:mb-4">{vision.title}</h3>
                   <p className="text-sm md:text-base text-white/60 mb-4 md:mb-6 leading-relaxed">
                     {vision.description}
                   </p>
@@ -137,7 +137,7 @@ const FutureVision = () => {
             transition={{ duration: 0.8 }}
           >
             <div className="text-center">
-              <h3 className="text-2xl md:text-3xl font-light mb-6 md:mb-8">
+              <h3 className="text-display-md font-light mb-6 md:mb-8">
                 The bet we're making
               </h3>
               <p className="text-base md:text-xl text-white/60 max-w-copy mx-auto leading-relaxed px-4">
