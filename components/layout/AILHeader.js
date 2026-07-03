@@ -2,12 +2,16 @@
  * ============================================
  * File: components/layout/AILHeader.js
  * ============================================
- * Modification Reason: v2.3 - Apple-grade language menu and link polish.
+ * Modification Reason: v2.4 - 2026 navigation state and control polish.
+ *   Adds active-route presentation, Escape-to-close behavior, full-surface
+ *   desktop CTA hit area, and stronger mobile language tap geometry.
+ *
+ * Historical Notes:
+ * v2.3 - Apple-grade language menu and link polish.
  *   Language menu items now keep 44px touch geometry and the brand link has a
  *   stable hit area, improving desktop hover paths and tablet/mobile taps
  *   without changing navigation routes.
  *
- * Historical Notes:
  * v2.2 - Apple-grade responsive header polish.
  *   Desktop navigation now starts at the lg breakpoint instead of md so iPad
  *   and narrow tablet widths use the mobile menu rather than squeezing long
@@ -31,7 +35,7 @@
  *   - Do not point the CTA back to #download-vpn on the homepage. The product
  *     download area now belongs to pages/privacy-network.js.
  *
- * Last Modified: v2.3 - Language menu and brand hit-area polish
+ * Last Modified: v2.4 - Active navigation and control hit-area polish
  * ============================================
  */
 
@@ -50,6 +54,21 @@ const AILHeader = () => {
   const locale = router.locale || DEFAULT_LOCALE;
   const copy = getMessages(locale);
   const currentLocale = SUPPORTED_LOCALES.find((item) => item.code === locale) || SUPPORTED_LOCALES[0];
+  const isActiveRoute = (href) => !href.startsWith('http') && router.pathname === href;
+  const desktopNavClass = (href) => (
+    `relative inline-flex min-h-[44px] items-center text-xs uppercase tracking-eyebrow transition-colors xl:text-sm ${
+      isActiveRoute(href)
+        ? 'text-white'
+        : 'text-white/60 hover:text-white'
+    }`
+  );
+  const mobileNavClass = (href) => (
+    `flex min-h-[44px] items-center rounded px-3 py-2 text-base transition-colors ${
+      isActiveRoute(href)
+        ? 'bg-white/[0.04] text-white'
+        : 'text-white/60 hover:bg-white/[0.03] hover:text-white'
+    }`
+  );
   
   useEffect(() => {
     const handleScroll = () => {
@@ -69,6 +88,17 @@ const AILHeader = () => {
 
     document.addEventListener('mousedown', handleClickAway);
     return () => document.removeEventListener('mousedown', handleClickAway);
+  }, []);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key !== 'Escape') return;
+      setIsLanguageOpen(false);
+      setIsOpen(false);
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
   }, []);
   
   // v2.1: protocol-first nav. Product detail pages are now secondary routes.
@@ -131,7 +161,7 @@ const AILHeader = () => {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-[44px] items-center text-xs uppercase tracking-eyebrow text-white/60 transition-colors hover:text-white xl:text-sm"
+                    className={desktopNavClass(link.href)}
                   >
                     {link.label}
                   </a>
@@ -140,7 +170,7 @@ const AILHeader = () => {
                     key={link.href}
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.href)}
-                    className="inline-flex min-h-[44px] items-center text-xs uppercase tracking-eyebrow text-white/60 transition-colors hover:text-white xl:text-sm"
+                    className={desktopNavClass(link.href)}
                   >
                     {link.label}
                   </a>
@@ -149,9 +179,13 @@ const AILHeader = () => {
                     key={link.href}
                     href={link.href}
                     locale={locale}
-                    className="inline-flex min-h-[44px] items-center text-xs uppercase tracking-eyebrow text-white/60 transition-colors hover:text-white xl:text-sm"
+                    aria-current={isActiveRoute(link.href) ? 'page' : undefined}
+                    className={desktopNavClass(link.href)}
                   >
                     {link.label}
+                    {isActiveRoute(link.href) && (
+                      <span aria-hidden="true" className="absolute -bottom-px left-0 h-px w-full bg-brand-light/80" />
+                    )}
                   </Link>
                 )
               ))}
@@ -162,6 +196,8 @@ const AILHeader = () => {
                 className="min-h-[44px] px-3 py-2 text-xs uppercase tracking-eyebrow text-white/60 transition-colors hover:text-white xl:text-sm"
                 aria-label={copy.nav.language}
                 aria-expanded={isLanguageOpen}
+                aria-haspopup="menu"
+                aria-controls="language-menu"
                 onClick={() => setIsLanguageOpen((value) => !value)}
               >
                 {currentLocale.short}
@@ -169,31 +205,35 @@ const AILHeader = () => {
               <div className={`absolute right-0 top-full w-44 pt-3 transition-all ${
                 isLanguageOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
               }`}>
-                <div className="border border-white/10 bg-black/95 p-2 shadow-2xl shadow-black/40">
-                {SUPPORTED_LOCALES.map((item) => (
-                  <Link
-                    key={item.code}
-                    href={router.asPath || '/'}
-                    locale={item.code}
-                    onClick={() => setIsLanguageOpen(false)}
-                    className={`flex min-h-[44px] items-center px-3 py-2 text-sm transition-colors ${
-                      item.code === locale ? 'text-white' : 'text-white/50 hover:text-white'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
+                <div id="language-menu" role="menu" className="border border-white/10 bg-black/95 p-2 shadow-2xl shadow-black/40">
+                  {SUPPORTED_LOCALES.map((item) => (
+                    <Link
+                      key={item.code}
+                      href={router.asPath || '/'}
+                      locale={item.code}
+                      onClick={() => setIsLanguageOpen(false)}
+                      role="menuitem"
+                      className={`flex min-h-[44px] items-center px-3 py-2 text-sm transition-colors ${
+                        item.code === locale ? 'text-white' : 'text-white/50 hover:text-white'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>
 
             <div>
               <motion.div
-                className="relative flex min-h-[44px] items-center border border-white/20 px-5 py-2.5 transition-all hover:border-white/40 xl:px-6"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.985 }}
               >
-                <Link href="/privacy-network" locale={locale} className="relative z-10 text-xs uppercase tracking-eyebrow xl:text-sm">
+                <Link
+                  href="/privacy-network"
+                  locale={locale}
+                  className="relative z-10 flex min-h-[44px] items-center border border-white/20 px-5 py-2.5 text-xs uppercase tracking-eyebrow transition-colors hover:border-white/40 hover:bg-white/[0.03] xl:px-6 xl:text-sm"
+                >
                   {copy.nav.privacyAccess || copy.nav.downloads}
                 </Link>
               </motion.div>
@@ -205,7 +245,9 @@ const AILHeader = () => {
             <button
               className="p-2 text-white/60 hover:text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
               onClick={() => setIsOpen(!isOpen)}
-              aria-label="Toggle menu"
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpen}
+              aria-controls="mobile-navigation"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 {isOpen ? (
@@ -223,6 +265,7 @@ const AILHeader = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-navigation"
             className="lg:hidden relative z-20"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -240,7 +283,7 @@ const AILHeader = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setIsOpen(false)}
-                    className="px-3 py-2 text-base text-white/60 hover:text-white transition-colors min-h-[44px] flex items-center"
+                    className={mobileNavClass(link.href)}
                   >
                     {link.label}
                   </a>
@@ -249,7 +292,7 @@ const AILHeader = () => {
                     key={link.href}
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.href)}
-                    className="px-3 py-2 text-base text-white/60 hover:text-white transition-colors min-h-[44px] flex items-center"
+                    className={mobileNavClass(link.href)}
                   >
                     {link.label}
                   </a>
@@ -259,7 +302,8 @@ const AILHeader = () => {
                     href={link.href}
                     locale={locale}
                     onClick={() => setIsOpen(false)}
-                    className="px-3 py-2 text-base text-white/60 hover:text-white transition-colors min-h-[44px] flex items-center"
+                    aria-current={isActiveRoute(link.href) ? 'page' : undefined}
+                    className={mobileNavClass(link.href)}
                   >
                     {link.label}
                   </Link>
@@ -270,7 +314,7 @@ const AILHeader = () => {
                 href="/privacy-network"
                 locale={locale}
                 onClick={() => setIsOpen(false)}
-                className="mt-2 px-4 py-3 text-center border border-white/20 hover:border-white/40 transition-colors min-h-[44px] flex items-center justify-center"
+                className="mt-2 flex min-h-[48px] items-center justify-center border border-white/20 px-4 py-3 text-center transition-colors hover:border-white/40 hover:bg-white/[0.03]"
               >
                 {copy.nav.privacyAccess || copy.nav.downloads}
               </Link>
@@ -282,7 +326,7 @@ const AILHeader = () => {
                     href={router.asPath || '/'}
                     locale={item.code}
                     onClick={() => setIsOpen(false)}
-                    className={`px-3 py-2 text-sm border transition-colors ${
+                    className={`flex min-h-[44px] items-center rounded-sm border px-3 py-2 text-sm transition-colors ${
                       item.code === locale
                         ? 'border-white/30 text-white'
                         : 'border-white/10 text-white/50 hover:text-white'

@@ -2,10 +2,10 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v3.5 — Apple-grade selector and content rhythm pass.
- *   Product tabs now snap cleanly on mobile, keep predictable touch geometry,
- *   and the product detail cards use calmer spacing so Privacy Access and
- *   MemChain read as premium product entries before x402.
+ * Modification Reason: v3.6 - Apple-grade selector keyboard polish.
+ *   Product tabs now support roving focus, Home/End, and arrow-key selection
+ *   so the ecosystem selector behaves like a mature product control rather
+ *   than a set of decorative buttons.
  *
  * Historical Notes:
  * v3.4 — Product hierarchy order correction.
@@ -66,10 +66,11 @@
  * Last Modified: v3.3 — Homepage product index spacing and interaction polish
  * Last Modified: v3.4 — Privacy Access and MemChain ordered before x402 rails
  * Last Modified: v3.5 — Mobile snap selector and detail card rhythm polish
+ * Last Modified: v3.6 - Roving keyboard focus for product tabs
  * ============================================
  */
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import Container from '../ui/Container';
@@ -85,6 +86,7 @@ const STATUS_BADGES = {
 
 const ProductsEcosystem = () => {
   const [selectedProduct, setSelectedProduct] = useState('vpn');
+  const tabRefs = useRef({});
 
   const products = [
     {
@@ -211,6 +213,54 @@ const ProductsEcosystem = () => {
 
   const activeProduct = products.find((p) => p.id === selectedProduct) || products[0];
 
+  const focusProductTab = (productId) => {
+    if (typeof window === 'undefined') return;
+    window.requestAnimationFrame(() => {
+      tabRefs.current[productId]?.focus();
+    });
+  };
+
+  const selectProductByIndex = (index, shouldFocus = false) => {
+    const product = products[index];
+    if (!product) return;
+    setSelectedProduct(product.id);
+    if (shouldFocus) {
+      focusProductTab(product.id);
+    }
+  };
+
+  const selectAdjacentProduct = (productId, direction) => {
+    const currentIndex = products.findIndex((product) => product.id === productId);
+    if (currentIndex < 0) return;
+    const nextIndex = (currentIndex + direction + products.length) % products.length;
+    selectProductByIndex(nextIndex, true);
+  };
+
+  const handleProductTabKeyDown = (event, productId) => {
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      selectAdjacentProduct(productId, 1);
+      return;
+    }
+
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      selectAdjacentProduct(productId, -1);
+      return;
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault();
+      selectProductByIndex(0, true);
+      return;
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault();
+      selectProductByIndex(products.length - 1, true);
+    }
+  };
+
   const getStatusBadge = (status) => {
     const badge = STATUS_BADGES[status];
     if (!badge) return null;
@@ -263,9 +313,14 @@ const ProductsEcosystem = () => {
               return (
                 <button
                   key={product.id}
+                  ref={(node) => {
+                    if (node) tabRefs.current[product.id] = node;
+                  }}
                   role="tab"
                   aria-selected={active}
                   aria-controls={`product-panel-${product.id}`}
+                  tabIndex={active ? 0 : -1}
+                  onKeyDown={(event) => handleProductTabKeyDown(event, product.id)}
                   onClick={() => setSelectedProduct(product.id)}
                   className={`relative min-h-[56px] min-w-fit flex-shrink-0 snap-start rounded border px-4 py-2.5 text-left transition-colors duration-fast md:px-6 md:py-3 ${
                     active

@@ -2,10 +2,10 @@
  * ============================================
  * File: components/layout/Footer.jsx
  * ============================================
- * Modification Reason: v2.2 — Footer tap geometry and mobile polish.
- *   Footer text links now keep practical touch targets and the legal row wraps
- *   cleanly on mobile, preserving the existing IA while making the bottom of
- *   the site feel as finished as the homepage.
+ * Modification Reason: v2.3 - Footer control geometry polish.
+ *   Footer brand, column links, and legal links now keep a consistent minimum
+ *   interaction size so the final page section feels as deliberate as the
+ *   hero and protocol modules on touch devices.
  *
  * Historical Notes:
  * v2.1 — Protocol-first IA alignment.
@@ -41,6 +41,7 @@
  *     routes use next/link.
  *
  * Last Modified: v2.2 — Footer link tap-target polish
+ * Last Modified: v2.3 - Consistent footer hit areas and link formatting
  * ============================================
  */
 
@@ -50,11 +51,11 @@ import AeroNyxLogo from '../ui/AeroNyxLogo';
 
 const Footer = () => {
   return (
-    <footer className="border-t border-white/10 py-14" style={{ background: 'var(--surface-0, #08080D)' }}>
+    <footer className="border-t border-white/10 py-14 md:py-16" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center space-x-2 mb-6">
+            <Link href="/" className="mb-6 inline-flex min-h-[44px] items-center space-x-2">
               <span className="h-10 w-10 flex items-center justify-center">
                 <AeroNyxLogo width={40} height={40} />
               </span>
@@ -111,7 +112,7 @@ const Footer = () => {
               href="https://docs.aeronyx.network/articles/aeronyx-privacy-policy"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[36px] items-center text-sm text-white/35 hover:text-white transition-colors duration-fast"
+              className="inline-flex min-h-[44px] items-center text-sm text-white/35 hover:text-white transition-colors duration-fast"
             >
               Privacy Policy
             </a>
@@ -119,7 +120,7 @@ const Footer = () => {
               href="https://docs.aeronyx.network/articles/aeronyx-user-agreement"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[36px] items-center text-sm text-white/35 hover:text-white transition-colors duration-fast"
+              className="inline-flex min-h-[44px] items-center text-sm text-white/35 hover:text-white transition-colors duration-fast"
             >
               Terms of Service
             </a>
@@ -133,7 +134,7 @@ const Footer = () => {
 const FooterColumn = ({ heading, links }) => (
   <div>
     <h4 className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-4">{heading}</h4>
-    <ul className="space-y-3">
+    <ul className="space-y-2">
       {links.map((link, index) => {
         const external = link.href.startsWith('http') || link.href.startsWith('mailto:');
         return (
@@ -143,12 +144,12 @@ const FooterColumn = ({ heading, links }) => (
                 href={link.href}
                 target={link.href.startsWith('mailto:') ? undefined : '_blank'}
                 rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-              className="inline-flex min-h-[36px] items-center text-sm text-white/55 hover:text-white transition-colors duration-fast"
-            >
+                className="inline-flex min-h-[44px] items-center text-sm text-white/55 hover:text-white transition-colors duration-fast"
+              >
                 {link.label}
               </a>
             ) : (
-              <Link href={link.href} className="inline-flex min-h-[36px] items-center text-sm text-white/55 hover:text-white transition-colors duration-fast">
+              <Link href={link.href} className="inline-flex min-h-[44px] items-center text-sm text-white/55 hover:text-white transition-colors duration-fast">
                 {link.label}
               </Link>
             )}
