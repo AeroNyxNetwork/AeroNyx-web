@@ -2,7 +2,14 @@
  * ============================================
  * File: tailwind.config.js
  * ============================================
- * Modification Reason: v2.0 — Design token foundation for the 2026
+ * Modification Reason: v2.1 — 2026 typography trust pass.
+ *   Display text tokens now use zero letter-spacing and a restrained fixed
+ *   scale so section headlines feel institutional and stable across desktop,
+ *   mobile, Windows, Android, iOS, and macOS. Eyebrow tracking was reduced
+ *   from 0.16em to 0.12em to avoid the over-spaced "crypto dashboard" look.
+ *
+ * Historical Notes:
+ *   v2.0 — Design token foundation for the 2026
  *   homepage redesign (US Web3 VC / AI-lab aesthetic). Adds the new
  *   `brand / cipher / surface` token system, display type scale,
  *   motion tokens (easing + duration), and sharp geometry radii.
@@ -31,7 +38,7 @@
  *   - Geometry rule: new sections use rounded (4px) / rounded-md (6px)
  *     max. Do not introduce rounded-xl/2xl in new code.
  *
- * Last Modified: v2.0 — Added 2026 design token system (additive)
+ * Last Modified: v2.1 — 2026 typography trust pass
  * ============================================
  */
 
@@ -108,9 +115,9 @@ module.exports = {
 
       fontSize: {
         /* Display scale — section headings must use one of these. */
-        'display-xl': ['clamp(2.5rem, 5vw, 4.75rem)', { lineHeight: '1.04', letterSpacing: '-0.03em' }],
-        'display-lg': ['clamp(2rem, 3.6vw, 3.25rem)', { lineHeight: '1.08', letterSpacing: '-0.025em' }],
-        'display-md': ['clamp(1.5rem, 2.4vw, 2.125rem)', { lineHeight: '1.15', letterSpacing: '-0.02em' }],
+        'display-xl': ['3.75rem', { lineHeight: '1.05', letterSpacing: '0' }],
+        'display-lg': ['2.75rem', { lineHeight: '1.1', letterSpacing: '0' }],
+        'display-md': ['2rem', { lineHeight: '1.16', letterSpacing: '0' }],
       },
 
       borderRadius: {
@@ -133,7 +140,7 @@ module.exports = {
       },
 
       letterSpacing: {
-        eyebrow: '0.16em', // the single sanctioned eyebrow tracking
+        eyebrow: '0.12em', // restrained 2026 trust eyebrow tracking
       },
 
       maxWidth: {

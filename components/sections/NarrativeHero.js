@@ -2,16 +2,20 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.1.0
+ * Version: 8.2.0
  *
  * Modification Reason:
+ *   v8.2 — Adopted the 2026 trust typography system. The hero headline now
+ *   uses the shared .hero-title class from globals.css, which maps to Inter
+ *   Tight through --font-display, fixed responsive breakpoints, zero
+ *   letter-spacing, and a stronger but still restrained 560 weight.
+ *
+ * Historical Notes:
  *   v8.1 — Reframed the first viewport around the approved product thesis:
  *   "The encrypted coordination layer for autonomous agents." The hero now
  *   connects humans, apps, and AI agents across routing, encrypted messages,
  *   private memory, and blind protocol coordination while preserving the Lens
  *   interaction as proof that infrastructure only sees ciphertext.
- *
- * Historical Notes:
  *   v8.0 — Foreground rebuilt copy-first for the approved top-tier pass.
  *   The Lens demonstrates "the network sees only ciphertext"; the headline
  *   now IS that claim ("Built to see nothing"), so the interaction proves
@@ -34,7 +38,8 @@
  *   - framer-motion, ../ui/Container, ../ui/AnimatedMessageCounter (v2.0),
  *     ../../lib/hooks/useNetworkStats (already multi-consumer safe:
  *     Home + JoinNetwork call it concurrently)
- *   - pages/_app.js v2.3 (--font-display = Inter/readable UI stack)
+ *   - pages/_app.js v2.4 (--font-display = Inter Tight)
+ *   - styles/globals.css v3.1 (.hero-title typography contract)
  *
  * ⚠️ Important Notes for Next Developer:
  *   - The eyes canvas is position:absolute (section-scoped). Do NOT make
@@ -46,7 +51,7 @@
  *   - The payoff stamp must remain earned (manual drag only, >92%) — do
  *     not show it during auto-sweep or it loses all meaning.
  *
- * Last Modified: v8.1.0 — Autonomous-agent coordination thesis
+ * Last Modified: v8.2.0 — 2026 trust typography system
  * ============================================================================
  */
 
@@ -584,14 +589,7 @@ const NarrativeHero = () => {
 
               <motion.h1
                 variants={stageItem}
-                className="mb-6"
-                style={{
-                  fontFamily: 'var(--font-display), Georgia, serif',
-                  fontWeight: 400,
-                  fontSize: 'clamp(2.4rem, 5vw, 4.6rem)',
-                  lineHeight: 1.08,
-                  letterSpacing: 0,
-                }}
+                className="hero-title mb-6"
               >
                 The encrypted coordination layer for autonomous agents.
               </motion.h1>

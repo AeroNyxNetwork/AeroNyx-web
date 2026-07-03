@@ -2,34 +2,39 @@
  * ============================================
  * File: pages/_app.js
  * ============================================
- * Modification Reason: v2.3 — Display typeface simplified for readability.
- *   --font-display now resolves to Inter instead of Instrument Serif so
- *   homepage hero and section headlines feel cleaner, more legible, and more
- *   product-grade across desktop/mobile. Body remains Inter, code remains
- *   JetBrains Mono. This keeps the existing type scale while removing the
- *   hard-to-read editorial serif treatment.
+ * Modification Reason: v2.4 — 2026 trust typography system.
+ *   --font-display now resolves to Inter Tight while body copy remains Inter
+ *   and code/ciphertext remains JetBrains Mono. This creates the polished
+ *   VC-deck feel the homepage needs without returning to a hard-to-read
+ *   editorial serif. Cyrillic subsets are loaded for Russian pages; CJK pages
+ *   keep native system fallback for readability.
  *   (v2.0/v2.1 changes retained: delegated smooth scroll, zoom unlock,
  *   orientationchange --vh, next/font self-hosting.)
  *
  * ⚠️ Important Notes for Next Developer:
- *   - Keep --font-display on var(--font-inter) unless a future design pass
- *     explicitly reintroduces a tested display face with mobile screenshots.
+ *   - Keep --font-display on var(--font-display-tight). It is the approved
+ *     display face for the autonomous-agent coordination narrative.
  *   - Several sections reference var(--font-display) inline; this file is the
  *     central switch for homepage headline readability.
  *
- * Last Modified: v2.3 — Display font normalized to Inter
+ * Last Modified: v2.4 — Inter Tight display system
  * ============================================
  */
 
 import { useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import Head from 'next/head';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, Inter_Tight, JetBrains_Mono } from 'next/font/google';
 import '../styles/globals.css';
 import '../styles/scrollbar.css';
 import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
 
-const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
+const inter = Inter({ subsets: ['latin', 'cyrillic'], display: 'swap', variable: '--font-inter' });
+const display = Inter_Tight({
+  subsets: ['latin', 'cyrillic'],
+  display: 'swap',
+  variable: '--font-display-tight',
+});
 const mono = JetBrains_Mono({ subsets: ['latin'], display: 'swap', variable: '--font-jbmono' });
 function MyApp({ Component, pageProps, router }) {
   const locale = router.locale || DEFAULT_LOCALE;
@@ -76,10 +81,10 @@ function MyApp({ Component, pageProps, router }) {
 
   return (
     <div
-      className={`${inter.variable} ${mono.variable}`}
+      className={`${inter.variable} ${display.variable} ${mono.variable}`}
       style={{
         '--font-sans': 'var(--font-inter)',
-        '--font-display': 'var(--font-inter)',
+        '--font-display': 'var(--font-display-tight)',
         '--font-mono': 'var(--font-jbmono)',
       }}
     >
