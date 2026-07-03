@@ -1,3 +1,43 @@
+/**
+ * ============================================
+ * File: components/ui/AnimatedMessageCounter.jsx
+ * ============================================
+ * Modification Reason: v2.0 — Brand + interface pass.
+ *   1. FIX (brand): pulse label color was green rgba(134,239,172,·) —
+ *      violates the homepage "no green" rule (NarrativeHero header).
+ *      Now brand light purple.
+ *   2. FIX (interface): pages/index.js passes a `defaultStep` prop that
+ *      this component silently ignored. Now formally accepted; used as
+ *      the minimum granularity for jittered live increments so byte
+ *      counters step in ~KB units instead of single bytes.
+ *   3. Pulse animation timing now uses the shared motion tokens.
+ *
+ * Main Functionality:
+ *   - Displays a live-growing formatted metric. Real values sync from
+ *     the API (~30s); between syncs the component extrapolates small
+ *     jittered increments from the observed growth rate, so the number
+ *     feels alive without ever exceeding plausible reality by design
+ *     (never decreases below a fresher API value).
+ *
+ * Dependencies:
+ *   - Consumed by pages/index.js (HomeNetworkStats items)
+ *   - Props: value, fallback, suffix, pulseLabel, defaultStep
+ *
+ * Main Logical Flow:
+ *   1. New `value` prop → compute delta vs previous sync → rate/sec
+ *   2. rAF-free timer loop emits jittered increments scaled by rate
+ *   3. Fit-to-container font sizing via hidden measurer + ResizeObserver
+ *
+ * ⚠️ Important Notes for Next Developer:
+ *   - displayValue must never move backwards between syncs except when
+ *     a fresher API value is lower (authoritative reset). Keep the
+ *     Math.max logic in the value effect.
+ *   - Do not reintroduce green for the pulse; ok-state color is purple.
+ *
+ * Last Modified: v2.0 — Purple pulse, defaultStep support
+ * ============================================
+ */
+
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 const MAX_VALUE_FONT_SIZE = 44;
@@ -7,7 +47,6 @@ const normalizeValue = (value) => {
   if (typeof value !== 'number' || !Number.isFinite(value)) {
     return null;
   }
-
   return Math.max(0, Math.floor(value));
 };
 
@@ -21,7 +60,6 @@ const formatPulseValue = (value) => {
   if (value <= 0) {
     return null;
   }
-
   return formatFullValue(value);
 };
 
@@ -29,7 +67,12 @@ const randomBetween = (min, max) => (
   min + Math.random() * (max - min)
 );
 
-const estimateJitteredStep = (ratePerSecond, delayMs) => {
+/**
+ * Estimate a plausible increment for one pulse window.
+ * v2.0: `minStep` (from the defaultStep prop) sets granularity — byte
+ * counters pulse in ~KB chunks, packet counters in single packets.
+ */
+const estimateJitteredStep = (ratePerSecond, delayMs, minStep = 1) => {
   if (ratePerSecond <= 0) {
     return 0;
   }
@@ -37,11 +80,13 @@ const estimateJitteredStep = (ratePerSecond, delayMs) => {
   const expected = ratePerSecond * (delayMs / 1000) * randomBetween(0.35, 1.75);
   const whole = Math.floor(expected);
 
-  if (whole > 0) {
-    return whole;
+  if (whole >= minStep) {
+    // Snap to minStep granularity so large-unit metrics look natural.
+    return Math.floor(whole / minStep) * minStep;
   }
 
-  return Math.random() < expected ? 1 : 0;
+  // Probabilistic single-minStep pulse for slow rates.
+  return Math.random() < expected / minStep ? minStep : 0;
 };
 
 const AnimatedMessageCounter = ({
@@ -49,6 +94,7 @@ const AnimatedMessageCounter = ({
   fallback = 'Syncing',
   suffix = '',
   pulseLabel = 'last sync',
+  defaultStep = 1,
 }) => {
   const containerRef = useRef(null);
   const measureRef = useRef(null);
@@ -128,7 +174,7 @@ const AnimatedMessageCounter = ({
           return;
         }
 
-        const step = estimateJitteredStep(ratePerSecond, delayMs);
+        const step = estimateJitteredStep(ratePerSecond, delayMs, Math.max(1, defaultStep));
 
         if (step > 0) {
           pulseKeyRef.current += 1;
@@ -151,7 +197,7 @@ const AnimatedMessageCounter = ({
       stopped = true;
       window.clearTimeout(timer);
     };
-  }, [hasDisplayValue, ratePerSecond]);
+  }, [hasDisplayValue, ratePerSecond, defaultStep]);
 
   const displayMeta = useMemo(
     () => {
@@ -304,11 +350,13 @@ const AnimatedMessageCounter = ({
           text-transform: uppercase;
         }
 
+        /* v2.0: brand light purple — the green pulse violated the
+           homepage "no green" brand rule. */
         .metric-pulse {
           display: block;
           margin-top: 0.35rem;
-          animation: metricPulse 1.2s ease-out;
-          color: rgba(134, 239, 172, 0.9);
+          animation: metricPulse 1.2s var(--ease-out-brand, ease-out);
+          color: rgba(151, 136, 247, 0.9);
           font-size: clamp(0.68rem, 1.2vw, 0.82rem);
           font-weight: 400;
           letter-spacing: 0.02em;
@@ -333,7 +381,6 @@ const AnimatedMessageCounter = ({
             transform: translateY(-0.25rem);
           }
         }
-
       `}</style>
     </span>
   );
