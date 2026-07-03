@@ -2,36 +2,40 @@
  * ============================================
  * File: pages/_app.js
  * ============================================
- * Modification Reason: v2.1 — Wired next/font (Next 13.4 confirmed via
- *   package.json). Inter (variable) now self-hosted and injected as
- *   --font-sans / --font-display / --font-mono CSS variables consumed
- *   by tailwind.config.js v2.0 and globals.css v3.0. Eliminates FOUT
- *   and third-party font requests on all platforms.
- *   (v2.0 changes retained: delegated smooth scroll, zoom unlock,
- *   orientationchange --vh updater. See v2.0 header notes.)
+ * Modification Reason: v2.2 — Display typeface wired. Instrument Serif
+ *   (Google Fonts, OFL) now drives --font-display for h1/h2 via the
+ *   text-display-* scale; body remains Inter, code remains JetBrains
+ *   Mono. This is the single highest-leverage "premium" change: the
+ *   engineering-sans-body + characterful-serif-display pairing.
+ *   (v2.0/v2.1 changes retained: delegated smooth scroll, zoom unlock,
+ *   orientationchange --vh, next/font self-hosting.)
  *
  * ⚠️ Important Notes for Next Developer:
- *   - next/font must be called at module scope (Next.js constraint).
- *   - --font-display currently maps to Inter; if a display serif is
- *     approved later, add a second next/font call and change ONLY the
- *     --font-display line in the wrapper div style.
- *   - Do NOT reintroduce per-element anchor listeners or user-scalable=no.
+ *   - Instrument Serif has weight 400 only — display headings must not
+ *     request bold; use size/tracking for hierarchy.
+ *   - To revert to a single-typeface look, change ONLY the
+ *     --font-display line back to var(--font-inter).
  *
- * Last Modified: v2.1 — next/font wiring
+ * Last Modified: v2.2 — Instrument Serif display wiring
  * ============================================
  */
 
 import { useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import Head from 'next/head';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Instrument_Serif } from 'next/font/google';
 import '../styles/globals.css';
 import '../styles/scrollbar.css';
 import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
 
-// Module scope (Next.js requirement)
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
 const mono = JetBrains_Mono({ subsets: ['latin'], display: 'swap', variable: '--font-jbmono' });
+const display = Instrument_Serif({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-instrument',
+});
 
 function MyApp({ Component, pageProps, router }) {
   const locale = router.locale || DEFAULT_LOCALE;
@@ -78,10 +82,10 @@ function MyApp({ Component, pageProps, router }) {
 
   return (
     <div
-      className={`${inter.variable} ${mono.variable}`}
+      className={`${inter.variable} ${mono.variable} ${display.variable}`}
       style={{
         '--font-sans': 'var(--font-inter)',
-        '--font-display': 'var(--font-inter)',
+        '--font-display': 'var(--font-instrument)',
         '--font-mono': 'var(--font-jbmono)',
       }}
     >
