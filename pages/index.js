@@ -3,7 +3,14 @@
  * index.js - Homepage with Encrypted Coordination Layer Narrative
  * ============================================
  *
- * Modification Reason: v5.2 - Protocol-layer homepage restructure.
+ * Modification Reason: v5.3 - Homepage module polish pass.
+ *   Preserves every live-data field and privacy boundary while refining the
+ *   first-page rhythm: the aggregate stats panel now reads as product evidence
+ *   instead of an engineering console, repeated proof cards have stable mobile
+ *   dimensions, and long status labels can wrap without breaking the layout.
+ *
+ * Historical Notes:
+ * v5.2 - Protocol-layer homepage restructure.
  *   The homepage now explains AeroNyx as the encrypted coordination layer and
  *   routes product-specific stories to secondary pages:
  *   /memchain and /privacy-network. This keeps the first page focused on the
@@ -52,6 +59,7 @@
  * blind open protocol for humans, apps, and AI agents to route traffic,
  * exchange encrypted messages, preserve private memory, and coordinate work.
  * Last Modified: v5.2 - Product deep-dives moved to secondary pages.
+ * Last Modified: v5.3 - Homepage module rhythm and responsive evidence polish.
  * ============================================
  */
 
@@ -323,23 +331,23 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const meshNodeCount = Math.max(2, Math.min(4, Number(stats.protocolNetworkStoryReportedNodes || stats.protocolReportedNodes || 2)));
 
   return (
-    <section aria-label={copy.homeStats.ariaLabel} className="relative z-20 -mt-6 md:-mt-10 pb-10 md:pb-16">
+    <section aria-label={copy.homeStats.ariaLabel} className="relative z-20 -mt-6 pb-10 md:-mt-10 md:pb-16">
       <Container>
-        <div className="mx-auto max-w-6xl border border-white/10 bg-black/70 backdrop-blur-md">
-          <div className="grid gap-0 xl:grid-cols-[0.8fr_2.2fr]">
-            <div className="border-b border-white/10 p-5 md:p-6 xl:border-b-0 xl:border-r">
-              <div className="flex items-center gap-2 text-xs uppercase tracking-eyebrow text-brand-light">
+        <div className="page-surface mx-auto max-w-6xl overflow-hidden border">
+          <div className="grid gap-0 xl:grid-cols-[0.86fr_2.14fr]">
+            <div className="border-b border-white/10 p-5 md:p-7 xl:border-b-0 xl:border-r">
+              <div className="flex items-center gap-2 text-[11px] uppercase tracking-eyebrow text-brand-light">
                 <span className="h-2 w-2 rounded-pill bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.6)]" />
                 {copy.homeStats.eyebrow}
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-white/50">
+              <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/52">
                 {copy.homeStats.description}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2">
               {items.map((item) => (
-                <div key={item.label} className="min-w-0 border-t border-white/10 p-5 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0 md:p-6">
+                <div key={item.label} className="min-w-0 border-t border-white/10 p-5 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0 md:p-7">
                   <div className="min-h-[2.65rem] min-w-0 font-light text-white">
                     {isLoading ? (
                       <span className="block h-8 w-28 animate-pulse bg-white/10" />
@@ -355,18 +363,18 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                       item.value || copy.homeStats.syncing
                     )}
                   </div>
-                  <div className="mt-2 min-h-[2.5rem] text-[10px] uppercase leading-relaxed tracking-eyebrow text-white/40 md:text-xs">
+                  <div className="mt-2 min-h-[2.25rem] text-[10px] uppercase leading-relaxed tracking-eyebrow text-white/42 md:text-xs">
                     {item.label}
                   </div>
-                  <p className="mt-2 max-w-[34rem] text-xs leading-relaxed text-white/45 md:text-sm">
+                  <p className="mt-2 max-w-[34rem] text-xs leading-relaxed text-white/48 md:text-sm">
                     {item.description}
                   </p>
                 </div>
               ))}
             </div>
           </div>
-          <div className="border-t border-white/10 p-5 md:p-6">
-            <div className="grid gap-6 lg:grid-cols-[0.95fr_1.25fr] lg:items-stretch">
+          <div className="border-t border-white/10 p-5 md:p-7">
+            <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch">
               <div className="flex min-w-0 flex-col justify-between">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={`inline-flex rounded-pill border px-2.5 py-1 text-[11px] uppercase tracking-eyebrow ${protocolStatusTone(stats.protocolFoundationStatus)}`}>
@@ -382,38 +390,41 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/55">
                   {foundationDescription}
                 </p>
-                <div className="mt-5 flex flex-wrap gap-2 text-[11px] uppercase tracking-eyebrow text-white/35">
-                  <span className="border border-white/10 bg-white/[0.025] px-2.5 py-1">
+                <div className="mt-5 flex flex-wrap gap-2 text-[11px] uppercase leading-5 tracking-eyebrow text-white/36">
+                  <span className="border border-white/10 bg-white/[0.025] px-2.5 py-1.5">
                     {foundationStageLabel}
                   </span>
-                  <span className="border border-white/10 bg-white/[0.025] px-2.5 py-1">
+                  <span className="border border-white/10 bg-white/[0.025] px-2.5 py-1.5">
                     {foundationChecksLabel}
                   </span>
-                  <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-brand-light/80">
+                  <span className="border border-brand-line bg-brand-faint px-2.5 py-1.5 text-brand-light/80">
                     {protocolText(protocolCopy, 'foundationEvidence', 'Relay evidence')} · {evidenceModeLabel}
                   </span>
-                  <span className={`border px-2.5 py-1 ${protocolStatusTone(stats.protocolBlindRelayStatus)}`}>
+                  <span className={`border px-2.5 py-1.5 ${protocolStatusTone(stats.protocolBlindRelayStatus)}`}>
                     {blindRelayStatusLabel} · {protocolText(protocolCopy, 'blindRelayProof', 'Relay Proof')}
                   </span>
                 </div>
-                <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                <div className="mt-5 grid grid-cols-2 gap-2.5">
                   {foundationChecks.map((check) => (
-                    <div key={check.label} className="min-w-0 border border-white/10 bg-white/[0.018] p-3">
+                    <div key={check.label} className="page-card min-w-0 border p-3 md:p-3.5">
                       <div className="flex items-center justify-between gap-3">
-                        <span className="truncate text-[10px] uppercase tracking-eyebrow text-white/45">
+                        <span className="text-[10px] uppercase leading-4 tracking-eyebrow text-white/45">
                           {check.label}
                         </span>
                         <span className={`h-2.5 w-2.5 shrink-0 rounded-pill ${check.ready ? 'bg-brand-light shadow-[0_0_10px_rgba(151,136,247,0.55)]' : 'bg-white/20'}`} />
                       </div>
-                      <div className="mt-2 truncate text-lg font-light text-white">
+                      <div className="mt-2 break-words text-base font-light text-white md:text-lg">
                         {check.value || copy.homeStats.syncing}
                       </div>
+                      <p className="mt-1 hidden text-xs leading-5 text-white/38 md:block">
+                        {check.detail}
+                      </p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="relative min-h-[13rem] overflow-hidden border border-white/10 bg-white/[0.018] p-5">
+              <div className="page-card relative min-h-[12rem] overflow-hidden border p-5 sm:min-h-[15rem] sm:pb-20">
                 <div
                   className="absolute inset-0 opacity-[0.05]"
                   style={{
@@ -441,24 +452,24 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                     </div>
                   ))}
                 </div>
-                <div className="absolute bottom-4 left-5 right-5 z-10 grid gap-2 text-[10px] uppercase tracking-eyebrow text-white/35 sm:grid-cols-3">
-                  <span className="border border-white/10 bg-black/40 px-2.5 py-2">
+                <div className="absolute bottom-4 left-5 right-5 z-10 hidden grid-cols-3 gap-2 text-center text-[10px] uppercase leading-4 tracking-eyebrow text-white/35 sm:grid">
+                  <span className="min-w-0 break-words border border-white/10 bg-black/40 px-2 py-2 md:px-2.5">
                     {evidenceModeLabel}
                   </span>
-                  <span className="border border-white/10 bg-black/40 px-2.5 py-2">
+                  <span className="min-w-0 break-words border border-white/10 bg-black/40 px-2 py-2 md:px-2.5">
                     {formatCompactCount(stats.protocolFoundationRealRelayReadyNodes)} {protocolText(protocolCopy, 'realRelayNodes', 'real')}
                   </span>
-                  <span className="border border-white/10 bg-black/40 px-2.5 py-2">
+                  <span className="min-w-0 break-words border border-white/10 bg-black/40 px-2 py-2 md:px-2.5">
                     {formatCompactCount(stats.protocolFoundationSyntheticProbeReadyNodes)} {protocolText(protocolCopy, 'syntheticProbeNodes', 'probe')}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
               {fabricMetrics.map((item) => (
-                <div key={item.label} className="min-w-0 border border-white/10 bg-white/[0.02] p-4">
-                  <div className="text-2xl font-light tracking-normal text-white md:text-3xl">
+                <div key={item.label} className="page-card min-w-0 border p-3.5 md:p-5">
+                  <div className="break-words text-xl font-light leading-tight tracking-normal text-white md:text-3xl">
                     {isLoading ? (
                       <span className="block h-8 w-20 animate-pulse bg-white/10" />
                     ) : (
@@ -468,7 +479,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                   <div className="mt-2 text-[10px] uppercase leading-relaxed tracking-eyebrow text-white/42">
                     {item.label}
                   </div>
-                  <p className="mt-2 text-xs leading-5 text-white/38">
+                  <p className="mt-2 hidden text-xs leading-5 text-white/40 md:block">
                     {item.detail}
                   </p>
                 </div>

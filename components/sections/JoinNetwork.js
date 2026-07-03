@@ -29,7 +29,7 @@
  *     earnings, mining, or performance claims.
  *   - Brand rule: no green, no emojis.
  *
- * Last Modified: v2.1 — Protocol-node narrative and visual polish
+ * Last Modified: v2.2 — Homepage operator journey density and tap polish
  * ============================================
  */
 
@@ -139,7 +139,7 @@ const JoinNetwork = () => {
   ];
 
   return (
-    <section id="join-network" className="py-12 md:py-24 relative overflow-hidden" style={{ background: 'var(--surface-0, #08080D)' }}>
+    <section id="join-network" className="relative overflow-hidden py-12 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
       <div className="absolute inset-0 opacity-20">
         <NetworkBackground />
       </div>
@@ -148,7 +148,7 @@ const JoinNetwork = () => {
         <div className="max-w-6xl mx-auto">
           {/* Section header */}
           <motion.div
-            className="text-center mb-12 md:mb-16"
+            className="mb-10 text-center md:mb-14"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -164,7 +164,7 @@ const JoinNetwork = () => {
 
           {/* Live stats strip */}
           <motion.div
-            className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4 mb-10 md:mb-14"
+            className="mb-10 grid grid-cols-1 gap-3 md:mb-12 md:grid-cols-3 md:gap-4"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -200,7 +200,7 @@ const JoinNetwork = () => {
             ].map((item) => (
               <div
                 key={item.label}
-                className="min-w-0 border border-white/10 bg-white/[0.03] rounded p-4 backdrop-blur-sm md:p-5"
+                className="page-card min-w-0 rounded border p-4 backdrop-blur-sm md:p-5"
               >
                 <div className="min-h-[2.65rem] min-w-0 font-light leading-none text-white">
                   {isLoading ? (
@@ -247,7 +247,7 @@ const JoinNetwork = () => {
                   <button
                     onClick={() => setActiveStep(index)}
                     aria-label={`Step ${index + 1}: ${step.title}`}
-                    className={`transition-all duration-base ease-out-brand ${
+                    className={`rounded-sm transition-all duration-base ease-out-brand ${
                       index === activeStep
                         ? 'scale-110'
                         : index < activeStep
@@ -281,7 +281,7 @@ const JoinNetwork = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: EASE }}
-            className="grid md:grid-cols-2 gap-8 md:gap-12 items-center"
+            className="grid items-center gap-8 md:grid-cols-2 md:gap-12"
           >
             <div className="order-2 md:order-1">
               <div className="mb-6">
@@ -314,7 +314,7 @@ const JoinNetwork = () => {
                   href={steps[activeStep].cta.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded border border-white/20 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast group"
+                  className="group inline-flex min-h-[44px] items-center gap-2 rounded border border-white/20 px-6 py-3 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
                 >
                   <span className="text-sm uppercase tracking-eyebrow">
                     {steps[activeStep].cta.text}
@@ -331,17 +331,17 @@ const JoinNetwork = () => {
             </div>
 
             <div className="order-1 md:order-2">
-              <div className="aspect-square border border-white/10 rounded-md p-8 backdrop-blur-sm" style={{ background: 'rgba(8,8,13,0.5)' }}>
+              <div className="page-card aspect-square rounded border p-6 backdrop-blur-sm md:p-8">
                 {steps[activeStep].visual}
               </div>
             </div>
           </motion.div>
 
           {/* Navigation buttons */}
-          <div className="flex justify-between items-center mt-8 md:mt-12">
+          <div className="mt-8 flex items-center justify-between md:mt-12">
             <button
               onClick={() => setActiveStep(Math.max(0, activeStep - 1))}
-              className={`px-4 py-2 text-sm text-white/60 hover:text-white transition-colors duration-fast ${
+              className={`min-h-[44px] rounded px-4 py-2 text-sm text-white/60 hover:text-white transition-colors duration-fast ${
                 activeStep === 0 ? 'opacity-30 cursor-not-allowed' : ''
               }`}
               disabled={activeStep === 0}
@@ -351,7 +351,7 @@ const JoinNetwork = () => {
 
             <button
               onClick={() => setActiveStep(Math.min(steps.length - 1, activeStep + 1))}
-              className={`px-4 py-2 text-sm text-white/60 hover:text-white transition-colors duration-fast ${
+              className={`min-h-[44px] rounded px-4 py-2 text-sm text-white/60 hover:text-white transition-colors duration-fast ${
                 activeStep === steps.length - 1 ? 'opacity-30 cursor-not-allowed' : ''
               }`}
               disabled={activeStep === steps.length - 1}

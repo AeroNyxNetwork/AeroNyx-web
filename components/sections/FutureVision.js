@@ -23,7 +23,7 @@
  *   - Roadmap items are stated as intentions ("we aim", "designed to"),
  *     never as guarantees. Keep it that way.
  *
- * Last Modified: v2.1 — Typography consistency and coordination framing
+ * Last Modified: v2.2 — Homepage roadmap card rhythm and responsive polish
  * ============================================
  */
 
@@ -68,12 +68,12 @@ const FutureVision = () => {
   ];
 
   return (
-    <section id="vision" className="py-12 md:py-24" style={{ background: 'var(--surface-1, #0C0C13)' }}>
+    <section id="vision" className="py-12 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
       <Container>
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <motion.div
-            className="mb-8 md:mb-16"
+            className="mb-8 md:mb-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -90,23 +90,23 @@ const FutureVision = () => {
           </motion.div>
 
           {/* Vision timeline */}
-          <div className="space-y-12 md:space-y-16">
+          <div className="space-y-4 md:space-y-5">
             {visions.map((vision, index) => (
               <motion.div
                 key={vision.year}
-                className="grid md:grid-cols-3 gap-6 md:gap-8"
+                className="page-card grid gap-5 rounded border p-5 md:grid-cols-[0.72fr_2fr] md:gap-8 md:p-6"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.15, duration: 0.6, ease: EASE }}
               >
                 <div className="md:text-right">
-                  <div className="text-4xl md:text-5xl font-extralight text-white/15 mb-2 font-mono">
+                  <div className="mb-1 font-mono text-4xl font-extralight text-white/18 md:text-5xl">
                     {vision.year}
                   </div>
                 </div>
 
-                <div className="md:col-span-2">
+                <div>
                   <h3 className="text-display-md font-light mb-3 md:mb-4">{vision.title}</h3>
                   <p className="text-sm md:text-base text-white/60 mb-4 md:mb-6 leading-relaxed">
                     {vision.description}
@@ -130,7 +130,7 @@ const FutureVision = () => {
 
           {/* Closing statement */}
           <motion.div
-            className="mt-16 md:mt-24 pt-8 md:pt-16 border-t border-white/10"
+            className="mt-12 border-t border-white/10 pt-8 md:mt-16 md:pt-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}

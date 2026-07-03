@@ -43,7 +43,7 @@
  *   - Section headline uses the shared text-display-lg token. Keep the
  *     architecture tone precise and avoid decorative display styling.
  *
- * Last Modified: v4.1 — 2026 trust typography alignment
+ * Last Modified: v4.2 — Homepage card rhythm and CTA interaction polish
  * ============================================
  */
 
@@ -88,7 +88,7 @@ const PILLARS = [
 
 const HowAILWorks = () => {
   return (
-    <section id="how-it-works" className="py-14 md:py-24" style={{ background: 'var(--surface-0, #08080D)' }}>
+    <section id="how-it-works" className="py-12 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
         <div className="max-w-6xl mx-auto">
 
@@ -98,7 +98,7 @@ const HowAILWorks = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE }}
-            className="mb-12 md:mb-20 max-w-3xl"
+            className="mb-10 max-w-3xl md:mb-14"
           >
             <h2 className="text-display-lg font-light mb-4 md:mb-6">
               Two layers. One <em className="text-brand-light" style={{ fontStyle: 'italic' }}>invariant.</em>
@@ -118,19 +118,18 @@ const HowAILWorks = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.15, ease: EASE }}
-                className="flex flex-col border border-white/10 rounded-md overflow-hidden"
-                style={{ background: 'var(--surface-1, #0C0C13)' }}
+                className="page-card flex flex-col overflow-hidden rounded border"
               >
                 {/* Visual */}
                 <div
-                  className="aspect-[16/10] border-b border-white/10 p-6 md:p-8"
+                  className="aspect-[16/10] border-b border-white/10 p-5 md:p-8"
                   style={{ background: 'var(--surface-0, #08080D)' }}
                 >
                   {pillar.visual}
                 </div>
 
                 {/* Content */}
-                <div className="p-6 md:p-8 flex flex-col flex-1">
+                <div className="flex flex-1 flex-col p-5 md:p-8">
                   <div className="text-[10px] uppercase tracking-eyebrow text-brand-light mb-2">
                     {pillar.tag}
                   </div>
@@ -141,7 +140,7 @@ const HowAILWorks = () => {
                     {pillar.description}
                   </p>
 
-                  <div className="bg-white/[0.03] border-l-2 border-brand/40 pl-4 py-3 mb-6">
+                  <div className="mb-6 border-l-2 border-brand/40 bg-white/[0.03] py-3 pl-4">
                     <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">
                       Protocol Impact
                     </div>
@@ -172,13 +171,13 @@ const HowAILWorks = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE }}
-            className="mt-12 md:mt-16 text-center"
+            className="mt-10 text-center md:mt-14"
           >
             <a
               href="https://docs.aeronyx.network/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-8 py-4 rounded border border-white/20 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
+              className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/20 px-8 py-3.5 text-center hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
             >
               <span className="text-sm uppercase tracking-eyebrow">
                 Read the Technical Docs

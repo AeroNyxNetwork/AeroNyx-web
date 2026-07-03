@@ -40,7 +40,7 @@
  *   - Section headline uses the shared text-display-lg token. Do not add
  *     ad hoc serif styling or negative letter-spacing.
  *
- * Last Modified: v1.1 — 2026 trust typography alignment
+ * Last Modified: v1.2 — Homepage rhythm, tap target, and card polish
  * ============================================
  */
 
@@ -100,7 +100,7 @@ const ProblemToX402 = () => {
   ];
 
   return (
-    <section className="py-14 md:py-24 border-y border-white/5" style={{ background: 'var(--surface-1, #0C0C13)' }}>
+    <section className="border-y border-white/5 py-12 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
       <Container>
         <div className="max-w-6xl mx-auto">
 
@@ -110,7 +110,7 @@ const ProblemToX402 = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE }}
-            className="text-center mb-12 md:mb-16"
+            className="mb-10 text-center md:mb-14"
           >
             <h2 className="text-display-lg font-light mb-5">
               We built agents that can think.
@@ -124,7 +124,7 @@ const ProblemToX402 = () => {
           </motion.div>
 
           {/* Three blockers */}
-          <div className="grid sm:grid-cols-3 gap-4 md:gap-5 mb-10 md:mb-12">
+          <div className="mb-10 grid gap-4 sm:grid-cols-3 md:mb-12 md:gap-5">
             {blockers.map((b, index) => (
               <motion.div
                 key={b.title}
@@ -132,10 +132,10 @@ const ProblemToX402 = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.12, ease: EASE }}
-                className={`rounded-md border p-5 md:p-6 ${
+                className={`min-h-full rounded border p-5 md:p-6 ${
                   b.pivot
                     ? 'border-brand-line bg-brand-faint'
-                    : 'border-white/10 bg-white/[0.03]'
+                    : 'page-card border'
                 }`}
               >
                 <div className="mb-3">{b.icon}</div>
@@ -154,8 +154,7 @@ const ProblemToX402 = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE }}
-            className="rounded-md border border-white/10 overflow-hidden"
-            style={{ background: 'var(--surface-0, #08080D)' }}
+            className="page-surface overflow-hidden rounded border"
           >
             {/* Pivot header */}
             <div className="p-5 md:p-8 border-b border-white/10">
@@ -183,7 +182,7 @@ const ProblemToX402 = () => {
 
               {/* Code panel */}
               <div className="p-5 md:p-8">
-                <div className="inline-flex p-1 rounded border border-white/10 bg-white/[0.03] mb-4">
+                <div className="mb-4 inline-flex rounded border border-white/10 bg-white/[0.03] p-1">
                   {[
                     { id: 'traditional', label: 'Traditional API' },
                     { id: 'x402', label: 'With x402' },
@@ -191,7 +190,7 @@ const ProblemToX402 = () => {
                     <button
                       key={tab.id}
                       onClick={() => setCodeTab(tab.id)}
-                      className={`px-4 py-2 rounded-sm text-xs sm:text-sm font-medium transition-colors duration-fast ${
+                      className={`min-h-[40px] rounded-sm px-4 py-2 text-xs font-medium transition-colors duration-fast sm:text-sm ${
                         codeTab === tab.id ? 'bg-white text-black' : 'text-white/60 hover:text-white'
                       }`}
                     >
@@ -230,7 +229,7 @@ const ProblemToX402 = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-center mt-12 md:mt-16"
+            className="mt-10 text-center md:mt-14"
           >
             <p className="text-sm md:text-base text-white/50 max-w-copy mx-auto">
               Payment and memory are two blockers down. The third — trust —

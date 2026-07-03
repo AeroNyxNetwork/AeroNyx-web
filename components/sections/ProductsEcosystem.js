@@ -52,7 +52,7 @@
  *   - Brand rule: no green, no emojis. Status colors come from the
  *     STATUS_BADGES map only.
  *
- * Last Modified: v3.2 — Secondary page handoff links
+ * Last Modified: v3.3 — Homepage product index spacing and interaction polish
  * ============================================
  */
 
@@ -224,12 +224,12 @@ const ProductsEcosystem = () => {
   };
 
   return (
-    <section id="products" className="py-12 md:py-24" style={{ background: 'var(--surface-0, #08080D)' }}>
+    <section id="products" className="py-12 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
         <div className="max-w-6xl mx-auto">
 
           {/* Header */}
-          <div className="text-center mb-8 md:mb-16">
+          <div className="mb-8 text-center md:mb-12">
             <h2 className="text-display-lg font-light mb-4 md:mb-6">
               Protocol layers &amp; products
             </h2>
@@ -243,7 +243,7 @@ const ProductsEcosystem = () => {
           <div
             role="tablist"
             aria-label="AeroNyx products"
-            className="flex flex-nowrap overflow-x-auto gap-3 md:gap-4 mb-8 md:mb-12 -mx-4 px-4 md:mx-0 md:px-0 md:justify-center scrollbar-hide"
+            className="-mx-4 mb-8 flex flex-nowrap gap-3 overflow-x-auto px-4 scrollbar-hide md:mx-0 md:mb-12 md:justify-center md:gap-4 md:px-0"
           >
             {products.map((product) => {
               const active = selectedProduct === product.id;
@@ -254,7 +254,7 @@ const ProductsEcosystem = () => {
                   aria-selected={active}
                   aria-controls={`product-panel-${product.id}`}
                   onClick={() => setSelectedProduct(product.id)}
-                  className={`relative flex-shrink-0 px-4 md:px-6 py-2 md:py-3 border rounded text-left transition-colors duration-fast min-w-fit ${
+                  className={`relative min-h-[52px] min-w-fit flex-shrink-0 rounded border px-4 py-2 text-left transition-colors duration-fast md:px-6 md:py-3 ${
                     active
                       ? 'border-brand-line bg-brand-faint text-white'
                       : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'
@@ -280,7 +280,7 @@ const ProductsEcosystem = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.3, ease: EASE }}
-              className="grid md:grid-cols-2 gap-8 md:gap-12 items-start"
+              className="grid items-start gap-8 md:grid-cols-2 md:gap-12"
             >
               {/* Visual */}
               <div className="order-2 md:order-1 hidden md:block">
@@ -289,7 +289,7 @@ const ProductsEcosystem = () => {
 
               {/* Content */}
               <div className="order-1 md:order-2">
-                <div className="flex items-center gap-3 md:gap-4 mb-3">
+                <div className="mb-3 flex flex-wrap items-center gap-3 md:gap-4">
                   <h3 className="text-display-md font-light">{activeProduct.name}</h3>
                   {getStatusBadge(activeProduct.status)}
                 </div>
@@ -299,7 +299,7 @@ const ProductsEcosystem = () => {
                 </p>
 
                 {/* USE CASE */}
-                <div className="mb-6 p-4 bg-white/[0.03] border-l-2 border-brand/40 rounded-r">
+                <div className="page-card mb-6 rounded border border-l-2 border-l-brand/40 p-4 md:p-5">
                   <div className="space-y-3">
                     <div>
                       <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">Pain Point</div>
@@ -317,7 +317,7 @@ const ProductsEcosystem = () => {
                 </div>
 
                 {/* Architecture Comparison */}
-                <div className="mb-6 md:mb-8 p-4 border border-white/10 rounded" style={{ background: 'var(--surface-2, #111118)' }}>
+                <div className="page-card mb-6 rounded border p-4 md:mb-8 md:p-5">
                   <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-3">Architecture Comparison</div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between gap-4 text-sm">
@@ -352,7 +352,7 @@ const ProductsEcosystem = () => {
                   activeProduct.cta.link.startsWith('/') ? (
                     <Link
                       href={activeProduct.cta.link}
-                      className="inline-block px-6 md:px-8 py-2.5 md:py-3 rounded border border-white/20 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
+                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/20 px-6 py-2.5 text-center hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast md:px-8 md:py-3"
                     >
                       <span className="text-xs md:text-sm uppercase tracking-eyebrow">
                         {activeProduct.cta.text}
@@ -364,7 +364,7 @@ const ProductsEcosystem = () => {
                       onClick={(e) => handleCtaClick(e, activeProduct.cta.link)}
                       target={activeProduct.cta.link.startsWith('http') ? '_blank' : undefined}
                       rel={activeProduct.cta.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className="inline-block px-6 md:px-8 py-2.5 md:py-3 rounded border border-white/20 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
+                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/20 px-6 py-2.5 text-center hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast md:px-8 md:py-3"
                     >
                       <span className="text-xs md:text-sm uppercase tracking-eyebrow">
                         {activeProduct.cta.text}
@@ -382,7 +382,7 @@ const ProductsEcosystem = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE }}
-            className="mt-12 md:mt-16 text-center p-6 md:p-8 border border-white/10 rounded-md bg-white/[0.03]"
+            className="page-surface mt-10 rounded border p-6 text-center md:mt-14 md:p-8"
           >
             <h3 className="text-display-md font-light mb-3">
               Why this belongs at the protocol layer
@@ -415,7 +415,7 @@ const ProductVisual = ({ productId }) => {
 
   return (
     <div
-      className="aspect-square border border-white/10 rounded-md p-8 flex items-center justify-center"
+      className="page-card flex aspect-square items-center justify-center rounded border p-8"
       style={{ background: 'var(--surface-1, #0C0C13)' }}
     >
       {visuals[productId] || <div className="text-white/20">Visual</div>}

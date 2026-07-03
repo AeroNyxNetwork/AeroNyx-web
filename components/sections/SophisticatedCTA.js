@@ -16,7 +16,7 @@
  *   - Keep whileInView here — do not revert to animate.
  *   - Whitepaper URL must match Footer; change both together.
  *
- * Last Modified: v2.1 — 2026 trust typography alignment
+ * Last Modified: v2.2 — Final CTA spacing and Apple-grade tap targets
  * ============================================
  */
 
@@ -33,12 +33,12 @@ const SophisticatedCTA = () => {
   const copy = getMessages(locale || DEFAULT_LOCALE).cta;
 
   return (
-    <section className="py-16 md:py-32 border-t border-white/10" style={{ background: 'var(--surface-0, #08080D)' }}>
+    <section className="border-t border-white/10 py-14 md:py-24" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
         <div className="max-w-4xl mx-auto text-center">
           {/* Main message — whileInView (v2.0 fix) */}
           <motion.div
-            className="mb-8 md:mb-16"
+            className="mb-8 md:mb-12"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -56,7 +56,7 @@ const SophisticatedCTA = () => {
 
           {/* Actions */}
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center px-4"
+            className="flex flex-col items-center justify-center gap-4 px-4 sm:flex-row sm:gap-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -68,7 +68,7 @@ const SophisticatedCTA = () => {
               rel="noopener noreferrer"
               className="group relative w-full sm:w-auto"
             >
-              <div className="px-8 sm:px-12 py-4 sm:py-5 rounded border border-white/20 group-hover:border-brand-line group-hover:bg-brand-faint transition-colors duration-fast text-center">
+              <div className="flex min-h-[48px] items-center justify-center rounded border border-white/20 px-8 py-3.5 text-center transition-colors duration-fast group-hover:border-brand-line group-hover:bg-brand-faint sm:px-12 sm:py-4">
                 <span className="text-xs sm:text-sm uppercase tracking-eyebrow">
                   {copy.whitepaper}
                 </span>
@@ -77,7 +77,7 @@ const SophisticatedCTA = () => {
 
             <a
               href="mailto:partnerships@aeronyx.network"
-              className="text-white/40 hover:text-white transition-colors duration-fast px-4 py-2"
+              className="inline-flex min-h-[44px] items-center justify-center px-4 py-2 text-white/40 hover:text-white transition-colors duration-fast"
             >
               <span className="text-xs sm:text-sm uppercase tracking-eyebrow">
                 {copy.partnership}
