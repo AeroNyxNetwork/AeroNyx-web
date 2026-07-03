@@ -2,12 +2,17 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v3.2 — Protocol-layer homepage handoff.
+ * Modification Reason: v3.4 — Product hierarchy order correction.
+ *   Privacy Access and MemChain are intentionally ordered before Agent
+ *   Payment Rails / x402 so the homepage presents AeroNyx's live privacy and
+ *   private memory layers before the agent payment layer.
+ *
+ * Historical Notes:
+ * v3.2 — Protocol-layer homepage handoff.
  *   Product CTAs now route to dedicated secondary pages for MemChain and
  *   Privacy Network. The homepage keeps this component as a protocol capability
  *   index instead of hosting long product deep-dives directly.
  *
- * Historical Notes:
  *   v3.0 — 2026 brand/aesthetic + interaction pass.
  *   1. Brand: all green/yellow semantic colors migrated to the token 
  *      system (homepage "no green" rule): Live badge → ok (brand light
@@ -53,6 +58,7 @@
  *     STATUS_BADGES map only.
  *
  * Last Modified: v3.3 — Homepage product index spacing and interaction polish
+ * Last Modified: v3.4 — Privacy Access and MemChain ordered before x402 rails
  * ============================================
  */
 
@@ -97,6 +103,30 @@ const ProductsEcosystem = () => {
       },
       status: 'live',
       cta: { text: 'Get Privacy Access', link: '/privacy-network' },
+    },
+    {
+      id: 'memchain',
+      name: 'MemChain',
+      category: 'Encrypted Memory Layer',
+      tagline: 'Versioned private memory for humans and agents',
+      useCase: {
+        pain: 'AI memories are trapped in vendor silos — switch tools, lose everything',
+        solution: 'A personal, encrypted append-only memory chain that can travel across clients and agent tools',
+        savings: 'Own the private context layer without exposing raw conversation history.',
+      },
+      features: [
+        'Ed25519 signed, SHA-256 hashed memory facts',
+        'Merkle tree blocks mined every hour',
+        'Cross-device sync via encrypted protocol channels',
+        'Agent integration with wallet-based identity',
+      ],
+      comparison: {
+        traditional: 'Vendor memory: locked to one platform',
+        aeronyx: 'MemChain: Owned by you, on your devices',
+        savings: 'Total data sovereignty',
+      },
+      status: 'beta',
+      cta: { text: 'Explore MemChain', link: '/memchain' },
     },
     {
       id: 'compute',
@@ -169,30 +199,6 @@ const ProductsEcosystem = () => {
       },
       status: 'live',
       cta: { text: 'View SDK Docs', link: 'https://docs.aeronyx.network/developer-documentation/overview' },
-    },
-    {
-      id: 'memchain',
-      name: 'MemChain',
-      category: 'Encrypted Memory Layer',
-      tagline: 'Versioned private memory for humans and agents',
-      useCase: {
-        pain: 'AI memories are trapped in vendor silos — switch tools, lose everything',
-        solution: 'A personal, encrypted append-only memory chain that can travel across clients and agent tools',
-        savings: 'Own the private context layer without exposing raw conversation history.',
-      },
-      features: [
-        'Ed25519 signed, SHA-256 hashed memory facts',
-        'Merkle tree blocks mined every hour',
-        'Cross-device sync via encrypted protocol channels',
-        'Agent integration with wallet-based identity',
-      ],
-      comparison: {
-        traditional: 'Vendor memory: locked to one platform',
-        aeronyx: 'MemChain: Owned by you, on your devices',
-        savings: 'Total data sovereignty',
-      },
-      status: 'beta',
-      cta: { text: 'Explore MemChain', link: '/memchain' },
     },
   ];
 

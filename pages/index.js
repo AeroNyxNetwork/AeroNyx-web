@@ -3,26 +3,31 @@
  * index.js - Homepage with Encrypted Coordination Layer Narrative
  * ============================================
  *
- * Modification Reason: v5.3 - Homepage module polish pass.
+ * Modification Reason: v5.4 - Homepage narrative order correction.
+ *   Privacy Network and MemChain now appear before the x402/payment story.
+ *   This keeps the homepage product hierarchy grounded in AeroNyx's live
+ *   privacy and memory layers before introducing agent payment rails.
+ *
+ * Historical Notes:
+ * v5.3 - Homepage module polish pass.
  *   Preserves every live-data field and privacy boundary while refining the
  *   first-page rhythm: the aggregate stats panel now reads as product evidence
  *   instead of an engineering console, repeated proof cards have stable mobile
  *   dimensions, and long status labels can wrap without breaking the layout.
  *
- * Historical Notes:
  * v5.2 - Protocol-layer homepage restructure.
  *   The homepage now explains AeroNyx as the encrypted coordination layer and
  *   routes product-specific stories to secondary pages:
  *   /memchain and /privacy-network. This keeps the first page focused on the
  *   protocol invariant while preserving product detail pages for SEO/GEO.
  *
- * Section Order (v5.2):
+ * Section Order (v5.4):
  * 1. NarrativeHero      — "Infrastructure AI Agents Can Use"
  * 2. HomeNetworkStats   — Aggregate protocol evidence only
- * 3. ProblemToX402      — Agent coordination problem/solution
- * 4. HowAILWorks        — Technical deep-dive
- * 5. JoinNetwork        — Node/protocol operator CTA
- * 6. ProductsEcosystem  — Protocol capability index with page handoff
+ * 3. ProductsEcosystem  — Privacy Network / MemChain before x402
+ * 4. ProblemToX402      — Agent coordination payment problem/solution
+ * 5. HowAILWorks        — Technical deep-dive
+ * 6. JoinNetwork        — Node/protocol operator CTA
  * 7. FutureVision       — Roadmap
  * 8. SophisticatedCTA   — Final conversion
  *
@@ -60,6 +65,7 @@
  * exchange encrypted messages, preserve private memory, and coordinate work.
  * Last Modified: v5.2 - Product deep-dives moved to secondary pages.
  * Last Modified: v5.3 - Homepage module rhythm and responsive evidence polish.
+ * Last Modified: v5.4 - Product layers moved before x402 payment narrative.
  * ============================================
  */
 
@@ -133,16 +139,17 @@ export default function Home() {
 
         <HomeNetworkStats stats={stats} isLoading={isLoading} copy={copy} />
 
+        {/* 3. Protocol capability index. Product deep-dives live on secondary pages. */}
+        <ProductsEcosystem />
+
+        {/* 4. Agent payment narrative comes after Privacy Network and MemChain. */}
         <ProblemToX402 />
 
-        {/* 4. How it works — technical deep-dive */}
+        {/* 5. How it works — technical deep-dive */}
         <HowAILWorks />
 
-        {/* 5. Join the network */}
+        {/* 6. Join the network */}
         <JoinNetwork />
-
-        {/* 6. Protocol capability index. Product deep-dives live on secondary pages. */}
-        <ProductsEcosystem />
 
         {/* 7. Vision for the future */}
         <FutureVision />
