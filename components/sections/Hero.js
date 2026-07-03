@@ -1,3 +1,17 @@
+/**
+ * ============================================
+ * File: components/sections/Hero.js
+ * ============================================
+ * Modification Reason: v1.1 - Legacy copy safety cleanup.
+ *   This older hero is not used by pages/index.js, but it remains in the
+ *   repository. Replace overbroad zero-knowledge wording with the current
+ *   AeroNyx privacy-protocol language so future reuse does not revive an
+ *   unsupported claim.
+ *
+ * Last Modified: v1.1 - Node-blind protocol wording
+ * ============================================
+ */
+
 import { Suspense, useState } from 'react';
 import { motion } from 'framer-motion';
 import Button from '../ui/Button'; 
@@ -67,7 +81,7 @@ const Hero = () => {
                 <div className="text-center">
                   <h3 className="text-2xl font-bold mb-2">Secure Privacy Layer</h3>
                   <p className="text-neutral-300 mb-6">
-                    End-to-end encrypted communications with zero-knowledge proofs for maximum privacy.
+                    End-to-end encrypted communications through a node-blind privacy protocol.
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">

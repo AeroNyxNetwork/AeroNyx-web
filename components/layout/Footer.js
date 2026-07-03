@@ -2,7 +2,13 @@
  * ============================================
  * File: components/layout/Footer.jsx
  * ============================================
- * Modification Reason: v2.0 — Bug fix + premium alignment pass.
+ * Modification Reason: v2.1 — Protocol-first IA alignment.
+ *   Footer links now point to the new MemChain and Privacy Network secondary
+ *   pages while the brand blurb describes AeroNyx as the encrypted
+ *   coordination protocol for humans, apps, and autonomous agents.
+ *
+ * Historical Notes:
+ *   v2.0 — Bug fix + premium alignment pass.
  *   1. FIX: contact link pointed to http://mail.google.com/ (opened the
  *      Gmail homepage, not a compose window). Now mailto:hi@aeronyx.network
  *      — works with the user's default mail client on every platform.
@@ -29,7 +35,7 @@
  *   - External links use <a target=_blank rel=noopener>; internal
  *     routes use next/link.
  *
- * Last Modified: v2.0 — mailto fix, surface/type alignment
+ * Last Modified: v2.1 — Secondary product page links
  * ============================================
  */
 
@@ -50,8 +56,9 @@ const Footer = () => {
               <span className="text-xl font-light">AeroNyx</span>
             </Link>
             <p className="text-white/55 mb-6 max-w-md text-sm leading-relaxed">
-              AeroNyx Network is building the foundation for privacy-first decentralized computing,
-              empowering billions of devices to securely share resources in a global marketplace.
+              AeroNyx is the encrypted coordination layer for humans, apps, and
+              autonomous agents: private routing, encrypted messages, node-blind
+              memory, and blind protocol services.
             </p>
             <div className="flex space-x-3">
               <SocialLink href="https://twitter.com/AeroNyxNetwork" label="AeroNyx on X" icon={<TwitterIcon />} />
@@ -62,10 +69,10 @@ const Footer = () => {
           <FooterColumn
             heading="Products"
             links={[
+              { href: '/privacy-network', label: 'Privacy Network' },
+              { href: '/memchain', label: 'MemChain' },
               { href: 'https://docs.aeronyx.network/developer-documentation/overview', label: 'Privacy SDK' },
-              { href: 'https://rwa.aeronyx.network/', label: 'RWA' },
-              { href: 'https://app.aeronyx.network/', label: 'AI Infrastructure' },
-              { href: 'https://docs.aeronyx.network/decentralized-node-documentation', label: 'Decentralized Nodes' },
+              { href: 'https://app.aeronyx.network/', label: 'Nodeboard' },
             ]}
           />
 

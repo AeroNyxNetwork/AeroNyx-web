@@ -1,3 +1,28 @@
+/**
+ * ============================================
+ * File: components/layout/AILHeader.js
+ * ============================================
+ * Modification Reason: v2.1 - Protocol-first navigation restructure.
+ *   The homepage now focuses on the AeroNyx protocol layer, while MemChain
+ *   and Privacy Network live on dedicated secondary pages. Header links use
+ *   Next.js Link for internal routes so locale prefixes remain compatible.
+ *
+ * Main Functionality:
+ *   - Shared responsive site header, language menu, internal navigation,
+ *     external documentation/GitHub links, and Privacy Access CTA.
+ *
+ * Dependencies:
+ *   - lib/i18n nav labels for all configured locales.
+ *   - next/link and next/router for locale-aware internal routing.
+ *
+ * Important Note for Next Developer:
+ *   - Do not point the CTA back to #download-vpn on the homepage. The product
+ *     download area now belongs to pages/privacy-network.js.
+ *
+ * Last Modified: v2.1 - Protocol-first navigation
+ * ============================================
+ */
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -34,13 +59,13 @@ const AILHeader = () => {
     return () => document.removeEventListener('mousedown', handleClickAway);
   }, []);
   
-  // Updated navigation links with proper hrefs
+  // v2.1: protocol-first nav. Product detail pages are now secondary routes.
   const navLinks = [
-    { href: "#how-it-works", label: copy.nav.technology }, // Fixed to point to how-it-works section
-    { href: "#products", label: copy.nav.products },
+    { href: "/", label: copy.nav.protocol || 'Protocol' },
+    { href: "/memchain", label: copy.nav.memchain || 'MemChain' },
+    { href: "/privacy-network", label: copy.nav.privacyNetwork || 'Privacy Network' },
     { href: "https://docs.aeronyx.network/", label: copy.nav.docs, external: true },
-    { href: "https://github.com/AeroNyxNetwork", label: copy.nav.github, external: true },
-    { href: "https://rwa.aeronyx.network/", label: copy.nav.rwa, external: true }
+    { href: "https://github.com/AeroNyxNetwork", label: copy.nav.github, external: true }
   ];
   
   // Handle smooth scrolling for internal links
@@ -88,16 +113,35 @@ const AILHeader = () => {
           <div className="hidden md:flex items-center space-x-8">
             <nav className="flex items-center space-x-6">
               {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={(e) => handleNavClick(e, link.href)}
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noopener noreferrer" : undefined}
-                  className="text-white/60 hover:text-white transition-colors text-sm uppercase tracking-wider"
-                >
-                  {link.label}
-                </a>
+                link.external ? (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/60 hover:text-white transition-colors text-sm uppercase tracking-wider"
+                  >
+                    {link.label}
+                  </a>
+                ) : link.href.startsWith('#') ? (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={(e) => handleNavClick(e, link.href)}
+                    className="text-white/60 hover:text-white transition-colors text-sm uppercase tracking-wider"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    locale={locale}
+                    className="text-white/60 hover:text-white transition-colors text-sm uppercase tracking-wider"
+                  >
+                    {link.label}
+                  </Link>
+                )
               ))}
             </nav>
             
@@ -132,15 +176,15 @@ const AILHeader = () => {
             </div>
 
             <div>
-              <motion.a
-                href="#download-vpn"
-                onClick={(e) => handleNavClick(e, '#download-vpn')}
+              <motion.div
                 className="relative px-6 py-2.5 border border-white/20 hover:border-white/40 transition-all"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span className="relative z-10 text-sm uppercase tracking-wider">{copy.nav.downloads}</span>
-              </motion.a>
+                <Link href="/privacy-network" locale={locale} className="relative z-10 text-sm uppercase tracking-wider">
+                  {copy.nav.privacyAccess || copy.nav.downloads}
+                </Link>
+              </motion.div>
             </div>
           </div>
           
@@ -177,25 +221,47 @@ const AILHeader = () => {
             
             <nav className="relative z-10 p-4 flex flex-col space-y-3">
               {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={(e) => handleNavClick(e, link.href)}
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noopener noreferrer" : undefined}
-                  className="px-3 py-2 text-base text-white/60 hover:text-white transition-colors min-h-[44px] flex items-center"
-                >
-                  {link.label}
-                </a>
+                link.external ? (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsOpen(false)}
+                    className="px-3 py-2 text-base text-white/60 hover:text-white transition-colors min-h-[44px] flex items-center"
+                  >
+                    {link.label}
+                  </a>
+                ) : link.href.startsWith('#') ? (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={(e) => handleNavClick(e, link.href)}
+                    className="px-3 py-2 text-base text-white/60 hover:text-white transition-colors min-h-[44px] flex items-center"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    locale={locale}
+                    onClick={() => setIsOpen(false)}
+                    className="px-3 py-2 text-base text-white/60 hover:text-white transition-colors min-h-[44px] flex items-center"
+                  >
+                    {link.label}
+                  </Link>
+                )
               ))}
               
-              <a
-                href="#download-vpn"
-                onClick={(e) => handleNavClick(e, '#download-vpn')}
+              <Link
+                href="/privacy-network"
+                locale={locale}
+                onClick={() => setIsOpen(false)}
                 className="mt-2 px-4 py-3 text-center border border-white/20 hover:border-white/40 transition-colors min-h-[44px] flex items-center justify-center"
               >
-                {copy.nav.downloads}
-              </a>
+                {copy.nav.privacyAccess || copy.nav.downloads}
+              </Link>
 
               <div className="grid grid-cols-2 gap-2 pt-2">
                 {SUPPORTED_LOCALES.map((item) => (

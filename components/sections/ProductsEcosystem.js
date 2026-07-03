@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v3.0 — 2026 brand/aesthetic + interaction pass.
+ * Modification Reason: v3.2 — Protocol-layer homepage handoff.
+ *   Product CTAs now route to dedicated secondary pages for MemChain and
+ *   Privacy Network. The homepage keeps this component as a protocol capability
+ *   index instead of hosting long product deep-dives directly.
+ *
+ * Historical Notes:
+ *   v3.0 — 2026 brand/aesthetic + interaction pass.
  *   1. Brand: all green/yellow semantic colors migrated to the token 
  *      system (homepage "no green" rule): Live badge → ok (brand light
  *      purple), Beta badge → warn (muted amber), Protocol Value /
@@ -42,15 +48,16 @@
  *   - v2.3 rule stands: no unverified scale/cost claims in product copy.
  *   - All five product data objects preserved verbatim from v2.3 except
  *     color/emoji presentation — do not trim fields; MemChainShowcase
- *     and VPNDownloadSection cross-reference this narrative.
+ *     and the secondary pages cross-reference this narrative.
  *   - Brand rule: no green, no emojis. Status colors come from the
  *     STATUS_BADGES map only.
  *
- * Last Modified: v3.1 — 2026 typography consistency pass
+ * Last Modified: v3.2 — Secondary page handoff links
  * ============================================
  */
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import Container from '../ui/Container';
 
@@ -89,7 +96,7 @@ const ProductsEcosystem = () => {
         savings: 'Own the privacy layer',
       },
       status: 'live',
-      cta: { text: 'Get Privacy Access', link: '#download-vpn' },
+      cta: { text: 'Get Privacy Access', link: '/privacy-network' },
     },
     {
       id: 'compute',
@@ -185,7 +192,7 @@ const ProductsEcosystem = () => {
         savings: 'Total data sovereignty',
       },
       status: 'beta',
-      cta: { text: 'Explore MemChain', link: '#memchain' },
+      cta: { text: 'Explore MemChain', link: '/memchain' },
     },
   ];
 
@@ -342,17 +349,28 @@ const ProductsEcosystem = () => {
 
                 {/* CTA */}
                 {activeProduct.cta && (
-                  <a
-                    href={activeProduct.cta.link}
-                    onClick={(e) => handleCtaClick(e, activeProduct.cta.link)}
-                    target={activeProduct.cta.link.startsWith('http') ? '_blank' : undefined}
-                    rel={activeProduct.cta.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    className="inline-block px-6 md:px-8 py-2.5 md:py-3 rounded border border-white/20 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
-                  >
-                    <span className="text-xs md:text-sm uppercase tracking-eyebrow">
-                      {activeProduct.cta.text}
-                    </span>
-                  </a>
+                  activeProduct.cta.link.startsWith('/') ? (
+                    <Link
+                      href={activeProduct.cta.link}
+                      className="inline-block px-6 md:px-8 py-2.5 md:py-3 rounded border border-white/20 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
+                    >
+                      <span className="text-xs md:text-sm uppercase tracking-eyebrow">
+                        {activeProduct.cta.text}
+                      </span>
+                    </Link>
+                  ) : (
+                    <a
+                      href={activeProduct.cta.link}
+                      onClick={(e) => handleCtaClick(e, activeProduct.cta.link)}
+                      target={activeProduct.cta.link.startsWith('http') ? '_blank' : undefined}
+                      rel={activeProduct.cta.link.startsWith('http') ? 'noopener noreferrer' : undefined}
+                      className="inline-block px-6 md:px-8 py-2.5 md:py-3 rounded border border-white/20 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
+                    >
+                      <span className="text-xs md:text-sm uppercase tracking-eyebrow">
+                        {activeProduct.cta.text}
+                      </span>
+                    </a>
+                  )
                 )}
               </div>
             </motion.div>

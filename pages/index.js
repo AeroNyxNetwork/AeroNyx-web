@@ -3,21 +3,21 @@
  * index.js - Homepage with Encrypted Coordination Layer Narrative
  * ============================================
  *
- * Modification Reason: v4.0 - Added MemChainShowcase section between
- * ProductsEcosystem and VPNDownloadSection. Narrative flow now includes
- * the AI memory story as a killer app demonstration.
+ * Modification Reason: v5.2 - Protocol-layer homepage restructure.
+ *   The homepage now explains AeroNyx as the encrypted coordination layer and
+ *   routes product-specific stories to secondary pages:
+ *   /memchain and /privacy-network. This keeps the first page focused on the
+ *   protocol invariant while preserving product detail pages for SEO/GEO.
  *
- * Section Order (v4.0):
+ * Section Order (v5.2):
  * 1. NarrativeHero      — "Infrastructure AI Agents Can Use"
- * 2. ProblemStatement    — AI paradox (accounts, payments, memory lock-in)
- * 3. X402Showcase        — x402 protocol solution
- * 4. HowAILWorks         — Technical deep-dive
- * 5. JoinNetwork         — Node operator CTA
- * 6. ProductsEcosystem   — 5 products (VPN, Compute, CDN, Network, MemChain)
- * 7. MemChainShowcase    — Deep dive into AI Memory Chain
- * 8. VPNDownloadSection  — Download CTA
- * 9. FutureVision        — Roadmap
- * 10. SophisticatedCTA   — Final conversion
+ * 2. HomeNetworkStats   — Aggregate protocol evidence only
+ * 3. ProblemToX402      — Agent coordination problem/solution
+ * 4. HowAILWorks        — Technical deep-dive
+ * 5. JoinNetwork        — Node/protocol operator CTA
+ * 6. ProductsEcosystem  — Protocol capability index with page handoff
+ * 7. FutureVision       — Roadmap
+ * 8. SophisticatedCTA   — Final conversion
  *
  * Last Modified: v4.0 - Added MemChainShowcase
  * Last Modified: v4.1 - Added privacy-safe protocol network_story card sourced
@@ -51,6 +51,7 @@
  * viewport, SEO copy, and public protocol statistics now frame AeroNyx as a
  * blind open protocol for humans, apps, and AI agents to route traffic,
  * exchange encrypted messages, preserve private memory, and coordinate work.
+ * Last Modified: v5.2 - Product deep-dives moved to secondary pages.
  * ============================================
  */
 
@@ -84,8 +85,6 @@ import ProblemToX402 from '../components/sections/ProblemToX402';
 import HowAILWorks from '../components/sections/HowAILWorks';
 import JoinNetwork from '../components/sections/JoinNetwork';
 import ProductsEcosystem from '../components/sections/ProductsEcosystem';
-import MemChainShowcase from '../components/sections/MemChainShowcase';
-import VPNDownloadSection from '../components/sections/VPNDownloadSection';
 import FutureVision from '../components/sections/FutureVision';
 import SophisticatedCTA from '../components/sections/SophisticatedCTA';
 import Footer from '../components/layout/Footer';
@@ -134,19 +133,13 @@ export default function Home() {
         {/* 5. Join the network */}
         <JoinNetwork />
 
-        {/* 6. Products ecosystem (now includes MemChain as 5th product) */}
+        {/* 6. Protocol capability index. Product deep-dives live on secondary pages. */}
         <ProductsEcosystem />
 
-        {/* 7. MemChain deep-dive — the killer app */}
-        <MemChainShowcase />
-
-        {/* 8. VPN download section */}
-        <VPNDownloadSection />
-
-        {/* 9. Vision for the future */}
+        {/* 7. Vision for the future */}
         <FutureVision />
 
-        {/* 10. Call to action */}
+        {/* 8. Call to action */}
         <SophisticatedCTA />
       </main>
 
