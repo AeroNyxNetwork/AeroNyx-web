@@ -1,10 +1,47 @@
-import React, { useState } from 'react';
+/**
+ * ============================================
+ * File: components/sections/JoinNetwork.jsx
+ * ============================================
+ * Modification Reason: v2.0 — SSR fix + brand/credibility pass.
+ *   1. FIX (hydration): NetworkBackground generated line coordinates
+ *      with Math.random() during render — server and client produced
+ *      different values (React hydration mismatch + first-paint flicker).
+ *      Lines are now generated once on mount.
+ *   2. Credibility: ResourceVisual/AIVisual earnings figures are demo
+ *      values — now labeled "Simulated" so illustrative numbers cannot
+ *      be read as claims.
+ *   3. Brand: green earnings text / green pulse → brand tokens; step
+ *      content transition → 8px rise + fade; radii → 2/4/6px; external
+ *      CTAs get target=_blank rel=noopener.
+ *
+ * Main Functionality:
+ *   - Four-step node operator journey with live aggregate stats strip,
+ *     progress indicator, per-step visual, and prev/next navigation.
+ *
+ * Dependencies:
+ *   - useNetworkStats (public aggregate endpoint — see inline note),
+ *     AnimatedMessageCounter v2.0, lib/i18n, Container
+ *
+ * ⚠️ Important Notes for Next Developer:
+ *   - Live counters source ONLY privacy-safe aggregates. Never surface
+ *     node IDs/endpoints here.
+ *   - Demo visuals must keep the "Simulated" label if they show money
+ *     or performance figures.
+ *   - Brand rule: no green, no emojis.
+ *
+ * Last Modified: v2.0 — Hydration fix, token restyle, demo labeling
+ * ============================================
+ */
+
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import Container from '../ui/Container';
 import AnimatedMessageCounter from '../ui/AnimatedMessageCounter';
 import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 import useNetworkStats from '../../lib/hooks/useNetworkStats';
+
+const EASE = [0.16, 1, 0.3, 1];
 
 const humanizeStatus = (value) => (
   String(value || 'syncing')
@@ -27,7 +64,7 @@ const JoinNetwork = () => {
   const { stats, isLoading } = useNetworkStats({
     period: '30d',
     autoRefresh: true,
-    refreshInterval: 30000
+    refreshInterval: 30000,
   });
 
   const protocolHealthStatus = stats.protocolFoundationStatus || stats.protocolStatus || 'syncing';
@@ -57,72 +94,56 @@ const JoinNetwork = () => {
     }
   );
 
-  // Join section live counters use the public aggregate privacy endpoint:
-  //   GET /api/privacy_network/vpn/public/network-stats/
-  // Backend:
-  //   /root/aeronyx/privacy_network/api/vpn_observability.py
-  // Rust packet/traffic sources:
-  //   /root/open/AeroNyx/crates/aeronyx-server/src/api/vpn_health.rs
-  //   /root/open/AeroNyx/crates/aeronyx-server/src/handlers/packet.rs
-  
+  // Live counters source: GET /api/privacy_network/vpn/public/network-stats/
+  // Backend: /root/aeronyx/privacy_network/api/vpn_observability.py
+  // Rust:    /root/open/AeroNyx/crates/aeronyx-server/src/api/vpn_health.rs
+  //          /root/open/AeroNyx/crates/aeronyx-server/src/handlers/packet.rs
+
   const steps = [
     {
-      number: "01",
+      number: '01',
       title: copy.steps[0].title,
       subtitle: copy.steps[0].subtitle,
       description: copy.steps[0].description,
       features: copy.steps[0].features,
-      cta: {
-        text: copy.steps[0].cta,
-        link: "https://docs.aeronyx.network/node-setup"
-      },
-      visual: <NodeVisual />
+      cta: { text: copy.steps[0].cta, link: 'https://docs.aeronyx.network/node-setup' },
+      visual: <NodeVisual />,
     },
     {
-      number: "02",
+      number: '02',
       title: copy.steps[1].title,
       subtitle: copy.steps[1].subtitle,
       description: copy.steps[1].description,
       features: copy.steps[1].features,
-      cta: {
-        text: copy.steps[1].cta,
-        link: "https://docs.aeronyx.network/mcp-ai"
-      },
-      visual: <AIVisual />
+      cta: { text: copy.steps[1].cta, link: 'https://docs.aeronyx.network/mcp-ai' },
+      visual: <AIVisual />,
     },
     {
-      number: "03",
+      number: '03',
       title: copy.steps[2].title,
       subtitle: copy.steps[2].subtitle,
       description: copy.steps[2].description,
       features: copy.steps[2].features,
-      cta: {
-        text: copy.steps[2].cta,
-        link: "https://aeronyx.network/calculator"
-      },
-      visual: <ResourceVisual />
+      cta: { text: copy.steps[2].cta, link: 'https://aeronyx.network/calculator' },
+      visual: <ResourceVisual />,
     },
     {
-      number: "04",
+      number: '04',
       title: copy.steps[3].title,
       subtitle: copy.steps[3].subtitle,
       description: copy.steps[3].description,
       features: copy.steps[3].features,
-      cta: {
-        text: copy.steps[3].cta,
-        link: "https://docs.aeronyx.network/developers"
-      },
-      visual: <BuildVisual liveLabel={copy.live} activeNodesLabel={copy.activeNodesWorldwide} />
-    }
+      cta: { text: copy.steps[3].cta, link: 'https://docs.aeronyx.network/developers' },
+      visual: <BuildVisual liveLabel={copy.live} activeNodesLabel={copy.activeNodesWorldwide} />,
+    },
   ];
-  
+
   return (
-    <section id="join-network" className="py-12 md:py-24 bg-black relative overflow-hidden">
-      {/* Background network effect */}
+    <section id="join-network" className="py-12 md:py-24 relative overflow-hidden" style={{ background: 'var(--surface-0, #08080D)' }}>
       <div className="absolute inset-0 opacity-20">
         <NetworkBackground />
       </div>
-      
+
       <Container className="relative z-10">
         <div className="max-w-6xl mx-auto">
           {/* Section header */}
@@ -131,21 +152,23 @@ const JoinNetwork = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-light mb-4 md:mb-6">
+            transition={{ duration: 0.6, ease: EASE }}
+          >
+            <h2 className="text-display-lg font-light mb-4 md:mb-6">
               {copy.title}
             </h2>
-            <p className="text-base md:text-xl text-white/60 max-w-3xl mx-auto">
+            <p className="text-base md:text-xl text-white/60 max-w-copy mx-auto">
               {copy.description}
             </p>
           </motion.div>
 
+          {/* Live stats strip */}
           <motion.div
             className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4 mb-10 md:mb-14"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.45 }}
+            transition={{ duration: 0.45, ease: EASE }}
           >
             {[
               {
@@ -155,7 +178,7 @@ const JoinNetwork = () => {
                 liveValue: stats.encryptedTrafficBytes,
                 isLiveCounter: true,
                 suffix: copy.stats.bytesUnit,
-                defaultStep: 1024
+                defaultStep: 1024,
               },
               {
                 label: copy.stats.encryptedMessages,
@@ -164,7 +187,7 @@ const JoinNetwork = () => {
                 liveValue: stats.encryptedMessagesRaw,
                 isLiveCounter: true,
                 suffix: copy.stats.packetsUnit,
-                defaultStep: 1
+                defaultStep: 1,
               },
               {
                 label: copy.stats.protocolHealth || 'Protocol Health',
@@ -172,12 +195,12 @@ const JoinNetwork = () => {
                 value: protocolHealthValue,
                 detail: protocolHealthEvidence,
                 source: protocolHealthSource,
-                isLiveCounter: false
-              }
+                isLiveCounter: false,
+              },
             ].map((item) => (
               <div
                 key={item.label}
-                className="min-w-0 border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm md:p-5"
+                className="min-w-0 border border-white/10 bg-white/[0.03] rounded p-4 backdrop-blur-sm md:p-5"
               >
                 <div className="min-h-[2.65rem] min-w-0 font-light leading-none text-white">
                   {isLoading ? (
@@ -196,26 +219,26 @@ const JoinNetwork = () => {
                     </span>
                   )}
                 </div>
-                <div className="mt-1 text-[11px] md:text-xs uppercase tracking-[0.18em] text-white/40">
+                <div className="mt-1 text-[10px] md:text-xs uppercase tracking-eyebrow text-white/40">
                   {item.label}
                 </div>
                 <p className="mt-2 max-w-[34rem] text-xs leading-relaxed text-white/45">
                   {item.description}
                 </p>
                 {item.detail && (
-                  <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-primary/70">
+                  <p className="mt-2 text-[11px] uppercase tracking-eyebrow text-brand-light/70">
                     {item.detail}
                   </p>
                 )}
                 {item.source && (
-                  <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-white/35">
+                  <p className="mt-1 text-[11px] uppercase tracking-eyebrow text-white/35">
                     {item.source}
                   </p>
                 )}
               </div>
             ))}
           </motion.div>
-          
+
           {/* Progress indicator */}
           <div className="flex items-center justify-center mb-8 md:mb-12">
             <div className="flex items-center space-x-2 md:space-x-4">
@@ -223,46 +246,46 @@ const JoinNetwork = () => {
                 <React.Fragment key={index}>
                   <button
                     onClick={() => setActiveStep(index)}
-                    className={`transition-all duration-300 ${
-                      index === activeStep 
-                        ? 'scale-110' 
-                        : index < activeStep 
-                        ? 'opacity-60' 
-                        : 'opacity-30'
+                    aria-label={`Step ${index + 1}: ${step.title}`}
+                    className={`transition-all duration-base ease-out-brand ${
+                      index === activeStep
+                        ? 'scale-110'
+                        : index < activeStep
+                          ? 'opacity-60'
+                          : 'opacity-30'
                     }`}
                   >
-                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full border-2 flex items-center justify-center ${
-                      index === activeStep 
-                        ? 'border-white bg-white text-black' 
+                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded border flex items-center justify-center font-mono ${
+                      index === activeStep
+                        ? 'border-brand-light bg-brand-faint text-brand-light'
                         : index < activeStep
-                        ? 'border-white/60 bg-white/10'
-                        : 'border-white/20'
+                          ? 'border-white/40 bg-white/10'
+                          : 'border-white/20'
                     }`}>
-                      <span className="text-xs md:text-sm font-medium">{index + 1}</span>
+                      <span className="text-xs md:text-sm">{String(index + 1).padStart(2, '0')}</span>
                     </div>
                   </button>
                   {index < steps.length - 1 && (
-                    <div className={`w-12 md:w-24 h-0.5 transition-all duration-300 ${
-                      index < activeStep ? 'bg-white/60' : 'bg-white/20'
+                    <div className={`w-12 md:w-24 h-px transition-all duration-base ${
+                      index < activeStep ? 'bg-brand-light/50' : 'bg-white/15'
                     }`} />
                   )}
                 </React.Fragment>
               ))}
             </div>
           </div>
-          
-          {/* Step content */}
+
+          {/* Step content — rise + fade (v2.0) */}
           <motion.div
             key={activeStep}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: EASE }}
             className="grid md:grid-cols-2 gap-8 md:gap-12 items-center"
           >
-            {/* Content */}
             <div className="order-2 md:order-1">
               <div className="mb-6">
-                <div className="text-5xl md:text-6xl font-extralight text-white/20 mb-2">
+                <div className="text-5xl md:text-6xl font-extralight text-white/15 mb-2 font-mono">
                   {steps[activeStep].number}
                 </div>
                 <h3 className="text-2xl md:text-3xl font-light mb-2">
@@ -272,65 +295,63 @@ const JoinNetwork = () => {
                   {steps[activeStep].subtitle}
                 </p>
               </div>
-              
+
               <p className="text-sm md:text-base text-white/80 mb-6 leading-relaxed">
                 {steps[activeStep].description}
               </p>
-              
+
               <div className="space-y-2 mb-8">
                 {steps[activeStep].features.map((feature, i) => (
                   <div key={i} className="flex items-start">
-                    <div className="w-1 h-1 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                    <div className="w-1 h-1 rounded-pill bg-brand-light/60 mt-2 mr-3 flex-shrink-0" />
                     <span className="text-sm md:text-base text-white/60">{feature}</span>
                   </div>
                 ))}
               </div>
-              
+
               {steps[activeStep].cta && (
-                <motion.a
+                
                   href={steps[activeStep].cta.link}
-                  className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 hover:border-white/40 transition-all group"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded border border-white/20 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast group"
                 >
-                  <span className="text-sm uppercase tracking-wider">
+                  <span className="text-sm uppercase tracking-eyebrow">
                     {steps[activeStep].cta.text}
                   </span>
-                  <svg 
-                    className="w-4 h-4 group-hover:translate-x-1 transition-transform" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    xmlns="http://www.w3.org/2000/svg"
+                  <svg
+                    className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-fast"
+                    viewBox="0 0 24 24"
+                    fill="none"
                   >
-                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                </motion.a>
+                </a>
               )}
             </div>
-            
-            {/* Visual */}
+
             <div className="order-1 md:order-2">
-              <div className="aspect-square bg-black/50 border border-white/10 rounded-xl p-8 backdrop-blur-sm">
+              <div className="aspect-square border border-white/10 rounded-md p-8 backdrop-blur-sm" style={{ background: 'rgba(8,8,13,0.5)' }}>
                 {steps[activeStep].visual}
               </div>
             </div>
           </motion.div>
-          
+
           {/* Navigation buttons */}
           <div className="flex justify-between items-center mt-8 md:mt-12">
             <button
               onClick={() => setActiveStep(Math.max(0, activeStep - 1))}
-              className={`px-4 py-2 text-sm text-white/60 hover:text-white transition-colors ${
+              className={`px-4 py-2 text-sm text-white/60 hover:text-white transition-colors duration-fast ${
                 activeStep === 0 ? 'opacity-30 cursor-not-allowed' : ''
               }`}
               disabled={activeStep === 0}
             >
               ← {copy.previous}
             </button>
-            
+
             <button
               onClick={() => setActiveStep(Math.min(steps.length - 1, activeStep + 1))}
-              className={`px-4 py-2 text-sm text-white/60 hover:text-white transition-colors ${
+              className={`px-4 py-2 text-sm text-white/60 hover:text-white transition-colors duration-fast ${
                 activeStep === steps.length - 1 ? 'opacity-30 cursor-not-allowed' : ''
               }`}
               disabled={activeStep === steps.length - 1}
@@ -344,45 +365,35 @@ const JoinNetwork = () => {
   );
 };
 
-// Visual components for each step
+/* ---- Step visuals ---- */
+
 const NodeVisual = () => (
   <div className="relative w-full h-full flex items-center justify-center">
     <motion.div
       className="relative"
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ duration: 0.5 }}
+      initial={{ scale: 0.85, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.5, ease: EASE }}
     >
-      {/* Central node */}
-      <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-primary/40 to-primary/20 flex items-center justify-center">
-        <div className="text-white/80">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <div className="w-24 h-24 md:w-32 md:h-32 rounded-pill border border-brand-line bg-brand-faint flex items-center justify-center">
+        <div className="text-brand-light">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <circle cx="12" cy="12" r="3" />
             <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" />
-            <path d="M20.5 7.5L16 12l4.5 4.5M3.5 7.5L8 12l-4.5 4.5" />
           </svg>
         </div>
       </div>
-      
-      {/* Orbiting connections */}
+
       {[0, 1, 2, 3].map((i) => (
         <motion.div
           key={i}
-          className="absolute w-3 h-3 bg-white/40 rounded-full"
-          style={{
-            top: '50%',
-            left: '50%',
-          }}
+          className="absolute w-2.5 h-2.5 bg-white/40 rounded-pill"
+          style={{ top: '50%', left: '50%' }}
           animate={{
-            x: [0, Math.cos(i * Math.PI / 2) * 80, 0],
-            y: [0, Math.sin(i * Math.PI / 2) * 80, 0],
+            x: [0, Math.cos((i * Math.PI) / 2) * 80, 0],
+            y: [0, Math.sin((i * Math.PI) / 2) * 80, 0],
           }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            delay: i * 0.5,
-            ease: "linear"
-          }}
+          transition={{ duration: 4, repeat: Infinity, delay: i * 0.5, ease: 'linear' }}
         />
       ))}
     </motion.div>
@@ -392,35 +403,39 @@ const NodeVisual = () => (
 const AIVisual = () => (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="w-full max-w-sm">
-      {/* Chat interface mock */}
+      <div className="flex justify-end mb-3">
+        <span className="text-[9px] uppercase tracking-eyebrow text-white/30 border border-white/10 rounded-sm px-2 py-0.5">
+          Simulated
+        </span>
+      </div>
       <div className="space-y-4">
         <motion.div
-          className="bg-white/5 rounded-lg p-3 text-sm"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
+          className="bg-white/5 rounded p-3 text-sm"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, ease: EASE }}
         >
-          <div className="text-primary mb-1">You:</div>
+          <div className="text-brand-light mb-1">You:</div>
           <div className="text-white/80">Optimize for maximum earnings</div>
         </motion.div>
-        
+
         <motion.div
-          className="bg-primary/10 rounded-lg p-3 text-sm"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.6 }}
+          className="bg-brand-faint rounded p-3 text-sm"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, ease: EASE }}
         >
-          <div className="text-primary mb-1">AI:</div>
+          <div className="text-brand-light mb-1">AI:</div>
           <div className="text-white/80">Analyzing network demand... Reallocating 70% GPU to AI tasks, 30% to mining. Estimated earnings increase: 45%</div>
         </motion.div>
-        
+
         <motion.div
           className="flex items-center gap-2 text-white/40 text-xs"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
         >
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+          <div className="w-2 h-2 bg-brand-light rounded-pill animate-pulse" />
           AI is managing your infrastructure
         </motion.div>
       </div>
@@ -431,35 +446,39 @@ const AIVisual = () => (
 const ResourceVisual = () => (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="w-full">
-      {/* Resource meters */}
+      <div className="flex justify-end mb-3">
+        <span className="text-[9px] uppercase tracking-eyebrow text-white/30 border border-white/10 rounded-sm px-2 py-0.5">
+          Simulated
+        </span>
+      </div>
       <div className="space-y-4">
         {[
           { name: 'CPU', usage: 35, earning: '$0.42/hr' },
           { name: 'GPU', usage: 78, earning: '$2.15/hr' },
           { name: 'Storage', usage: 45, earning: '$0.18/hr' },
-          { name: 'Bandwidth', usage: 62, earning: '$0.95/hr' }
+          { name: 'Bandwidth', usage: 62, earning: '$0.95/hr' },
         ].map((resource, i) => (
           <motion.div
             key={resource.name}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.1 }}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1, ease: EASE }}
           >
             <div className="flex justify-between items-center mb-1">
               <span className="text-sm text-white/60">{resource.name}</span>
-              <span className="text-xs text-green-400">{resource.earning}</span>
+              <span className="text-xs text-brand-light font-mono">{resource.earning}</span>
             </div>
-            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-white/10 rounded-pill overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-primary to-secondary"
+                className="h-full bg-gradient-to-r from-brand to-cipher"
                 initial={{ width: 0 }}
                 animate={{ width: `${resource.usage}%` }}
-                transition={{ duration: 1, delay: 0.5 + i * 0.1 }}
+                transition={{ duration: 1, delay: 0.5 + i * 0.1, ease: EASE }}
               />
             </div>
           </motion.div>
         ))}
-        
+
         <motion.div
           className="pt-4 border-t border-white/10 text-center"
           initial={{ opacity: 0 }}
@@ -467,7 +486,7 @@ const ResourceVisual = () => (
           transition={{ delay: 1 }}
         >
           <div className="text-xs text-white/40">Total earnings</div>
-          <div className="text-2xl font-light text-green-400">$3.70/hr</div>
+          <div className="text-2xl font-light text-brand-light font-mono">$3.70/hr</div>
         </motion.div>
       </div>
     </div>
@@ -477,40 +496,30 @@ const ResourceVisual = () => (
 const BuildVisual = ({ liveLabel = 'Live', activeNodesLabel = 'Active Nodes Worldwide' }) => (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="text-center">
-      {/* Global network visualization */}
       <motion.div
         className="relative w-48 h-48 md:w-64 md:h-64 mx-auto"
         animate={{ rotate: 360 }}
-        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
       >
-        {/* Globe outline */}
-        <div className="absolute inset-0 border-2 border-white/20 rounded-full" />
-        
-        {/* Network nodes */}
+        <div className="absolute inset-0 border border-white/20 rounded-pill" />
+
         {Array.from({ length: 8 }).map((_, i) => {
           const angle = (i / 8) * Math.PI * 2;
           const x = 50 + Math.cos(angle) * 35;
           const y = 50 + Math.sin(angle) * 35;
-          
+
           return (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 bg-primary rounded-full"
+              className="absolute w-2 h-2 bg-brand-light rounded-pill"
               style={{ left: `${x}%`, top: `${y}%` }}
-              animate={{
-                scale: [1, 1.5, 1],
-                opacity: [0.6, 1, 0.6]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                delay: i * 0.25
-              }}
+              animate={{ scale: [1, 1.4, 1], opacity: [0.6, 1, 0.6] }}
+              transition={{ duration: 2, repeat: Infinity, delay: i * 0.25 }}
             />
           );
         })}
       </motion.div>
-      
+
       <motion.div
         className="mt-6"
         initial={{ opacity: 0 }}
@@ -524,37 +533,46 @@ const BuildVisual = ({ liveLabel = 'Live', activeNodesLabel = 'Active Nodes Worl
   </div>
 );
 
-// Background network animation
-const NetworkBackground = () => (
-  <svg className="w-full h-full">
-    <defs>
-      <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-        <circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)" />
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#grid)" />
-    
-    {/* Animated connection lines */}
-    {Array.from({ length: 5 }).map((_, i) => (
-      <motion.line
-        key={i}
-        x1={`${Math.random() * 100}%`}
-        y1={`${Math.random() * 100}%`}
-        x2={`${Math.random() * 100}%`}
-        y2={`${Math.random() * 100}%`}
-        stroke="rgba(119, 98, 243, 0.2)"
-        strokeWidth="1"
-        initial={{ pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          delay: i * 0.5,
-          repeatType: "reverse"
-        }}
-      />
-    ))}
-  </svg>
-);
+/** Background grid + lines — generated on mount (v2.0 hydration fix). */
+const NetworkBackground = () => {
+  const [lines, setLines] = useState([]);
+
+  useEffect(() => {
+    setLines(
+      Array.from({ length: 5 }, () => ({
+        x1: `${Math.random() * 100}%`,
+        y1: `${Math.random() * 100}%`,
+        x2: `${Math.random() * 100}%`,
+        y2: `${Math.random() * 100}%`,
+      }))
+    );
+  }, []);
+
+  return (
+    <svg className="w-full h-full">
+      <defs>
+        <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+          <circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" />
+
+      {lines.map((line, i) => (
+        <motion.line
+          key={i}
+          x1={line.x1}
+          y1={line.y1}
+          x2={line.x2}
+          y2={line.y2}
+          stroke="rgba(119, 98, 243, 0.2)"
+          strokeWidth="1"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 3, repeat: Infinity, delay: i * 0.5, repeatType: 'reverse' }}
+        />
+      ))}
+    </svg>
+  );
+};
 
 export default JoinNetwork;
