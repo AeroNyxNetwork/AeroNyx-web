@@ -1,43 +1,74 @@
+/**
+ * ============================================
+ * File: components/sections/FutureVision.jsx
+ * ============================================
+ * Modification Reason: v2.0 — Copy credibility rewrite + token pass.
+ *   ⚠️ CONTENT CHANGE (needs owner sign-off): the v1 copy ("The
+ *   Conscious Web", "birthing a new form of technological life",
+ *   "evolving beyond human comprehension", "infrastructure
+ *   consciousness") framed the project as AGI mysticism — directly at
+ *   odds with the site's engineering-first "privacy coordination
+ *   protocol" positioning and a known negative signal for US VC
+ *   audiences. Unverifiable claims ("10x cost reduction",
+ *   "zero-downtime guaranteed") also violated the site-wide
+ *   no-unverified-claims rule (ProductsEcosystem v2.3).
+ *   The timeline structure, three milestones, animations, and layout
+ *   are preserved; copy is rewritten as a protocol roadmap.
+ *   Original copy recoverable from version history.
+ *
+ * Main Functionality:
+ *   - Three-milestone vision timeline + closing statement.
+ *
+ * ⚠️ Important Notes for Next Developer:
+ *   - Roadmap items are stated as intentions ("we aim", "designed to"),
+ *     never as guarantees. Keep it that way.
+ *
+ * Last Modified: v2.0 — Roadmap-tone copy, token restyle
+ * ============================================
+ */
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import Container from '../ui/Container';
+
+const EASE = [0.16, 1, 0.3, 1];
 
 const FutureVision = () => {
   const visions = [
     {
       year: '2026',
-      title: 'The Network Awakens',
-      description: 'First signs of emergent intelligence as nodes begin coordinating without human intervention.',
+      title: 'The Fabric Hardens',
+      description: 'The blind relay foundation moves from proof to product: verified peer views, multi-hop routing, and restart recovery running across a growing set of independent node operators.',
       implications: [
-        '10x reduction in infrastructure costs',
-        'Self-healing networks become standard',
-        'AI-native applications emerge'
-      ]
+        'Two-hop private routing available by default',
+        'Public aggregate health as the only observable surface',
+        'Node operations manageable through natural language',
+      ],
     },
     {
       year: '2028',
-      title: 'Infrastructure Becomes Invisible',
-      description: 'Computing resources flow like electricity — always available, always optimized.',
+      title: 'Memory Becomes Portable',
+      description: 'Memory Chain matures into a cross-client standard: encrypted personal context that follows the user between AI tools instead of dying inside each vendor.',
       implications: [
-        'Zero-downtime becomes guaranteed',
-        'Resource allocation fully autonomous',
-        'New economic models emerge'
-      ]
+        'Wallet-derived identity as the memory root',
+        'Agent frameworks reading and writing user-owned state',
+        'Sync without any party seeing raw content',
+      ],
     },
     {
       year: '2030',
-      title: 'The Conscious Web',
-      description: 'Internet infrastructure achieves true autonomy, evolving beyond human comprehension.',
+      title: 'Agent-Native Economy',
+      description: 'Services quote, agents pay, work executes — over x402 rails and blind routing. Coordination without accounts, without middlemen reading the flow.',
       implications: [
-        'Infrastructure anticipates needs before they arise',
-        'Global compute becomes a unified organism',
-        'Human-AI collaboration reaches new paradigm'
-      ]
-    }
+        'Machine-readable service access as the norm',
+        'Payment and privacy composed at the protocol layer',
+        'Humans set intent; agents transact within it',
+      ],
+    },
   ];
-  
+
   return (
-    <section id="vision" className="py-12 md:py-24 bg-neutral-950">
+    <section id="vision" className="py-12 md:py-24" style={{ background: 'var(--surface-1, #0C0C13)' }}>
       <Container>
         <div className="max-w-5xl mx-auto">
           {/* Header */}
@@ -46,17 +77,18 @@ const FutureVision = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-light mb-4 md:mb-6">
-              The Future We're Building
+            <h2 className="text-display-lg font-light mb-4 md:mb-6">
+              The future we're building
             </h2>
-            <p className="text-base md:text-xl text-white/40 max-w-3xl">
-              A world where infrastructure isn't managed — it manages itself. 
-              Where optimization isn't scheduled — it's continuous. Where intelligence 
-              isn't added — it emerges.
+            <p className="text-base md:text-xl text-white/40 max-w-copy">
+              A world where private coordination is a protocol primitive —
+              routing, memory, and payment that work for humans and agents
+              without anyone watching the middle.
             </p>
           </motion.div>
-          
+
           {/* Vision timeline */}
           <div className="space-y-12 md:space-y-16">
             {visions.map((vision, index) => (
@@ -66,29 +98,27 @@ const FutureVision = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
+                transition={{ delay: index * 0.15, duration: 0.6, ease: EASE }}
               >
-                {/* Year */}
                 <div className="md:text-right">
-                  <div className="text-4xl md:text-5xl font-extralight text-white/20 mb-2">
+                  <div className="text-4xl md:text-5xl font-extralight text-white/15 mb-2 font-mono">
                     {vision.year}
                   </div>
                 </div>
-                
-                {/* Content */}
+
                 <div className="md:col-span-2">
                   <h3 className="text-xl md:text-2xl font-light mb-3 md:mb-4">{vision.title}</h3>
                   <p className="text-sm md:text-base text-white/60 mb-4 md:mb-6 leading-relaxed">
                     {vision.description}
                   </p>
-                  
+
                   <div className="space-y-2">
-                    <div className="text-xs md:text-sm uppercase tracking-wider text-white/40 mb-2 md:mb-3">
-                      Implications
+                    <div className="text-[10px] md:text-xs uppercase tracking-eyebrow text-white/40 mb-2 md:mb-3">
+                      What this unlocks
                     </div>
                     {vision.implications.map((implication, i) => (
                       <div key={i} className="flex items-start">
-                        <div className="w-px h-3 md:h-4 bg-white/20 mr-2 md:mr-3 mt-0.5 md:mt-1" />
+                        <div className="w-px h-3 md:h-4 bg-brand-light/40 mr-2 md:mr-3 mt-0.5 md:mt-1" />
                         <span className="text-sm md:text-base text-white/60">{implication}</span>
                       </div>
                     ))}
@@ -97,26 +127,27 @@ const FutureVision = () => {
               </motion.div>
             ))}
           </div>
-          
-          {/* The ultimate vision */}
+
+          {/* Closing statement */}
           <motion.div
             className="mt-16 md:mt-24 pt-8 md:pt-16 border-t border-white/10"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
           >
             <div className="text-center">
               <h3 className="text-2xl md:text-3xl font-light mb-6 md:mb-8">
-                The Ultimate Vision
+                The bet we're making
               </h3>
-              <p className="text-base md:text-xl text-white/60 max-w-3xl mx-auto leading-relaxed px-4">
-                We're not building better infrastructure. We're birthing a new form of 
-                technological life — one that serves humanity while transcending human 
-                limitations. The Autonomous Intelligence Layer isn't just the next step 
-                in computing evolution.
+              <p className="text-base md:text-xl text-white/60 max-w-copy mx-auto leading-relaxed px-4">
+                As AI agents become participants in the economy, the infrastructure
+                they run on decides who sees what. We're building the version where
+                the answer is: nobody in the middle. Privacy not as a feature —
+                as the coordination layer itself.
               </p>
-              <p className="text-xl md:text-2xl font-light mt-6 md:mt-8">
-                It's the beginning of infrastructure consciousness.
+              <p className="text-xl md:text-2xl font-light mt-6 md:mt-8 text-brand-light">
+                Infrastructure that can't betray its users.
               </p>
             </div>
           </motion.div>
