@@ -2,7 +2,14 @@
  * ============================================
  * File: components/sections/X402Showcase.jsx
  * ============================================
- * Modification Reason: v2.0 — 2026 brand/aesthetic + credibility pass.
+ * Modification Reason: v2.1 — Remove legacy node-economy positioning from visible copy.
+ *   v2.1 keeps the x402 section focused on AeroNyx as a blind, open privacy
+ *   protocol for autonomous agents. The old node-economy category label is
+ *   removed because it no longer matches the protocol/product separation used
+ *   across the homepage.
+ *
+ * Historical Notes:
+ *   v2.0 — 2026 brand/aesthetic + credibility pass.
  *   1. FIX (credibility): removed the unverified "15,000-node" scale
  *      claim. ProductsEcosystem v2.3 already removed unverified scale
  *      claims site-wide; this one was missed and directly contradicts
@@ -35,7 +42,7 @@
  *   - Keep the Coinbase x402 attribution line.
  *   - Brand rule: no green, no emojis in this section.
  *
- * Last Modified: v2.0 — Token system restyle, claim removal
+ * Last Modified: v2.1 — Protocol narrative cleanup
  * ============================================
  */
 
@@ -164,7 +171,7 @@ const X402Showcase = () => {
 
               <div className="flex-1">
                 <h3 className="text-lg font-medium mb-2">
-                  AeroNyx Innovation: x402 + ZKP + DePIN
+                  AeroNyx Innovation: x402 + ZKP + Blind Routing
                 </h3>
                 <p className="text-sm text-white/60 leading-relaxed mb-3">
                   {/* v2.0: unverified node-count claim removed */}

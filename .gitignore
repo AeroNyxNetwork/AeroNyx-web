@@ -1,0 +1,31 @@
+# AeroNyx Web generated files
+#
+# Keep this file intentionally small. It exists to keep production source
+# reviews focused on real code instead of local build output or temporary
+# Codex backup snapshots.
+
+# Dependencies and framework output
+node_modules/
+.next/
+out/
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Logs and package-manager diagnostics
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+
+# Temporary backup files created during staged production edits.
+*.codexbak-*
+*.bak
+*.tmp
+*.orig
