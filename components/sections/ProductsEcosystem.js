@@ -3,7 +3,7 @@
  * File: components/sections/ProductsEcosystem.js
  * ============================================
  * Modification Reason: v3.0 — 2026 brand/aesthetic + interaction pass.
- *   1. Brand: all green/yellow semantic colors migrated to the token
+ *   1. Brand: all green/yellow semantic colors migrated to the token 
  *      system (homepage "no green" rule): Live badge → ok (brand light
  *      purple), Beta badge → warn (muted amber), Protocol Value /
  *      comparison highlight / closing statement → brand-light.
