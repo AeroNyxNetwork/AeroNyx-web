@@ -569,7 +569,7 @@ const OpenClawTeaser = () => (
           <IntegrationPoint text="Local-first: works offline, syncs when connected" />
         </div>
 
-        
+        <a
           href="https://docs.aeronyx.network"
           target="_blank"
           rel="noopener noreferrer"

@@ -342,7 +342,7 @@ const ProductsEcosystem = () => {
 
                 {/* CTA */}
                 {activeProduct.cta && (
-                  
+                  <a
                     href={activeProduct.cta.link}
                     onClick={(e) => handleCtaClick(e, activeProduct.cta.link)}
                     target={activeProduct.cta.link.startsWith('http') ? '_blank' : undefined}

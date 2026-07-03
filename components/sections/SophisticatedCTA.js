@@ -62,7 +62,7 @@ const SophisticatedCTA = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
           >
-            
+            <a
               href="https://docs.aeronyx.network/aeronyx-whitepaper/technical-white-paper"
               target="_blank"
               rel="noopener noreferrer"
@@ -75,7 +75,7 @@ const SophisticatedCTA = () => {
               </div>
             </a>
 
-            
+            <a
               href="mailto:partnerships@aeronyx.network"
               className="text-white/40 hover:text-white transition-colors duration-fast px-4 py-2"
             >

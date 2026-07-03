@@ -182,7 +182,7 @@ const HowAILWorks = () => {
             transition={{ duration: 0.6, ease: EASE }}
             className="mt-12 md:mt-16 text-center"
           >
-            
+            <a
               href="https://docs.aeronyx.network/"
               target="_blank"
               rel="noopener noreferrer"

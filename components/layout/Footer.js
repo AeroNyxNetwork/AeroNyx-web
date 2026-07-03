@@ -95,7 +95,7 @@ const Footer = () => {
             © {new Date().getFullYear()} AeroNyx Network. All rights reserved.
           </p>
           <div className="flex space-x-6">
-            
+            <a
               href="https://docs.aeronyx.network/articles/aeronyx-privacy-policy"
               target="_blank"
               rel="noopener noreferrer"
@@ -103,7 +103,7 @@ const Footer = () => {
             >
               Privacy Policy
             </a>
-            
+            <a
               href="https://docs.aeronyx.network/articles/aeronyx-user-agreement"
               target="_blank"
               rel="noopener noreferrer"
@@ -127,7 +127,7 @@ const FooterColumn = ({ heading, links }) => (
         return (
           <li key={index}>
             {external ? (
-              
+              <a
                 href={link.href}
                 target={link.href.startsWith('mailto:') ? undefined : '_blank'}
                 rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
@@ -148,7 +148,7 @@ const FooterColumn = ({ heading, links }) => (
 );
 
 const SocialLink = ({ href, label, icon }) => (
-  
+  <a
     href={href}
     target="_blank"
     rel="noopener noreferrer"

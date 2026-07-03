@@ -310,7 +310,7 @@ const JoinNetwork = () => {
               </div>
 
               {steps[activeStep].cta && (
-                
+                <a
                   href={steps[activeStep].cta.link}
                   target="_blank"
                   rel="noopener noreferrer"
