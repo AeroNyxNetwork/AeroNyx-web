@@ -40,7 +40,7 @@
  *   - Section headline uses the shared text-display-lg token. Do not add
  *     ad hoc serif styling or negative letter-spacing.
  *
- * Last Modified: v1.2 — Homepage rhythm, tap target, and card polish
+ * Last Modified: v1.3 — Memory-before-payment narrative and touch polish
  * ============================================
  */
 
@@ -83,19 +83,19 @@ const ProblemToX402 = () => {
       statusTone: 'text-warn',
     },
     {
+      icon: <MemoryIcon />,
+      title: 'Memory Lock-in',
+      problem: 'Agent memory is trapped in vendor silos — switch tools, lose everything.',
+      status: 'Solved by MemChain',
+      statusTone: 'text-brand-light',
+    },
+    {
       icon: <PaymentIcon solved />,
       title: 'Payment Setup',
       problem: 'No cards, no bank accounts, no human to configure billing.',
       status: 'Solved by x402',
       statusTone: 'text-brand-light',
       pivot: true,
-    },
-    {
-      icon: <MemoryIcon />,
-      title: 'Memory Lock-in',
-      problem: 'Agent memory is trapped in vendor silos — switch tools, lose everything.',
-      status: 'Solved by MemChain',
-      statusTone: 'text-brand-light',
     },
   ];
 
@@ -232,8 +232,8 @@ const ProblemToX402 = () => {
             className="mt-10 text-center md:mt-14"
           >
             <p className="text-sm md:text-base text-white/50 max-w-copy mx-auto">
-              Payment and memory are two blockers down. The third — trust —
-              is what the rest of the protocol removes.
+              Privacy access and private memory establish the product foundation.
+              x402 extends that foundation into agent-native service payment.
             </p>
             <div className="h-px w-24 mx-auto mt-5 bg-gradient-to-r from-transparent via-brand-light/30 to-transparent" />
           </motion.div>
@@ -257,9 +257,9 @@ const FlowStep = ({ number, title, description, tone }) => {
     neutral: 'text-white/50 border-white/15',
   };
   return (
-    <div className={`p-3 rounded border ${tones[tone]} mb-2`}>
+    <div className={`mb-2 rounded border p-3 ${tones[tone]}`}>
       <div className="flex items-start gap-3">
-        <div className={`w-7 h-7 rounded-sm border flex items-center justify-center text-xs font-mono flex-shrink-0 ${numberTone[tone]}`}>
+        <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-sm border font-mono text-xs ${numberTone[tone]}`}>
           {number}
         </div>
         <div className="flex-1 min-w-0">
@@ -278,7 +278,7 @@ const TraditionalFlow = () => (
     <FlowStep number="2" title="Add Payment Method" description="Human enters credit card details" tone="warn" />
     <FlowStep number="3" title="Configure Billing" description="Human sets up subscription" tone="warn" />
     <FlowStep number="4" title="Get API Key" description="Finally… access infrastructure" tone="neutral" />
-    <div className="mt-4 p-3 rounded border border-warn/25 bg-warn/[0.06]">
+    <div className="mt-4 rounded border border-warn/25 bg-warn/[0.06] p-3">
       <div className="text-sm text-white/60">Days of setup. Agents blocked.</div>
     </div>
   </div>
@@ -291,7 +291,7 @@ const X402Flow = () => (
     <FlowStep number="2" title="Receive Quote" description="Server responds 402 + price" tone="ok" />
     <FlowStep number="3" title="Auto-Pay" description="Wallet signs payment automatically" tone="ok" />
     <FlowStep number="4" title="Get Access" description="Instant resource delivery" tone="ok" />
-    <div className="mt-4 p-3 rounded border border-brand-line bg-brand-faint">
+    <div className="mt-4 rounded border border-brand-line bg-brand-faint p-3">
       <div className="text-sm text-white/60">One request-cycle. No human needed.</div>
     </div>
   </div>

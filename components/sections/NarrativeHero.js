@@ -2,9 +2,13 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.2.0
+ * Version: 8.3.0
  *
  * Modification Reason:
+ *   v8.3 — Apple-grade control polish. Hero CTAs now keep a 48px minimum
+ *   touch target, stable full-width mobile geometry, and centered labels so
+ *   the first viewport feels like a finished product surface on iOS/Android.
+ *
  *   v8.2 — Adopted the 2026 trust typography system. The hero headline now
  *   uses the shared .hero-title class from globals.css, which maps to Inter
  *   Tight through --font-display, fixed responsive breakpoints, zero
@@ -51,7 +55,7 @@
  *   - The payoff stamp must remain earned (manual drag only, >92%) — do
  *     not show it during auto-sweep or it loses all meaning.
  *
- * Last Modified: v8.2.0 — 2026 trust typography system
+ * Last Modified: v8.3.0 — Hero CTA touch geometry polish
  * ============================================================================
  */
 
@@ -605,15 +609,15 @@ const NarrativeHero = () => {
 
               <motion.div
                 variants={stageItem}
-                className="flex flex-col sm:flex-row gap-4 items-center lg:items-start justify-center lg:justify-start mb-8"
+                className="mb-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4 lg:items-start lg:justify-start"
               >
                 <a href="#how-it-works"
-                  className="px-7 py-3.5 rounded text-sm font-medium tracking-wide transition-transform duration-fast hover:scale-[1.02]"
+                  className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded px-7 py-3.5 text-center text-sm font-medium tracking-wide transition-transform duration-fast hover:scale-[1.02] sm:w-auto"
                   style={{ background: ACCENT, color: '#fff', boxShadow: `0 0 30px ${ACCENT}40` }}>
                   Explore the coordination layer
                 </a>
                 <a href="#join-network"
-                  className="px-7 py-3.5 rounded text-sm tracking-wide border transition-colors duration-fast hover:border-white/40"
+                  className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border px-7 py-3.5 text-center text-sm tracking-wide transition-colors duration-fast hover:border-white/40 sm:w-auto"
                   style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.75)' }}>
                   Join the protocol
                 </a>

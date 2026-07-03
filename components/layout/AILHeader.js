@@ -2,13 +2,18 @@
  * ============================================
  * File: components/layout/AILHeader.js
  * ============================================
- * Modification Reason: v2.2 - Apple-grade responsive header polish.
+ * Modification Reason: v2.3 - Apple-grade language menu and link polish.
+ *   Language menu items now keep 44px touch geometry and the brand link has a
+ *   stable hit area, improving desktop hover paths and tablet/mobile taps
+ *   without changing navigation routes.
+ *
+ * Historical Notes:
+ * v2.2 - Apple-grade responsive header polish.
  *   Desktop navigation now starts at the lg breakpoint instead of md so iPad
  *   and narrow tablet widths use the mobile menu rather than squeezing long
  *   protocol/product labels into one row. CTA/link tap targets keep the
  *   44px minimum interaction geometry.
  *
- * Historical Notes:
  *   v2.1 - Protocol-first navigation restructure.
  *   The homepage now focuses on the AeroNyx protocol layer, while MemChain
  *   and Privacy Network live on dedicated secondary pages. Header links use
@@ -26,7 +31,7 @@
  *   - Do not point the CTA back to #download-vpn on the homepage. The product
  *     download area now belongs to pages/privacy-network.js.
  *
- * Last Modified: v2.2 - Tablet-safe header navigation
+ * Last Modified: v2.3 - Language menu and brand hit-area polish
  * ============================================
  */
 
@@ -110,7 +115,7 @@ const AILHeader = () => {
         <div className="flex items-center justify-between h-16 lg:h-[4.5rem]">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" locale={locale} className="flex items-center space-x-2">
+            <Link href="/" locale={locale} className="flex min-h-[44px] items-center space-x-2">
               <AeroNyxLogo width={32} height={32} />
               <span className="text-lg font-light tracking-normal lg:text-xl">AeroNyx</span>
             </Link>
@@ -161,7 +166,7 @@ const AILHeader = () => {
               >
                 {currentLocale.short}
               </button>
-              <div className={`absolute right-0 top-full w-44 pt-2 transition-all ${
+              <div className={`absolute right-0 top-full w-44 pt-3 transition-all ${
                 isLanguageOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
               }`}>
                 <div className="border border-white/10 bg-black/95 p-2 shadow-2xl shadow-black/40">
@@ -171,7 +176,7 @@ const AILHeader = () => {
                     href={router.asPath || '/'}
                     locale={item.code}
                     onClick={() => setIsLanguageOpen(false)}
-                    className={`block px-3 py-2 text-sm transition-colors ${
+                    className={`flex min-h-[44px] items-center px-3 py-2 text-sm transition-colors ${
                       item.code === locale ? 'text-white' : 'text-white/50 hover:text-white'
                     }`}
                   >
@@ -226,7 +231,7 @@ const AILHeader = () => {
             <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
             <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
             
-            <nav className="relative z-10 p-4 flex flex-col space-y-3">
+            <nav className="relative z-10 flex flex-col space-y-3 p-4">
               {navLinks.map((link) => (
                 link.external ? (
                   <a

@@ -23,7 +23,7 @@
  *   - Roadmap items are stated as intentions ("we aim", "designed to"),
  *     never as guarantees. Keep it that way.
  *
- * Last Modified: v2.2 — Homepage roadmap card rhythm and responsive polish
+ * Last Modified: v2.3 — Roadmap hierarchy and mobile scan polish
  * ============================================
  */
 
@@ -68,7 +68,7 @@ const FutureVision = () => {
   ];
 
   return (
-    <section id="vision" className="py-12 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
+    <section id="vision" className="scroll-mt-20 py-12 md:scroll-mt-24 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
       <Container>
         <div className="max-w-5xl mx-auto">
           {/* Header */}
@@ -101,7 +101,7 @@ const FutureVision = () => {
                 transition={{ delay: index * 0.15, duration: 0.6, ease: EASE }}
               >
                 <div className="md:text-right">
-                  <div className="mb-1 font-mono text-4xl font-extralight text-white/18 md:text-5xl">
+                  <div className="mb-1 font-mono text-3xl font-extralight text-white/18 md:text-5xl">
                     {vision.year}
                   </div>
                 </div>
@@ -119,7 +119,7 @@ const FutureVision = () => {
                     {vision.implications.map((implication, i) => (
                       <div key={i} className="flex items-start">
                         <div className="w-px h-3 md:h-4 bg-brand-light/40 mr-2 md:mr-3 mt-0.5 md:mt-1" />
-                        <span className="text-sm md:text-base text-white/60">{implication}</span>
+                        <span className="text-sm leading-relaxed text-white/60 md:text-base">{implication}</span>
                       </div>
                     ))}
                   </div>

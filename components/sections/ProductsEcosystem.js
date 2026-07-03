@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v3.4 — Product hierarchy order correction.
+ * Modification Reason: v3.5 — Apple-grade selector and content rhythm pass.
+ *   Product tabs now snap cleanly on mobile, keep predictable touch geometry,
+ *   and the product detail cards use calmer spacing so Privacy Access and
+ *   MemChain read as premium product entries before x402.
+ *
+ * Historical Notes:
+ * v3.4 — Product hierarchy order correction.
  *   Privacy Access and MemChain are intentionally ordered before Agent
  *   Payment Rails / x402 so the homepage presents AeroNyx's live privacy and
  *   private memory layers before the agent payment layer.
@@ -59,6 +65,7 @@
  *
  * Last Modified: v3.3 — Homepage product index spacing and interaction polish
  * Last Modified: v3.4 — Privacy Access and MemChain ordered before x402 rails
+ * Last Modified: v3.5 — Mobile snap selector and detail card rhythm polish
  * ============================================
  */
 
@@ -230,7 +237,7 @@ const ProductsEcosystem = () => {
   };
 
   return (
-    <section id="products" className="py-12 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
+    <section id="products" className="scroll-mt-20 py-12 md:scroll-mt-24 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
         <div className="max-w-6xl mx-auto">
 
@@ -249,7 +256,7 @@ const ProductsEcosystem = () => {
           <div
             role="tablist"
             aria-label="AeroNyx products"
-            className="-mx-4 mb-8 flex flex-nowrap gap-3 overflow-x-auto px-4 scrollbar-hide md:mx-0 md:mb-12 md:justify-center md:gap-4 md:px-0"
+            className="-mx-4 mb-8 flex snap-x snap-mandatory flex-nowrap gap-3 overflow-x-auto px-4 pb-1 scrollbar-hide md:mx-0 md:mb-12 md:justify-center md:gap-4 md:px-0"
           >
             {products.map((product) => {
               const active = selectedProduct === product.id;
@@ -260,7 +267,7 @@ const ProductsEcosystem = () => {
                   aria-selected={active}
                   aria-controls={`product-panel-${product.id}`}
                   onClick={() => setSelectedProduct(product.id)}
-                  className={`relative min-h-[52px] min-w-fit flex-shrink-0 rounded border px-4 py-2 text-left transition-colors duration-fast md:px-6 md:py-3 ${
+                  className={`relative min-h-[56px] min-w-fit flex-shrink-0 snap-start rounded border px-4 py-2.5 text-left transition-colors duration-fast md:px-6 md:py-3 ${
                     active
                       ? 'border-brand-line bg-brand-faint text-white'
                       : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'
@@ -300,24 +307,24 @@ const ProductsEcosystem = () => {
                   {getStatusBadge(activeProduct.status)}
                 </div>
 
-                <p className="text-base md:text-lg text-white/40 mb-6">
+                <p className="mb-5 text-base text-white/48 md:mb-6 md:text-lg">
                   {activeProduct.tagline}
                 </p>
 
                 {/* USE CASE */}
-                <div className="page-card mb-6 rounded border border-l-2 border-l-brand/40 p-4 md:p-5">
-                  <div className="space-y-3">
+                <div className="page-card mb-5 rounded border border-l-2 border-l-brand/40 p-4 md:mb-6 md:p-5">
+                  <div className="space-y-3.5">
                     <div>
                       <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">Pain Point</div>
-                      <p className="text-sm text-white/70">{activeProduct.useCase.pain}</p>
+                      <p className="text-sm leading-relaxed text-white/70">{activeProduct.useCase.pain}</p>
                     </div>
                     <div>
                       <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">Solution</div>
-                      <p className="text-sm text-white/70">{activeProduct.useCase.solution}</p>
+                      <p className="text-sm leading-relaxed text-white/70">{activeProduct.useCase.solution}</p>
                     </div>
                     <div>
                       <div className="text-[10px] uppercase tracking-eyebrow text-brand-light mb-1">Protocol Value</div>
-                      <p className="text-sm text-brand-light font-medium">{activeProduct.useCase.savings}</p>
+                      <p className="text-sm font-medium leading-relaxed text-brand-light">{activeProduct.useCase.savings}</p>
                     </div>
                   </div>
                 </div>
@@ -326,13 +333,13 @@ const ProductsEcosystem = () => {
                 <div className="page-card mb-6 rounded border p-4 md:mb-8 md:p-5">
                   <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-3">Architecture Comparison</div>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between gap-4 text-sm">
+                    <div className="grid gap-1 text-sm sm:flex sm:items-center sm:justify-between sm:gap-4">
                       <span className="text-white/60 flex-shrink-0">Traditional</span>
-                      <span className="text-white/80 text-right">{activeProduct.comparison.traditional}</span>
+                      <span className="text-white/80 sm:text-right">{activeProduct.comparison.traditional}</span>
                     </div>
-                    <div className="flex items-center justify-between gap-4 text-sm">
+                    <div className="grid gap-1 text-sm sm:flex sm:items-center sm:justify-between sm:gap-4">
                       <span className="text-white/60 flex-shrink-0">AeroNyx</span>
-                      <span className="text-brand-light font-medium text-right">{activeProduct.comparison.aeronyx}</span>
+                      <span className="font-medium text-brand-light sm:text-right">{activeProduct.comparison.aeronyx}</span>
                     </div>
                     <div className="pt-2 border-t border-white/10">
                       <div className="text-center text-brand-light font-medium">

@@ -2,12 +2,17 @@
  * ============================================
  * File: components/layout/Footer.jsx
  * ============================================
- * Modification Reason: v2.1 — Protocol-first IA alignment.
+ * Modification Reason: v2.2 — Footer tap geometry and mobile polish.
+ *   Footer text links now keep practical touch targets and the legal row wraps
+ *   cleanly on mobile, preserving the existing IA while making the bottom of
+ *   the site feel as finished as the homepage.
+ *
+ * Historical Notes:
+ * v2.1 — Protocol-first IA alignment.
  *   Footer links now point to the new MemChain and Privacy Network secondary
  *   pages while the brand blurb describes AeroNyx as the encrypted
  *   coordination protocol for humans, apps, and autonomous agents.
  *
- * Historical Notes:
  *   v2.0 — Bug fix + premium alignment pass.
  *   1. FIX: contact link pointed to http://mail.google.com/ (opened the
  *      Gmail homepage, not a compose window). Now mailto:hi@aeronyx.network
@@ -35,7 +40,7 @@
  *   - External links use <a target=_blank rel=noopener>; internal
  *     routes use next/link.
  *
- * Last Modified: v2.1 — Secondary product page links
+ * Last Modified: v2.2 — Footer link tap-target polish
  * ============================================
  */
 
@@ -97,16 +102,16 @@ const Footer = () => {
           />
         </div>
 
-        <div className="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 md:flex-row">
           <p className="text-white/35 text-sm">
             © {new Date().getFullYear()} AeroNyx Network. All rights reserved.
           </p>
-          <div className="flex space-x-6">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <a
               href="https://docs.aeronyx.network/articles/aeronyx-privacy-policy"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/35 text-sm hover:text-white transition-colors duration-fast"
+              className="inline-flex min-h-[36px] items-center text-sm text-white/35 hover:text-white transition-colors duration-fast"
             >
               Privacy Policy
             </a>
@@ -114,7 +119,7 @@ const Footer = () => {
               href="https://docs.aeronyx.network/articles/aeronyx-user-agreement"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/35 text-sm hover:text-white transition-colors duration-fast"
+              className="inline-flex min-h-[36px] items-center text-sm text-white/35 hover:text-white transition-colors duration-fast"
             >
               Terms of Service
             </a>
@@ -138,12 +143,12 @@ const FooterColumn = ({ heading, links }) => (
                 href={link.href}
                 target={link.href.startsWith('mailto:') ? undefined : '_blank'}
                 rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-                className="text-white/55 text-sm hover:text-white transition-colors duration-fast"
-              >
+              className="inline-flex min-h-[36px] items-center text-sm text-white/55 hover:text-white transition-colors duration-fast"
+            >
                 {link.label}
               </a>
             ) : (
-              <Link href={link.href} className="text-white/55 text-sm hover:text-white transition-colors duration-fast">
+              <Link href={link.href} className="inline-flex min-h-[36px] items-center text-sm text-white/55 hover:text-white transition-colors duration-fast">
                 {link.label}
               </Link>
             )}
@@ -160,7 +165,7 @@ const SocialLink = ({ href, label, icon }) => (
     target="_blank"
     rel="noopener noreferrer"
     aria-label={label}
-    className="h-10 w-10 rounded border border-white/10 bg-white/[0.03] hover:border-brand-line hover:bg-brand-faint flex items-center justify-center text-white/55 hover:text-white transition-colors duration-fast"
+    className="flex h-11 w-11 items-center justify-center rounded border border-white/10 bg-white/[0.03] text-white/55 hover:border-brand-line hover:bg-brand-faint hover:text-white transition-colors duration-fast"
   >
     {icon}
   </a>

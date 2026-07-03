@@ -29,7 +29,7 @@
  *     earnings, mining, or performance claims.
  *   - Brand rule: no green, no emojis.
  *
- * Last Modified: v2.2 — Homepage operator journey density and tap polish
+ * Last Modified: v2.3 — Apple-grade operator journey control polish
  * ============================================
  */
 
@@ -139,7 +139,7 @@ const JoinNetwork = () => {
   ];
 
   return (
-    <section id="join-network" className="relative overflow-hidden py-12 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
+    <section id="join-network" className="relative scroll-mt-20 overflow-hidden py-12 md:scroll-mt-24 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
       <div className="absolute inset-0 opacity-20">
         <NetworkBackground />
       </div>
@@ -200,7 +200,7 @@ const JoinNetwork = () => {
             ].map((item) => (
               <div
                 key={item.label}
-                className="page-card min-w-0 rounded border p-4 backdrop-blur-sm md:p-5"
+                className="page-card min-w-0 rounded border p-4 backdrop-blur-sm md:min-h-[12rem] md:p-5"
               >
                 <div className="min-h-[2.65rem] min-w-0 font-light leading-none text-white">
                   {isLoading ? (
@@ -240,14 +240,14 @@ const JoinNetwork = () => {
           </motion.div>
 
           {/* Progress indicator */}
-          <div className="flex items-center justify-center mb-8 md:mb-12">
-            <div className="flex items-center space-x-2 md:space-x-4">
+          <div className="mb-8 flex items-center justify-center md:mb-12">
+            <div className="flex max-w-full items-center overflow-x-auto px-1 scrollbar-hide md:space-x-4">
               {steps.map((step, index) => (
                 <React.Fragment key={index}>
                   <button
                     onClick={() => setActiveStep(index)}
                     aria-label={`Step ${index + 1}: ${step.title}`}
-                    className={`rounded-sm transition-all duration-base ease-out-brand ${
+                    className={`flex-shrink-0 rounded-sm transition-all duration-base ease-out-brand ${
                       index === activeStep
                         ? 'scale-110'
                         : index < activeStep
@@ -266,7 +266,7 @@ const JoinNetwork = () => {
                     </div>
                   </button>
                   {index < steps.length - 1 && (
-                    <div className={`w-12 md:w-24 h-px transition-all duration-base ${
+                    <div className={`mx-2 h-px w-10 flex-shrink-0 transition-all duration-base md:mx-0 md:w-24 ${
                       index < activeStep ? 'bg-brand-light/50' : 'bg-white/15'
                     }`} />
                   )}
@@ -291,12 +291,12 @@ const JoinNetwork = () => {
                 <h3 className="text-2xl md:text-3xl font-light mb-2">
                   {steps[activeStep].title}
                 </h3>
-                <p className="text-lg text-white/60">
+                <p className="text-base text-white/60 md:text-lg">
                   {steps[activeStep].subtitle}
                 </p>
               </div>
 
-              <p className="text-sm md:text-base text-white/80 mb-6 leading-relaxed">
+              <p className="mb-6 text-sm leading-relaxed text-white/78 md:text-base">
                 {steps[activeStep].description}
               </p>
 
@@ -304,7 +304,7 @@ const JoinNetwork = () => {
                 {steps[activeStep].features.map((feature, i) => (
                   <div key={i} className="flex items-start">
                     <div className="w-1 h-1 rounded-pill bg-brand-light/60 mt-2 mr-3 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-white/60">{feature}</span>
+                    <span className="text-sm leading-relaxed text-white/60 md:text-base">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -314,7 +314,7 @@ const JoinNetwork = () => {
                   href={steps[activeStep].cta.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex min-h-[44px] items-center gap-2 rounded border border-white/20 px-6 py-3 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
+                  className="group inline-flex min-h-[46px] items-center gap-2 rounded border border-white/20 px-6 py-3 hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
                 >
                   <span className="text-sm uppercase tracking-eyebrow">
                     {steps[activeStep].cta.text}

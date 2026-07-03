@@ -16,7 +16,7 @@
  *   - Keep whileInView here — do not revert to animate.
  *   - Whitepaper URL must match Footer; change both together.
  *
- * Last Modified: v2.2 — Final CTA spacing and Apple-grade tap targets
+ * Last Modified: v2.3 — Final CTA control geometry polish
  * ============================================
  */
 
@@ -68,7 +68,7 @@ const SophisticatedCTA = () => {
               rel="noopener noreferrer"
               className="group relative w-full sm:w-auto"
             >
-              <div className="flex min-h-[48px] items-center justify-center rounded border border-white/20 px-8 py-3.5 text-center transition-colors duration-fast group-hover:border-brand-line group-hover:bg-brand-faint sm:px-12 sm:py-4">
+              <div className="flex min-h-[50px] items-center justify-center rounded border border-white/20 px-8 py-3.5 text-center transition-colors duration-fast group-hover:border-brand-line group-hover:bg-brand-faint sm:px-12 sm:py-4">
                 <span className="text-xs sm:text-sm uppercase tracking-eyebrow">
                   {copy.whitepaper}
                 </span>
@@ -77,7 +77,7 @@ const SophisticatedCTA = () => {
 
             <a
               href="mailto:partnerships@aeronyx.network"
-              className="inline-flex min-h-[44px] items-center justify-center px-4 py-2 text-white/40 hover:text-white transition-colors duration-fast"
+              className="inline-flex min-h-[44px] items-center justify-center rounded px-4 py-2 text-white/40 hover:text-white transition-colors duration-fast"
             >
               <span className="text-xs sm:text-sm uppercase tracking-eyebrow">
                 {copy.partnership}

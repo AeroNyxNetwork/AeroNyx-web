@@ -43,7 +43,7 @@
  *   - Section headline uses the shared text-display-lg token. Keep the
  *     architecture tone precise and avoid decorative display styling.
  *
- * Last Modified: v4.2 — Homepage card rhythm and CTA interaction polish
+ * Last Modified: v4.3 — Apple-grade pillar spacing and bullet rhythm polish
  * ============================================
  */
 
@@ -88,7 +88,7 @@ const PILLARS = [
 
 const HowAILWorks = () => {
   return (
-    <section id="how-it-works" className="py-12 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
+    <section id="how-it-works" className="scroll-mt-20 py-12 md:scroll-mt-24 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
         <div className="max-w-6xl mx-auto">
 
@@ -110,7 +110,7 @@ const HowAILWorks = () => {
           </motion.div>
 
           {/* Two pillars */}
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
+          <div className="grid gap-5 lg:grid-cols-2 lg:gap-8">
             {PILLARS.map((pillar, index) => (
               <motion.div
                 key={pillar.title}
@@ -118,7 +118,7 @@ const HowAILWorks = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.15, ease: EASE }}
-                className="page-card flex flex-col overflow-hidden rounded border"
+                className="page-card flex min-h-full flex-col overflow-hidden rounded border"
               >
                 {/* Visual */}
                 <div
@@ -129,7 +129,7 @@ const HowAILWorks = () => {
                 </div>
 
                 {/* Content */}
-                <div className="flex flex-1 flex-col p-5 md:p-8">
+                <div className="flex flex-1 flex-col p-5 md:p-7">
                   <div className="text-[10px] uppercase tracking-eyebrow text-brand-light mb-2">
                     {pillar.tag}
                   </div>
@@ -140,7 +140,7 @@ const HowAILWorks = () => {
                     {pillar.description}
                   </p>
 
-                  <div className="mb-6 border-l-2 border-brand/40 bg-white/[0.03] py-3 pl-4">
+                  <div className="mb-6 border-l-2 border-brand/40 bg-white/[0.03] py-3 pl-4 pr-3">
                     <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">
                       Protocol Impact
                     </div>
@@ -156,7 +156,7 @@ const HowAILWorks = () => {
                     {pillar.technical.map((item, i) => (
                       <div key={i} className="flex items-start">
                         <div className="w-1 h-1 rounded-pill bg-brand-light/60 mt-2 mr-3 flex-shrink-0" />
-                        <span className="text-sm text-white/60">{item}</span>
+                        <span className="text-sm leading-relaxed text-white/60">{item}</span>
                       </div>
                     ))}
                   </div>
