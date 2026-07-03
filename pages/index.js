@@ -75,8 +75,7 @@ const MinimalAILBackground = dynamic(
 
 // Import sections
 import NarrativeHero from '../components/sections/NarrativeHero';
-import ProblemStatement from '../components/sections/ProblemStatement';
-import X402Showcase from '../components/sections/X402Showcase';
+import ProblemToX402 from '../components/sections/ProblemToX402';
 import HowAILWorks from '../components/sections/HowAILWorks';
 import JoinNetwork from '../components/sections/JoinNetwork';
 import ProductsEcosystem from '../components/sections/ProductsEcosystem';
@@ -122,11 +121,7 @@ export default function Home() {
 
         <HomeNetworkStats stats={stats} isLoading={isLoading} copy={copy} />
 
-        {/* 2. Problem Statement — AI infrastructure paradox */}
-        <ProblemStatement />
-
-        {/* 3. X402 Showcase — the payment solution */}
-        <X402Showcase />
+        <ProblemToX402 />
 
         {/* 4. How it works — technical deep-dive */}
         <HowAILWorks />
