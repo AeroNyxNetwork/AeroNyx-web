@@ -2,7 +2,20 @@
  * ============================================
  * File: styles/globals.css
  * ============================================
- * Modification Reason: v3.1 — 2026 trust typography pass.
+ * Modification Reason: v3.2 — Apple-grade homepage typography compatibility.
+ *   1. Added fixed breakpoint display scales for desktop/tablet/phone instead
+ *      of fluid viewport-driven text. This keeps headings predictable across
+ *      Safari, iOS, macOS, Windows, and Android.
+ *   2. Added locale-aware CJK fallback stacks via the root `lang` attribute
+ *      from pages/_app.js v2.5. Chinese, Japanese, and Korean pages now use
+ *      Apple/system CJK families for headings and body text instead of forcing
+ *      Latin display metrics onto CJK glyphs.
+ *   3. Raised mobile microcopy to Apple-readable caption sizes, improved body
+ *      line-height, enabled stable numeric rendering for counters, and added
+ *      minimum tap geometry for CTA-like controls without changing layout.
+ *
+ * Historical Notes:
+ *   v3.1 — 2026 trust typography pass.
  *   1. Added the site-wide typography contract: Inter for body copy,
  *      Inter Tight for trusted product/display headings, and JetBrains Mono
  *      for ciphertext, counters, and code-like protocol surfaces.
@@ -53,7 +66,7 @@
  *     referenced by older sections — do not delete.
  *   - Heading text-shadow must stay neutral black. No colored glows.
  *
- * Last Modified: v3.1 — 2026 trust typography contract
+ * Last Modified: v3.2 — Apple-compatible type scale and locale fallback
  * ============================================
  */
 
@@ -88,9 +101,27 @@
   --font-sans: 'Inter';
   --font-display: 'Inter Tight';
   --font-mono: ui-monospace;
+  --font-apple-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+    'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-cjk-tc: -apple-system, BlinkMacSystemFont, 'PingFang TC',
+    'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+  --font-cjk-sc: -apple-system, BlinkMacSystemFont, 'PingFang SC',
+    'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  --font-cjk-ja: -apple-system, BlinkMacSystemFont, 'Hiragino Sans',
+    'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+  --font-cjk-ko: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+    'Noto Sans KR', sans-serif;
 
   /* Dynamic viewport height (JS-updated legacy mechanism) */
   --vh: 1vh;
+
+  /* Apple-style fixed type scale. Do not make these viewport-fluid. */
+  --type-display-xl: 4rem;
+  --type-display-lg: 2.875rem;
+  --type-display-md: 2rem;
+  --type-hero: 4.25rem;
+  --type-body: 1rem;
+  --type-caption: 0.75rem;
 }
 
 html {
@@ -104,12 +135,12 @@ html {
 body {
   color: white;
   background-color: var(--surface-0);
-  font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
-    'Helvetica Neue', sans-serif;
+  font-family: var(--font-sans), 'Inter', var(--font-apple-ui);
   overflow-x: hidden;
   margin: 0;
   padding: 0;
+  font-size: var(--type-body);
+  line-height: 1.5;
   font-optical-sizing: auto;
   font-feature-settings: 'cv02' 1, 'cv03' 1, 'cv04' 1, 'tnum' 0;
 }
@@ -145,13 +176,53 @@ h1, h2, h3, h4, h5, h6, p, span, a, button {
 }
 
 h1, h2, h3, .heading-text {
-  font-family: var(--font-display), var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-display), var(--font-sans), var(--font-apple-ui);
   letter-spacing: 0;
   text-wrap: balance;
 }
 
 p, li {
+  line-height: 1.58;
   text-wrap: pretty;
+}
+
+:lang(zh-Hant),
+:lang(zh-Hant) h1,
+:lang(zh-Hant) h2,
+:lang(zh-Hant) h3 {
+  font-family: var(--font-cjk-tc);
+}
+
+:lang(zh-Hans),
+:lang(zh-Hans) h1,
+:lang(zh-Hans) h2,
+:lang(zh-Hans) h3 {
+  font-family: var(--font-cjk-sc);
+}
+
+:lang(ja),
+:lang(ja) h1,
+:lang(ja) h2,
+:lang(ja) h3 {
+  font-family: var(--font-cjk-ja);
+}
+
+:lang(ko),
+:lang(ko) h1,
+:lang(ko) h2,
+:lang(ko) h3 {
+  font-family: var(--font-cjk-ko);
+}
+
+:lang(zh-Hant) p,
+:lang(zh-Hant) li,
+:lang(zh-Hans) p,
+:lang(zh-Hans) li,
+:lang(ja) p,
+:lang(ja) li,
+:lang(ko) p,
+:lang(ko) li {
+  line-height: 1.68;
 }
 
 .font-mono,
@@ -161,25 +232,80 @@ pre {
 }
 
 .hero-title {
-  font-family: var(--font-display), var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 4.45rem;
+  font-family: var(--font-display), var(--font-sans), var(--font-apple-ui);
+  font-size: var(--type-hero);
   font-weight: 560;
-  line-height: 1.03;
+  line-height: 1.05;
   letter-spacing: 0;
   text-wrap: balance;
 }
 
+.text-display-xl {
+  font-size: var(--type-display-xl);
+  line-height: 1.06;
+  letter-spacing: 0;
+}
+
+.text-display-lg {
+  font-size: var(--type-display-lg);
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.text-display-md {
+  font-size: var(--type-display-md);
+  line-height: 1.18;
+  letter-spacing: 0;
+}
+
 @media (max-width: 1024px) {
+  :root {
+    --type-display-xl: 3.375rem;
+    --type-display-lg: 2.5rem;
+    --type-display-md: 1.75rem;
+    --type-hero: 3.5rem;
+  }
+
   .hero-title {
-    font-size: 3.75rem;
-    line-height: 1.04;
+    line-height: 1.06;
   }
 }
 
 @media (max-width: 640px) {
+  :root {
+    --type-display-xl: 2.375rem;
+    --type-display-lg: 1.875rem;
+    --type-display-md: 1.5rem;
+    --type-hero: 2.45rem;
+    --type-caption: 0.6875rem;
+  }
+
   .hero-title {
-    font-size: 2.65rem;
     line-height: 1.08;
+  }
+
+  .text-\[8px\],
+  .text-\[9px\],
+  .text-\[10px\] {
+    font-size: var(--type-caption);
+    line-height: 1rem;
+  }
+
+  .tracking-eyebrow {
+    letter-spacing: 0.1em;
+  }
+
+  a[class*='px-'],
+  button[class*='px-'] {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 390px) {
+  :root {
+    --type-hero: 2.25rem;
+    --type-display-xl: 2.1875rem;
+    --type-display-lg: 1.75rem;
   }
 }
 

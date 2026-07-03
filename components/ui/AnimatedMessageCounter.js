@@ -2,7 +2,14 @@
  * ============================================
  * File: components/ui/AnimatedMessageCounter.jsx
  * ============================================
- * Modification Reason: v2.0 — Brand + interface pass.
+ * Modification Reason: v2.1 — Brand + Apple mobile typography pass.
+ *   1. FIX (mobile): metric units could overflow narrow iPhone cards when
+ *      full-width byte counters reached 12+ digits. Mobile now allows the
+ *      unit to wrap below the value and slightly tightens unit tracking while
+ *      preserving the full numeric value.
+ *
+ * Historical Notes:
+ *   v2.0 — Brand + interface pass.
  *   1. FIX (brand): pulse label color was green rgba(134,239,172,·) —
  *      violates the homepage "no green" rule (NarrativeHero header).
  *      Now brand light purple.
@@ -34,7 +41,7 @@
  *     Math.max logic in the value effect.
  *   - Do not reintroduce green for the pulse; ok-state color is purple.
  *
- * Last Modified: v2.0 — Purple pulse, defaultStep support
+ * Last Modified: v2.1 — iPhone-safe metric unit wrapping
  * ============================================
  */
 
@@ -348,6 +355,28 @@ const AnimatedMessageCounter = ({
           font-size: max(0.72rem, calc(var(--metric-value-size, ${MAX_VALUE_FONT_SIZE}px) * 0.3));
           letter-spacing: 0.08em;
           text-transform: uppercase;
+        }
+
+        @media (max-width: 640px) {
+          .metric-line,
+          .metric-measure {
+            align-items: flex-end;
+            column-gap: 0.32rem;
+            row-gap: 0.1rem;
+          }
+
+          .metric-unit {
+            font-size: 0.66rem;
+            letter-spacing: 0.045em;
+            line-height: 1;
+          }
+        }
+
+        @media (max-width: 420px) {
+          .metric-line,
+          .metric-measure {
+            flex-wrap: wrap;
+          }
         }
 
         /* v2.0: brand light purple — the green pulse violated the

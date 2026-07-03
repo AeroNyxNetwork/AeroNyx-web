@@ -2,7 +2,7 @@
  * ============================================
  * File: pages/_app.js
  * ============================================
- * Modification Reason: v2.4 — 2026 trust typography system.
+ * Modification Reason: v2.5 — Locale-aware 2026 trust typography system.
  *   --font-display now resolves to Inter Tight while body copy remains Inter
  *   and code/ciphertext remains JetBrains Mono. This creates the polished
  *   VC-deck feel the homepage needs without returning to a hard-to-read
@@ -16,8 +16,10 @@
  *     display face for the autonomous-agent coordination narrative.
  *   - Several sections reference var(--font-display) inline; this file is the
  *     central switch for homepage headline readability.
+ *   - Keep the root `lang` attribute. globals.css v3.2 uses it to apply
+ *     Apple-grade CJK fallback and line-height rules for multilingual pages.
  *
- * Last Modified: v2.4 — Inter Tight display system
+ * Last Modified: v2.5 — Locale-aware typography root
  * ============================================
  */
 
@@ -81,6 +83,7 @@ function MyApp({ Component, pageProps, router }) {
 
   return (
     <div
+      lang={locale}
       className={`${inter.variable} ${display.variable} ${mono.variable}`}
       style={{
         '--font-sans': 'var(--font-inter)',
