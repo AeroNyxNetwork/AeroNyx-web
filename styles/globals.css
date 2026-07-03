@@ -1,104 +1,118 @@
+/**
+ * ============================================
+ * File: styles/globals.css
+ * ============================================
+ * Modification Reason: v3.0 — 2026 redesign foundation pass.
+ *   1. FIX (critical): global `canvas { position: fixed !important }`
+ *      was hijacking ALL canvases, including the section-scoped
+ *      WatcherField canvas in NarrativeHero (whose file header
+ *      explicitly forbids fixed positioning). Fixed rule is now
+ *      scoped to `.constellation-canvas` only.
+ *   2. FIX: duplicate, conflicting canvas rules merged into one.
+ *   3. FIX: `word-break: break-word` removed from the global text
+ *      selector (broke English words / hex ciphertext mid-token on
+ *      Windows & Android). `overflow-wrap` retained.
+ *   4. Removed purple glow text-shadow on headings (2026 aesthetic);
+ *      kept a subtle black shadow for contrast on canvas backgrounds.
+ *   5. Added CSS motion/font variables consumed by tailwind.config v2.
+ *   6. Added Firefox scrollbar styling (Windows/Android parity) and
+ *      dvh-based viewport fix alongside the iOS webkit fallback.
+ *
+ * Main Functionality:
+ *   - Global reset, typography base, scrollbar, z-index hierarchy,
+ *     mobile/tablet optimizations, reduced-motion accessibility.
+ *
+ * Dependencies:
+ *   - tailwind.config.js v2.0 (reads --font-* variables defined here)
+ *   - components/ui/MinimalAILBackground (.constellation-canvas)
+ *   - components/sections/NarrativeHero (section-scoped canvas —
+ *     MUST NOT be forced to fixed by global CSS)
+ *
+ * Main Logical Flow:
+ *   1. Tailwind layers → root variables → base element styles
+ *   2. Legacy utility classes (kept for backward compatibility)
+ *   3. Responsive + platform-specific fixes
+ *
+ * ⚠️ Important Notes for Next Developer:
+ *   - NEVER re-add a global `canvas { position: fixed }` rule. The
+ *     hero's eye-field canvas is intentionally absolute/section-scoped.
+ *   - .force-visible / .reveal-on-scroll / .text-gradient /
+ *     .section-heading / .text-backdrop are legacy classes still
+ *     referenced by older sections — do not delete.
+ *   - Heading text-shadow must stay neutral black. No colored glows.
+ *
+ * Last Modified: v3.0 — Canvas scoping fix + 2026 token foundation
+ * ============================================
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Updated with correct purple brand color rgb(119, 98, 243) */
+  /* Legacy brand variables — kept for backward compatibility */
   --primary: #7762F3;
   --primary-light: #9788F7;
   --primary-dark: #5945C4;
   --secondary: #5FBBF7;
   --secondary-light: #8AD1FF;
   --secondary-dark: #368AD1;
-  
-  /* CSS variable for dynamic viewport height */
+
+  /* v3.0 surface + motion tokens */
+  --surface-0: #08080D;
+  --surface-1: #0C0C13;
+  --surface-2: #111118;
+  --line-weak: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+
+  --ease-out-brand: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout-brand: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 150ms;
+  --dur-base: 300ms;
+  --dur-slow: 600ms;
+
+  /* Font variables — populated by next/font in _app.js/_document.js.
+     Fallbacks keep the site working before that wiring lands. */
+  --font-sans: 'Inter';
+  --font-display: 'Inter';
+  --font-mono: ui-monospace;
+
+  /* Dynamic viewport height (JS-updated legacy mechanism) */
   --vh: 1vh;
 }
 
 html {
   scroll-behavior: smooth;
-  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   color: white;
-  background-color: #000000; /* Pure black for constellation background */
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
-    'Open Sans', 'Helvetica Neue', sans-serif;
-  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+  background-color: var(--surface-0);
+  font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+    'Helvetica Neue', sans-serif;
+  overflow-x: hidden;
   margin: 0;
   padding: 0;
 }
 
-/* Force elements to be visible - important solution for animation issues */
+/* ---- Legacy animation-rescue classes (older sections depend on these) ---- */
 .force-visible {
   opacity: 1 !important;
   transform: none !important;
   visibility: visible !important;
 }
 
-/* Ensure motion elements start visible */
 .motion-safe\:opacity-0 {
   opacity: 1 !important;
 }
 
-/* Enhanced text rendering for better clarity */
-h1, h2, h3, h4, h5, h6, p, span, a, button {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-
-/* Text clarity fixes */
-.text-center {
-  position: relative;
-  z-index: 5;
-}
-
-/* Add text shadow for better contrast against starry background */
-h1, h2, h3, .heading-text {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(119, 98, 243, 0.3);
-}
-
-/* Enhanced section headings */
-section h2 {
-  position: relative;
-  z-index: 10;
-  font-weight: 700;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0a0a0a;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #7762F3;
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #9788F7;
-}
-
-/* Mobile scrollbar */
-@media (max-width: 768px) {
-  ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-}
-
-/* Animation classes */
 .reveal-on-scroll {
   opacity: 1 !important;
   transform: translateY(0) !important;
-  transition: opacity 0.8s, transform 0.8s;
+  transition: opacity var(--dur-slow) var(--ease-out-brand),
+    transform var(--dur-slow) var(--ease-out-brand);
 }
 
 .revealed {
@@ -106,7 +120,58 @@ section h2 {
   transform: translateY(0);
 }
 
-/* Utility classes */
+/* ---- Text rendering ---- */
+h1, h2, h3, h4, h5, h6, p, span, a, button {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.text-center {
+  position: relative;
+  z-index: 5;
+}
+
+/* v3.0: neutral contrast shadow only — colored glows removed by design. */
+h1, h2, h3, .heading-text {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+section h2 {
+  position: relative;
+  z-index: 10;
+}
+
+/* ---- Scrollbar: WebKit (macOS/Windows Chrome/Edge/Safari) ---- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface-1);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(119, 98, 243, 0.55);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(151, 136, 247, 0.7);
+}
+
+/* ---- Scrollbar: Firefox (Windows/Android parity) ---- */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(119, 98, 243, 0.55) var(--surface-1);
+}
+
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* ---- Legacy utility classes (keep) ---- */
 .bg-gradient-radial {
   background-image: radial-gradient(var(--tw-gradient-stops));
 }
@@ -115,72 +180,58 @@ section h2 {
   background: radial-gradient(circle at center, var(--tw-gradient-from) 0%, var(--tw-gradient-via) 50%, var(--tw-gradient-to) 100%);
 }
 
-/* Hide scrollbars but keep functionality */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 
-/* Fix for hero section on mobile to prevent content from going under header */
+/* ---- Header / layout ---- */
 header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 50;
-  height: 64px; /* Default header height */
+  height: 64px;
 }
 
 @media (min-width: 768px) {
   header {
-    height: 80px; /* Desktop header height */
+    height: 80px;
   }
 }
 
-/* Ensure main content has proper z-index */
 main {
   position: relative;
   z-index: 10;
 }
 
-/* Fix for canvas elements to ensure they stay in background */
+/* ============================================================
+ * CANVAS RULES — v3.0 critical fix.
+ * Base rule: passive, non-interactive, never overflow. Position
+ * is left to each component (NarrativeHero uses absolute).
+ * ============================================================ */
 canvas {
+  max-width: 100%;
   touch-action: none;
   pointer-events: none;
 }
 
-/* Properly handle long words in smaller viewports */
-p, h1, h2, h3, h4, h5, h6, span, a, div {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
-}
-
-/* Prevent image overflow on small screens */
-img, svg {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Fix for canvas elements on mobile */
-canvas {
-  max-width: 100%;
-  touch-action: none;
-  position: fixed !important; /* Ensure canvas stays fixed */
+/* Only the global constellation background is viewport-fixed. */
+.constellation-canvas {
+  position: fixed !important;
   top: 0;
   left: 0;
-  width: 100% !important;
-  height: 100% !important;
+  width: 100vw !important;
+  height: 100vh !important;
   pointer-events: none;
-  z-index: 1; /* Behind content but above background */
+  z-index: 1;
+  opacity: 1;
 }
 
-/* Ensure background layers are properly stacked */
 .fixed.inset-0 {
   position: fixed;
   top: 0;
@@ -189,72 +240,72 @@ canvas {
   bottom: 0;
 }
 
-/* Background container specific styles */
 .fixed.inset-0.-z-10 {
-  z-index: 0; /* Ensure it's behind everything */
+  z-index: 0;
 }
 
 @layer components {
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-light to-secondary-light;
   }
-  
-  /* Fix for section headings */
+
   .section-heading {
     @apply text-4xl font-bold mb-4 relative z-10;
   }
-  
-  /* Add backdrop for text sections that need more contrast */
+
   .text-backdrop {
     @apply relative;
   }
-  
+
   .text-backdrop::before {
     content: '';
     @apply absolute inset-0 bg-black bg-opacity-70 rounded-lg -z-10 backdrop-blur-sm;
   }
 }
 
-/* Mobile Optimizations */
+/* ---- Word wrapping: v3.0 — overflow-wrap only. `word-break:
+   break-word` removed (was splitting English/hex tokens mid-word). ---- */
+p, h1, h2, h3, h4, h5, h6, span, a, div {
+  overflow-wrap: break-word;
+}
+
+img, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---- Mobile optimizations ---- */
 @media (max-width: 640px) {
-  /* Increase tap target sizes */
-  button, 
+  button,
   a,
-  [role="button"] {
+  [role='button'] {
     min-height: 44px;
     min-width: 44px;
   }
-  
-  /* Adjust font sizes for better readability */
+
   h1 {
-    font-size: 1.875rem !important; /* Reduced from 2rem */
+    font-size: 1.875rem !important;
     line-height: 1.2 !important;
   }
-  
   h2 {
     font-size: 1.5rem !important;
   }
-  
   h3 {
     font-size: 1.25rem !important;
   }
-  
   p {
     font-size: 0.938rem;
     line-height: 1.6;
   }
-  
-  /* Better spacing for mobile */
+
   .gap-4 {
     gap: 1rem;
   }
-  
-  /* Improve touch scrolling */
+
   * {
     -webkit-overflow-scrolling: touch;
   }
-  
-  /* Make buttons more touchable on mobile */
+
   .modal-close-button {
     min-height: 44px;
     min-width: 44px;
@@ -262,73 +313,63 @@ canvas {
     align-items: center;
     justify-content: center;
   }
-  
-  /* Reduce padding on mobile */
+
   section {
     padding-top: 3rem;
     padding-bottom: 3rem;
   }
-  
-  /* First section needs more padding to account for header */
   section:first-of-type {
     padding-top: 5rem;
   }
-  
-  /* Mobile-specific container padding */
-  .container, .max-w-7xl {
+
+  .container,
+  .max-w-7xl {
     padding-left: 1rem;
     padding-right: 1rem;
   }
 }
 
-/* Very small mobile devices */
 @media (max-width: 375px) {
   h1 {
     font-size: 1.625rem !important;
   }
-  
   h2 {
     font-size: 1.375rem !important;
   }
-  
   section:first-of-type {
     padding-top: 4.5rem;
   }
 }
 
-/* Tablet optimizations */
+/* ---- Tablet ---- */
 @media (min-width: 641px) and (max-width: 1024px) {
   h1 {
     font-size: 2.5rem;
   }
-  
   h2 {
     font-size: 2rem;
   }
-  
   section {
     padding-top: 4rem;
     padding-bottom: 4rem;
   }
-  
   section:first-of-type {
     padding-top: 6rem;
   }
 }
 
-/* Section specifics for clarity */
+/* ---- Section z-index anchors ---- */
 #features, #how-it-works, #technology, #ecosystem, #products, #vision, #download-vpn {
   position: relative;
   z-index: 10;
 }
 
-/* Make sure text is always readable */
 .text-white, .text-neutral-300, .text-neutral-200 {
   position: relative;
   z-index: 5;
 }
 
-/* Fix for scrollable containers on mobile */
+/* ---- Scrollable stats containers (mobile) ---- */
 .stats-container {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -342,35 +383,36 @@ canvas {
   width: 80%;
 }
 
-/* Fix for Safari 100vh issue */
+/* ---- Viewport height: modern dvh + iOS webkit fallback ---- */
+@supports (height: 100dvh) {
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+}
+
 @supports (-webkit-touch-callout: none) {
   .min-h-screen {
     height: -webkit-fill-available;
   }
 }
 
-/* Improve performance on mobile */
+/* ---- Performance: mobile ---- */
 @media (max-width: 768px) {
-  /* Disable complex animations on mobile */
   .animate-pulse {
     animation: none;
   }
-  
-  /* Reduce blur intensity for performance */
   .blur-3xl {
     filter: blur(40px);
   }
-  
   .blur-2xl {
     filter: blur(24px);
   }
-  
   .blur-xl {
     filter: blur(12px);
   }
 }
 
-/* Accessibility improvements */
+/* ---- Accessibility ---- */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -380,23 +422,6 @@ canvas {
   }
 }
 
-/* Ensure constellation background is visible */
-.constellation-canvas {
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  width: 100vw !important;
-  height: 100vh !important;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 1;
-}
-
-/* Z-index hierarchy for proper layering */
-/* 0: Main background (black) */
-/* 1: Constellation canvas */
-/* 2: Gradient overlays */
-/* 5: General content */
-/* 10: Section headings and important content */
-/* 50: Fixed header */
-/* 100+: Modals and overlays */
+/* Z-index hierarchy:
+ * 0: page background · 1: constellation canvas · 2: gradient overlays
+ * 5: general content · 10: headings/sections · 50: header · 100+: modals */
