@@ -2,10 +2,10 @@
  * ============================================
  * File: components/sections/JoinNetwork.jsx
  * ============================================
- * Modification Reason: v2.5 - Mobile stats loading-state polish.
- *   Operator stats now render a readable Syncing state while aggregate data
- *   hydrates instead of gray skeleton bars. This keeps the mobile journey
- *   credible and complete even when the public stats endpoint is warming.
+ * Modification Reason: v2.6 - Mobile operator journey density polish.
+ *   Operator stats now use calmer loading typography and tighter mobile card
+ *   spacing so the node journey keeps product-grade rhythm without turning
+ *   into a tall engineering dashboard on iPhone-class screens.
  *
  * Historical Notes:
  * v2.1 — SSR fix + protocol-node credibility pass.
@@ -37,7 +37,7 @@
  *
  * Last Modified: v2.3 — Apple-grade operator journey control polish
  * Last Modified: v2.4 - iPhone-safe journey order and control sizing
- * Last Modified: v2.5 - Product-grade stats syncing state
+ * Last Modified: v2.6 - Mobile operator journey density polish
  * ============================================
  */
 
@@ -173,7 +173,7 @@ const JoinNetwork = () => {
 
           {/* Live stats strip */}
           <motion.div
-            className="mb-10 grid grid-cols-1 gap-3 md:mb-12 md:grid-cols-3 md:gap-4"
+            className="mb-9 grid grid-cols-1 gap-3 md:mb-12 md:grid-cols-3 md:gap-4"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -209,11 +209,11 @@ const JoinNetwork = () => {
             ].map((item) => (
               <div
                 key={item.label}
-                className="page-card min-w-0 rounded border p-4 backdrop-blur-sm md:min-h-[12rem] md:p-5"
+                className="page-card min-w-0 rounded border p-3.5 backdrop-blur-sm md:min-h-[12rem] md:p-5"
               >
-                <div className="min-h-[2.65rem] min-w-0 font-light leading-none text-white">
+                <div className="min-h-[2.35rem] min-w-0 font-light leading-none text-white md:min-h-[2.65rem]">
                   {isLoading ? (
-                    <span className="inline-flex min-h-[2.35rem] items-end text-[clamp(1.75rem,9vw,2.65rem)] tracking-normal text-white/55">
+                    <span className="inline-flex min-h-[2.1rem] items-end text-[clamp(1.55rem,8vw,2.35rem)] tracking-normal text-white/55">
                       {syncingLabel}
                     </span>
                   ) : item.isLiveCounter ? (
@@ -233,7 +233,7 @@ const JoinNetwork = () => {
                 <div className="mt-1 text-[10px] md:text-xs uppercase tracking-eyebrow text-white/40">
                   {item.label}
                 </div>
-                <p className="mt-2 max-w-[34rem] text-xs leading-relaxed text-white/45">
+                <p className="mt-1.5 max-w-[34rem] text-xs leading-relaxed text-white/45 md:mt-2">
                   {item.description}
                 </p>
                 {item.detail && (

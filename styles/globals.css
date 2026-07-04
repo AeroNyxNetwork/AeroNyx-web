@@ -2,12 +2,12 @@
  * ============================================
  * File: styles/globals.css
  * ============================================
- * Modification Reason: v3.3 — Apple-grade interaction and secondary-page polish.
- *   1. Added baseline touch-action and text-size stability for interactive
- *      controls so iOS/Android taps feel immediate and do not trigger
- *      accidental text scaling.
- *   2. Added page-surface utility rules used by the new MemChain and Privacy
- *      Network pages for quieter card rhythm and consistent mobile spacing.
+ * Modification Reason: v3.4 — Mobile typography token cleanup.
+ *   Legacy global mobile h1/h2/h3 overrides were still forcing every heading
+ *   back to older !important sizes after the fixed Apple-style type scale had
+ *   been introduced. The compatibility rules now target the legacy
+ *   .section-heading utility only, so hero-title/text-display tokens remain
+ *   the single source of truth on iOS, Android, macOS, and Windows.
  *
  * Historical Notes:
  *   v3.2 — Apple-grade homepage typography compatibility.
@@ -74,7 +74,7 @@
  *     referenced by older sections — do not delete.
  *   - Heading text-shadow must stay neutral black. No colored glows.
  *
- * Last Modified: v3.3 — Interaction and secondary-page polish
+ * Last Modified: v3.4 — Removed global mobile heading overrides
  * ============================================
  */
 
@@ -494,15 +494,9 @@ img, svg {
     min-width: 44px;
   }
 
-  h1 {
-    font-size: 1.875rem !important;
-    line-height: 1.2 !important;
-  }
-  h2 {
+  .section-heading {
     font-size: 1.5rem !important;
-  }
-  h3 {
-    font-size: 1.25rem !important;
+    line-height: 1.18 !important;
   }
   p {
     font-size: 0.938rem;
@@ -541,10 +535,7 @@ img, svg {
 }
 
 @media (max-width: 375px) {
-  h1 {
-    font-size: 1.625rem !important;
-  }
-  h2 {
+  .section-heading {
     font-size: 1.375rem !important;
   }
   section:first-of-type {
@@ -554,11 +545,9 @@ img, svg {
 
 /* ---- Tablet ---- */
 @media (min-width: 641px) and (max-width: 1024px) {
-  h1 {
+  .section-heading {
     font-size: 2.5rem;
-  }
-  h2 {
-    font-size: 2rem;
+    line-height: 1.16;
   }
   section {
     padding-top: 4rem;

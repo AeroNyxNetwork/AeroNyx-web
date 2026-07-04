@@ -40,13 +40,14 @@
  *   - Section headline uses the shared text-display-lg token. Do not add
  *     ad hoc serif styling or negative letter-spacing.
  *
- * Modification Reason: v1.4 - Mobile narrative and code-panel polish.
- *   Blocker cards now stay single-column until desktop/tablet widths, and
- *   the code tabs become a full-width two-option control on mobile so the
- *   x402 proof remains readable without horizontal squeeze.
+ * Modification Reason: v1.5 - Mobile code overflow containment.
+ *   The inline x402 code proof now contains long URLs and token strings inside
+ *   its own panel on iPhone-class screens. This prevents pre/code content from
+ *   widening the entire homepage while preserving the traditional-vs-x402
+ *   comparison and attribution.
  *
  * Last Modified: v1.3 — Memory-before-payment narrative and touch polish
- * Last Modified: v1.4 - iPhone-safe blocker grid and code tabs
+ * Last Modified: v1.5 - iPhone-safe code proof overflow
  * ============================================
  */
 
@@ -106,7 +107,7 @@ const ProblemToX402 = () => {
   ];
 
   return (
-    <section className="border-y border-white/5 py-12 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
+    <section className="overflow-hidden border-y border-white/5 py-12 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
       <Container>
         <div className="max-w-6xl mx-auto">
 
@@ -205,7 +206,7 @@ const ProblemToX402 = () => {
                   ))}
                 </div>
 
-                <div className="rounded border border-white/10 overflow-x-auto" style={{ background: 'var(--surface-2, #111118)' }}>
+                <div className="max-w-full overflow-hidden rounded border border-white/10" style={{ background: 'var(--surface-2, #111118)' }}>
                   <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/[0.03]">
                     <div className="flex gap-1.5">
                       <div className="w-2.5 h-2.5 rounded-pill bg-white/15" />
@@ -216,7 +217,7 @@ const ProblemToX402 = () => {
                       {codeTab === 'traditional' ? 'traditional_api.js' : 'x402_api.js'}
                     </span>
                   </div>
-                  <div className="p-4 font-mono text-xs sm:text-sm min-w-0">
+                  <div className="min-w-0 overflow-x-auto p-4 font-mono text-xs sm:text-sm">
                     {codeTab === 'traditional' ? <TraditionalCode /> : <X402Code />}
                   </div>
                 </div>
@@ -305,8 +306,8 @@ const X402Flow = () => (
 
 /* ---- Code samples (strings in cipher blue; no green) ---- */
 const TraditionalCode = () => (
-  <pre className="text-xs leading-relaxed whitespace-pre-wrap break-words">
-    <code className="block">
+  <pre className="max-w-full whitespace-pre-wrap break-words text-xs leading-relaxed [overflow-wrap:anywhere]">
+    <code className="block max-w-full [overflow-wrap:anywhere]">
       <span className="text-white/35">{'// Human signs up, adds card, gets key'}</span>{'\n'}
       {'\n'}
       <span className="text-brand-light">const</span> <span className="text-cipher-light">apiKey</span> = <span className="text-cipher">{"'sk_live_...'"}</span>;{'\n'}
@@ -322,8 +323,8 @@ const TraditionalCode = () => (
 );
 
 const X402Code = () => (
-  <pre className="text-xs leading-relaxed whitespace-pre-wrap break-words">
-    <code className="block">
+  <pre className="max-w-full whitespace-pre-wrap break-words text-xs leading-relaxed [overflow-wrap:anywhere]">
+    <code className="block max-w-full [overflow-wrap:anywhere]">
       <span className="text-white/35">{'// No sign-up. No card on file.'}</span>{'\n'}
       {'\n'}
       <span className="text-brand-light">const</span> <span className="text-cipher-light">res</span> = <span className="text-brand-light">await</span> <span className="text-white/80">fetch</span>(<span className="text-cipher">{"'https://aeronyx.network/compute'"}</span>, {'{'}{'\n'}
