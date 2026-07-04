@@ -2,7 +2,22 @@
  * ============================================
  * File: components/sections/PrivacyAccessSection.js
  * ============================================
- * Modification Reason: v2.3 - Privacy Network product wording.
+ * Modification Reason: v2.4 - Product-grade protection mockup.
+ *   Replaced the generic tab-bar phone mockup with a daily protection view:
+ *   encrypted traffic, encrypted packets, protocol health, hidden IP, and
+ *   regional route status. This aligns the app preview with the public
+ *   Privacy Network page and avoids presenting the product as a simple switch.
+ *   The phone shell now owns overflow and condenses route/IP assurance into
+ *   the header area so no hidden status rows are clipped below the frame.
+ *   The outer visual clips connection ripples so the connected state cannot
+ *   create horizontal page scroll on mobile.
+ *   The primary connection control uses localized accessible text so the mock
+ *   remains testable and usable with assistive technologies.
+ *   Protection microcopy is read from the existing i18n contract with fallbacks
+ *   so language pages do not ship an English-only phone preview.
+ *
+ * Historical Notes:
+ * v2.3 - Privacy Network product wording.
  *   Renamed the active download section and changed the page anchor to
  *   #privacy-access. Phone mockup structure, DownloadsModal contract, and
  *   visible Privacy Network copy are preserved.
@@ -16,6 +31,7 @@
  *   - Brand rule: no green, no emojis. Connected = brand purple.
  *
  * Last Modified: v2.3 - Privacy Network product wording
+ * Last Modified: v2.4 - Product-grade protection mockup
  * ============================================
  */
 
@@ -104,12 +120,17 @@ const PowerIcon = () => (
 // Privacy Network app visual — copy contract preserved from v1.
 const PrivacyAccessVisual = ({ copy }) => {
   const [isConnected, setIsConnected] = useState(false);
+  const protectionMetrics = [
+    { label: copy.encryptedTraffic || 'Encrypted traffic', value: isConnected ? '29.4 GB' : '0 B' },
+    { label: copy.encryptedPackets || 'Encrypted packets', value: isConnected ? '1.8M' : '0' },
+    { label: copy.protocolHealth || 'Protocol health', value: isConnected ? (copy.ready || 'Ready') : (copy.standby || 'Standby') },
+  ];
 
   return (
-    <div className="relative flex justify-center items-center">
+    <div className="relative flex items-center justify-center overflow-hidden py-1">
       {/* Phone mockup */}
-      <div className="w-60 md:w-72 h-[500px] md:h-[600px] rounded-[2.5rem] md:rounded-[3rem] border-2 border-white/10 p-3 md:p-4" style={{ background: 'var(--surface-0, #08080D)' }}>
-        <div className="w-full h-full rounded-[2rem] md:rounded-[2.5rem] p-4 md:p-6 flex flex-col" style={{ background: 'var(--surface-2, #111118)' }}>
+      <div className="h-[620px] w-60 overflow-hidden rounded-[2.5rem] border-2 border-white/10 p-3 md:h-[600px] md:w-72 md:rounded-[3rem] md:p-4" style={{ background: 'var(--surface-0, #08080D)' }}>
+        <div className="flex h-full w-full flex-col overflow-hidden rounded-[2rem] p-4 md:rounded-[2.5rem] md:p-6" style={{ background: 'var(--surface-2, #111118)' }}>
           {/* Status bar */}
           <div className="flex justify-between items-center mb-6 md:mb-8 text-xs text-white/40">
             <span>9:41 AM</span>
@@ -121,17 +142,30 @@ const PrivacyAccessVisual = ({ copy }) => {
 
           {/* App content */}
           <div className="flex-1 flex flex-col">
-            <div className="text-center mb-6 md:mb-8">
-              <div className="text-xl md:text-2xl font-light mb-1 md:mb-2">AeroNyx Privacy Network</div>
-              <div className="text-xs md:text-sm text-white/40">{copy.privacyNetwork}</div>
+            <div className="mb-5 md:mb-6">
+              <div className="text-xl md:text-2xl font-light leading-tight">AeroNyx Privacy Network</div>
+              <div className="mt-2 inline-flex border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">
+                {isConnected ? copy.protected : copy.unprotected}
+              </div>
+              <div className="mt-3 grid gap-1 text-xs text-white/42">
+                <div className="flex justify-between gap-3">
+                  <span>{copy.location}</span>
+                  <span className="text-white/60">{isConnected ? (copy.activeRoute || 'Asia route') : (copy.standby || 'Standby')}</span>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <span>{copy.ipAddress}</span>
+                  <span className="font-mono text-white/60">{isConnected ? '***.***.***' : '192.168.1.1'}</span>
+                </div>
+              </div>
             </div>
 
             {/* Connection button — connected = brand purple (v2.0) */}
-            <div className="flex-1 flex items-center justify-center">
+            <div className="mb-5 flex items-center justify-center md:mb-6">
               <button
                 onClick={() => setIsConnected(!isConnected)}
                 aria-pressed={isConnected}
-                className={`w-28 h-28 md:w-32 md:h-32 rounded-pill border-2 transition-all duration-slow ease-out-brand ${
+                aria-label={isConnected ? copy.connected : copy.connect}
+                className={`h-24 w-24 rounded-pill border-2 transition-all duration-slow ease-out-brand md:h-28 md:w-28 ${
                   isConnected
                     ? 'border-brand-light bg-brand-faint'
                     : 'border-white/20 hover:border-white/40'
@@ -148,34 +182,11 @@ const PrivacyAccessVisual = ({ copy }) => {
               </button>
             </div>
 
-            {/* Status */}
-            <div className="space-y-2 md:space-y-3 mb-6 md:mb-8">
-              <div className="flex justify-between text-xs md:text-sm">
-                <span className="text-white/40">{copy.status}</span>
-                <span className={isConnected ? 'text-brand-light' : 'text-white/60'}>
-                  {isConnected ? copy.protected : copy.unprotected}
-                </span>
-              </div>
-              <div className="flex justify-between text-xs md:text-sm">
-                <span className="text-white/40">{copy.location}</span>
-                <span className="text-white/60">
-                  {isConnected ? 'Singapore' : '—'}
-                </span>
-              </div>
-              <div className="flex justify-between text-xs md:text-sm">
-                <span className="text-white/40">{copy.ipAddress}</span>
-                <span className="text-white/60 font-mono">
-                  {isConnected ? '***.***.***' : '192.168.1.1'}
-                </span>
-              </div>
-            </div>
-
-            {/* Bottom bar */}
-            <div className="flex justify-around pt-3 md:pt-4 border-t border-white/10">
-              {[copy.home, copy.nodes, copy.settings].map((label) => (
-                <div key={label} className="text-center">
-                  <div className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-1 border border-white/20 rounded-sm" />
-                  <div className="text-xs text-white/40">{label}</div>
+            <div className="mb-4 grid gap-2 md:mb-5">
+              {protectionMetrics.map((metric) => (
+                <div key={metric.label} className="border border-white/10 bg-white/[0.025] p-3">
+                  <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{metric.label}</div>
+                  <div className="mt-1 font-mono text-lg text-white">{metric.value}</div>
                 </div>
               ))}
             </div>

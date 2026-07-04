@@ -2,7 +2,12 @@
  * ============================================
  * File: components/layout/Footer.jsx
  * ============================================
- * Modification Reason: v2.3 - Footer control geometry polish.
+ * Modification Reason: v2.4 - 2026 social icon and protocol link polish.
+ *   Updated the X social icon away from the legacy Twitter bird and tuned the
+ *   developer/resource labels so the footer feels current and protocol-first.
+ *
+ * Historical Notes:
+ * v2.3 - Footer control geometry polish.
  *   Footer brand, column links, and legal links now keep a consistent minimum
  *   interaction size so the final page section feels as deliberate as the
  *   hero and protocol modules on touch devices.
@@ -42,6 +47,7 @@
  *
  * Last Modified: v2.2 — Footer link tap-target polish
  * Last Modified: v2.3 - Consistent footer hit areas and link formatting
+ * Last Modified: v2.4 - X icon and protocol link polish
  * ============================================
  */
 
@@ -67,7 +73,7 @@ const Footer = () => {
               memory, and blind protocol services.
             </p>
             <div className="flex space-x-3">
-              <SocialLink href="https://twitter.com/AeroNyxNetwork" label="AeroNyx on X" icon={<TwitterIcon />} />
+              <SocialLink href="https://twitter.com/AeroNyxNetwork" label="AeroNyx on X" icon={<XIcon />} />
               <SocialLink href="https://github.com/AeroNyxNetwork" label="AeroNyx on GitHub" icon={<GithubIcon />} />
             </div>
           </div>
@@ -77,7 +83,7 @@ const Footer = () => {
             links={[
               { href: '/privacy-network', label: 'Privacy Network' },
               { href: '/memchain', label: 'MemChain' },
-              { href: 'https://docs.aeronyx.network/developer-documentation/overview', label: 'Privacy SDK' },
+              { href: 'https://docs.aeronyx.network/developer-documentation/overview', label: 'Developer Docs' },
               { href: 'https://app.aeronyx.network/', label: 'Nodeboard' },
             ]}
           />
@@ -172,9 +178,10 @@ const SocialLink = ({ href, label, icon }) => (
   </a>
 );
 
-const TwitterIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M23 3.00005C22.0424 3.67552 20.9821 4.19216 19.86 4.53005C19.2577 3.83756 18.4573 3.34674 17.567 3.12397C16.6767 2.90121 15.7395 2.95724 14.8821 3.2845C14.0247 3.61176 13.2884 4.19445 12.773 4.95376C12.2575 5.71308 11.9877 6.61238 12 7.53005V8.53005C10.2426 8.57561 8.50127 8.18586 6.93101 7.39549C5.36074 6.60512 4.01032 5.43868 3 4.00005C3 4.00005 -1 13 8 17C5.94053 18.398 3.48716 19.099 1 19C10 24 21 19 21 7.50005C20.9991 7.2215 20.9723 6.94364 20.92 6.67005C21.9406 5.66354 22.6608 4.39276 23 3.00005Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+const XIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 4L20 20M20 4L4 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <path d="M8.2 4H4L10.8 12M15.8 20H20L13.2 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
