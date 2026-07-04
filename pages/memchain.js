@@ -5,7 +5,15 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
- * Modification Reason: v1.7 - Evidence lab refinement.
+ * Modification Reason: v1.8 - Mobile product interaction polish.
+ *   Tightened the MemChain mobile journey so the hero owns its spacing,
+ *   proof cards use a touch-friendly snap rail, the memory animation is
+ *   shorter on phone-class screens, and the advantage lab becomes a
+ *   mobile segmented selector instead of a dense desktop control stack.
+ *   No claims, privacy boundaries, or public routes were changed.
+ *
+ * Historical Notes:
+ * v1.7 - Evidence lab refinement.
  *   Upgraded the interactive advantage lab so every selected axis explains
  *   the user outcome, what the storage node can see, and the public proof
  *   surface. This turns the section from a feature comparison into a
@@ -81,6 +89,7 @@
  * Last Modified: v1.5 - Product-grade memory flow animation
  * Last Modified: v1.6 - Protocol continuity bridge
  * Last Modified: v1.7 - Evidence lab refinement
+ * Last Modified: v1.8 - Mobile product interaction polish
  * ============================================
  */
 
@@ -431,13 +440,14 @@ export default function MemChainPage() {
 }
 
 const Hero = () => (
-  <section className="pb-12 md:pb-24">
+  <section data-hero-section className="pb-12 md:pb-24">
     <Container>
       <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE }}
+          className="min-w-0"
         >
           <div className="inline-flex items-center gap-2 border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
             MemChain / Node-blind memory
@@ -445,10 +455,12 @@ const Hero = () => (
           <h1 className="mt-6 max-w-4xl text-display-xl font-light text-white">
             The first AI memory your server cannot read.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/62 md:text-xl">
-            Your AI remembers you; the memory belongs to you alone. MemChain turns
-            personal context into encrypted, local-first memory that can sync
-            across devices without giving storage nodes readable data.
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/62 md:text-xl">
+            Your AI remembers you; the memory belongs to you alone.
+            <span className="hidden sm:inline">
+              {' '}MemChain turns personal context into encrypted, local-first memory
+              that can sync across devices without giving storage nodes readable data.
+            </span>
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
@@ -465,10 +477,10 @@ const Hero = () => (
             </a>
           </div>
 
-          <div className="mt-8 grid grid-cols-3 gap-2.5">
+          <div className="-mx-4 mt-8 flex snap-x gap-2.5 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
             {heroProofs.map((item) => (
-              <div key={item.label} className="page-card min-w-0 border p-2.5 md:p-4">
-                <div className="font-mono text-xl font-light leading-none text-white md:text-3xl">
+              <div key={item.label} className="page-card min-w-[9.5rem] snap-start border p-3 sm:min-w-0 md:p-4">
+                <div className="font-mono text-[1.55rem] font-light leading-none text-white md:text-3xl">
                   {item.value}
                 </div>
                 <div className="mt-2 text-[9px] uppercase leading-4 tracking-eyebrow text-brand-light">
@@ -486,6 +498,7 @@ const Hero = () => (
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.12, ease: EASE }}
+          className="min-w-0"
         >
           <MemoryVisual />
         </motion.div>
@@ -513,7 +526,7 @@ const ProtocolContinuity = () => (
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 md:gap-3">
+          <div className="grid gap-2 sm:grid-cols-2 md:gap-3">
             {protocolContinuityCards.map((item) => (
               <Link
                 key={item.title}
@@ -544,17 +557,17 @@ const MemoryVisual = () => {
   const reduced = useReducedMotion();
 
   return (
-    <div className="page-surface relative min-h-[24rem] overflow-hidden border p-4 md:min-h-[34rem] md:p-5">
+    <div className="page-surface relative min-h-[20rem] overflow-hidden border p-3 sm:min-h-[24rem] sm:p-4 md:min-h-[34rem] md:p-5">
       <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.24) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.24) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/50 to-transparent" />
 
-      <div className="relative z-10 flex h-full min-h-[22rem] flex-col md:min-h-[31rem]">
+      <div className="relative z-10 flex h-full min-h-[18rem] flex-col sm:min-h-[22rem] md:min-h-[31rem]">
         <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
           <span className="font-mono text-xs uppercase tracking-eyebrow text-white/35">device hippocampus</span>
           <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">local first</span>
         </div>
 
-        <div className="relative mt-5 overflow-hidden border border-white/10 bg-black/30 p-4 md:p-5">
+        <div className="relative mt-4 overflow-hidden border border-white/10 bg-black/30 p-3 sm:mt-5 sm:p-4 md:p-5">
           <div className="grid grid-cols-3 gap-2 md:gap-3">
             <MemoryNodeCard
               label="Device"
@@ -576,7 +589,7 @@ const MemoryVisual = () => {
             />
           </div>
 
-          <div className="relative mt-5 h-32 overflow-hidden sm:h-28">
+          <div className="relative mt-4 h-32 overflow-hidden sm:mt-5 sm:h-28">
             <div className="absolute left-[10%] right-[10%] top-[36%] h-px bg-white/10" />
             <motion.div
               className="absolute left-[10%] top-[36%] h-px w-[80%] origin-left bg-brand-light/70"
@@ -661,7 +674,7 @@ const MemoryAdvantageLab = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.55, ease: EASE }}
-            className="lg:sticky lg:top-28"
+            className="min-w-0 lg:sticky lg:top-28"
           >
             <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
               Interactive proof
@@ -678,7 +691,7 @@ const MemoryAdvantageLab = () => {
               Category context: Zep / Mem0 / Supermemory / ChatGPT Memory-style cloud memory
             </div>
 
-            <div className="mt-6 grid gap-2">
+            <div className="-mx-4 mt-6 flex max-w-full snap-x gap-2 overflow-x-auto px-4 pb-2 scrollbar-hide lg:mx-0 lg:grid lg:overflow-visible lg:px-0 lg:pb-0">
               {advantageAxes.map((axis) => {
                 const active = axis.id === activeAxisId;
                 return (
@@ -686,7 +699,7 @@ const MemoryAdvantageLab = () => {
                     key={axis.id}
                     type="button"
                     onClick={() => setActiveAxisId(axis.id)}
-                    className={`grid min-h-[52px] grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded border px-4 py-3 text-left transition-colors duration-fast ${
+                    className={`grid min-h-[52px] min-w-[10rem] snap-start grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded border px-4 py-3 text-left transition-colors duration-fast lg:min-w-0 ${
                       active
                         ? 'border-brand-line bg-brand-faint text-white'
                         : 'border-white/10 bg-white/[0.02] text-white/58 hover:border-white/20 hover:text-white'
@@ -710,7 +723,7 @@ const MemoryAdvantageLab = () => {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: EASE }}
-            className="page-surface overflow-hidden rounded border"
+            className="page-surface min-w-0 overflow-hidden rounded border"
           >
             <div className="border-b border-white/10 p-5 md:p-6">
               <div className="mb-3 inline-flex border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">
@@ -756,7 +769,7 @@ const MemoryModeCard = ({ mode, tone }) => {
   const isMemChain = tone === 'memchain';
 
   return (
-    <div className={`min-h-full border-b border-white/10 p-5 md:p-6 lg:border-b-0 ${
+    <div className={`min-h-full border-b border-white/10 p-4 md:p-6 lg:border-b-0 ${
       isMemChain ? 'bg-brand-faint/60 lg:border-r' : 'bg-black/25 lg:border-l'
     } border-white/10`}>
       <div className="mb-5 flex items-center justify-between gap-3">
@@ -769,7 +782,7 @@ const MemoryModeCard = ({ mode, tone }) => {
           isMemChain ? 'bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.75)]' : 'bg-white/20'
         }`} />
       </div>
-      <h4 className="text-2xl font-light text-white md:text-3xl">{mode.headline}</h4>
+      <h4 className="text-xl font-light text-white md:text-3xl">{mode.headline}</h4>
       <div className={`mt-5 border px-3 py-2 font-mono text-xs uppercase tracking-[0.14em] ${
         isMemChain
           ? 'border-brand-line bg-black/25 text-brand-light'
@@ -793,7 +806,7 @@ const MemoryAxisVisual = ({ axisId }) => {
   const [cloudLabel, memchainLabel] = labels[axisId] || labels.blind;
 
   return (
-    <div className="relative flex min-h-[16rem] items-center justify-center overflow-hidden border-b border-white/10 bg-black/35 p-5 lg:border-b-0">
+    <div className="relative flex min-h-[12rem] items-center justify-center overflow-hidden border-b border-white/10 bg-black/35 p-4 md:min-h-[16rem] md:p-5 lg:border-b-0">
       <div
         className="absolute inset-0 opacity-[0.06]"
         style={{

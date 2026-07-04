@@ -4,12 +4,18 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v1.9 - Decentralized node naming.
+ * Modification Reason: v2.0 - Mobile protection experience polish.
+ *   Tightened the Privacy Network mobile journey so the hero owns its
+ *   spacing, protection signals appear as a touch-friendly status rail,
+ *   the blind-route visual is shorter on phones, and aggregate evidence
+ *   cards avoid cramped three-column text on small screens.
+ *
+ * Historical Notes:
+ * v1.9 - Decentralized node naming.
  *   Replaced user-facing implementation-language node wording with
- *   decentralized node language
- *   so the public page describes the product network instead of the
- *   implementation language. Technical source-path comments remain intact for
- *   maintainers.
+ *   decentralized node language so the public page describes the product
+ *   network instead of the implementation language. Technical source-path
+ *   comments remain intact for maintainers.
  *
  * Historical Notes:
  * v1.8 - Trustworthy stats dashboard.
@@ -90,6 +96,7 @@
  * Last Modified: v1.7 - Product continuity bridge
  * Last Modified: v1.8 - Trustworthy stats dashboard
  * Last Modified: v1.9 - Decentralized node naming
+ * Last Modified: v2.0 - Mobile protection experience polish
  * ============================================
  */
 
@@ -217,6 +224,21 @@ const routeEvidence = [
   'aggregate health',
 ];
 
+const privacyHeroSignals = [
+  {
+    label: 'Address',
+    value: 'masked',
+  },
+  {
+    label: 'Route',
+    value: 'encrypted',
+  },
+  {
+    label: 'Telemetry',
+    value: 'aggregate',
+  },
+];
+
 export default function PrivacyNetworkPage() {
   const { locale } = useRouter();
   const activeLocale = locale || DEFAULT_LOCALE;
@@ -274,13 +296,14 @@ export default function PrivacyNetworkPage() {
 }
 
 const Hero = () => (
-  <section className="pb-12 md:pb-24">
+  <section data-hero-section className="pb-12 md:pb-24">
     <Container>
       <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE }}
+          className="min-w-0"
         >
           <div className="inline-flex items-center gap-2 border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
             More private. Open source. Global.
@@ -288,12 +311,15 @@ const Hero = () => (
           <h1 className="mt-6 max-w-4xl text-display-xl font-light text-white">
             A more private, open source network for global use.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/62 md:text-xl">
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/62 md:text-xl">
             AeroNyx Privacy Network lets humans, apps, and autonomous agents route
-            traffic through encrypted protocol nodes without turning public
-            observability into user surveillance. The decentralized node layer is built as
-            real privacy infrastructure: auditable, blind by default, and designed
-            to run across independent operators worldwide.
+            traffic through encrypted protocol nodes.
+            <span className="hidden sm:inline">
+              {' '}It avoids turning public observability into user surveillance.
+              The decentralized node layer is built as real privacy infrastructure:
+              auditable, blind by default, and designed to run across independent
+              operators worldwide.
+            </span>
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
@@ -308,6 +334,15 @@ const Hero = () => (
             >
               View protocol health
             </a>
+          </div>
+
+          <div className="-mx-4 mt-8 flex snap-x gap-2.5 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
+            {privacyHeroSignals.map((item) => (
+              <div key={item.label} className="page-card min-w-[9rem] snap-start border p-3 sm:min-w-0 md:p-4">
+                <div className="text-[10px] uppercase tracking-eyebrow text-white/36">{item.label}</div>
+                <div className="mt-2 text-lg font-light text-white md:text-2xl">{item.value}</div>
+              </div>
+            ))}
           </div>
         </motion.div>
 
@@ -343,7 +378,7 @@ const ProtocolContinuity = () => (
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 md:gap-3">
+          <div className="grid gap-2 sm:grid-cols-2 md:gap-3">
             {protocolContinuityCards.map((item) => (
               <Link
                 key={item.title}
@@ -374,12 +409,12 @@ const PrivacyRouteVisual = () => {
   const reduced = useReducedMotion();
 
   return (
-    <div className="page-surface relative min-h-[24rem] w-full max-w-full overflow-hidden border p-4 md:min-h-[32rem] md:p-5">
+    <div className="page-surface relative min-h-[20rem] w-full max-w-full overflow-hidden border p-3 sm:min-h-[24rem] sm:p-4 md:min-h-[32rem] md:p-5">
       <div className="absolute inset-0 opacity-[0.045]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/60 to-transparent" />
 
-      <div className="relative z-10 flex min-h-[22rem] flex-col md:min-h-[29rem]">
-        <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
+      <div className="relative z-10 flex min-h-[18rem] flex-col sm:min-h-[22rem] md:min-h-[29rem]">
+        <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-4 sm:mb-5">
           <span className="text-[10px] uppercase tracking-eyebrow text-white/36">blind routing boundary</span>
           <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">protected</span>
         </div>
@@ -399,7 +434,7 @@ const PrivacyRouteVisual = () => {
           ))}
         </div>
 
-        <div className="relative mt-5 flex flex-1 items-center justify-center overflow-hidden border border-white/10 bg-black/35 p-4">
+        <div className="relative mt-4 flex flex-1 items-center justify-center overflow-hidden border border-white/10 bg-black/35 p-3 sm:mt-5 sm:p-4">
           <div className="absolute left-5 right-5 top-1/2 h-px bg-white/10" />
           <div className="absolute left-1/2 top-5 bottom-5 w-px bg-white/10" />
 
@@ -427,7 +462,7 @@ const PrivacyRouteVisual = () => {
               ))}
             </div>
 
-            <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-pill border border-brand-line bg-brand-faint md:h-28 md:w-28">
+            <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-pill border border-brand-line bg-brand-faint sm:h-24 sm:w-24 md:h-28 md:w-28">
               <motion.div
                 className="absolute inset-3 rounded-pill border border-brand-light/40"
                 animate={reduced ? undefined : { rotate: 360 }}
@@ -559,13 +594,13 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
             where they go, or what they send.
           </p>
         </div>
-        <div className="mb-4 grid grid-cols-3 gap-2">
+        <div className="-mx-4 mb-4 flex snap-x gap-2 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
           {[
             ['user sees', 'protected', 'hidden address, encrypted route, healthy protocol'],
             ['public sees', 'aggregate', 'aggregate counters and readiness only'],
             ['nodes see', 'ciphertext', 'ciphertext and signed operational metadata'],
           ].map(([label, mobileValue, value]) => (
-            <div key={label} className="border border-white/10 bg-black/25 px-3 py-2.5">
+            <div key={label} className="min-w-[10rem] snap-start border border-white/10 bg-black/25 px-3 py-2.5 sm:min-w-0">
               <div className="text-[9px] uppercase tracking-[0.12em] text-white/34">{label}</div>
               <div className="mt-1 text-xs leading-relaxed text-white/62 md:hidden">{mobileValue}</div>
               <div className="mt-1 hidden text-sm leading-relaxed text-white/62 md:block">{value}</div>
