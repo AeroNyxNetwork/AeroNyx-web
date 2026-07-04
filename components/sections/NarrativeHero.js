@@ -2,7 +2,15 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.8.0
+ * Version: 8.9.0
+ *
+ * Modification Reason:
+ *   v8.9 — Homepage hero internationalization pass.
+ *   Moved first-viewport product narrative, CTA labels, Lens hint, slider
+ *   label, and earned proof stamp into lib/i18n so locale switching does not
+ *   leave the most visible homepage module in English. Button labels also
+ *   gained safer line-height for long Russian/Spanish strings on mobile, and
+ *   the client-download CTA now preserves the active locale path.
  *
  * Modification Reason:
  *   v8.8 — Product conversion CTA restoration.
@@ -94,14 +102,17 @@
  * Last Modified: v8.6.0 — CTA contrast and first-screen cadence polish
  * Last Modified: v8.7.0 — North Star Plan first-screen entry
  * Last Modified: v8.8.0 — Product conversion CTA restoration
+ * Last Modified: v8.9.0 — Homepage hero internationalization pass
  * ============================================================================
  */
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import Container from '../ui/Container';
 import AnimatedMessageCounter from '../ui/AnimatedMessageCounter';
 import useNetworkStats from '../../lib/hooks/useNetworkStats';
+import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
 // ---- Brand palette (no green) ----
 const ACCENT = '#7762F3';
@@ -485,6 +496,13 @@ const stageItem = {
 };
 
 const NarrativeHero = () => {
+  const { locale } = useRouter();
+  const messages = getMessages(locale || DEFAULT_LOCALE);
+  const copy = messages.homeHero || getMessages(DEFAULT_LOCALE).homeHero;
+  const privacyAccessHref =
+    locale && locale !== DEFAULT_LOCALE
+      ? `/${locale}/privacy-network#privacy-access`
+      : '/privacy-network#privacy-access';
   const [reduced, setReduced] = useState(false);
   const [split, setSplit] = useState(50);
   const [isCompactLens, setIsCompactLens] = useState(false);
@@ -650,14 +668,14 @@ const NarrativeHero = () => {
                   color: 'rgba(210,205,255,0.78)',
                 }}
               >
-                Blind open coordination protocol
+                {copy.eyebrow}
               </motion.div>
 
               <motion.h1
                 variants={stageItem}
                 className="hero-title mb-6"
               >
-                The encrypted coordination layer for autonomous agents.
+                {copy.title}
               </motion.h1>
 
               <motion.p
@@ -665,8 +683,7 @@ const NarrativeHero = () => {
                 className="text-base sm:text-lg font-light leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0"
                 style={{ color: 'rgba(255,255,255,0.6)' }}
               >
-                AeroNyx lets humans, apps, and AI agents route traffic, exchange encrypted messages,
-                preserve private memory, and coordinate work through a blind, open protocol.
+                {copy.description}
               </motion.p>
 
               <motion.div
@@ -674,14 +691,14 @@ const NarrativeHero = () => {
                 className="mb-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4 lg:items-start lg:justify-start"
               >
                 <a href="#how-it-works"
-                  className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border px-7 py-3.5 text-center text-sm font-semibold tracking-wide transition duration-fast hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto"
+                  className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border px-7 py-3.5 text-center text-sm font-semibold leading-snug tracking-wide transition duration-fast hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto"
                   style={{ background: ACCENT, borderColor: 'rgba(151,136,247,0.38)', color: '#fff', boxShadow: `0 18px 50px ${ACCENT}33` }}>
-                  Explore the coordination layer
+                  {copy.primaryCta}
                 </a>
-                <a href="/privacy-network#privacy-access"
-                  className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border px-7 py-3.5 text-center text-sm font-medium tracking-wide transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 sm:w-auto"
+                <a href={privacyAccessHref}
+                  className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border px-7 py-3.5 text-center text-sm font-medium leading-snug tracking-wide transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 sm:w-auto"
                   style={{ borderColor: 'rgba(255,255,255,0.16)', color: 'rgba(255,255,255,0.82)' }}>
-                  Download client
+                  {copy.secondaryCta}
                 </a>
               </motion.div>
 
@@ -692,7 +709,7 @@ const NarrativeHero = () => {
               >
                 <div className="flex items-center gap-2 text-[9px] uppercase tracking-eyebrow text-white/35 mb-1.5">
                   <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT_LT }} />
-                  Live — encrypted coordination traffic
+                  {copy.liveProof}
                 </div>
                 <div className="max-w-[16rem]">
                   <AnimatedMessageCounter
@@ -715,14 +732,14 @@ const NarrativeHero = () => {
             >
               {/* Caption elevated from hint to narrative (v8.0) */}
               <p className="text-center text-xs tracking-wide mb-3" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                {isCompactLens ? 'Drag left to reveal the network view' : 'Drag the lens'} — <span style={{ color: 'rgba(138,209,255,0.75)' }}>infrastructure only sees ciphertext.</span>
+                {isCompactLens ? copy.compactLensHint : copy.lensHint} — <span style={{ color: 'rgba(138,209,255,0.75)' }}>{copy.lensProof}</span>
               </p>
 
               <div
                 ref={boxRef}
                 role="slider"
                 tabIndex={0}
-                aria-label="Privacy lens: reveal what the network sees. Use left and right arrow keys."
+                aria-label={copy.sliderLabel}
                 aria-valuemin={0}
                 aria-valuemax={100}
                 aria-valuenow={Math.round(split)}
@@ -776,7 +793,7 @@ const NarrativeHero = () => {
                         boxShadow: `0 0 16px ${SCAN}22`,
                       }}
                     >
-                      PLAINTEXT RECOVERED: 0 B
+                      {copy.proofStamp}
                     </motion.div>
                   )}
                 </AnimatePresence>

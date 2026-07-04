@@ -8,6 +8,12 @@
  *   the bottom of the page instead of turning the footer into a long stacked
  *   link list on iPhone and Android. Desktop keeps the expanded column layout.
  *
+ * Modification Reason: v2.6 - Footer internationalization pass.
+ *   Footer brand statement, column headings, navigation labels, legal labels,
+ *   and social aria labels now read from lib/i18n. This keeps the mobile
+ *   accordion footer aligned with the selected locale and avoids English
+ *   leakage at the bottom of localized pages.
+ *
  * Historical Notes:
  * v2.4 - 2026 social icon and protocol link polish.
  *   Updated the X social icon away from the legacy Twitter bird and tuned the
@@ -56,14 +62,21 @@
  * Last Modified: v2.3 - Consistent footer hit areas and link formatting
  * Last Modified: v2.4 - X icon and protocol link polish
  * Last Modified: v2.5 - Mobile footer navigation polish
+ * Last Modified: v2.6 - Footer internationalization pass
  * ============================================
  */
 
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Container from '../ui/Container';
 import AeroNyxLogo from '../ui/AeroNyxLogo';
+import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
 const Footer = () => {
+  const { locale } = useRouter();
+  const messages = getMessages(locale || DEFAULT_LOCALE);
+  const copy = messages.footer || getMessages(DEFAULT_LOCALE).footer;
+
   return (
     <footer className="border-t border-white/10 py-10 md:py-16" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
@@ -76,43 +89,41 @@ const Footer = () => {
               <span className="text-xl font-light">AeroNyx</span>
             </Link>
             <p className="mb-5 max-w-md text-sm leading-relaxed text-white/55 md:mb-6">
-              AeroNyx is the encrypted coordination layer for humans, apps, and
-              autonomous agents: private routing, encrypted messages, node-blind
-              memory, and blind protocol services.
+              {copy.description}
             </p>
             <div className="flex space-x-3">
-              <SocialLink href="https://twitter.com/AeroNyxNetwork" label="AeroNyx on X" icon={<XIcon />} />
-              <SocialLink href="https://github.com/AeroNyxNetwork" label="AeroNyx on GitHub" icon={<GithubIcon />} />
+              <SocialLink href="https://twitter.com/AeroNyxNetwork" label={copy.social.x} icon={<XIcon />} />
+              <SocialLink href="https://github.com/AeroNyxNetwork" label={copy.social.github} icon={<GithubIcon />} />
             </div>
           </div>
 
           <div className="grid gap-0 md:grid-cols-3 md:gap-6">
             <FooterColumn
-              heading="Products"
+              heading={copy.columns.products}
               links={[
-                { href: '/privacy-network', label: 'Privacy Network' },
-                { href: '/memchain', label: 'MemChain' },
-                { href: 'https://docs.aeronyx.network/developer-documentation/overview', label: 'Developer Docs' },
+                { href: '/privacy-network', label: copy.links.privacyNetwork },
+                { href: '/memchain', label: copy.links.memchain },
+                { href: 'https://docs.aeronyx.network/developer-documentation/overview', label: copy.links.developerDocs },
                 { href: 'https://app.aeronyx.network/', label: 'Nodeboard' },
               ]}
             />
 
             <FooterColumn
-              heading="Resources"
+              heading={copy.columns.resources}
               links={[
-                { href: 'https://docs.aeronyx.network/', label: 'Documentation' },
-                { href: 'https://docs.aeronyx.network/aeronyx-whitepaper/technical-white-paper', label: 'Whitepaper' },
+                { href: 'https://docs.aeronyx.network/', label: copy.links.documentation },
+                { href: 'https://docs.aeronyx.network/aeronyx-whitepaper/technical-white-paper', label: copy.links.whitepaper },
                 { href: 'https://github.com/AeroNyxNetwork', label: 'GitHub' },
-                { href: 'https://app.aeronyx.network/', label: 'App' },
+                { href: 'https://app.aeronyx.network/', label: copy.links.app },
               ]}
             />
 
             <FooterColumn
-              heading="About"
+              heading={copy.columns.about}
               links={[
                 { href: 'https://twitter.com/AeroNyxNetwork', label: 'X' },
                 { href: 'https://t.me/AeroNyxNetwork', label: 'Telegram' },
-                { href: 'https://docs.aeronyx.network/media-resources', label: 'Press Kit' },
+                { href: 'https://docs.aeronyx.network/media-resources', label: copy.links.pressKit },
                 { href: 'mailto:hi@aeronyx.network', label: 'hi@aeronyx.network' }, // v2.0 fix
               ]}
             />
@@ -121,7 +132,7 @@ const Footer = () => {
 
         <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-5 md:mt-12 md:flex-row md:items-center md:pt-6">
           <p className="text-sm text-white/35">
-            © {new Date().getFullYear()} AeroNyx Network. All rights reserved.
+            © {new Date().getFullYear()} AeroNyx Network. {copy.rights}
           </p>
           <div className="grid w-full grid-cols-2 gap-2 md:w-auto md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-6 md:gap-y-2">
             <a
@@ -130,7 +141,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               className="inline-flex min-h-[44px] items-center text-sm text-white/35 transition-colors duration-fast hover:text-white"
             >
-              Privacy Policy
+              {copy.legal.privacy}
             </a>
             <a
               href="https://docs.aeronyx.network/articles/aeronyx-user-agreement"
@@ -138,7 +149,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               className="inline-flex min-h-[44px] items-center justify-end text-right text-sm text-white/35 transition-colors duration-fast hover:text-white md:justify-start md:text-left"
             >
-              Terms of Service
+              {copy.legal.terms}
             </a>
           </div>
         </div>

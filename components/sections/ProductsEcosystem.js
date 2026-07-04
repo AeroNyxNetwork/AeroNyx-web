@@ -8,6 +8,13 @@
  *   promise. This keeps the concept discoverable from the first viewport and
  *   shareable as a URL fragment.
  *
+ * Modification Reason: v4.7 - Homepage ecosystem i18n shell.
+ *   Moved the ecosystem header, North Star covenant, core-card labels, tab
+ *   status labels, use-case labels, comparison labels, and bottom invariant
+ *   into lib/i18n. Privacy Network and MemChain now accept localized product
+ *   overrides so the homepage's two primary product paths stay coherent when
+ *   users switch language.
+ *
  * Historical Notes:
  * v4.5 - North Star Plan visibility.
  *   Promoted the North Star Plan / 北極星計劃 into a visible homepage covenant
@@ -122,13 +129,16 @@
  * Last Modified: v4.4 - Core product entrance polish
  * Last Modified: v4.5 - North Star Plan visibility
  * Last Modified: v4.6 - North Star anchor entry
+ * Last Modified: v4.7 - Homepage ecosystem i18n shell
  * ============================================
  */
 
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import Container from '../ui/Container';
+import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -162,8 +172,12 @@ const NORTH_STAR_SIGNALS = [
 const ProductsEcosystem = () => {
   const [selectedProduct, setSelectedProduct] = useState('vpn');
   const tabRefs = useRef({});
+  const { locale } = useRouter();
+  const messages = getMessages(locale || DEFAULT_LOCALE);
+  const copy = messages.productsEcosystem || getMessages(DEFAULT_LOCALE).productsEcosystem;
+  const northStarSignals = copy.northStar?.signals || NORTH_STAR_SIGNALS;
 
-  const products = [
+  const baseProducts = [
     {
       id: 'vpn',
       name: 'Privacy Network',
@@ -266,6 +280,26 @@ const ProductsEcosystem = () => {
     },
   ];
 
+  const products = baseProducts.map((product) => {
+    const override = copy.products?.[product.id] || {};
+    return {
+      ...product,
+      ...override,
+      useCase: {
+        ...product.useCase,
+        ...(override.useCase || {}),
+      },
+      comparison: {
+        ...product.comparison,
+        ...(override.comparison || {}),
+      },
+      cta: {
+        ...product.cta,
+        ...(override.cta || {}),
+      },
+    };
+  });
+
   const activeProduct = products.find((p) => p.id === selectedProduct) || products[0];
   const coreProducts = products.filter((product) => CORE_PRODUCT_IDS.has(product.id));
 
@@ -322,7 +356,7 @@ const ProductsEcosystem = () => {
     if (!badge) return null;
     return (
       <span className={`inline-flex rounded-sm border px-2 py-0.5 text-[10px] uppercase tracking-eyebrow ${badge.className}`}>
-        {badge.label}
+        {copy.statusLabels?.[status] || badge.label}
       </span>
     );
   };
@@ -350,15 +384,13 @@ const ProductsEcosystem = () => {
           {/* Header */}
           <div className="mb-8 text-center md:mb-12">
             <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
-              Built On The Two Primitives
+              {copy.eyebrow}
             </div>
             <h2 className="text-display-lg font-light mb-4 md:mb-6">
-              From private connection to agent services.
+              {copy.title}
             </h2>
             <p className="text-base md:text-xl text-white/60 max-w-copy mx-auto px-4">
-              Privacy Network and MemChain form the foundation. The layers below
-              turn private routing and private context into encrypted relay,
-              protocol services, and agent-native coordination.
+              {copy.description}
             </p>
           </div>
 
@@ -366,19 +398,17 @@ const ProductsEcosystem = () => {
             <div className="grid gap-5 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
               <div>
                 <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
-                  North Star Plan / 北極星計劃
+                  {copy.northStar?.eyebrow}
                 </div>
                 <h3 className="mt-3 text-2xl font-light leading-tight text-white md:text-display-md">
-                  More private. Open source. Global by default.
+                  {copy.northStar?.title}
                 </h3>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58 md:text-base">
-                  AeroNyx's node infrastructure covenant: every privacy product
-                  should be able to stand up to public audit, real operation, and
-                  worldwide participation without exposing user-level telemetry.
+                  {copy.northStar?.description}
                 </p>
               </div>
               <div className="grid gap-2.5 sm:grid-cols-3">
-                {NORTH_STAR_SIGNALS.map((item) => (
+                {northStarSignals.map((item) => (
                   <div key={item.title} className="border border-white/10 bg-black/20 p-3 md:p-4">
                     <div className="font-mono text-xs text-brand-light">{item.label}</div>
                     <div className="mt-3 text-sm font-medium text-white">{item.title}</div>
@@ -404,13 +434,13 @@ const ProductsEcosystem = () => {
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
-                      Core System 0{index + 1}
+                      {(copy.coreSystemLabel || 'Core System 0{index}').replace('{index}', index + 1)}
                     </div>
                     <h3 className="mt-3 text-display-md font-light text-white">
                       {product.name}
                     </h3>
                   </div>
-                  <span className="shrink-0 border border-white/10 bg-white/[0.025] px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-white/42 transition-colors duration-fast group-hover:border-brand-line group-hover:text-brand-light">
+                  <span className="max-w-[9.5rem] shrink-0 break-words border border-white/10 bg-white/[0.025] px-2.5 py-1 text-right text-[10px] uppercase leading-4 tracking-eyebrow text-white/42 transition-colors duration-fast group-hover:border-brand-line group-hover:text-brand-light">
                     {product.category}
                   </span>
                 </div>
@@ -419,15 +449,15 @@ const ProductsEcosystem = () => {
                 </p>
                 <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
                   <div className="border border-white/10 bg-black/20 p-3">
-                    <div className="text-[10px] uppercase tracking-eyebrow text-white/34">protects</div>
+                    <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{copy.protectsLabel}</div>
                     <div className="mt-2 text-sm leading-relaxed text-white/72">
                       {product.proof}
                     </div>
                   </div>
                   <div className="border border-white/10 bg-black/20 p-3">
-                    <div className="text-[10px] uppercase tracking-eyebrow text-white/34">invariant</div>
+                    <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{copy.invariantLabel}</div>
                     <div className="mt-2 text-sm leading-relaxed text-brand-light/86">
-                      Nodes can coordinate, not read.
+                      {copy.invariantValue}
                     </div>
                   </div>
                 </div>
@@ -437,7 +467,7 @@ const ProductsEcosystem = () => {
             <div className="order-2 flex min-h-[4.75rem] items-center justify-center rounded border border-white/10 bg-white/[0.018] px-4 py-4 md:order-none md:col-start-2 md:row-start-1 md:min-h-full md:w-28 md:flex-col">
               <div className="h-px flex-1 bg-gradient-to-r from-transparent via-brand-light/28 to-transparent md:h-auto md:w-px md:bg-gradient-to-b" />
               <div className="mx-3 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] text-brand-light/80 md:mx-0 md:my-3 md:[writing-mode:vertical-rl]">
-                same blind protocol
+                {copy.spineLabel}
               </div>
               <div className="h-px flex-1 bg-gradient-to-r from-transparent via-brand-light/28 to-transparent md:h-auto md:w-px md:bg-gradient-to-b" />
             </div>
@@ -446,7 +476,7 @@ const ProductsEcosystem = () => {
           {/* Product selector — tab semantics (v3.0) */}
           <div
             role="tablist"
-            aria-label="AeroNyx products"
+            aria-label={copy.tabAriaLabel}
             className="mb-8 flex snap-x snap-mandatory flex-nowrap gap-3 overflow-x-auto pb-1 scrollbar-hide md:mb-12 md:justify-center md:gap-4"
           >
             {products.map((product) => {
@@ -477,7 +507,7 @@ const ProductsEcosystem = () => {
                     <div className="truncate text-xs font-medium md:text-sm">{product.name}</div>
                     {isCoreProduct && (
                       <span className="shrink-0 rounded-sm border border-brand-line bg-brand-faint px-1.5 py-0.5 text-[9px] uppercase tracking-[0.1em] text-brand-light">
-                        Core
+                        {copy.coreBadge}
                       </span>
                     )}
                   </div>
@@ -519,15 +549,15 @@ const ProductsEcosystem = () => {
                 <div className="page-card mb-5 rounded border border-l-2 border-l-brand/40 p-4 md:mb-6 md:p-5">
                   <div className="space-y-3.5">
                     <div>
-                      <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">Pain Point</div>
+                      <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">{copy.labels.pain}</div>
                       <p className="text-sm leading-relaxed text-white/70">{activeProduct.useCase.pain}</p>
                     </div>
                     <div>
-                      <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">Solution</div>
+                      <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">{copy.labels.solution}</div>
                       <p className="text-sm leading-relaxed text-white/70">{activeProduct.useCase.solution}</p>
                     </div>
                     <div>
-                      <div className="text-[10px] uppercase tracking-eyebrow text-brand-light mb-1">Protocol Value</div>
+                      <div className="text-[10px] uppercase tracking-eyebrow text-brand-light mb-1">{copy.labels.protocolValue}</div>
                       <p className="text-sm font-medium leading-relaxed text-brand-light">{activeProduct.useCase.savings}</p>
                     </div>
                   </div>
@@ -535,10 +565,10 @@ const ProductsEcosystem = () => {
 
                 {/* Architecture Comparison */}
                 <div className="page-card mb-6 rounded border p-4 md:mb-8 md:p-5">
-                  <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-3">Architecture Comparison</div>
+                  <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-3">{copy.labels.architectureComparison}</div>
                   <div className="space-y-2">
                     <div className="grid gap-1 text-sm sm:flex sm:items-center sm:justify-between sm:gap-4">
-                      <span className="text-white/60 flex-shrink-0">Traditional</span>
+                      <span className="text-white/60 flex-shrink-0">{copy.labels.traditional}</span>
                       <span className="text-white/80 sm:text-right">{activeProduct.comparison.traditional}</span>
                     </div>
                     <div className="grid gap-1 text-sm sm:flex sm:items-center sm:justify-between sm:gap-4">
@@ -555,7 +585,7 @@ const ProductsEcosystem = () => {
 
                 {/* Features */}
                 <div className="space-y-2 md:space-y-3 mb-6 md:mb-8">
-                  <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-2">Key Features</div>
+                  <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-2">{copy.labels.keyFeatures}</div>
                   {activeProduct.features.map((feature, i) => (
                     <div key={i} className="flex items-start">
                       <div className="w-1 h-1 rounded-pill bg-brand-light/60 mt-1.5 md:mt-2 mr-2 md:mr-3 flex-shrink-0" />
@@ -571,7 +601,7 @@ const ProductsEcosystem = () => {
                       href={activeProduct.cta.link}
                       className="inline-flex min-h-[44px] w-full items-center justify-center rounded border border-white/20 px-6 py-2.5 text-center transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint sm:w-auto md:px-8 md:py-3"
                     >
-                      <span className="text-xs md:text-sm uppercase tracking-eyebrow">
+                      <span className="text-xs uppercase leading-snug tracking-eyebrow md:text-sm">
                         {activeProduct.cta.text}
                       </span>
                     </Link>
@@ -583,7 +613,7 @@ const ProductsEcosystem = () => {
                       rel={activeProduct.cta.link.startsWith('http') ? 'noopener noreferrer' : undefined}
                       className="inline-flex min-h-[44px] w-full items-center justify-center rounded border border-white/20 px-6 py-2.5 text-center transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint sm:w-auto md:px-8 md:py-3"
                     >
-                      <span className="text-xs md:text-sm uppercase tracking-eyebrow">
+                      <span className="text-xs uppercase leading-snug tracking-eyebrow md:text-sm">
                         {activeProduct.cta.text}
                       </span>
                     </a>
@@ -602,12 +632,10 @@ const ProductsEcosystem = () => {
             className="page-surface mt-10 rounded border p-6 text-center md:mt-14 md:p-8"
           >
             <h3 className="text-display-md font-light mb-3">
-              Why this belongs at the protocol layer
+              {copy.bottomTitle}
             </h3>
             <p className="text-sm md:text-base text-white/60 max-w-copy mx-auto">
-              Privacy access, encrypted messaging, private memory, and agent-to-agent services all
-              need the same invariant: infrastructure can route, meter, and coordinate work without
-              reading user content or turning public health data into user surveillance.
+              {copy.bottomDescription}
             </p>
           </motion.div>
 

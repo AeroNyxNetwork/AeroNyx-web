@@ -35,6 +35,13 @@
  *   implementation language, keeping the homepage product-led for users and
  *   investors.
  *
+ * Modification Reason: v1.5 - Homepage primitive internationalization.
+ *   Moved the section header, primitive card copy, proof strip, protocol spine
+ *   labels, and compact SVG captions into lib/i18n so Privacy Network and
+ *   MemChain remain one coherent story across supported languages. CTA and
+ *   proof labels now use safer line-height/word breaking for Russian, Spanish,
+ *   Japanese, Korean, and Chinese mobile layouts.
+ *
  * Historical Notes:
  * v1.3 - Homepage primitive animation handoff.
  *   Polished the two homepage primitive cards so they visually hand off to the
@@ -65,16 +72,19 @@
  * Last Modified: v1.2 - Privacy Network North Star wording
  * Last Modified: v1.3 - Homepage primitive animation handoff
  * Last Modified: v1.4 - Decentralized node public naming
+ * Last Modified: v1.5 - Homepage primitive internationalization
  * ============================================
  */
 
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { motion, useReducedMotion } from 'framer-motion';
 import Container from '../ui/Container';
+import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
 const EASE = [0.16, 1, 0.3, 1];
 
-const primitiveCards = [
+const defaultPrimitiveCards = [
   {
     id: 'privacy-network',
     eyebrow: 'Private Traffic',
@@ -109,7 +119,7 @@ const primitiveCards = [
   },
 ];
 
-const proofItems = [
+const defaultProofItems = [
   {
     value: 'Node-blind',
     label: 'Infrastructure cannot read payloads or memory.',
@@ -128,7 +138,19 @@ const proofItems = [
 ];
 
 const CorePrimitives = () => {
+  const { locale } = useRouter();
+  const messages = getMessages(locale || DEFAULT_LOCALE);
+  const copy = messages.corePrimitives || getMessages(DEFAULT_LOCALE).corePrimitives;
   const reduced = useReducedMotion();
+  const primitiveCards = defaultPrimitiveCards.map((card, index) => ({
+    ...card,
+    ...(copy.cards?.[index] || {}),
+  }));
+  const proofItems = defaultProofItems.map((item, index) => ({
+    ...item,
+    ...(copy.proofItems?.[index] || {}),
+  }));
+  const spineWords = copy.spineWords || ['Route', 'Coordinate', 'Remember'];
 
   return (
     <section className="relative overflow-hidden border-y border-white/5 py-12 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
@@ -143,21 +165,19 @@ const CorePrimitives = () => {
             className="mb-9 max-w-3xl md:mb-12"
           >
             <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
-              Two Private Primitives
+              {copy.eyebrow}
             </div>
             <h2 className="text-display-lg font-light">
-              Private connection and private memory, under one blind protocol.
+              {copy.title}
             </h2>
             <p className="mt-4 max-w-copy text-base leading-relaxed text-white/58 md:text-xl">
-              AeroNyx protects what agents send and what agents remember. The same
-              invariant holds across both: infrastructure can coordinate work, but
-              it cannot read the content or own the context.
+              {copy.description}
             </p>
           </motion.div>
 
           <div className="grid gap-4 lg:grid-cols-[1fr_0.24fr_1fr] lg:items-stretch lg:gap-5">
             <PrimitiveCard primitive={primitiveCards[0]} reduced={reduced} />
-            <ProtocolSpine reduced={reduced} />
+            <ProtocolSpine words={spineWords} reduced={reduced} />
             <PrimitiveCard primitive={primitiveCards[1]} reduced={reduced} />
           </div>
 
@@ -176,7 +196,7 @@ const CorePrimitives = () => {
                 <div className="mt-2 text-sm leading-relaxed text-white/70">
                   {item.label}
                 </div>
-                <div className="mt-3 text-[10px] uppercase leading-4 tracking-eyebrow text-white/38">
+                <div className="mt-3 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/38">
                   {item.detail}
                 </div>
               </div>
@@ -199,14 +219,14 @@ const PrimitiveCard = ({ primitive, reduced }) => (
   >
     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/35 to-transparent opacity-60" />
     <div className="grid gap-5 md:grid-cols-[0.92fr_1.08fr] md:items-center lg:block">
-      <PrimitiveVisual type={primitive.visual} reduced={reduced} />
+      <PrimitiveVisual type={primitive.visual} reduced={reduced} visualCopy={primitive.visualCopy} />
 
       <div className="min-w-0">
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <span className="rounded-sm border border-brand-line bg-brand-faint px-2 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">
             {primitive.eyebrow}
           </span>
-          <span className="text-[10px] uppercase tracking-eyebrow text-white/35">
+          <span className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/35">
             {primitive.label}
           </span>
         </div>
@@ -228,7 +248,7 @@ const PrimitiveCard = ({ primitive, reduced }) => (
 
         <Link
           href={primitive.href}
-          className="mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded border border-white/15 px-5 py-2.5 text-center text-xs uppercase tracking-eyebrow text-white/72 transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint hover:text-white sm:w-auto"
+          className="mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded border border-white/15 px-5 py-2.5 text-center text-xs uppercase leading-snug tracking-eyebrow text-white/72 transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint hover:text-white sm:w-auto"
         >
           {primitive.cta}
         </Link>
@@ -237,7 +257,7 @@ const PrimitiveCard = ({ primitive, reduced }) => (
   </motion.div>
 );
 
-const ProtocolSpine = ({ reduced }) => (
+const ProtocolSpine = ({ words, reduced }) => (
   <motion.div
     initial={reduced ? false : { opacity: 0, scale: 0.98 }}
     whileInView={reduced ? undefined : { opacity: 1, scale: 1 }}
@@ -254,9 +274,9 @@ const ProtocolSpine = ({ reduced }) => (
       transition={reduced ? undefined : { duration: 3.2, repeat: Infinity, ease: EASE }}
     />
     <div className="relative z-10 grid grid-cols-3 gap-2 text-center sm:gap-3 lg:grid-cols-1">
-      {['Route', 'Coordinate', 'Remember'].map((word) => (
+      {words.map((word) => (
         <div key={word} className="rounded-sm border border-white/10 bg-black/35 px-1.5 py-2 sm:px-2.5">
-          <div className="whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.14em] text-brand-light sm:text-xs sm:tracking-eyebrow">
+          <div className="break-words font-mono text-[9px] uppercase leading-4 tracking-[0.14em] text-brand-light sm:text-xs sm:tracking-eyebrow">
             {word}
           </div>
         </div>
@@ -265,7 +285,7 @@ const ProtocolSpine = ({ reduced }) => (
   </motion.div>
 );
 
-const PrimitiveVisual = ({ type, reduced }) => (
+const PrimitiveVisual = ({ type, reduced, visualCopy }) => (
   <div className="relative mb-5 h-48 overflow-hidden rounded border border-white/10 bg-black/25 md:mb-0 lg:mb-6">
     <div
       className="absolute inset-0 opacity-[0.06]"
@@ -274,11 +294,11 @@ const PrimitiveVisual = ({ type, reduced }) => (
         backgroundSize: '24px 24px',
       }}
     />
-    {type === 'motion' ? <TrafficVisual reduced={reduced} /> : <MemoryVisual reduced={reduced} />}
+    {type === 'motion' ? <TrafficVisual reduced={reduced} copy={visualCopy} /> : <MemoryVisual reduced={reduced} copy={visualCopy} />}
   </div>
 );
 
-const TrafficVisual = ({ reduced }) => (
+const TrafficVisual = ({ reduced, copy = {} }) => (
   <svg className="absolute inset-0 h-full w-full" viewBox="0 0 420 190" fill="none">
     <path d="M48 104H372" stroke="rgba(151,136,247,0.16)" />
     <path d="M72 68C136 36 224 42 348 76" stroke="rgba(95,187,247,0.12)" />
@@ -315,20 +335,20 @@ const TrafficVisual = ({ reduced }) => (
       transition={reduced ? undefined : { duration: 4.2, repeat: Infinity, ease: 'linear', delay: 0.45 }}
     />
     <text x="210" y="42" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, fill: 'rgba(95,187,247,0.6)' }}>
-      encrypted route · aggregate health only
+      {copy.caption || 'encrypted route · aggregate health only'}
     </text>
   </svg>
 );
 
-const MemoryVisual = ({ reduced }) => (
+const MemoryVisual = ({ reduced, copy = {} }) => (
   <svg className="absolute inset-0 h-full w-full" viewBox="0 0 420 190" fill="none">
     <text x="210" y="38" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, fill: 'rgba(95,187,247,0.6)' }}>
-      local memory · sealed sync · blind node
+      {copy.caption || 'local memory · sealed sync · blind node'}
     </text>
     {[
-      { x: 42, title: 'local', body: 'fact' },
-      { x: 172, title: 'sealed', body: 'cipher' },
-      { x: 302, title: 'blind', body: 'node' },
+      { x: 42, title: copy.localTitle || 'local', body: copy.localBody || 'fact' },
+      { x: 172, title: copy.sealedTitle || 'sealed', body: copy.sealedBody || 'cipher' },
+      { x: 302, title: copy.blindTitle || 'blind', body: copy.blindBody || 'node' },
     ].map((item, index) => (
       <motion.g
         key={item.title}
@@ -355,7 +375,7 @@ const MemoryVisual = ({ reduced }) => (
       transition={reduced ? undefined : { duration: 3.6, repeat: Infinity, ease: 'linear' }}
     />
     <text x="210" y="154" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 9, fill: 'rgba(255,255,255,0.34)' }}>
-      node stores memory it cannot read
+      {copy.footer || 'node stores memory it cannot read'}
     </text>
   </svg>
 );
