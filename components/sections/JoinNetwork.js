@@ -7,6 +7,11 @@
  *   `join.visualCopy` so non-English pages do not expose English-only
  *   protocol dashboard captions inside the operator journey.
  *
+ * Modification Reason: v3.0 - Multilingual metric wrapping polish.
+ *   Protocol-health stat values no longer truncate on phone-class screens.
+ *   Long Russian, Spanish, Japanese, and Korean status labels can wrap within
+ *   the stat card while desktop keeps the large calm counter rhythm.
+ *
  * Modification Reason: v2.8 - Public node summary wording.
  *   Public protocol-health copy now says node summary instead of exposing
  *   implementation-language reporting details in the user-facing stat source.
@@ -56,6 +61,7 @@
  * Last Modified: v2.7 - Developer CTA route alignment
  * Last Modified: v2.8 - Public node summary wording
  * Last Modified: v2.9 - Localized protocol visual microcopy
+ * Last Modified: v3.0 - Multilingual metric wrapping polish
  * ============================================
  */
 
@@ -244,7 +250,7 @@ const JoinNetwork = () => {
                       defaultStep={item.defaultStep}
                     />
                   ) : (
-                    <span className="block truncate text-[clamp(2rem,6vw,3.6rem)] tracking-normal">
+                    <span className="block max-w-full break-words text-[clamp(1.45rem,7.5vw,2.35rem)] leading-[1.06] tracking-normal md:text-[clamp(2rem,6vw,3.6rem)]">
                       {item.value}
                     </span>
                   )}

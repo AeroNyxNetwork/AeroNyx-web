@@ -10,6 +10,13 @@
  *   horizontal snap rail, preventing half-visible proof cards on iPhone-class
  *   screens while keeping the desktop three-column evidence layout.
  *
+ * Modification Reason: v2.4 - Advantage lab mobile metric wrapping.
+ *   The segmented axis selector now gives metric labels more width on
+ *   phone/tablet layouts and slightly reduces tracking before the desktop
+ *   grid takes over. This prevents long localized latency/privacy metrics from
+ *   looking clipped or overly fragmented in Spanish, Russian, Japanese, and
+ *   Korean.
+ *
  * Modification Reason: v2.2 - Multilingual mobile resilience.
  *   Tightened long-locale wrapping for MemChain proof rails, comparison cards,
  *   mode cards, and the animated memory visual so Japanese, Korean, Russian,
@@ -131,6 +138,7 @@
  * Last Modified: v2.1 - Secondary page internationalization
  * Last Modified: v2.2 - Multilingual mobile resilience
  * Last Modified: v2.3 - Mobile hero proof rail stabilization
+ * Last Modified: v2.4 - Advantage lab mobile metric wrapping
  * ============================================
  */
 
@@ -453,7 +461,7 @@ const MemoryAdvantageLab = ({ copy }) => {
                     aria-pressed={active}
                   >
                     <span className="min-w-0 break-words text-sm font-medium leading-snug">{axis.label}</span>
-                    <span className={`max-w-[5.5rem] break-words text-right font-mono text-[10px] uppercase leading-4 tracking-[0.14em] ${
+                    <span className={`max-w-[7.5rem] break-words text-right font-mono text-[10px] uppercase leading-4 tracking-[0.12em] md:max-w-[8.5rem] lg:max-w-[5.5rem] lg:tracking-[0.14em] ${
                       active ? 'text-brand-light' : 'text-white/36'
                     }`}>
                       {axis.metric}

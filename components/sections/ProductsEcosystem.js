@@ -7,6 +7,12 @@
  *   instead of hardcoded English labels, keeping the homepage product index
  *   visually coherent across all supported languages.
  *
+ * Modification Reason: v4.9 - Mobile product tab wrapping.
+ *   Product selector tabs now allow localized product names and categories to
+ *   wrap instead of truncating. This preserves the horizontal snap interaction
+ *   while making Russian, Spanish, Japanese, Korean, and CJK labels feel
+ *   intentional rather than clipped on iPhone-class screens.
+ *
  * Modification Reason: v4.6 - North Star anchor entry.
  *   Added a stable homepage `#north-star-plan` anchor for the promoted North
  *   Star Plan covenant so the hero can link directly into the infrastructure
@@ -136,6 +142,7 @@
  * Last Modified: v4.6 - North Star anchor entry
  * Last Modified: v4.7 - Homepage ecosystem i18n shell
  * Last Modified: v4.8 - Localized product visual microcopy
+ * Last Modified: v4.9 - Mobile product tab wrapping
  * ============================================
  */
 
@@ -500,7 +507,7 @@ const ProductsEcosystem = () => {
                   tabIndex={active ? 0 : -1}
                   onKeyDown={(event) => handleProductTabKeyDown(event, product.id)}
                   onClick={() => setSelectedProduct(product.id)}
-                  className={`relative min-h-[64px] w-[14rem] flex-shrink-0 snap-start rounded border px-4 py-2.5 text-left transition-colors duration-fast md:w-auto md:min-w-[12rem] md:px-5 md:py-3 ${
+                  className={`relative min-h-[72px] w-[15rem] flex-shrink-0 snap-start rounded border px-4 py-3 text-left transition-colors duration-fast md:min-h-[64px] md:w-auto md:min-w-[12rem] md:px-5 md:py-3 ${
                     active
                       ? 'border-brand-line bg-brand-faint text-white'
                       : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'
@@ -510,14 +517,14 @@ const ProductsEcosystem = () => {
                     <span aria-hidden="true" className="absolute left-0 top-0 h-full w-0.5 bg-brand-light" />
                   )}
                   <div className="flex min-w-0 items-center justify-between gap-3">
-                    <div className="truncate text-xs font-medium md:text-sm">{product.name}</div>
+                    <div className="min-w-0 break-words text-xs font-medium leading-snug md:text-sm">{product.name}</div>
                     {isCoreProduct && (
                       <span className="shrink-0 rounded-sm border border-brand-line bg-brand-faint px-1.5 py-0.5 text-[9px] uppercase tracking-[0.1em] text-brand-light">
                         {copy.coreBadge}
                       </span>
                     )}
                   </div>
-                  <div className="mt-1 truncate text-xs opacity-60">{product.category}</div>
+                  <div className="mt-1 break-words text-xs leading-snug opacity-60">{product.category}</div>
                 </button>
               );
             })}
