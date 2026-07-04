@@ -2,7 +2,14 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v3.9 - Homepage focus pass.
+ * Modification Reason: v4.0 - Privacy Network naming and selector polish.
+ *   Renamed the user-facing first product to Privacy Network so the homepage
+ *   reads as a protocol/product system rather than a
+ *   download funnel. Mobile selector tabs now keep stable widths and truncate
+ *   secondary labels cleanly.
+ *
+ * Historical Notes:
+ * v3.9 - Homepage focus pass.
  *   Removed the standalone payment-services tab from the homepage product
  *   index. Downstream service monetization remains a protocol direction, but
  *   the first-page product story now stays centered on private connection,
@@ -10,7 +17,7 @@
  *
  * Historical Notes:
  * v3.4 — Product hierarchy order correction.
- *   Privacy Access and MemChain are intentionally ordered first so the
+ *   Privacy Network and MemChain are intentionally ordered first so the
  *   homepage presents AeroNyx's live privacy and private memory layers before
  *   downstream protocol services.
  *
@@ -37,7 +44,7 @@
  *      shared brand curve; durations to the 300/600ms ladder.
  *
  * Main Functionality:
- *   - Four-product ecosystem selector (Privacy Access, MemChain, Encrypted
+ *   - Four-product ecosystem selector (Privacy Network, MemChain, Encrypted
  *     Service Relay, Protocol Foundation)
  *     with per-product use case, architecture comparison, features,
  *     status badge, CTA, and a dedicated visual.
@@ -64,10 +71,11 @@
  *     STATUS_BADGES map only.
  *
  * Last Modified: v3.3 — Homepage product index spacing and interaction polish
- * Last Modified: v3.4 — Privacy Access and MemChain ordered before downstream services
+ * Last Modified: v3.4 — Privacy Network and MemChain ordered before downstream services
  * Last Modified: v3.5 — Mobile snap selector and detail card rhythm polish
  * Last Modified: v3.8 - Reframed after CorePrimitives section
  * Last Modified: v3.9 - Removed standalone payment rails tab from homepage
+ * Last Modified: v4.0 - Privacy Network naming and selector polish
  * ============================================
  */
 
@@ -92,8 +100,8 @@ const ProductsEcosystem = () => {
   const products = [
     {
       id: 'vpn',
-      name: 'AeroNyx Privacy Access',
-      category: 'Protocol Application',
+      name: 'Privacy Network',
+      category: 'Private Routing Layer',
       tagline: 'Private routing without trusting a company',
       useCase: {
         pain: 'Centralized privacy apps ask users to trust one company with all routing metadata',
@@ -112,7 +120,7 @@ const ProductsEcosystem = () => {
         savings: 'Own the privacy layer',
       },
       status: 'live',
-      cta: { text: 'Get Privacy Access', link: '/privacy-network' },
+      cta: { text: 'Explore Privacy Network', link: '/privacy-network' },
     },
     {
       id: 'memchain',
@@ -164,8 +172,8 @@ const ProductsEcosystem = () => {
     },
     {
       id: 'foundation',
-      name: 'Privacy Protocol Foundation',
-      category: 'Foundation Layer',
+      name: 'Protocol Foundation',
+      category: 'Rust Node Layer',
       tagline: 'Open Rust nodes, signed peer state, public health',
       useCase: {
         pain: 'Privacy products fail when every feature depends on a centralized service that can observe or be forced to disclose user behavior',
@@ -287,7 +295,7 @@ const ProductsEcosystem = () => {
           <div
             role="tablist"
             aria-label="AeroNyx products"
-            className="-mx-4 mb-8 flex snap-x snap-mandatory flex-nowrap gap-3 overflow-x-auto px-4 pb-1 scrollbar-hide md:mx-0 md:mb-12 md:justify-center md:gap-4 md:px-0"
+            className="mb-8 flex snap-x snap-mandatory flex-nowrap gap-3 overflow-x-auto pb-1 scrollbar-hide md:mb-12 md:justify-center md:gap-4"
           >
             {products.map((product) => {
               const active = selectedProduct === product.id;
@@ -303,7 +311,7 @@ const ProductsEcosystem = () => {
                   tabIndex={active ? 0 : -1}
                   onKeyDown={(event) => handleProductTabKeyDown(event, product.id)}
                   onClick={() => setSelectedProduct(product.id)}
-                  className={`relative min-h-[56px] min-w-fit flex-shrink-0 snap-start rounded border px-4 py-2.5 text-left transition-colors duration-fast md:px-6 md:py-3 ${
+                  className={`relative min-h-[58px] w-[14rem] flex-shrink-0 snap-start rounded border px-4 py-2.5 text-left transition-colors duration-fast md:w-auto md:min-w-[12rem] md:px-6 md:py-3 ${
                     active
                       ? 'border-brand-line bg-brand-faint text-white'
                       : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'
@@ -312,8 +320,8 @@ const ProductsEcosystem = () => {
                   {active && (
                     <span aria-hidden="true" className="absolute left-0 top-0 h-full w-0.5 bg-brand-light" />
                   )}
-                  <div className="text-xs md:text-sm font-medium whitespace-nowrap">{product.name}</div>
-                  <div className="text-xs opacity-60 mt-1">{product.category}</div>
+                  <div className="truncate text-xs font-medium md:text-sm">{product.name}</div>
+                  <div className="mt-1 truncate text-xs opacity-60">{product.category}</div>
                 </button>
               );
             })}
@@ -401,7 +409,7 @@ const ProductsEcosystem = () => {
                   activeProduct.cta.link.startsWith('/') ? (
                     <Link
                       href={activeProduct.cta.link}
-                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/20 px-6 py-2.5 text-center hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast md:px-8 md:py-3"
+                      className="inline-flex min-h-[44px] w-full items-center justify-center rounded border border-white/20 px-6 py-2.5 text-center transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint sm:w-auto md:px-8 md:py-3"
                     >
                       <span className="text-xs md:text-sm uppercase tracking-eyebrow">
                         {activeProduct.cta.text}
@@ -413,7 +421,7 @@ const ProductsEcosystem = () => {
                       onClick={(e) => handleCtaClick(e, activeProduct.cta.link)}
                       target={activeProduct.cta.link.startsWith('http') ? '_blank' : undefined}
                       rel={activeProduct.cta.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/20 px-6 py-2.5 text-center hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast md:px-8 md:py-3"
+                      className="inline-flex min-h-[44px] w-full items-center justify-center rounded border border-white/20 px-6 py-2.5 text-center transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint sm:w-auto md:px-8 md:py-3"
                     >
                       <span className="text-xs md:text-sm uppercase tracking-eyebrow">
                         {activeProduct.cta.text}

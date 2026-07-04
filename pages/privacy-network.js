@@ -4,21 +4,21 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v1.2 - Source cleanup and naming alignment.
+ * Modification Reason: v1.3 - Privacy Network narrative cleanup.
  *   Renames the active header/background/download section dependencies away
  *   from legacy AIL/VPN implementation names. Visible copy stays focused on
- *   Privacy Network, Privacy Access, and AeroNyx Privacy Protocol.
+ *   Privacy Network and AeroNyx Privacy Protocol.
  *
  * Historical Notes:
- *   v1.0 - New secondary page for Privacy Access.
+ *   v1.0 - New secondary page for the privacy network product surface.
  * Main Functionality:
- *   - Presents AeroNyx Privacy Network / Privacy Access as an application
- *     built on the AeroNyx Privacy Protocol.
+ *   - Presents AeroNyx Privacy Network as an application built on the
+ *     AeroNyx Privacy Protocol.
  *   - Shows user-facing protection signals, aggregate protocol statistics,
  *     and the existing download/app visual section.
  * Dependencies:
  *   - components/sections/PrivacyAccessSection keeps the existing download
- *     modal contract while visible copy remains Privacy Access / Privacy Network.
+ *     modal contract while visible copy remains Privacy Network.
  *   - lib/hooks/useNetworkStats for public aggregate protocol counters.
  *   - components/ui/AnimatedMessageCounter for live privacy-safe counters.
  *
@@ -30,13 +30,12 @@
  *      to downloads.
  *
  * Important Note for Next Developer:
- *   - Keep visible language as "Privacy Network", "Privacy Access", or
- *     "AeroNyx Privacy Protocol". Do not rebrand the public page around legacy
- *     tunnel terminology.
+ *   - Keep visible language as "Privacy Network" or "AeroNyx Privacy
+ *     Protocol". Do not rebrand the public page around legacy tunnel terms.
  *   - The Rust/backend endpoint path still contains vpn for backward
  *     compatibility; do not rename API paths without coordinating clients.
  *
- * Last Modified: v1.2 - Active dependency names aligned with protocol story
+ * Last Modified: v1.3 - Removed old download surface wording
  * ============================================
  */
 
@@ -110,13 +109,13 @@ export default function PrivacyNetworkPage() {
   return (
     <>
       <SEO
-        title="AeroNyx Privacy Network | Privacy Access on the AeroNyx Protocol"
+        title="AeroNyx Privacy Network | Private routing on the AeroNyx Protocol"
         description="AeroNyx Privacy Network gives humans, apps, and AI agents encrypted routing through a blind protocol boundary, with public aggregate health and no user-level telemetry."
         canonicalUrl={`https://aeronyx.network${canonicalPath}`}
         keywords={[
           'AeroNyx Privacy Network',
           'AeroNyx Privacy Protocol',
-          'Privacy Access',
+          'private routing',
           'encrypted routing',
           'blind relay network',
           'privacy-safe network stats',
@@ -156,7 +155,7 @@ const Hero = () => (
             AeroNyx Privacy Network
           </div>
           <h1 className="mt-6 max-w-4xl text-display-xl font-light text-white">
-            Privacy Access built on a blind open protocol.
+            Private routing built on a blind open protocol.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/62 md:text-xl">
             AeroNyx Privacy Network lets humans, apps, and autonomous agents route
@@ -168,7 +167,7 @@ const Hero = () => (
               href="#privacy-access"
               className="inline-flex min-h-[44px] items-center justify-center bg-white px-6 py-3 text-center text-xs uppercase leading-none tracking-eyebrow text-black transition-colors hover:bg-white/90 md:text-sm"
             >
-              Download Privacy Access
+              Get Privacy Network
             </a>
             <a
               href="#protocol-stats"

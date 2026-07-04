@@ -2,20 +2,20 @@
  * ============================================
  * File: components/sections/PrivacyAccessSection.js
  * ============================================
- * Modification Reason: v2.2 - Source cleanup and privacy naming alignment.
+ * Modification Reason: v2.3 - Privacy Network product wording.
  *   Renamed the active download section and changed the page anchor to
  *   #privacy-access. Phone mockup structure, DownloadsModal contract, and
- *   visible Privacy Access copy are preserved.
+ *   visible Privacy Network copy are preserved.
  *
  * Dependencies:
  *   - components/ui/DownloadsModal (isOpen/onClose contract preserved)
- *   - lib/i18n privacy access copy
+ *   - lib/i18n privacy network copy
  *
  * ⚠️ Important Notes for Next Developer:
  *   - Keep the copy contract (PrivacyAccessVisual receives `copy`).
  *   - Brand rule: no green, no emojis. Connected = brand purple.
  *
- * Last Modified: v2.2 - Renamed active section to PrivacyAccessSection
+ * Last Modified: v2.3 - Privacy Network product wording
  * ============================================
  */
 
@@ -101,7 +101,7 @@ const PowerIcon = () => (
   </svg>
 );
 
-// Privacy Access app visual — copy contract preserved from v1.
+// Privacy Network app visual — copy contract preserved from v1.
 const PrivacyAccessVisual = ({ copy }) => {
   const [isConnected, setIsConnected] = useState(false);
 
@@ -122,7 +122,7 @@ const PrivacyAccessVisual = ({ copy }) => {
           {/* App content */}
           <div className="flex-1 flex flex-col">
             <div className="text-center mb-6 md:mb-8">
-              <div className="text-xl md:text-2xl font-light mb-1 md:mb-2">AeroNyx Privacy Access</div>
+              <div className="text-xl md:text-2xl font-light mb-1 md:mb-2">AeroNyx Privacy Network</div>
               <div className="text-xs md:text-sm text-white/40">{copy.privacyNetwork}</div>
             </div>
 

@@ -27,14 +27,14 @@
  *
  * Main Functionality:
  *   - Shared responsive site header, language menu, internal navigation,
- *     external documentation/GitHub links, and Privacy Access CTA.
+ *     external documentation/GitHub links, and Privacy Network CTA.
  *
  * Dependencies:
  *   - lib/i18n nav labels for all configured locales.
  *   - next/link and next/router for locale-aware internal routing.
  *
  * Important Note for Next Developer:
- *   - Do not point the CTA back to a homepage download anchor. Privacy Access
+ *   - Do not point the CTA back to a homepage download anchor. Privacy Network
  *     now belongs to pages/privacy-network.js.
  *
  * Last Modified: v2.5 - Renamed active header component to SiteHeader
