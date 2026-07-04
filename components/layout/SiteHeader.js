@@ -9,6 +9,10 @@
  *   Desktop and mobile CTA destinations share one constant to prevent future
  *   route drift.
  *
+ * Modification Reason: v2.8 - Mobile menu accessibility localization.
+ *   The mobile open/close aria labels now come from lib/i18n nav copy so
+ *   localized pages do not expose English-only accessibility text.
+ *
  * Historical Notes:
  * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
@@ -47,6 +51,7 @@
  *
  * Last Modified: v2.5 - Renamed active header component to SiteHeader
  * Last Modified: v2.6 - Download client CTA alignment
+ * Last Modified: v2.8 - Mobile menu accessibility localization
  * ============================================
  */
 
@@ -258,7 +263,7 @@ const SiteHeader = () => {
             <button
               className="p-2 text-white/60 hover:text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
               onClick={() => setIsOpen(!isOpen)}
-              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-label={isOpen ? (copy.nav.closeMenu || 'Close menu') : (copy.nav.openMenu || 'Open menu')}
               aria-expanded={isOpen}
               aria-controls="mobile-navigation"
             >
