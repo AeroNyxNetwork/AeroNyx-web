@@ -7,6 +7,12 @@
  *   language so the future narrative stays focused on private memory, agent
  *   services, and the blind protocol.
  *
+ * Modification Reason: v2.6 - Roadmap internationalization.
+ *   Moved roadmap milestones, unlock labels, closing thesis, and final
+ *   protocol promise into lib/i18n so localized homepages do not end with
+ *   English-only roadmap content. Timeline text now uses safer line-height
+ *   and break behavior for long translated phrases.
+ *
  * Historical Notes:
  * v2.4 — Roadmap section rhythm polish.
  *   Added the shared homepage eyebrow pattern before the roadmap headline so
@@ -37,48 +43,23 @@
  *
  * Last Modified: v2.4 — Roadmap eyebrow rhythm alignment
  * Last Modified: v2.5 - Protocol identity wording
+ * Last Modified: v2.6 - Roadmap internationalization
  * ============================================
  */
 
 import React from 'react';
+import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import Container from '../ui/Container';
+import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
 const EASE = [0.16, 1, 0.3, 1];
 
 const FutureVision = () => {
-  const visions = [
-    {
-      year: '2026',
-      title: 'The Fabric Hardens',
-      description: 'The blind relay foundation moves from proof to product: verified peer views, multi-hop routing, and restart recovery running across a growing set of independent node operators.',
-      implications: [
-        'Two-hop private routing available by default',
-        'Public aggregate health as the only observable surface',
-        'Node operations manageable through natural language',
-      ],
-    },
-    {
-      year: '2028',
-      title: 'Memory Becomes Portable',
-      description: 'Memory Chain matures into a cross-client standard: encrypted personal context that follows the user between AI tools instead of dying inside each vendor.',
-      implications: [
-        'Identity-derived keys as the memory root',
-        'Agent frameworks reading and writing user-owned state',
-        'Sync without any party seeing raw content',
-      ],
-    },
-    {
-      year: '2030',
-      title: 'Agent-Native Coordination',
-      description: 'Agents route traffic, recall private context, exchange encrypted payloads, and request work through blind services. Coordination without middlemen reading the flow.',
-      implications: [
-        'Machine-readable service access as the norm',
-        'Private memory and relay services composed at the protocol layer',
-        'Humans set intent; agents coordinate within it',
-      ],
-    },
-  ];
+  const { locale } = useRouter();
+  const messages = getMessages(locale || DEFAULT_LOCALE);
+  const copy = messages.futureVision || getMessages(DEFAULT_LOCALE).futureVision;
+  const visions = copy.visions || [];
 
   return (
     <section id="vision" className="scroll-mt-20 py-12 md:scroll-mt-24 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
@@ -93,15 +74,13 @@ const FutureVision = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
-              Protocol Roadmap
+              {copy.eyebrow}
             </div>
             <h2 className="text-display-lg font-light mb-4 md:mb-6">
-              The future we're building
+              {copy.title}
             </h2>
             <p className="text-base md:text-xl text-white/40 max-w-copy">
-              A world where private coordination is a protocol primitive —
-              routing, memory, and services that work for humans and agents
-              without anyone watching the middle.
+              {copy.description}
             </p>
           </motion.div>
 
@@ -123,19 +102,19 @@ const FutureVision = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-display-md font-light mb-3 md:mb-4">{vision.title}</h3>
-                  <p className="text-sm md:text-base text-white/60 mb-4 md:mb-6 leading-relaxed">
+                  <h3 className="text-display-md font-light mb-3 break-words md:mb-4">{vision.title}</h3>
+                  <p className="text-sm md:text-base text-white/60 mb-4 md:mb-6 leading-relaxed break-words">
                     {vision.description}
                   </p>
 
                   <div className="space-y-2">
                     <div className="text-[10px] md:text-xs uppercase tracking-eyebrow text-white/40 mb-2 md:mb-3">
-                      What this unlocks
+                      {copy.unlocksLabel}
                     </div>
                     {vision.implications.map((implication, i) => (
                       <div key={i} className="flex items-start">
                         <div className="w-px h-3 md:h-4 bg-brand-light/40 mr-2 md:mr-3 mt-0.5 md:mt-1" />
-                        <span className="text-sm leading-relaxed text-white/60 md:text-base">{implication}</span>
+                        <span className="break-words text-sm leading-relaxed text-white/60 md:text-base">{implication}</span>
                       </div>
                     ))}
                   </div>
@@ -154,16 +133,13 @@ const FutureVision = () => {
           >
             <div className="text-center">
               <h3 className="text-display-md font-light mb-6 md:mb-8">
-                The bet we're making
+                {copy.closingTitle}
               </h3>
               <p className="text-base md:text-xl text-white/60 max-w-copy mx-auto leading-relaxed px-4">
-                As AI agents become participants in the economy, the infrastructure
-                they run on decides who sees what. We're building the version where
-                the answer is: nobody in the middle. Privacy not as a feature —
-                as the coordination layer itself.
+                {copy.closingDescription}
               </p>
               <p className="text-xl md:text-2xl font-light mt-6 md:mt-8 text-brand-light">
-                Infrastructure that can't betray its users.
+                {copy.finalLine}
               </p>
             </div>
           </motion.div>

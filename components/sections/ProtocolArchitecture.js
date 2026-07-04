@@ -9,6 +9,12 @@
  *   decentralized nodes only see ciphertext plus signed metadata, and the
  *   public site only exposes aggregate health.
  *
+ * Modification Reason: v5.0 - Homepage architecture internationalization.
+ *   Moved the architecture header, visibility boundary, pillar copy,
+ *   callout labels, technical bullets, visual microcopy, and docs CTA into
+ *   lib/i18n. This keeps the protocol architecture section coherent across
+ *   all supported locales while preserving the existing visuals and motion.
+ *
  * Historical Notes:
  * v4.8 - Decentralized node public naming.
  *   The public architecture copy now describes decentralized protocol nodes
@@ -71,16 +77,19 @@
  * Last Modified: v4.7 - Reduced-motion support and identity wording
  * Last Modified: v4.8 - Decentralized node public naming
  * Last Modified: v4.9 - Visibility boundary polish
+ * Last Modified: v5.0 - Homepage architecture internationalization
  * ============================================
  */
 
 import React from 'react';
+import { useRouter } from 'next/router';
 import { motion, useReducedMotion } from 'framer-motion';
 import Container from '../ui/Container';
+import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
 const EASE = [0.16, 1, 0.3, 1];
 
-const PILLARS = [
+const DEFAULT_PILLARS = [
   {
     tag: 'The Protocol',
     title: 'Blind Privacy Fabric',
@@ -132,7 +141,18 @@ const VISIBILITY_BOUNDARY = [
 ];
 
 const ProtocolArchitecture = () => {
+  const { locale } = useRouter();
+  const messages = getMessages(locale || DEFAULT_LOCALE);
+  const copy = messages.protocolArchitecture || getMessages(DEFAULT_LOCALE).protocolArchitecture;
   const reduced = useReducedMotion();
+  const pillars = DEFAULT_PILLARS.map((pillar, index) => ({
+    ...pillar,
+    ...(copy.pillars?.[index] || {}),
+  }));
+  const visibilityBoundary = (copy.visibility?.items || VISIBILITY_BOUNDARY).map((item, index) => ({
+    ...VISIBILITY_BOUNDARY[index],
+    ...item,
+  }));
 
   return (
     <section id="how-it-works" className="scroll-mt-20 py-12 md:scroll-mt-24 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
@@ -148,14 +168,13 @@ const ProtocolArchitecture = () => {
             className="mb-10 max-w-3xl md:mb-14"
           >
             <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
-              Protocol Architecture
+              {copy.eyebrow}
             </div>
             <h2 className="text-display-lg font-light mb-4 md:mb-6">
-              Two layers. One <em className="text-brand-light" style={{ fontStyle: 'italic' }}>invariant.</em>
+              {copy.titlePrefix} <em className="text-brand-light" style={{ fontStyle: 'italic' }}>{copy.titleEmphasis}</em>
             </h2>
             <p className="text-base md:text-xl text-white/60 leading-relaxed">
-              A blind fabric that routes what it can't read, and a service layer agents
-              can use directly. Both hold the same line: coordinate the work, never see the content.
+              {copy.description}
             </p>
           </motion.div>
 
@@ -169,15 +188,14 @@ const ProtocolArchitecture = () => {
             <div className="grid gap-0 lg:grid-cols-[0.72fr_2.28fr]">
               <div className="border-b border-white/10 p-4 md:p-5 lg:border-b-0 lg:border-r">
                 <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
-                  Visibility Boundary
+                  {copy.visibility?.eyebrow}
                 </div>
                 <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/50">
-                  The protocol is designed around a simple promise: each layer only
-                  sees the minimum it needs to do its job.
+                  {copy.visibility?.description}
                 </p>
               </div>
               <div className="grid gap-0 md:grid-cols-3">
-                {VISIBILITY_BOUNDARY.map((item) => (
+                {visibilityBoundary.map((item) => (
                   <div key={item.surface} className="min-w-0 border-t border-white/10 p-4 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0 md:p-5">
                     <div className="text-[10px] uppercase tracking-eyebrow text-white/38">
                       {item.surface}
@@ -196,7 +214,7 @@ const ProtocolArchitecture = () => {
 
           {/* Two pillars */}
           <div className="grid gap-5 lg:grid-cols-2 lg:gap-8">
-            {PILLARS.map((pillar, index) => (
+            {pillars.map((pillar, index) => (
               <motion.div
                 key={pillar.title}
                 initial={{ opacity: 0, y: 28 }}
@@ -210,7 +228,11 @@ const ProtocolArchitecture = () => {
                   className="aspect-[16/10] border-b border-white/10 p-5 md:p-8"
                   style={{ background: 'var(--surface-0, #08080D)' }}
                 >
-                  {pillar.visual === 'service' ? <ServiceVisual reduced={reduced} /> : <FabricVisual reduced={reduced} />}
+                  {pillar.visual === 'service' ? (
+                    <ServiceVisual reduced={reduced} copy={copy.visuals?.service} />
+                  ) : (
+                    <FabricVisual reduced={reduced} copy={copy.visuals?.fabric} />
+                  )}
                 </div>
 
                 {/* Content */}
@@ -227,7 +249,7 @@ const ProtocolArchitecture = () => {
 
                   <div className="mb-6 border-l-2 border-brand/40 bg-white/[0.03] py-3 pl-4 pr-3">
                     <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">
-                      Protocol Impact
+                      {copy.labels?.protocolImpact}
                     </div>
                     <p className="text-sm text-white/80 leading-relaxed">
                       {pillar.impact}
@@ -236,7 +258,7 @@ const ProtocolArchitecture = () => {
 
                   <div className="space-y-2.5 mt-auto">
                     <div className="text-[10px] uppercase tracking-eyebrow text-white/40">
-                      How It Works
+                      {copy.labels?.howItWorks}
                     </div>
                     {pillar.technical.map((item, i) => (
                       <div key={i} className="flex items-start">
@@ -265,7 +287,7 @@ const ProtocolArchitecture = () => {
               className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/20 px-8 py-3.5 text-center hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
             >
               <span className="text-sm uppercase tracking-eyebrow">
-                Read the Technical Docs
+                {copy.docsCta}
               </span>
             </a>
           </motion.div>
@@ -281,7 +303,7 @@ const ProtocolArchitecture = () => {
  * ============================================================ */
 
 /** Blind Fabric — a mesh routing a ciphertext packet, eyes closed. */
-function FabricVisual({ reduced }) {
+function FabricVisual({ reduced, copy = {} }) {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <svg viewBox="0 0 320 180" className="w-full h-full max-w-[420px]" fill="none">
@@ -312,7 +334,7 @@ function FabricVisual({ reduced }) {
         {/* hex label following the packet feel — static, quiet */}
         <text x="160" y="172" textAnchor="middle"
           style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 9, fill: 'rgba(151,136,247,0.5)' }}>
-          ciphertext · relayed · unread
+          {copy.caption || 'ciphertext · relayed · unread'}
         </text>
       </svg>
     </div>
@@ -320,8 +342,8 @@ function FabricVisual({ reduced }) {
 }
 
 /** Agent Services — route → recall → coordinate, in mono. */
-function ServiceVisual({ reduced }) {
-  const steps = ['route', 'recall', 'coordinate'];
+function ServiceVisual({ reduced, copy = {} }) {
+  const steps = copy.steps || ['route', 'recall', 'coordinate'];
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <div className="w-full max-w-[300px] space-y-2.5">
@@ -336,7 +358,7 @@ function ServiceVisual({ reduced }) {
           >
             <div className="flex items-center gap-2.5">
               <span className="font-mono text-xs text-white/40">{String(i + 1).padStart(2, '0')}</span>
-              <span className="text-sm text-white/70">Step {i + 1}</span>
+              <span className="text-sm text-white/70">{copy.stepLabel || 'Step'} {i + 1}</span>
             </div>
             <span className="font-mono text-sm text-brand-light">{verb}</span>
           </motion.div>
@@ -350,11 +372,11 @@ function ServiceVisual({ reduced }) {
         >
           <div className="text-center">
             <div className="font-mono text-xl font-light text-brand-light">E2E</div>
-            <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mt-0.5">Payload Privacy</div>
+            <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mt-0.5">{copy.payloadPrivacy || 'Payload Privacy'}</div>
           </div>
           <div className="text-center">
             <div className="font-mono text-xl font-light text-brand-light">BLIND</div>
-            <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mt-0.5">Node Boundary</div>
+            <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mt-0.5">{copy.nodeBoundary || 'Node Boundary'}</div>
           </div>
         </motion.div>
       </div>

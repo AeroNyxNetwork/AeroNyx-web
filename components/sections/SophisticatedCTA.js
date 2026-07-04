@@ -7,6 +7,10 @@
  *   buttons so the homepage closes on the protocol's three memorable
  *   qualities: blind, open, and useful. The primary actions remain unchanged.
  *
+ * Modification Reason: v2.7 - Closing eyebrow internationalization.
+ *   The final "Build on AeroNyx" eyebrow now comes from lib/i18n so localized
+ *   homepages do not end with an English-only section label.
+ *
  * Historical Notes:
  * v2.5 — Product-action closing surface.
  *   Replaced the two-action whitepaper/contact ending with a clearer
@@ -38,6 +42,7 @@
  * Last Modified: v2.4 — Final CTA eyebrow rhythm alignment
  * Last Modified: v2.5 — Product-action closing surface
  * Last Modified: v2.6 — Closing proof strip
+ * Last Modified: v2.7 - Closing eyebrow internationalization
  * ============================================
  */
 
@@ -92,7 +97,7 @@ const SophisticatedCTA = () => {
             transition={{ duration: 0.8, ease: EASE }}
           >
             <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
-              Build On AeroNyx
+              {copy.eyebrow || 'Build On AeroNyx'}
             </div>
             <h2 className="text-display-xl font-light mb-4 md:mb-6 px-4">
               {copy.line1}
