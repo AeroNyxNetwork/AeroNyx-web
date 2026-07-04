@@ -2,7 +2,16 @@
  * ============================================
  * File: components/sections/PrivacyAccessSection.js
  * ============================================
- * Modification Reason: v2.4 - Product-grade protection mockup.
+ * Modification Reason: v2.5 - Mobile conversion polish.
+ *   Reordered the mobile section so the product promise and download action
+ *   appear before the device mockup and before secondary feature cards,
+ *   converted feature bullets into compact assurance cards, and reduced the
+ *   phone frame height on small screens so the access section feels like a
+ *   polished product CTA instead of a heavy engineering demo. Existing modal
+ *   and localization contracts are preserved.
+ *
+ * Historical Notes:
+ * v2.4 - Product-grade protection mockup.
  *   Replaced the generic tab-bar phone mockup with a daily protection view:
  *   encrypted traffic, encrypted packets, protocol health, hidden IP, and
  *   regional route status. This aligns the app preview with the public
@@ -32,6 +41,7 @@
  *
  * Last Modified: v2.3 - Privacy Network product wording
  * Last Modified: v2.4 - Product-grade protection mockup
+ * Last Modified: v2.5 - Mobile conversion polish
  * ============================================
  */
 
@@ -52,9 +62,12 @@ const PrivacyAccessSection = () => {
     <section id="privacy-access" className="py-12 md:py-24" style={{ background: 'var(--surface-1, #0C0C13)' }}>
       <Container>
         <div className="max-w-5xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+          <div className="grid gap-8 md:gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             {/* Content */}
-            <div className="order-2 lg:order-1">
+            <div className="order-1">
+              <div className="mb-4 inline-flex border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
+                {copy.privacyNetwork}
+              </div>
               <h2 className="text-display-md font-light mb-4 md:mb-6">
                 {copy.title}
                 <span className="block text-lg md:text-xl text-white/40 mt-2">
@@ -66,28 +79,31 @@ const PrivacyAccessSection = () => {
                 {copy.description}
               </p>
 
-              <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
-                {features.map((feature, i) => (
-                  <div key={i} className="flex items-start">
-                    <div className="w-1 h-1 rounded-pill bg-brand-light/60 mt-1.5 md:mt-2 mr-2 md:mr-3 flex-shrink-0" />
-                    <div>
-                      <div className="font-medium text-white/80 text-sm md:text-base">{feature.title}</div>
-                      <div className="text-xs md:text-sm text-white/60">{feature.description}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
               <button
                 onClick={() => setShowDownloads(true)}
-                className="px-6 md:px-8 py-3 md:py-4 rounded bg-white text-black hover:bg-white/90 transition-colors duration-fast text-sm md:text-base font-medium w-full sm:w-auto"
+                className="mb-6 inline-flex min-h-[48px] w-full items-center justify-center rounded bg-white px-6 py-3 text-center text-sm font-medium text-black transition-colors duration-fast hover:bg-white/90 sm:w-auto md:mb-8 md:px-8 md:py-4 md:text-base"
               >
                 {copy.download}
               </button>
+
+              <div className="grid gap-2 sm:grid-cols-2 md:gap-3">
+                {features.map((feature, i) => (
+                  <div key={i} className="border border-white/10 bg-white/[0.025] p-3 md:p-4">
+                    <div className="mb-3 flex items-center gap-2">
+                      <div className="h-1.5 w-1.5 shrink-0 rounded-pill bg-brand-light/70" />
+                      <div className="text-[10px] uppercase tracking-eyebrow text-white/34">
+                        {String(i + 1).padStart(2, '0')}
+                      </div>
+                    </div>
+                    <div className="font-medium text-white/80 text-sm md:text-base">{feature.title}</div>
+                    <div className="mt-2 text-xs leading-relaxed text-white/56 md:text-sm">{feature.description}</div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Visual */}
-            <div className="order-1 lg:order-2">
+            <div className="order-2">
               <PrivacyAccessVisual copy={copy} />
             </div>
           </div>
@@ -127,12 +143,12 @@ const PrivacyAccessVisual = ({ copy }) => {
   ];
 
   return (
-    <div className="relative flex items-center justify-center overflow-hidden py-1">
+    <div className="relative flex items-center justify-center overflow-hidden py-1 md:py-2">
       {/* Phone mockup */}
-      <div className="h-[620px] w-60 overflow-hidden rounded-[2.5rem] border-2 border-white/10 p-3 md:h-[600px] md:w-72 md:rounded-[3rem] md:p-4" style={{ background: 'var(--surface-0, #08080D)' }}>
-        <div className="flex h-full w-full flex-col overflow-hidden rounded-[2rem] p-4 md:rounded-[2.5rem] md:p-6" style={{ background: 'var(--surface-2, #111118)' }}>
+      <div className="h-[520px] w-64 max-w-full overflow-hidden rounded-[2rem] border-2 border-white/10 p-3 md:h-[600px] md:w-72 md:rounded-[3rem] md:p-4" style={{ background: 'var(--surface-0, #08080D)' }}>
+        <div className="flex h-full w-full flex-col overflow-hidden rounded-[1.55rem] p-4 md:rounded-[2.5rem] md:p-6" style={{ background: 'var(--surface-2, #111118)' }}>
           {/* Status bar */}
-          <div className="flex justify-between items-center mb-6 md:mb-8 text-xs text-white/40">
+          <div className="flex justify-between items-center mb-5 md:mb-8 text-xs text-white/40">
             <span>9:41 AM</span>
             <div className="flex gap-1">
               <div className="w-4 h-3 border border-white/40 rounded-sm" />
@@ -142,7 +158,7 @@ const PrivacyAccessVisual = ({ copy }) => {
 
           {/* App content */}
           <div className="flex-1 flex flex-col">
-            <div className="mb-5 md:mb-6">
+            <div className="mb-4 md:mb-6">
               <div className="text-xl md:text-2xl font-light leading-tight">AeroNyx Privacy Network</div>
               <div className="mt-2 inline-flex border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">
                 {isConnected ? copy.protected : copy.unprotected}
@@ -160,12 +176,12 @@ const PrivacyAccessVisual = ({ copy }) => {
             </div>
 
             {/* Connection button — connected = brand purple (v2.0) */}
-            <div className="mb-5 flex items-center justify-center md:mb-6">
+            <div className="mb-4 flex items-center justify-center md:mb-6">
               <button
                 onClick={() => setIsConnected(!isConnected)}
                 aria-pressed={isConnected}
                 aria-label={isConnected ? copy.connected : copy.connect}
-                className={`h-24 w-24 rounded-pill border-2 transition-all duration-slow ease-out-brand md:h-28 md:w-28 ${
+                className={`h-20 w-20 rounded-pill border-2 transition-all duration-slow ease-out-brand md:h-28 md:w-28 ${
                   isConnected
                     ? 'border-brand-light bg-brand-faint'
                     : 'border-white/20 hover:border-white/40'
@@ -182,7 +198,7 @@ const PrivacyAccessVisual = ({ copy }) => {
               </button>
             </div>
 
-            <div className="mb-4 grid gap-2 md:mb-5">
+            <div className="mb-3 grid gap-2 md:mb-5">
               {protectionMetrics.map((metric) => (
                 <div key={metric.label} className="border border-white/10 bg-white/[0.025] p-3">
                   <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{metric.label}</div>
