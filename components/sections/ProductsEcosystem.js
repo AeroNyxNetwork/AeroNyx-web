@@ -2,7 +2,14 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v4.3 - Decentralized node product naming.
+ * Modification Reason: v4.4 - Core product entrance polish.
+ *   Added a dedicated two-card "core systems" entrance for Privacy Network
+ *   and MemChain before the product tab index. This makes the homepage read
+ *   as two load-bearing products on one blind protocol instead of a flat list
+ *   of capabilities, while preserving the existing tabbed architecture index.
+ *
+ * Historical Notes:
+ * v4.3 - Decentralized node product naming.
  *   Product ecosystem copy now describes open decentralized nodes and the
  *   Decentralized Node Layer instead of presenting implementation language as
  *   the user-facing product category.
@@ -97,6 +104,7 @@
  * Last Modified: v4.1 - North Star privacy infrastructure wording
  * Last Modified: v4.2 - MemChain terminology and visual cleanup
  * Last Modified: v4.3 - Decentralized node product naming
+ * Last Modified: v4.4 - Core product entrance polish
  * ============================================
  */
 
@@ -113,6 +121,8 @@ const STATUS_BADGES = {
   beta: { label: 'Beta', className: 'text-warn border-warn/25 bg-warn/[0.06]' },
   'coming-soon': { label: 'Coming Soon', className: 'text-white/40 border-white/10 bg-white/[0.03]' },
 };
+
+const CORE_PRODUCT_IDS = new Set(['vpn', 'memchain']);
 
 const ProductsEcosystem = () => {
   const [selectedProduct, setSelectedProduct] = useState('vpn');
@@ -142,6 +152,7 @@ const ProductsEcosystem = () => {
       },
       status: 'live',
       cta: { text: 'Explore Privacy Network', link: '/privacy-network' },
+      proof: 'Encrypted traffic in motion',
     },
     {
       id: 'memchain',
@@ -166,6 +177,7 @@ const ProductsEcosystem = () => {
       },
       status: 'beta',
       cta: { text: 'Explore MemChain', link: '/memchain' },
+      proof: 'Encrypted memory at rest',
     },
     {
       id: 'cdn',
@@ -190,6 +202,7 @@ const ProductsEcosystem = () => {
       },
       status: 'coming-soon',
       cta: { text: 'Join Waitlist', link: 'https://app.aeronyx.network/waitlist' },
+      proof: 'Encrypted delivery for services',
     },
     {
       id: 'foundation',
@@ -214,10 +227,12 @@ const ProductsEcosystem = () => {
       },
       status: 'live',
       cta: { text: 'View SDK Docs', link: 'https://docs.aeronyx.network/developer-documentation/overview' },
+      proof: 'Signed node state and public aggregates',
     },
   ];
 
   const activeProduct = products.find((p) => p.id === selectedProduct) || products[0];
+  const coreProducts = products.filter((product) => CORE_PRODUCT_IDS.has(product.id));
 
   const focusProductTab = (productId) => {
     if (typeof window === 'undefined') return;
@@ -312,6 +327,58 @@ const ProductsEcosystem = () => {
             </p>
           </div>
 
+          <div className="mb-8 grid gap-3 md:mb-10 md:grid-cols-[1fr_auto_1fr] md:items-stretch md:gap-4">
+            {coreProducts.map((product, index) => (
+              <Link
+                key={product.id}
+                href={product.cta.link}
+                className={`group page-surface relative min-w-0 overflow-hidden rounded border p-5 transition-colors duration-base hover:border-brand-line md:p-6 ${
+                  index === 0 ? 'order-1 md:order-none' : 'order-3 md:order-none md:col-start-3 md:row-start-1'
+                }`}
+              >
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/35 to-transparent opacity-70" />
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+                      Core System 0{index + 1}
+                    </div>
+                    <h3 className="mt-3 text-display-md font-light text-white">
+                      {product.name}
+                    </h3>
+                  </div>
+                  <span className="shrink-0 border border-white/10 bg-white/[0.025] px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-white/42 transition-colors duration-fast group-hover:border-brand-line group-hover:text-brand-light">
+                    {product.category}
+                  </span>
+                </div>
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/60 md:text-base">
+                  {product.tagline}
+                </p>
+                <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
+                  <div className="border border-white/10 bg-black/20 p-3">
+                    <div className="text-[10px] uppercase tracking-eyebrow text-white/34">protects</div>
+                    <div className="mt-2 text-sm leading-relaxed text-white/72">
+                      {product.proof}
+                    </div>
+                  </div>
+                  <div className="border border-white/10 bg-black/20 p-3">
+                    <div className="text-[10px] uppercase tracking-eyebrow text-white/34">invariant</div>
+                    <div className="mt-2 text-sm leading-relaxed text-brand-light/86">
+                      Nodes can coordinate, not read.
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+
+            <div className="order-2 flex min-h-[4.75rem] items-center justify-center rounded border border-white/10 bg-white/[0.018] px-4 py-4 md:order-none md:col-start-2 md:row-start-1 md:min-h-full md:w-28 md:flex-col">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-brand-light/28 to-transparent md:h-auto md:w-px md:bg-gradient-to-b" />
+              <div className="mx-3 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] text-brand-light/80 md:mx-0 md:my-3 md:[writing-mode:vertical-rl]">
+                same blind protocol
+              </div>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-brand-light/28 to-transparent md:h-auto md:w-px md:bg-gradient-to-b" />
+            </div>
+          </div>
+
           {/* Product selector — tab semantics (v3.0) */}
           <div
             role="tablist"
@@ -320,6 +387,7 @@ const ProductsEcosystem = () => {
           >
             {products.map((product) => {
               const active = selectedProduct === product.id;
+              const isCoreProduct = CORE_PRODUCT_IDS.has(product.id);
               return (
                 <button
                   key={product.id}
@@ -332,7 +400,7 @@ const ProductsEcosystem = () => {
                   tabIndex={active ? 0 : -1}
                   onKeyDown={(event) => handleProductTabKeyDown(event, product.id)}
                   onClick={() => setSelectedProduct(product.id)}
-                  className={`relative min-h-[58px] w-[14rem] flex-shrink-0 snap-start rounded border px-4 py-2.5 text-left transition-colors duration-fast md:w-auto md:min-w-[12rem] md:px-6 md:py-3 ${
+                  className={`relative min-h-[64px] w-[14rem] flex-shrink-0 snap-start rounded border px-4 py-2.5 text-left transition-colors duration-fast md:w-auto md:min-w-[12rem] md:px-5 md:py-3 ${
                     active
                       ? 'border-brand-line bg-brand-faint text-white'
                       : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'
@@ -341,7 +409,14 @@ const ProductsEcosystem = () => {
                   {active && (
                     <span aria-hidden="true" className="absolute left-0 top-0 h-full w-0.5 bg-brand-light" />
                   )}
-                  <div className="truncate text-xs font-medium md:text-sm">{product.name}</div>
+                  <div className="flex min-w-0 items-center justify-between gap-3">
+                    <div className="truncate text-xs font-medium md:text-sm">{product.name}</div>
+                    {isCoreProduct && (
+                      <span className="shrink-0 rounded-sm border border-brand-line bg-brand-faint px-1.5 py-0.5 text-[9px] uppercase tracking-[0.1em] text-brand-light">
+                        Core
+                      </span>
+                    )}
+                  </div>
                   <div className="mt-1 truncate text-xs opacity-60">{product.category}</div>
                 </button>
               );
