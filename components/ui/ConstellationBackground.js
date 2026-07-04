@@ -23,7 +23,7 @@
  *     plus a deterministic ambient star field.
  *
  * Dependencies:
- *   - Mounted by components/ui/MinimalAILBackground (fixed wrapper, z -1)
+ *   - Mounted by components/ui/ProtocolBackground (fixed wrapper, z -1)
  *   - styles/globals.css v3.0 (.constellation-canvas rule)
  *
  * Main Logical Flow:

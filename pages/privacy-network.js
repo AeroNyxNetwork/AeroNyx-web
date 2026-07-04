@@ -4,10 +4,10 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v1.1 - Apple-grade product page polish.
- *   Tightened hero spacing, stabilized CTA labels, and unified product cards
- *   with globals.css v3.3 page-surface/page-card utilities so the page feels
- *   calmer on iPhone, iPad, macOS, Windows, and Android.
+ * Modification Reason: v1.2 - Source cleanup and naming alignment.
+ *   Renames the active header/background/download section dependencies away
+ *   from legacy AIL/VPN implementation names. Visible copy stays focused on
+ *   Privacy Network, Privacy Access, and AeroNyx Privacy Protocol.
  *
  * Historical Notes:
  *   v1.0 - New secondary page for Privacy Access.
@@ -17,8 +17,8 @@
  *   - Shows user-facing protection signals, aggregate protocol statistics,
  *     and the existing download/app visual section.
  * Dependencies:
- *   - components/sections/VPNDownloadSection keeps the existing download modal
- *     contract while visible copy remains Privacy Access / Privacy Network.
+ *   - components/sections/PrivacyAccessSection keeps the existing download
+ *     modal contract while visible copy remains Privacy Access / Privacy Network.
  *   - lib/hooks/useNetworkStats for public aggregate protocol counters.
  *   - components/ui/AnimatedMessageCounter for live privacy-safe counters.
  *
@@ -31,11 +31,12 @@
  *
  * Important Note for Next Developer:
  *   - Keep visible language as "Privacy Network", "Privacy Access", or
- *     "AeroNyx Privacy Protocol". Do not rebrand the public page around VPN.
+ *     "AeroNyx Privacy Protocol". Do not rebrand the public page around legacy
+ *     tunnel terminology.
  *   - The Rust/backend endpoint path still contains vpn for backward
  *     compatibility; do not rename API paths without coordinating clients.
  *
- * Last Modified: v1.1 - Responsive typography and card polish
+ * Last Modified: v1.2 - Active dependency names aligned with protocol story
  * ============================================
  */
 
@@ -46,14 +47,14 @@ import { motion } from 'framer-motion';
 import SEO from '../components/ui/SEO';
 import Container from '../components/ui/Container';
 import AnimatedMessageCounter from '../components/ui/AnimatedMessageCounter';
-import AILHeader from '../components/layout/AILHeader';
+import SiteHeader from '../components/layout/SiteHeader';
 import Footer from '../components/layout/Footer';
-import VPNDownloadSection from '../components/sections/VPNDownloadSection';
+import PrivacyAccessSection from '../components/sections/PrivacyAccessSection';
 import useNetworkStats from '../lib/hooks/useNetworkStats';
 import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
 
-const MinimalAILBackground = dynamic(
-  () => import('../components/ui/MinimalAILBackground'),
+const ProtocolBackground = dynamic(
+  () => import('../components/ui/ProtocolBackground'),
   {
     ssr: false,
     suspense: true,
@@ -124,17 +125,17 @@ export default function PrivacyNetworkPage() {
       />
 
       <Suspense fallback={<div className="fixed inset-0" style={{ background: 'var(--surface-0, #08080D)' }} />}>
-        <MinimalAILBackground />
+        <ProtocolBackground />
       </Suspense>
 
-      <AILHeader />
+      <SiteHeader />
 
       <main className="relative z-10 pt-24 md:pt-32">
         <Hero />
         <LiveProtocolStats stats={stats} isLoading={isLoading} copy={copy} healthPercent={healthPercent} />
         <ProtectionSignals />
         <PrivacyBoundary />
-        <VPNDownloadSection />
+        <PrivacyAccessSection />
       </main>
 
       <Footer />
@@ -164,7 +165,7 @@ const Hero = () => (
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
-              href="#download-vpn"
+              href="#privacy-access"
               className="inline-flex min-h-[44px] items-center justify-center bg-white px-6 py-3 text-center text-xs uppercase leading-none tracking-eyebrow text-black transition-colors hover:bg-white/90 md:text-sm"
             >
               Download Privacy Access

@@ -1,10 +1,12 @@
 /**
  * ============================================
- * File: components/layout/AILHeader.js
+ * File: components/layout/SiteHeader.js
  * ============================================
- * Modification Reason: v2.4 - 2026 navigation state and control polish.
- *   Adds active-route presentation, Escape-to-close behavior, full-surface
- *   desktop CTA hit area, and stronger mobile language tap geometry.
+ * Modification Reason: v2.5 - Source cleanup and protocol naming alignment.
+ *   Renamed the shared navigation component so the active codebase matches
+ *   the current protocol-first product story.
+ *   Active-route presentation, Escape-to-close behavior, CTA hit areas, and
+ *   mobile language tap geometry are preserved.
  *
  * Historical Notes:
  * v2.3 - Apple-grade language menu and link polish.
@@ -35,7 +37,7 @@
  *   - Do not point the CTA back to a homepage download anchor. Privacy Access
  *     now belongs to pages/privacy-network.js.
  *
- * Last Modified: v2.4 - Active navigation and control hit-area polish
+ * Last Modified: v2.5 - Renamed active header component to SiteHeader
  * ============================================
  */
 
@@ -46,7 +48,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import AeroNyxLogo from '../ui/AeroNyxLogo';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, getMessages } from '../../lib/i18n';
 
-const AILHeader = () => {
+const SiteHeader = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
@@ -344,4 +346,4 @@ const AILHeader = () => {
   );
 };
 
-export default AILHeader;
+export default SiteHeader;

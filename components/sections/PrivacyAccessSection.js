@@ -1,22 +1,21 @@
 /**
  * ============================================
- * File: components/sections/VPNDownloadSection.jsx
+ * File: components/sections/PrivacyAccessSection.js
  * ============================================
- * Modification Reason: v2.0 — Brand pass. Connected state was green
- *   (ring, ripples, status text) and used 🛡️⚡ emojis — both violate
- *   the homepage brand rules. Connected → brand purple + shield SVG;
- *   disconnected → neutral + power SVG. Surfaces aligned to tokens.
- *   Phone mockup structure and DownloadsModal contract unchanged.
+ * Modification Reason: v2.2 - Source cleanup and privacy naming alignment.
+ *   Renamed the active download section and changed the page anchor to
+ *   #privacy-access. Phone mockup structure, DownloadsModal contract, and
+ *   visible Privacy Access copy are preserved.
  *
  * Dependencies:
  *   - components/ui/DownloadsModal (isOpen/onClose contract preserved)
- *   - lib/i18n vpn copy
+ *   - lib/i18n privacy access copy
  *
  * ⚠️ Important Notes for Next Developer:
- *   - Keep the copy contract (VPNAppVisual receives `copy`).
+ *   - Keep the copy contract (PrivacyAccessVisual receives `copy`).
  *   - Brand rule: no green, no emojis. Connected = brand purple.
  *
- * Last Modified: v2.1 — 2026 typography and privacy-network framing
+ * Last Modified: v2.2 - Renamed active section to PrivacyAccessSection
  * ============================================
  */
 
@@ -27,14 +26,14 @@ import Container from '../ui/Container';
 import DownloadsModal from '../ui/DownloadsModal';
 import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
-const VPNDownloadSection = () => {
+const PrivacyAccessSection = () => {
   const [showDownloads, setShowDownloads] = useState(false);
   const { locale } = useRouter();
   const copy = getMessages(locale || DEFAULT_LOCALE).vpn;
   const features = copy.features;
 
   return (
-    <section id="download-vpn" className="py-12 md:py-24" style={{ background: 'var(--surface-1, #0C0C13)' }}>
+    <section id="privacy-access" className="py-12 md:py-24" style={{ background: 'var(--surface-1, #0C0C13)' }}>
       <Container>
         <div className="max-w-5xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -73,7 +72,7 @@ const VPNDownloadSection = () => {
 
             {/* Visual */}
             <div className="order-1 lg:order-2">
-              <VPNAppVisual copy={copy} />
+              <PrivacyAccessVisual copy={copy} />
             </div>
           </div>
         </div>
@@ -103,7 +102,7 @@ const PowerIcon = () => (
 );
 
 // Privacy Access app visual — copy contract preserved from v1.
-const VPNAppVisual = ({ copy }) => {
+const PrivacyAccessVisual = ({ copy }) => {
   const [isConnected, setIsConnected] = useState(false);
 
   return (
@@ -203,4 +202,4 @@ const VPNAppVisual = ({ copy }) => {
   );
 };
 
-export default VPNDownloadSection;
+export default PrivacyAccessSection;

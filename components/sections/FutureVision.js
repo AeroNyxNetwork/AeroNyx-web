@@ -63,12 +63,12 @@ const FutureVision = () => {
     },
     {
       year: '2030',
-      title: 'Agent-Native Economy',
-      description: 'Services quote, agents pay, work executes — over x402 rails and blind routing. Coordination without accounts, without middlemen reading the flow.',
+      title: 'Agent-Native Coordination',
+      description: 'Agents route traffic, recall private context, exchange encrypted payloads, and request work through blind services. Coordination without middlemen reading the flow.',
       implications: [
         'Machine-readable service access as the norm',
-        'Payment and privacy composed at the protocol layer',
-        'Humans set intent; agents transact within it',
+        'Private memory and relay services composed at the protocol layer',
+        'Humans set intent; agents coordinate within it',
       ],
     },
   ];
@@ -93,7 +93,7 @@ const FutureVision = () => {
             </h2>
             <p className="text-base md:text-xl text-white/40 max-w-copy">
               A world where private coordination is a protocol primitive —
-              routing, memory, and payment that work for humans and agents
+              routing, memory, and services that work for humans and agents
               without anyone watching the middle.
             </p>
           </motion.div>

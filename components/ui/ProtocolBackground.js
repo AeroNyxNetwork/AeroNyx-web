@@ -1,6 +1,6 @@
 /**
  * ============================================
- * File: components/ui/MinimalAILBackground.jsx
+ * File: components/ui/ProtocolBackground.js
  * ============================================
  * Modification Reason: v2.1 - A16z/Apple-grade background restraint.
  *   Removed the large blurred purple/blue orbs from the global backdrop.
@@ -58,7 +58,7 @@ const ConstellationBackground = dynamic(() => import('./ConstellationBackground'
   loading: () => null,
 });
 
-const MinimalAILBackground = () => {
+const ProtocolBackground = () => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -119,4 +119,4 @@ const MinimalAILBackground = () => {
   );
 };
 
-export default MinimalAILBackground;
+export default ProtocolBackground;

@@ -2,17 +2,17 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v3.8 - Post-primitives capability index polish.
- *   The homepage now introduces Privacy Network and MemChain together in
- *   CorePrimitives, so this section is reframed as the capability index built
- *   on those two primitives. Product data, routing, keyboard behavior, and
- *   tab semantics are preserved.
+ * Modification Reason: v3.9 - Homepage focus pass.
+ *   Removed the standalone payment-services tab from the homepage product
+ *   index. Downstream service monetization remains a protocol direction, but
+ *   the first-page product story now stays centered on private connection,
+ *   private memory, encrypted relay, and protocol foundation.
  *
  * Historical Notes:
  * v3.4 — Product hierarchy order correction.
- *   Privacy Access and MemChain are intentionally ordered before Agent
- *   Payment Rails / x402 so the homepage presents AeroNyx's live privacy and
- *   private memory layers before the agent payment layer.
+ *   Privacy Access and MemChain are intentionally ordered first so the
+ *   homepage presents AeroNyx's live privacy and private memory layers before
+ *   downstream protocol services.
  *
  * Historical Notes:
  * v3.2 — Protocol-layer homepage handoff.
@@ -37,8 +37,8 @@
  *      shared brand curve; durations to the 300/600ms ladder.
  *
  * Main Functionality:
- *   - Five-product ecosystem selector (Privacy Access, Agent Payment
- *     Rails, Encrypted Service Relay, Protocol Foundation, MemChain)
+ *   - Four-product ecosystem selector (Privacy Access, MemChain, Encrypted
+ *     Service Relay, Protocol Foundation)
  *     with per-product use case, architecture comparison, features,
  *     status badge, CTA, and a dedicated visual.
  *
@@ -58,16 +58,16 @@
  *
  * ⚠️ Important Notes for Next Developer:
  *   - v2.3 rule stands: no unverified scale/cost claims in product copy.
- *   - All five product data objects preserved verbatim from v2.3 except
- *     color/emoji presentation — do not trim fields; MemChainShowcase
- *     and the secondary pages cross-reference this narrative.
+ *   - Keep this as a capability index, not a roadmap dump. Homepage tabs
+ *     should only represent load-bearing protocol/product surfaces.
  *   - Brand rule: no green, no emojis. Status colors come from the
  *     STATUS_BADGES map only.
  *
  * Last Modified: v3.3 — Homepage product index spacing and interaction polish
- * Last Modified: v3.4 — Privacy Access and MemChain ordered before x402 rails
+ * Last Modified: v3.4 — Privacy Access and MemChain ordered before downstream services
  * Last Modified: v3.5 — Mobile snap selector and detail card rhythm polish
  * Last Modified: v3.8 - Reframed after CorePrimitives section
+ * Last Modified: v3.9 - Removed standalone payment rails tab from homepage
  * ============================================
  */
 
@@ -104,7 +104,7 @@ const ProductsEcosystem = () => {
         'Blind relay fabric for encrypted routing',
         'Public aggregate network health without user-level telemetry',
         'Privacy access for humans, apps, and autonomous agents',
-        'x402-ready payment rails for protocol services',
+        'Agent-ready private access without centralized routing trust',
       ],
       comparison: {
         traditional: 'Centralized privacy app: trust the provider',
@@ -137,30 +137,6 @@ const ProductsEcosystem = () => {
       },
       status: 'beta',
       cta: { text: 'Explore MemChain', link: '/memchain' },
-    },
-    {
-      id: 'compute',
-      name: 'Agent Payment Rails',
-      category: 'Protocol Services',
-      tagline: 'Machine-readable access for autonomous work',
-      useCase: {
-        pain: 'Agents still need human-owned accounts, API keys, billing pages, and trusted middlemen to use paid services',
-        solution: 'AeroNyx prepares x402-compatible flows where a service quotes, an agent pays, and access is granted per request',
-        savings: 'Turn paid access into a protocol primitive instead of another SaaS account.',
-      },
-      features: [
-        'Request, quote, payment, and execution lifecycle',
-        'Wallet-based identity for humans, apps, and agents',
-        'Built for privacy-preserving service access',
-        'Compatible with future node-operated protocol services',
-      ],
-      comparison: {
-        traditional: 'Traditional API: account + billing portal',
-        aeronyx: 'AeroNyx: quote + pay + execute',
-        savings: 'Agent-native access',
-      },
-      status: 'beta',
-      cta: { text: 'Join Beta', link: 'https://app.aeronyx.network' },
     },
     {
       id: 'cdn',
@@ -481,7 +457,6 @@ const ProductVisual = ({ productId }) => {
   const visuals = {
     foundation: <FoundationVisual />,
     vpn: <PrivacyAccessVisual />,
-    compute: <ComputeVisual />,
     cdn: <CDNVisual />,
     memchain: <MemChainProductVisual />,
   };
@@ -533,24 +508,6 @@ const PrivacyAccessVisual = () => (
         </div>
       </div>
       <div className="text-sm text-white/60">Blind · Private · Verifiable</div>
-    </div>
-  </div>
-);
-
-const ComputeVisual = () => (
-  <div className="relative w-full h-full flex items-center justify-center">
-    <div className="grid grid-cols-3 gap-2">
-      {Array.from({ length: 9 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="w-10 h-10 md:w-12 md:h-12 border border-white/20 rounded-sm flex items-center justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: i * 0.08, ease: EASE }}
-        >
-          <div className="text-xs text-white/40 font-mono">402</div>
-        </motion.div>
-      ))}
     </div>
   </div>
 );

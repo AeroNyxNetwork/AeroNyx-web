@@ -392,14 +392,14 @@ function Bubble({ msg, cipher, idx }) {
           <div className="flex items-center gap-2 mb-1.5">
             <span className="w-4 h-4 rounded-full flex items-center justify-center text-[9px]"
               style={{ background: ACCENT, color: '#fff' }}>✓</span>
-            <span className="text-xs font-medium" style={{ color: ACCENT_LT }}>Booked &amp; paid</span>
+            <span className="text-xs font-medium" style={{ color: ACCENT_LT }}>Booked &amp; routed</span>
           </div>
           <div className="text-xs" style={{ color: 'rgba(255,255,255,0.75)' }}>
             NH 854 · Fri 09:40 → 16:10
           </div>
           <div className="text-[9px] mt-1.5 tracking-wide"
             style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(255,255,255,0.35)' }}>
-            548 USDC · x402 · signed Ed25519 ✓
+            blind route · signed Ed25519 ✓
           </div>
         </div>
       </div>

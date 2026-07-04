@@ -1,20 +1,16 @@
 /**
  * ============================================
- * File: components/sections/HowAILWorks.js
+ * File: components/sections/ProtocolArchitecture.js
  * ============================================
- * Modification Reason: v4.4 — Homepage section rhythm polish.
- *   Added the same quiet eyebrow treatment used by the product and protocol
- *   evidence sections so the architecture handoff reads as part of one
- *   product narrative instead of a standalone engineering block.
+ * Modification Reason: v4.5 - Source cleanup and protocol naming alignment.
+ *   Renamed the active architecture section so the visible two-layer story
+ *   and layout are preserved while stale implementation naming is removed.
  *
  * Historical Notes:
  * v4.0 — Narrative compression for the approved
  *   top-tier restructure. Cut from four steps to the two load-bearing
  *   ones: Blind Fabric and Agent-Native Services. The removed steps are
- *   fully covered elsewhere and were causing homepage repetition:
- *     - "The Problem" step → now owned by ProblemToX402 (merged section).
- *     - "The State Layer" (memory) step → owned by MemChainShowcase's
- *       full deep-dive.
+ *   fully covered elsewhere and were causing homepage repetition.
  *   Layout shifts from a slideshow (numbered chapter nav + one panel at
  *   a time) to two concepts presented together — a pillar pair — which
  *   reads as architecture, not a walkthrough. This also removes the
@@ -31,7 +27,7 @@
  * Dependencies:
  *   - components/ui/Container; framer-motion
  *   - tailwind.config.js v2.1 tokens; _app.js v2.4 (Inter Tight display)
- *   - Section anchor #how-it-works (AILHeader nav + hero CTA target)
+ *   - Section anchor #how-it-works (SiteHeader nav + hero CTA target)
  *
  * Main Logical Flow:
  *   1. Header reveals on scroll.
@@ -41,15 +37,16 @@
  *
  * ⚠️ Important Notes for Next Developer:
  *   - v2.1 reframing stands: privacy coordination protocol, not generic
- *     cloud payment automation.
+ *     cloud automation.
  *   - The two remaining pillars' copy is preserved verbatim from the v3.0
- *     Protocol + Service steps. Do not re-add the Problem/State steps here
- *     — they live in ProblemToX402 and MemChainShowcase respectively.
+ *     Protocol + Service steps. Do not re-add the Problem/State steps here.
  *   - Brand rule: no green, no emojis; visuals use brand/cipher/white-α.
  *   - Section headline uses the shared text-display-lg token. Keep the
  *     architecture tone precise and avoid decorative display styling.
  *
- * Last Modified: v4.4 — Section eyebrow rhythm alignment
+ * Last Modified: v4.5 - Renamed active section to ProtocolArchitecture
+ * Last Modified: v4.6 - Reframed service layer away from payment-first copy
+ * and toward encrypted coordination services.
  * ============================================
  */
 
@@ -77,22 +74,22 @@ const PILLARS = [
   },
   {
     tag: 'The Service Layer',
-    title: 'Agent-Native Services',
+    title: 'Encrypted Coordination Services',
     description:
-      'x402-compatible payment flows let services quote access, receive payment, and execute work in a format autonomous agents understand — no human-operated SaaS account required.',
+      'Humans, apps, and agents use the same private service surface to route traffic, exchange encrypted messages, preserve context, and request work without exposing payloads to infrastructure.',
     impact:
-      'The private service layer where agents route, remember, pay, and coordinate — without defaulting to accounts a human has to open.',
+      'The product surface investors can remember: private connection plus private memory becomes an open coordination layer agents can actually use.',
     technical: [
-      'Request, quote, payment, execution lifecycle',
+      'Blind relay and encrypted message routing',
+      'MemChain context handoff without node-readable memory',
       'Wallet-based identity and service permissions',
-      'Privacy protocol services before generic marketplaces',
       'Public stats expose health, not user data',
     ],
     visual: <ServiceVisual />,
   },
 ];
 
-const HowAILWorks = () => {
+const ProtocolArchitecture = () => {
   return (
     <section id="how-it-works" className="scroll-mt-20 py-12 md:scroll-mt-24 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
@@ -243,9 +240,9 @@ function FabricVisual() {
   );
 }
 
-/** Agent Services — quote → pay → run, in mono. */
+/** Agent Services — route → recall → coordinate, in mono. */
 function ServiceVisual() {
-  const steps = ['quote', 'pay', 'run'];
+  const steps = ['route', 'recall', 'coordinate'];
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <div className="w-full max-w-[300px] space-y-2.5">
@@ -273,12 +270,12 @@ function ServiceVisual() {
           transition={{ delay: 0.75 }}
         >
           <div className="text-center">
-            <div className="font-mono text-xl font-light text-brand-light">402</div>
-            <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mt-0.5">Payment Flow</div>
-          </div>
-          <div className="text-center">
             <div className="font-mono text-xl font-light text-brand-light">E2E</div>
             <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mt-0.5">Payload Privacy</div>
+          </div>
+          <div className="text-center">
+            <div className="font-mono text-xl font-light text-brand-light">BLIND</div>
+            <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mt-0.5">Node Boundary</div>
           </div>
         </motion.div>
       </div>
@@ -286,4 +283,4 @@ function ServiceVisual() {
   );
 }
 
-export default HowAILWorks;
+export default ProtocolArchitecture;

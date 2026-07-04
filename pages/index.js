@@ -22,18 +22,17 @@
  *   /memchain and /privacy-network. This keeps the first page focused on the
  *   protocol invariant while preserving product detail pages for SEO/GEO.
  *
- * Section Order (v5.4):
+ * Section Order (v5.9):
  * 1. NarrativeHero      — "Infrastructure AI Agents Can Use"
  * 2. HomeNetworkStats   — Aggregate protocol evidence only
  * 3. CorePrimitives     — Privacy Network + MemChain as one protocol story
  * 4. ProductsEcosystem  — Product/service capability index
- * 5. ProblemToX402      — Agent coordination payment problem/solution
- * 6. HowAILWorks        — Technical deep-dive
- * 7. JoinNetwork        — Node/protocol operator CTA
- * 8. FutureVision       — Roadmap
- * 9. SophisticatedCTA   — Final conversion
+ * 5. ProtocolArchitecture — Technical deep-dive
+ * 6. JoinNetwork        — Node/protocol operator CTA
+ * 7. FutureVision       — Roadmap
+ * 8. SophisticatedCTA   — Final conversion
  *
- * Last Modified: v4.0 - Added MemChainShowcase
+ * Last Modified: v4.0 - Added early MemChain homepage proof section
  * Last Modified: v4.1 - Added privacy-safe protocol network_story card sourced
  * from Rust peer discovery summaries and the backend public aggregate endpoint.
  * Last Modified: v4.2 - Added peer lifecycle activity sourced from
@@ -67,9 +66,11 @@
  * exchange encrypted messages, preserve private memory, and coordinate work.
  * Last Modified: v5.2 - Product deep-dives moved to secondary pages.
  * Last Modified: v5.3 - Homepage module rhythm and responsive evidence polish.
- * Last Modified: v5.4 - Product layers moved before x402 payment narrative.
+ * Last Modified: v5.4 - Product layers moved before downstream service narrative.
  * Last Modified: v5.5 - iPhone-safe public evidence layout
  * Last Modified: v5.8 - Added CorePrimitives homepage narrative
+ * Last Modified: v5.9 - Removed standalone payment block from the homepage so
+ * the first-page story stays focused on the blind coordination protocol.
  * ============================================
  */
 
@@ -85,11 +86,11 @@ import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
 import useNetworkStats from '../lib/hooks/useNetworkStats';
 
 // Import custom header
-import AILHeader from '../components/layout/AILHeader';
+import SiteHeader from '../components/layout/SiteHeader';
 
 // Import the enhanced background with constellations
-const MinimalAILBackground = dynamic(
-  () => import('../components/ui/MinimalAILBackground'),
+const ProtocolBackground = dynamic(
+  () => import('../components/ui/ProtocolBackground'),
   {
     ssr: false,
     suspense: true,
@@ -99,8 +100,7 @@ const MinimalAILBackground = dynamic(
 
 // Import sections
 import NarrativeHero from '../components/sections/NarrativeHero';
-import ProblemToX402 from '../components/sections/ProblemToX402';
-import HowAILWorks from '../components/sections/HowAILWorks';
+import ProtocolArchitecture from '../components/sections/ProtocolArchitecture';
 import JoinNetwork from '../components/sections/JoinNetwork';
 import ProductsEcosystem from '../components/sections/ProductsEcosystem';
 import CorePrimitives from '../components/sections/CorePrimitives';
@@ -131,11 +131,11 @@ export default function Home() {
 
       {/* Enhanced background with constellations */}
       <Suspense fallback={<div className="fixed inset-0" style={{ background: 'var(--surface-0, #08080D)' }} />}>
-        <MinimalAILBackground />
+        <ProtocolBackground />
       </Suspense>
 
       {/* Custom header */}
-      <AILHeader />
+      <SiteHeader />
 
       {/* Main content */}
       <main className="relative z-10">
@@ -150,19 +150,16 @@ export default function Home() {
         {/* 4. Protocol capability index. Product deep-dives live on secondary pages. */}
         <ProductsEcosystem />
 
-        {/* 5. Agent payment narrative comes after Privacy Network and MemChain. */}
-        <ProblemToX402 />
+        {/* 5. How it works — technical deep-dive */}
+        <ProtocolArchitecture />
 
-        {/* 6. How it works — technical deep-dive */}
-        <HowAILWorks />
-
-        {/* 7. Join the network */}
+        {/* 6. Join the network */}
         <JoinNetwork />
 
-        {/* 8. Vision for the future */}
+        {/* 7. Vision for the future */}
         <FutureVision />
 
-        {/* 9. Call to action */}
+        {/* 8. Call to action */}
         <SophisticatedCTA />
       </main>
 

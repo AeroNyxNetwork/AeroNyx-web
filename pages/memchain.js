@@ -5,21 +5,23 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
- * Modification Reason: v1.1 - Apple-grade page rhythm and mobile polish.
- *   Tightened the hero visual on phone widths, unified card surfaces through
- *   globals.css v3.3 utilities, and adjusted CTA/text rhythm so the page feels
- *   premium without sacrificing the claim-safe MemChain story.
+ * Modification Reason: v1.3 - Advantage lab market context polish.
+ *   Added an interactive comparison lab that makes MemChain's node-blind,
+ *   low-latency, offline, bring-your-own-brain, and zero-retrieval-inference
+ *   advantages visible before the detailed pipeline/table sections, with a
+ *   concise market-category note for SEO/GEO readers.
  *
  * Historical Notes:
  *   v1.0 - New page for node-blind AI memory positioning.
  * Main Functionality:
  *   - Explains MemChain as a local-first, node-blind AI memory layer.
- *   - Shows the remember/store/recall pipeline, privacy boundary, benchmark
- *     claims, comparison table, and FAQ based on the approved product material.
+ *   - Shows the interactive advantage lab, remember/store/recall pipeline,
+ *     privacy boundary, benchmark claims, comparison table, and FAQ based on
+ *     the approved product material.
  * Dependencies:
- *   - components/layout/AILHeader and Footer for shared site chrome.
+ *   - components/layout/SiteHeader and Footer for shared site chrome.
  *   - components/ui/SEO and Container for metadata/layout.
- *   - components/ui/MinimalAILBackground for the existing visual system.
+ *   - components/ui/ProtocolBackground for the existing visual system.
  *
  * Main Logical Flow:
  *   1. Render SEO metadata and shared background/header.
@@ -36,22 +38,24 @@
  *     range must be backed by a fresh benchmark before it appears here.
  *
  * Last Modified: v1.1 - Secondary page typography polish
+ * Last Modified: v1.2 - Interactive MemChain advantage lab
+ * Last Modified: v1.3 - Market-category context and mobile metric polish
  * ============================================
  */
 
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import SEO from '../components/ui/SEO';
 import Container from '../components/ui/Container';
-import AILHeader from '../components/layout/AILHeader';
+import SiteHeader from '../components/layout/SiteHeader';
 import Footer from '../components/layout/Footer';
 import { DEFAULT_LOCALE } from '../lib/i18n';
 
-const MinimalAILBackground = dynamic(
-  () => import('../components/ui/MinimalAILBackground'),
+const ProtocolBackground = dynamic(
+  () => import('../components/ui/ProtocolBackground'),
   {
     ssr: false,
     suspense: true,
@@ -146,6 +150,109 @@ const comparisonRows = [
   ['Retrieval cost', 'No model inference for retrieval.', 'Often depends on hosted inference or platform search.'],
 ];
 
+const advantageAxes = [
+  {
+    id: 'blind',
+    label: 'Server Blindness',
+    metric: '0 readable bytes',
+    title: 'The node holds memory it cannot open.',
+    description:
+      'MemChain stores ciphertext, blind indexes, and opaque relationship edges. The storage node can sync and order memory, but it cannot read or re-sign the facts.',
+    memchain: {
+      title: 'MemChain',
+      headline: 'Cryptographically unreadable',
+      proof: 'ciphertext + blind index',
+      detail: 'Infrastructure lacks the keys, so privacy is enforced by architecture instead of policy.',
+    },
+    cloud: {
+      title: 'Typical cloud memory',
+      headline: 'Readable service memory',
+      proof: 'plaintext service record',
+      detail: 'The provider can commonly inspect, rank, migrate, or expose memory because the server owns the readable state.',
+    },
+  },
+  {
+    id: 'speed',
+    label: 'Recall Speed',
+    metric: '2-40ms',
+    title: 'Recall should feel instant, not like a cloud round trip.',
+    description:
+      'Node-side recall measured at 2-5ms. Local recall is designed for a 15-40ms path, while typical cloud memory often lives in the hundreds-of-milliseconds to seconds range.',
+    memchain: {
+      title: 'MemChain',
+      headline: '2-5ms node / 15-40ms local',
+      proof: 'millisecond-class recall',
+      detail: 'Retrieval avoids model inference and starts from the device-side encrypted hippocampus.',
+    },
+    cloud: {
+      title: 'Typical cloud memory',
+      headline: 'hundreds of ms to seconds',
+      proof: 'network + hosted retrieval',
+      detail: 'Recall usually depends on remote services, queueing, hosted search, and model-adjacent orchestration.',
+    },
+  },
+  {
+    id: 'offline',
+    label: 'Offline Recall',
+    metric: 'works offline',
+    title: 'Memory should survive a bad network.',
+    description:
+      'MemChain keeps an encrypted local copy. When the relevant memory is present locally, recall continues without contacting the storage node.',
+    memchain: {
+      title: 'MemChain',
+      headline: 'local encrypted hippocampus',
+      proof: 'offline recall path',
+      detail: 'The device can search its own encrypted memory copy and sync later.',
+    },
+    cloud: {
+      title: 'Typical cloud memory',
+      headline: 'cloud dependency',
+      proof: 'offline miss',
+      detail: 'If the memory only exists in a provider cloud, the product degrades when the network disappears.',
+    },
+  },
+  {
+    id: 'brain',
+    label: 'BYO Brain',
+    metric: 'user chosen',
+    title: 'The memory layer should not lock you to one model.',
+    description:
+      'MemChain separates memory ownership from model choice. Users can choose an external AI provider or a local model, while the memory layer remains portable.',
+    memchain: {
+      title: 'MemChain',
+      headline: 'bring your own brain',
+      proof: 'OpenAI-compatible or local',
+      detail: 'Memory gets better as the user changes models; it is not trapped inside one assistant product.',
+    },
+    cloud: {
+      title: 'Typical cloud memory',
+      headline: 'platform-selected brain',
+      proof: 'vendor lock-in',
+      detail: 'Memory quality, portability, and model access are often bound to the platform that stores the memory.',
+    },
+  },
+  {
+    id: 'cost',
+    label: 'Recall Cost',
+    metric: '0 model calls',
+    title: 'Search should not burn a model call every time.',
+    description:
+      'MemChain retrieval uses search and ranking instead of model inference. Models are used for distillation and answers, not for every memory lookup.',
+    memchain: {
+      title: 'MemChain',
+      headline: 'zero LLM calls for retrieval',
+      proof: 'search/rank only',
+      detail: 'Recall can stay fast and cheap because the retrieval path is not an inference path.',
+    },
+    cloud: {
+      title: 'Typical cloud memory',
+      headline: 'often inference-adjacent',
+      proof: 'hosted retrieval cost',
+      detail: 'Hosted memory systems often couple search, ranking, and summarization to provider-side compute.',
+    },
+  },
+];
+
 const faqs = [
   {
     q: 'Can AeroNyx read my memories?',
@@ -184,13 +291,14 @@ export default function MemChainPage() {
       />
 
       <Suspense fallback={<div className="fixed inset-0" style={{ background: 'var(--surface-0, #08080D)' }} />}>
-        <MinimalAILBackground />
+        <ProtocolBackground />
       </Suspense>
 
-      <AILHeader />
+      <SiteHeader />
 
       <main className="relative z-10 pt-24 md:pt-32">
         <Hero />
+        <MemoryAdvantageLab />
         <Pipeline />
         <Pillars />
         <Benchmarks />
@@ -286,6 +394,176 @@ const MemoryVisual = () => (
     </div>
   </div>
 );
+
+const MemoryAdvantageLab = () => {
+  const [activeAxisId, setActiveAxisId] = useState('blind');
+  const activeAxis = advantageAxes.find((axis) => axis.id === activeAxisId) || advantageAxes[0];
+
+  return (
+    <section className="border-y border-white/10 bg-white/[0.015] py-12 md:py-20">
+      <Container>
+        <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55, ease: EASE }}
+            className="lg:sticky lg:top-28"
+          >
+            <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+              Interactive proof
+            </div>
+            <h2 className="mt-4 text-display-lg font-light text-white">
+              Not another memory table. A different trust model.
+            </h2>
+            <p className="mt-4 max-w-copy text-base leading-relaxed text-white/58 md:text-lg">
+              Tap each axis to see the core MemChain advantage: the server cannot
+              read memory, recall feels instant, offline memory works, model choice
+              stays open, and retrieval does not spend a model call.
+            </p>
+            <div className="mt-4 max-w-copy border border-white/10 bg-black/20 px-3 py-2 text-[11px] uppercase leading-relaxed tracking-[0.14em] text-white/34">
+              Category context: Zep / Mem0 / Supermemory / ChatGPT Memory-style cloud memory
+            </div>
+
+            <div className="mt-6 grid gap-2">
+              {advantageAxes.map((axis) => {
+                const active = axis.id === activeAxisId;
+                return (
+                  <button
+                    key={axis.id}
+                    type="button"
+                    onClick={() => setActiveAxisId(axis.id)}
+                    className={`grid min-h-[52px] grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded border px-4 py-3 text-left transition-colors duration-fast ${
+                      active
+                        ? 'border-brand-line bg-brand-faint text-white'
+                        : 'border-white/10 bg-white/[0.02] text-white/58 hover:border-white/20 hover:text-white'
+                    }`}
+                    aria-pressed={active}
+                  >
+                    <span className="min-w-0 text-sm font-medium">{axis.label}</span>
+                    <span className={`whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] ${
+                      active ? 'text-brand-light' : 'text-white/36'
+                    }`}>
+                      {axis.metric}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          <motion.div
+            key={activeAxis.id}
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: EASE }}
+            className="page-surface overflow-hidden rounded border"
+          >
+            <div className="border-b border-white/10 p-5 md:p-6">
+              <div className="mb-3 inline-flex border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">
+                {activeAxis.metric}
+              </div>
+              <h3 className="text-display-md font-light text-white">{activeAxis.title}</h3>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58 md:text-base">
+                {activeAxis.description}
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-[1fr_0.42fr_1fr]">
+              <MemoryModeCard mode={activeAxis.memchain} tone="memchain" />
+              <MemoryAxisVisual axisId={activeAxis.id} />
+              <MemoryModeCard mode={activeAxis.cloud} tone="cloud" />
+            </div>
+          </motion.div>
+        </div>
+      </Container>
+    </section>
+  );
+};
+
+const MemoryModeCard = ({ mode, tone }) => {
+  const isMemChain = tone === 'memchain';
+
+  return (
+    <div className={`min-h-full border-b border-white/10 p-5 md:p-6 lg:border-b-0 ${
+      isMemChain ? 'bg-brand-faint/60 lg:border-r' : 'bg-black/25 lg:border-l'
+    } border-white/10`}>
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <span className={`text-[10px] uppercase tracking-eyebrow ${
+          isMemChain ? 'text-brand-light' : 'text-white/36'
+        }`}>
+          {mode.title}
+        </span>
+        <span className={`h-2 w-2 rounded-pill ${
+          isMemChain ? 'bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.75)]' : 'bg-white/20'
+        }`} />
+      </div>
+      <h4 className="text-2xl font-light text-white md:text-3xl">{mode.headline}</h4>
+      <div className={`mt-5 border px-3 py-2 font-mono text-xs uppercase tracking-[0.14em] ${
+        isMemChain
+          ? 'border-brand-line bg-black/25 text-brand-light'
+          : 'border-white/10 bg-white/[0.025] text-white/40'
+      }`}>
+        {mode.proof}
+      </div>
+      <p className="mt-5 text-sm leading-relaxed text-white/58">{mode.detail}</p>
+    </div>
+  );
+};
+
+const MemoryAxisVisual = ({ axisId }) => {
+  const labels = {
+    blind: ['plaintext', 'ciphertext'],
+    speed: ['850ms', '5ms'],
+    offline: ['offline miss', 'local hit'],
+    brain: ['locked', 'BYO'],
+    cost: ['model call', '0 calls'],
+  };
+  const [cloudLabel, memchainLabel] = labels[axisId] || labels.blind;
+
+  return (
+    <div className="relative flex min-h-[16rem] items-center justify-center overflow-hidden border-b border-white/10 bg-black/35 p-5 lg:border-b-0">
+      <div
+        className="absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.26) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.26) 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }}
+      />
+      <div className="relative z-10 w-full max-w-[15rem]">
+        <div className="mb-4 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.14em]">
+          <span className="text-white/34">{cloudLabel}</span>
+          <span className="text-brand-light">{memchainLabel}</span>
+        </div>
+        <div className="relative h-2 overflow-hidden rounded-pill bg-white/10">
+          <motion.div
+            key={axisId}
+            initial={{ width: '18%' }}
+            animate={{ width: axisId === 'speed' ? '96%' : '86%' }}
+            transition={{ duration: 0.75, ease: EASE }}
+            className="h-full rounded-pill bg-brand-light"
+          />
+        </div>
+        <div className="mt-8 grid grid-cols-3 gap-2">
+          {['seal', 'rank', 'recall'].map((step, index) => (
+            <motion.div
+              key={`${axisId}-${step}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: index * 0.08, ease: EASE }}
+              className="border border-white/10 bg-white/[0.035] px-2 py-3 text-center"
+            >
+              <div className="mx-auto mb-2 h-2 w-2 rounded-pill bg-brand-light/80" />
+              <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/42">
+                {step}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Pipeline = () => (
   <section className="border-y border-white/10 bg-white/[0.015] py-12 md:py-20">
