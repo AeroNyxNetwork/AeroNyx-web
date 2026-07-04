@@ -2,7 +2,15 @@
  * ============================================
  * File: components/sections/ProtocolArchitecture.js
  * ============================================
- * Modification Reason: v4.8 - Decentralized node public naming.
+ * Modification Reason: v4.9 - Visibility boundary polish.
+ *   Added a compact "who can see what" boundary strip before the two
+ *   architecture pillars. This translates the blind protocol invariant into
+ *   an investor/user-readable trust model: clients can read local plaintext,
+ *   decentralized nodes only see ciphertext plus signed metadata, and the
+ *   public site only exposes aggregate health.
+ *
+ * Historical Notes:
+ * v4.8 - Decentralized node public naming.
  *   The public architecture copy now describes decentralized protocol nodes
  *   instead of exposing the underlying implementation language in user-facing
  *   narrative.
@@ -62,6 +70,7 @@
  * and toward encrypted coordination services.
  * Last Modified: v4.7 - Reduced-motion support and identity wording
  * Last Modified: v4.8 - Decentralized node public naming
+ * Last Modified: v4.9 - Visibility boundary polish
  * ============================================
  */
 
@@ -104,6 +113,24 @@ const PILLARS = [
   },
 ];
 
+const VISIBILITY_BOUNDARY = [
+  {
+    surface: 'Client',
+    canSee: 'Local plaintext before encryption',
+    cannotSee: 'Never leaves the device unless encrypted',
+  },
+  {
+    surface: 'Decentralized nodes',
+    canSee: 'Ciphertext, TTL, signed routing metadata',
+    cannotSee: 'No payloads, memory, domains, or social graph',
+  },
+  {
+    surface: 'Public status',
+    canSee: 'Aggregate health and relay evidence',
+    cannotSee: 'No node-level user activity or destinations',
+  },
+];
+
 const ProtocolArchitecture = () => {
   const reduced = useReducedMotion();
 
@@ -130,6 +157,41 @@ const ProtocolArchitecture = () => {
               A blind fabric that routes what it can't read, and a service layer agents
               can use directly. Both hold the same line: coordinate the work, never see the content.
             </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="mb-6 page-surface overflow-hidden rounded border md:mb-8"
+          >
+            <div className="grid gap-0 lg:grid-cols-[0.72fr_2.28fr]">
+              <div className="border-b border-white/10 p-4 md:p-5 lg:border-b-0 lg:border-r">
+                <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+                  Visibility Boundary
+                </div>
+                <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/50">
+                  The protocol is designed around a simple promise: each layer only
+                  sees the minimum it needs to do its job.
+                </p>
+              </div>
+              <div className="grid gap-0 md:grid-cols-3">
+                {VISIBILITY_BOUNDARY.map((item) => (
+                  <div key={item.surface} className="min-w-0 border-t border-white/10 p-4 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0 md:p-5">
+                    <div className="text-[10px] uppercase tracking-eyebrow text-white/38">
+                      {item.surface}
+                    </div>
+                    <div className="mt-3 text-sm leading-relaxed text-white/74">
+                      {item.canSee}
+                    </div>
+                    <div className="mt-3 border-t border-white/10 pt-3 text-xs leading-relaxed text-brand-light/72">
+                      {item.cannotSee}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </motion.div>
 
           {/* Two pillars */}
