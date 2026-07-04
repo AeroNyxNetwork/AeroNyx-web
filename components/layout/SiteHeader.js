@@ -2,7 +2,15 @@
  * ============================================
  * File: components/layout/SiteHeader.js
  * ============================================
- * Modification Reason: v2.5 - Source cleanup and protocol naming alignment.
+ * Modification Reason: v2.6 - Download client CTA alignment.
+ *   Aligned the shared header's primary CTA with the homepage hero CTA:
+ *   both now route users directly to the Privacy Network client access
+ *   surface instead of using the broader Privacy Network product label.
+ *   Desktop and mobile CTA destinations share one constant to prevent future
+ *   route drift.
+ *
+ * Historical Notes:
+ * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
  *   the current protocol-first product story.
  *   Active-route presentation, Escape-to-close behavior, CTA hit areas, and
@@ -38,6 +46,7 @@
  *     now belongs to pages/privacy-network.js.
  *
  * Last Modified: v2.5 - Renamed active header component to SiteHeader
+ * Last Modified: v2.6 - Download client CTA alignment
  * ============================================
  */
 
@@ -56,6 +65,8 @@ const SiteHeader = () => {
   const locale = router.locale || DEFAULT_LOCALE;
   const copy = getMessages(locale);
   const currentLocale = SUPPORTED_LOCALES.find((item) => item.code === locale) || SUPPORTED_LOCALES[0];
+  const clientAccessHref = '/privacy-network#privacy-access';
+  const clientAccessLabel = copy.nav.downloadClient || copy.nav.downloads || copy.nav.privacyAccess;
   const isActiveRoute = (href) => !href.startsWith('http') && router.pathname === href;
   const desktopNavClass = (href) => (
     `relative inline-flex min-h-[44px] items-center text-xs uppercase tracking-eyebrow transition-colors xl:text-sm ${
@@ -232,11 +243,11 @@ const SiteHeader = () => {
                 whileTap={{ scale: 0.985 }}
               >
                 <Link
-                  href="/privacy-network"
+                  href={clientAccessHref}
                   locale={locale}
                   className="relative z-10 flex min-h-[44px] items-center border border-white/20 px-5 py-2.5 text-xs uppercase tracking-eyebrow transition-colors hover:border-white/40 hover:bg-white/[0.03] xl:px-6 xl:text-sm"
                 >
-                  {copy.nav.privacyAccess || copy.nav.downloads}
+                  {clientAccessLabel}
                 </Link>
               </motion.div>
             </div>
@@ -313,12 +324,12 @@ const SiteHeader = () => {
               ))}
               
               <Link
-                href="/privacy-network"
+                href={clientAccessHref}
                 locale={locale}
                 onClick={() => setIsOpen(false)}
                 className="mt-2 flex min-h-[48px] items-center justify-center border border-white/20 px-4 py-3 text-center transition-colors hover:border-white/40 hover:bg-white/[0.03]"
               >
-                {copy.nav.privacyAccess || copy.nav.downloads}
+                {clientAccessLabel}
               </Link>
 
               <div className="grid grid-cols-2 gap-2 pt-2">
