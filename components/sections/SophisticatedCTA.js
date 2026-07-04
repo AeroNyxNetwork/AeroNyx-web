@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/SophisticatedCTA.jsx
  * ============================================
- * Modification Reason: v2.5 — Product-action closing surface.
+ * Modification Reason: v2.6 — Closing proof strip.
+ *   Added a compact proof strip between the final thesis and the action
+ *   buttons so the homepage closes on the protocol's three memorable
+ *   qualities: blind, open, and useful. The primary actions remain unchanged.
+ *
+ * Historical Notes:
+ * v2.5 — Product-action closing surface.
  *   Replaced the two-action whitepaper/contact ending with a clearer
  *   three-action product surface: protocol docs, MemChain, and Nodeboard.
  *   The partnership email remains as a quiet secondary link below the main
@@ -31,6 +37,7 @@
  *
  * Last Modified: v2.4 — Final CTA eyebrow rhythm alignment
  * Last Modified: v2.5 — Product-action closing surface
+ * Last Modified: v2.6 — Closing proof strip
  * ============================================
  */
 
@@ -46,6 +53,11 @@ const EASE = [0.16, 1, 0.3, 1];
 const SophisticatedCTA = () => {
   const { locale } = useRouter();
   const copy = getMessages(locale || DEFAULT_LOCALE).cta;
+  const proofItems = copy.proofs || [
+    { value: 'Blind', label: 'Nodes coordinate without reading payloads.' },
+    { value: 'Open', label: 'Protocol docs, public code, aggregate health.' },
+    { value: 'Useful', label: 'Privacy Network, MemChain, and Nodeboard are entry points.' },
+  ];
   const actions = [
     {
       label: copy.docs || copy.whitepaper,
@@ -90,6 +102,25 @@ const SophisticatedCTA = () => {
             <p className="text-base md:text-xl text-white/50 font-light max-w-copy mx-auto px-4 leading-relaxed">
               {copy.description}
             </p>
+          </motion.div>
+
+          <motion.div
+            className="mx-auto mb-8 grid max-w-3xl grid-cols-1 gap-2.5 px-4 sm:grid-cols-3 md:mb-10"
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.65, delay: 0.08, ease: EASE }}
+          >
+            {proofItems.map((item) => (
+              <div key={item.value} className="page-card min-w-0 border px-4 py-4 text-left sm:text-center">
+                <div className="font-mono text-lg font-light leading-none text-brand-light md:text-xl">
+                  {item.value}
+                </div>
+                <div className="mt-2 text-sm leading-relaxed text-white/58">
+                  {item.label}
+                </div>
+              </div>
+            ))}
           </motion.div>
 
           {/* Actions */}
