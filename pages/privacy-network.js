@@ -4,7 +4,14 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v2.2 - Secondary page action alignment.
+ * Modification Reason: v2.3 - North Star Plan visibility.
+ *   Made the North Star Plan / 北極星計劃 directly visible and anchorable on the
+ *   Privacy Network page so the infrastructure covenant is not reduced to a
+ *   small English eyebrow. The section now states the same product thesis as
+ *   the homepage: more private, open source, and global by default.
+ *
+ * Historical Notes:
+ * v2.2 - Secondary page action alignment.
  *   Aligned the Privacy Network hero actions with the homepage product-action
  *   system: 48px touch targets, brand-primary emphasis, restrained tracking,
  *   visible focus states, and predictable mobile widths. This keeps the page
@@ -114,6 +121,7 @@
  * Last Modified: v2.0 - Mobile protection experience polish
  * Last Modified: v2.1 - Homepage typography alignment
  * Last Modified: v2.2 - Secondary page action alignment
+ * Last Modified: v2.3 - North Star Plan visibility
  * ============================================
  */
 
@@ -520,7 +528,7 @@ const PrivacyRouteVisual = () => {
 };
 
 const NorthStarPlan = () => (
-  <section className="border-y border-white/10 bg-white/[0.012] py-14 md:py-20">
+  <section id="north-star-plan" className="scroll-mt-24 border-y border-white/10 bg-white/[0.012] py-14 md:py-20">
     <Container>
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <motion.div
@@ -529,15 +537,22 @@ const NorthStarPlan = () => (
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: EASE }}
         >
-          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">North Star Plan</div>
+          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+            North Star Plan / 北極星計劃
+          </div>
           <h2 className="mt-3 text-display-md font-light text-white">
-            Decentralized nodes that can survive global audit and real operation.
+            More private. Open source. Global by default.
           </h2>
           <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">
-            The Privacy Network is not a closed app feature. It is the public
-            operating surface for AeroNyx's blind protocol: open decentralized nodes,
-            privacy-safe telemetry, signed peer state, restart recovery, and
-            route evidence that can be inspected without exposing users.
+            The Privacy Network is not a closed app feature. It is AeroNyx's
+            infrastructure covenant: decentralized nodes that can survive global
+            audit, real operation, and worldwide participation while preserving
+            the blind protocol boundary.
+          </p>
+          <p className="mt-4 text-sm leading-relaxed text-white/48 md:text-base">
+            The public surface can expose aggregate node health, signed peer
+            state, restart recovery, and route evidence. It must never become a
+            user-level surveillance system.
           </p>
         </motion.div>
 

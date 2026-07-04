@@ -2,7 +2,15 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v4.4 - Core product entrance polish.
+ * Modification Reason: v4.5 - North Star Plan visibility.
+ *   Promoted the North Star Plan / 北極星計劃 into a visible homepage covenant
+ *   band before the core product cards. This makes the privacy infrastructure
+ *   promise legible on the first page instead of hiding it in a later
+ *   Privacy Network detail section, while keeping the component focused on
+ *   load-bearing protocol/product surfaces.
+ *
+ * Historical Notes:
+ * v4.4 - Core product entrance polish.
  *   Added a dedicated two-card "core systems" entrance for Privacy Network
  *   and MemChain before the product tab index. This makes the homepage read
  *   as two load-bearing products on one blind protocol instead of a flat list
@@ -105,6 +113,7 @@
  * Last Modified: v4.2 - MemChain terminology and visual cleanup
  * Last Modified: v4.3 - Decentralized node product naming
  * Last Modified: v4.4 - Core product entrance polish
+ * Last Modified: v4.5 - North Star Plan visibility
  * ============================================
  */
 
@@ -123,6 +132,24 @@ const STATUS_BADGES = {
 };
 
 const CORE_PRODUCT_IDS = new Set(['vpn', 'memchain']);
+
+const NORTH_STAR_SIGNALS = [
+  {
+    label: '01',
+    title: 'More private',
+    detail: 'Nodes route ciphertext and signed state without turning public health into user surveillance.',
+  },
+  {
+    label: '02',
+    title: 'Open source',
+    detail: 'The decentralized node foundation is built to be inspected, operated, and improved in public.',
+  },
+  {
+    label: '03',
+    title: 'Global by default',
+    detail: 'Independent nodes can join the privacy fabric and harden the protocol across regions.',
+  },
+];
 
 const ProductsEcosystem = () => {
   const [selectedProduct, setSelectedProduct] = useState('vpn');
@@ -325,6 +352,35 @@ const ProductsEcosystem = () => {
               turn private routing and private context into encrypted relay,
               protocol services, and agent-native coordination.
             </p>
+          </div>
+
+          <div className="mb-8 border-y border-white/10 bg-white/[0.014] px-4 py-5 text-left md:mb-10 md:px-5 md:py-6">
+            <div className="grid gap-5 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
+              <div>
+                <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+                  North Star Plan / 北極星計劃
+                </div>
+                <h3 className="mt-3 text-2xl font-light leading-tight text-white md:text-display-md">
+                  More private. Open source. Global by default.
+                </h3>
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58 md:text-base">
+                  AeroNyx's node infrastructure covenant: every privacy product
+                  should be able to stand up to public audit, real operation, and
+                  worldwide participation without exposing user-level telemetry.
+                </p>
+              </div>
+              <div className="grid gap-2.5 sm:grid-cols-3">
+                {NORTH_STAR_SIGNALS.map((item) => (
+                  <div key={item.title} className="border border-white/10 bg-black/20 p-3 md:p-4">
+                    <div className="font-mono text-xs text-brand-light">{item.label}</div>
+                    <div className="mt-3 text-sm font-medium text-white">{item.title}</div>
+                    <p className="mt-2 text-xs leading-relaxed text-white/52 md:text-sm">
+                      {item.detail}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="mb-8 grid gap-3 md:mb-10 md:grid-cols-[1fr_auto_1fr] md:items-stretch md:gap-4">
