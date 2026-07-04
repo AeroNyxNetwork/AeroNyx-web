@@ -5,7 +5,16 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
- * Modification Reason: v1.3 - Advantage lab market context polish.
+ * Modification Reason: v1.4 - VC-grade product page refinement.
+ *   Added a compact hero proof rail, converted the comparison table into
+ *   responsive claim cards, and added a closing product action band. These
+ *   changes make MemChain easier to understand from a first-principles
+ *   product lens while preserving all existing privacy and benchmark limits.
+ *   The hero visual now animates vertically to avoid transient horizontal
+ *   overflow on iPhone-class screens.
+ *
+ * Historical Notes:
+ * v1.3 - Advantage lab market context polish.
  *   Added an interactive comparison lab that makes MemChain's node-blind,
  *   low-latency, offline, bring-your-own-brain, and zero-retrieval-inference
  *   advantages visible before the detailed pipeline/table sections, with a
@@ -27,7 +36,8 @@
  *   1. Render SEO metadata and shared background/header.
  *   2. Present the MemChain hero and claim-safe positioning.
  *   3. Explain pipeline, pillars, benchmarks, comparison, privacy boundary,
- *      and FAQ without overstating zero-knowledge or benchmark leadership.
+ *      FAQ, and product actions without overstating zero-knowledge or
+ *      benchmark leadership.
  *
  * Important Note for Next Developer:
  *   - Do not call MemChain a blockchain or a zero-knowledge proof system.
@@ -40,6 +50,7 @@
  * Last Modified: v1.1 - Secondary page typography polish
  * Last Modified: v1.2 - Interactive MemChain advantage lab
  * Last Modified: v1.3 - Market-category context and mobile metric polish
+ * Last Modified: v1.4 - VC-grade product page refinement
  * ============================================
  */
 
@@ -76,6 +87,24 @@ const keywords = [
   'on-device embeddings',
   'bring your own LLM',
   'MemChain',
+];
+
+const heroProofs = [
+  {
+    value: '0',
+    label: 'readable bytes on node',
+    detail: 'ciphertext + blind indexes only',
+  },
+  {
+    value: '2-40ms',
+    label: 'recall class',
+    detail: 'node-side 2-5ms / local 15-40ms design path',
+  },
+  {
+    value: 'offline',
+    label: 'local hippocampus',
+    detail: 'recall works when the encrypted local copy has the memory',
+  },
 ];
 
 const pipeline = [
@@ -305,6 +334,7 @@ export default function MemChainPage() {
         <Comparison />
         <PrivacyBoundary />
         <FAQ />
+        <MemChainAction />
       </main>
 
       <Footer />
@@ -346,11 +376,27 @@ const Hero = () => (
               Read privacy boundary
             </a>
           </div>
+
+          <div className="mt-8 grid gap-2.5 sm:grid-cols-3">
+            {heroProofs.map((item) => (
+              <div key={item.label} className="page-card min-w-0 border p-3 md:p-4">
+                <div className="font-mono text-2xl font-light leading-none text-white md:text-3xl">
+                  {item.value}
+                </div>
+                <div className="mt-2 text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
+                  {item.label}
+                </div>
+                <div className="mt-2 text-xs leading-relaxed text-white/42">
+                  {item.detail}
+                </div>
+              </div>
+            ))}
+          </div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.12, ease: EASE }}
         >
           <MemoryVisual />
@@ -656,25 +702,23 @@ const Comparison = () => (
         title="MemChain vs typical cloud memory services."
         description="The product difference is structural: who can read memory, where recall happens, and whether users can leave with their context."
       />
-      <div className="mt-10 overflow-x-auto border border-white/10">
-        <table className="w-full min-w-[760px] border-collapse text-left">
-          <thead>
-            <tr className="border-b border-white/10 bg-white/[0.035] text-[10px] uppercase tracking-eyebrow text-white/42">
-              <th className="p-4 font-medium">Dimension</th>
-              <th className="p-4 font-medium text-brand-light">MemChain</th>
-              <th className="p-4 font-medium">Typical cloud memory</th>
-            </tr>
-          </thead>
-          <tbody>
-            {comparisonRows.map(([dimension, memchain, cloud]) => (
-              <tr key={dimension} className="border-b border-white/10 last:border-b-0">
-                <td className="p-4 text-sm text-white/70">{dimension}</td>
-                <td className="p-4 text-sm text-white">{memchain}</td>
-                <td className="p-4 text-sm text-white/48">{cloud}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="mt-10 grid gap-3">
+        {comparisonRows.map(([dimension, memchain, cloud]) => (
+          <article key={dimension} className="page-card grid gap-4 border p-4 md:grid-cols-[0.72fr_1fr_1fr] md:p-5">
+            <div>
+              <div className="text-[10px] uppercase tracking-eyebrow text-white/35">dimension</div>
+              <h3 className="mt-2 text-lg font-light text-white">{dimension}</h3>
+            </div>
+            <div className="border border-brand-line bg-brand-faint p-3">
+              <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">MemChain</div>
+              <p className="mt-2 text-sm leading-relaxed text-white">{memchain}</p>
+            </div>
+            <div className="border border-white/10 bg-black/25 p-3">
+              <div className="text-[10px] uppercase tracking-eyebrow text-white/34">Typical cloud memory</div>
+              <p className="mt-2 text-sm leading-relaxed text-white/50">{cloud}</p>
+            </div>
+          </article>
+        ))}
       </div>
     </Container>
   </section>
@@ -722,6 +766,40 @@ const FAQ = () => (
             <p className="mt-3 text-sm leading-relaxed text-white/58">{item.a}</p>
           </article>
         ))}
+      </div>
+    </Container>
+  </section>
+);
+
+const MemChainAction = () => (
+  <section className="border-t border-white/10 py-14 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
+    <Container>
+      <div className="page-surface border p-5 text-center md:p-8">
+        <div className="mx-auto mb-4 inline-flex border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
+          Own the memory layer
+        </div>
+        <h2 className="mx-auto max-w-3xl text-display-md font-light text-white">
+          A private memory system should make AI more useful without making the server more powerful.
+        </h2>
+        <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/58 md:text-lg">
+          MemChain keeps durable context portable, encrypted, and local-first so
+          humans and agents can remember across tools without handing readable
+          memory to infrastructure.
+        </p>
+        <div className="mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-2">
+          <Link
+            href="/privacy-network"
+            className="inline-flex min-h-[48px] items-center justify-center bg-white px-5 py-3 text-center text-xs uppercase tracking-eyebrow text-black transition-colors hover:bg-white/90"
+          >
+            Explore Privacy Network
+          </Link>
+          <a
+            href="#privacy-boundary"
+            className="inline-flex min-h-[48px] items-center justify-center border border-white/15 px-5 py-3 text-center text-xs uppercase tracking-eyebrow text-white/70 transition-colors hover:border-brand-line hover:bg-brand-faint hover:text-white"
+          >
+            Review Privacy Boundary
+          </a>
+        </div>
       </div>
     </Container>
   </section>

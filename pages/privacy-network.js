@@ -4,7 +4,14 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v1.4 - North Star infrastructure narrative.
+ * Modification Reason: v1.5 - Product assurance bridge.
+ *   Added a user promise/protocol evidence bridge so the page explains how
+ *   daily protection signals map to auditable Rust-node evidence without
+ *   exposing user telemetry. This makes the secondary page feel like a mature
+ *   product surface instead of a collection of engineering claims.
+ *
+ * Historical Notes:
+ * v1.4 - North Star infrastructure narrative.
  *   Added the North Star Plan as the engineering covenant for the Privacy
  *   Network: more private, open source, globally usable, and built on Rust
  *   node infrastructure that can stand up to public audit and real operation.
@@ -46,6 +53,7 @@
  *
  * Last Modified: v1.3 - Removed old download surface wording
  * Last Modified: v1.4 - North Star infrastructure narrative
+ * Last Modified: v1.5 - Product assurance bridge
  * ============================================
  */
 
@@ -113,6 +121,25 @@ const northStarPrinciples = [
   },
 ];
 
+const assurancePairs = [
+  {
+    promise: 'Your IP is hidden',
+    evidence: 'The app can show route protection while public stats remain aggregate-only. No destination, URL, DNS, or browsing history appears on the public surface.',
+  },
+  {
+    promise: 'This connection is stable',
+    evidence: 'Protocol health is derived from relay readiness, restart recovery, and signed peer state rather than private session inspection.',
+  },
+  {
+    promise: 'Your traffic is encrypted',
+    evidence: 'The website can display encrypted bytes and packets because nodes report counters, not payloads or user-level traffic graphs.',
+  },
+  {
+    promise: 'Agents can use the same privacy layer',
+    evidence: 'Humans, apps, and autonomous agents share blind routing primitives, so agent coordination does not require a separate trusted network operator.',
+  },
+];
+
 const privacyBoundaries = [
   'No packet payloads',
   'No DNS contents',
@@ -166,6 +193,7 @@ export default function PrivacyNetworkPage() {
         <Hero />
         <NorthStarPlan />
         <LiveProtocolStats stats={stats} isLoading={isLoading} copy={copy} healthPercent={healthPercent} />
+        <AssuranceModel />
         <ProtectionSignals />
         <PrivacyBoundary />
         <PrivacyAccessSection />
@@ -351,15 +379,67 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
   );
 };
 
-const ProtectionSignals = () => (
+const AssuranceModel = () => (
   <section className="py-14 md:py-20">
     <Container>
+      <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: EASE }}
+          className="lg:sticky lg:top-28"
+        >
+          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">Protection model</div>
+          <h2 className="mt-3 text-display-md font-light text-white">
+            Make privacy visible without making users observable.
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">
+            A world-class privacy product should give users confidence every day:
+            hidden address, encrypted route, stable connection, healthy nodes.
+            AeroNyx maps those signals to aggregate Rust-node evidence instead
+            of turning protection into surveillance.
+          </p>
+        </motion.div>
+
+        <div className="grid gap-3">
+          {assurancePairs.map((item, index) => (
+            <motion.article
+              key={item.promise}
+              className="page-card border p-4 md:p-5"
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: index * 0.05, ease: EASE }}
+            >
+              <div className="grid gap-4 md:grid-cols-[0.74fr_1.26fr] md:items-start">
+                <div>
+                  <div className="text-[10px] uppercase tracking-eyebrow text-white/34">user promise</div>
+                  <h3 className="mt-2 text-xl font-light text-white">{item.promise}</h3>
+                </div>
+                <div className="border border-brand-line bg-brand-faint p-3">
+                  <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">protocol evidence</div>
+                  <p className="mt-2 text-sm leading-relaxed text-white/64 md:text-base">{item.evidence}</p>
+                </div>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </div>
+    </Container>
+  </section>
+);
+
+const ProtectionSignals = () => (
+  <section className="border-y border-white/10 bg-white/[0.012] py-14 md:py-20">
+    <Container>
       <div className="mb-10 max-w-3xl">
-        <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">User-facing assurance</div>
-        <h2 className="mt-3 text-display-md font-light text-white">Show protection, not debug counters.</h2>
+        <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">Daily assurance</div>
+        <h2 className="mt-3 text-display-md font-light text-white">A dashboard that feels protective, not technical.</h2>
         <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">
           Privacy products should make users feel protected every time they open
-          the app. The interface should prioritize clear status over raw node internals.
+          the app. The interface should prioritize clear status, regional context,
+          and connection confidence over raw node internals.
         </p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
