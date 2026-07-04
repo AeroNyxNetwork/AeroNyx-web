@@ -18,8 +18,8 @@
  *      with Math.random() during render — server and client produced
  *      different values (React hydration mismatch + first-paint flicker).
  *      Lines are now generated once on mount.
- *   2. Credibility: old earnings/GPU/mining demo visuals were replaced
- *      with protocol-node states: peer store, blind relay, restart recovery,
+ *   2. Credibility: old resource-reward demo visuals were replaced with
+ *      protocol-node states: peer store, blind relay, restart recovery,
  *      Memory Chain, and aggregate relay evidence.
  *   3. Brand: old green status text / green pulse → brand tokens; step
  *      content transition → 8px rise + fade; radii → 2/4/6px; external
@@ -37,7 +37,7 @@
  *   - Live counters source ONLY privacy-safe aggregates. Never surface
  *     node IDs/endpoints here.
  *   - Visuals must describe protocol-node capabilities, never speculative
- *     earnings, mining, or performance claims.
+ *     reward or performance claims.
  *   - Brand rule: no green, no emojis.
  *
  * Last Modified: v2.3 — Apple-grade operator journey control polish

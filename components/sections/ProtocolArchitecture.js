@@ -2,7 +2,14 @@
  * ============================================
  * File: components/sections/ProtocolArchitecture.js
  * ============================================
- * Modification Reason: v4.5 - Source cleanup and protocol naming alignment.
+ * Modification Reason: v4.7 - Motion accessibility and identity wording.
+ *   The architecture visuals now respect prefers-reduced-motion so the public
+ *   protocol page keeps Apple-grade accessibility. Service-layer copy also
+ *   moves from legacy credential wording to identity-derived permission scopes,
+ *   matching the current protocol narrative without implying a finance surface.
+ *
+ * Historical Notes:
+ * v4.5 - Source cleanup and protocol naming alignment.
  *   Renamed the active architecture section so the visible two-layer story
  *   and layout are preserved while stale implementation naming is removed.
  *
@@ -47,11 +54,12 @@
  * Last Modified: v4.5 - Renamed active section to ProtocolArchitecture
  * Last Modified: v4.6 - Reframed service layer away from payment-first copy
  * and toward encrypted coordination services.
+ * Last Modified: v4.7 - Reduced-motion support and identity wording
  * ============================================
  */
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Container from '../ui/Container';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -70,7 +78,7 @@ const PILLARS = [
       'Encrypted packet and traffic counters only in aggregate',
       'Foundation for future multi-hop routing',
     ],
-    visual: <FabricVisual />,
+    visual: 'fabric',
   },
   {
     tag: 'The Service Layer',
@@ -82,14 +90,16 @@ const PILLARS = [
     technical: [
       'Blind relay and encrypted message routing',
       'MemChain context handoff without node-readable memory',
-      'Wallet-based identity and service permissions',
+      'Identity-derived permissions and service scopes',
       'Public stats expose health, not user data',
     ],
-    visual: <ServiceVisual />,
+    visual: 'service',
   },
 ];
 
 const ProtocolArchitecture = () => {
+  const reduced = useReducedMotion();
+
   return (
     <section id="how-it-works" className="scroll-mt-20 py-12 md:scroll-mt-24 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
@@ -131,7 +141,7 @@ const ProtocolArchitecture = () => {
                   className="aspect-[16/10] border-b border-white/10 p-5 md:p-8"
                   style={{ background: 'var(--surface-0, #08080D)' }}
                 >
-                  {pillar.visual}
+                  {pillar.visual === 'service' ? <ServiceVisual reduced={reduced} /> : <FabricVisual reduced={reduced} />}
                 </div>
 
                 {/* Content */}
@@ -202,7 +212,7 @@ const ProtocolArchitecture = () => {
  * ============================================================ */
 
 /** Blind Fabric — a mesh routing a ciphertext packet, eyes closed. */
-function FabricVisual() {
+function FabricVisual({ reduced }) {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <svg viewBox="0 0 320 180" className="w-full h-full max-w-[420px]" fill="none">
@@ -227,8 +237,8 @@ function FabricVisual() {
           r="3.5"
           fill="#9788F7"
           initial={{ cx: 40, cy: 60 }}
-          animate={{ cx: [40, 130, 220, 285], cy: [60, 40, 70, 45] }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: 'linear' }}
+          animate={reduced ? { cx: 220, cy: 70 } : { cx: [40, 130, 220, 285], cy: [60, 40, 70, 45] }}
+          transition={reduced ? { duration: 0 } : { duration: 3.5, repeat: Infinity, ease: 'linear' }}
         />
         {/* hex label following the packet feel — static, quiet */}
         <text x="160" y="172" textAnchor="middle"
@@ -241,7 +251,7 @@ function FabricVisual() {
 }
 
 /** Agent Services — route → recall → coordinate, in mono. */
-function ServiceVisual() {
+function ServiceVisual({ reduced }) {
   const steps = ['route', 'recall', 'coordinate'];
   return (
     <div className="relative w-full h-full flex items-center justify-center">
@@ -250,8 +260,8 @@ function ServiceVisual() {
           <motion.div
             key={verb}
             className="flex items-center justify-between rounded border border-white/10 bg-white/[0.03] px-3.5 py-2.5"
-            initial={{ opacity: 0, x: -12 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={reduced ? false : { opacity: 0, x: -12 }}
+            whileInView={reduced ? undefined : { opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 + i * 0.15, duration: 0.4, ease: EASE }}
           >
@@ -264,8 +274,8 @@ function ServiceVisual() {
         ))}
         <motion.div
           className="grid grid-cols-2 gap-3 pt-3 border-t border-white/10"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={reduced ? false : { opacity: 0 }}
+          whileInView={reduced ? undefined : { opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.75 }}
         >

@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/FutureVision.jsx
  * ============================================
- * Modification Reason: v2.4 — Roadmap section rhythm polish.
+ * Modification Reason: v2.5 - Protocol identity wording.
+ *   Replaced legacy credential roadmap wording with identity-derived key
+ *   language so the future narrative stays focused on private memory, agent
+ *   services, and the blind protocol.
+ *
+ * Historical Notes:
+ * v2.4 — Roadmap section rhythm polish.
  *   Added the shared homepage eyebrow pattern before the roadmap headline so
  *   the future narrative reads as a deliberate protocol roadmap rather than a
  *   separate marketing block.
@@ -30,6 +36,7 @@
  *     never as guarantees. Keep it that way.
  *
  * Last Modified: v2.4 — Roadmap eyebrow rhythm alignment
+ * Last Modified: v2.5 - Protocol identity wording
  * ============================================
  */
 
@@ -56,7 +63,7 @@ const FutureVision = () => {
       title: 'Memory Becomes Portable',
       description: 'Memory Chain matures into a cross-client standard: encrypted personal context that follows the user between AI tools instead of dying inside each vendor.',
       implications: [
-        'Wallet-derived identity as the memory root',
+        'Identity-derived keys as the memory root',
         'Agent frameworks reading and writing user-owned state',
         'Sync without any party seeing raw content',
       ],
