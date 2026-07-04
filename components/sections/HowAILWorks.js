@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/HowAILWorks.js
  * ============================================
- * Modification Reason: v4.0 — Narrative compression for the approved
+ * Modification Reason: v4.4 — Homepage section rhythm polish.
+ *   Added the same quiet eyebrow treatment used by the product and protocol
+ *   evidence sections so the architecture handoff reads as part of one
+ *   product narrative instead of a standalone engineering block.
+ *
+ * Historical Notes:
+ * v4.0 — Narrative compression for the approved
  *   top-tier restructure. Cut from four steps to the two load-bearing
  *   ones: Blind Fabric and Agent-Native Services. The removed steps are
  *   fully covered elsewhere and were causing homepage repetition:
@@ -43,7 +49,7 @@
  *   - Section headline uses the shared text-display-lg token. Keep the
  *     architecture tone precise and avoid decorative display styling.
  *
- * Last Modified: v4.3 — Apple-grade pillar spacing and bullet rhythm polish
+ * Last Modified: v4.4 — Section eyebrow rhythm alignment
  * ============================================
  */
 
@@ -100,6 +106,9 @@ const HowAILWorks = () => {
             transition={{ duration: 0.6, ease: EASE }}
             className="mb-10 max-w-3xl md:mb-14"
           >
+            <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
+              Protocol Architecture
+            </div>
             <h2 className="text-display-lg font-light mb-4 md:mb-6">
               Two layers. One <em className="text-brand-light" style={{ fontStyle: 'italic' }}>invariant.</em>
             </h2>

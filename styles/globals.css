@@ -559,7 +559,7 @@ img, svg {
 }
 
 /* ---- Section z-index anchors ---- */
-#features, #how-it-works, #technology, #ecosystem, #products, #vision, #download-vpn {
+#features, #how-it-works, #technology, #ecosystem, #products, #vision {
   position: relative;
   z-index: 10;
 }

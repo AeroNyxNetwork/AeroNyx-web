@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/FutureVision.jsx
  * ============================================
- * Modification Reason: v2.0 — Copy credibility rewrite + token pass.
+ * Modification Reason: v2.4 — Roadmap section rhythm polish.
+ *   Added the shared homepage eyebrow pattern before the roadmap headline so
+ *   the future narrative reads as a deliberate protocol roadmap rather than a
+ *   separate marketing block.
+ *
+ * Historical Notes:
+ * v2.0 — Copy credibility rewrite + token pass.
  *   ⚠️ CONTENT CHANGE (needs owner sign-off): the v1 copy ("The
  *   Conscious Web", "birthing a new form of technological life",
  *   "evolving beyond human comprehension", "infrastructure
@@ -23,7 +29,7 @@
  *   - Roadmap items are stated as intentions ("we aim", "designed to"),
  *     never as guarantees. Keep it that way.
  *
- * Last Modified: v2.3 — Roadmap hierarchy and mobile scan polish
+ * Last Modified: v2.4 — Roadmap eyebrow rhythm alignment
  * ============================================
  */
 
@@ -79,6 +85,9 @@ const FutureVision = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
+            <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
+              Protocol Roadmap
+            </div>
             <h2 className="text-display-lg font-light mb-4 md:mb-6">
               The future we're building
             </h2>

@@ -2,10 +2,11 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v3.6 - Apple-grade selector keyboard polish.
- *   Product tabs now support roving focus, Home/End, and arrow-key selection
- *   so the ecosystem selector behaves like a mature product control rather
- *   than a set of decorative buttons.
+ * Modification Reason: v3.7 - Protocol naming consistency polish.
+ *   The Privacy Access product visual no longer carries the legacy tunnel-era
+ *   component name internally. This keeps implementation vocabulary aligned
+ *   with the public AeroNyx Privacy Protocol / Privacy Access narrative while
+ *   preserving the product id and all routing behavior.
  *
  * Historical Notes:
  * v3.4 — Product hierarchy order correction.
@@ -66,7 +67,7 @@
  * Last Modified: v3.3 — Homepage product index spacing and interaction polish
  * Last Modified: v3.4 — Privacy Access and MemChain ordered before x402 rails
  * Last Modified: v3.5 — Mobile snap selector and detail card rhythm polish
- * Last Modified: v3.6 - Roving keyboard focus for product tabs
+ * Last Modified: v3.7 - Privacy Access visual naming polish
  * ============================================
  */
 
@@ -475,7 +476,7 @@ const ProductsEcosystem = () => {
 const ProductVisual = ({ productId }) => {
   const visuals = {
     foundation: <FoundationVisual />,
-    vpn: <VPNVisual />,
+    vpn: <PrivacyAccessVisual />,
     compute: <ComputeVisual />,
     cdn: <CDNVisual />,
     memchain: <MemChainProductVisual />,
@@ -515,7 +516,7 @@ const FoundationVisual = () => (
   </div>
 );
 
-const VPNVisual = () => (
+const PrivacyAccessVisual = () => (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="text-center">
       <div className="w-24 h-24 mx-auto mb-4 rounded-pill border-2 border-white/20 flex items-center justify-center">

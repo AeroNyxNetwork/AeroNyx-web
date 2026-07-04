@@ -32,8 +32,8 @@
  *   - next/link and next/router for locale-aware internal routing.
  *
  * Important Note for Next Developer:
- *   - Do not point the CTA back to #download-vpn on the homepage. The product
- *     download area now belongs to pages/privacy-network.js.
+ *   - Do not point the CTA back to a homepage download anchor. Privacy Access
+ *     now belongs to pages/privacy-network.js.
  *
  * Last Modified: v2.4 - Active navigation and control hit-area polish
  * ============================================

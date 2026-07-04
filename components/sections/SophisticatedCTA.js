@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/SophisticatedCTA.jsx
  * ============================================
- * Modification Reason: v2.0 — Interaction fix + alignment.
+ * Modification Reason: v2.4 — Final conversion rhythm polish.
+ *   Added a restrained final eyebrow before the closing CTA so the bottom of
+ *   the homepage resolves with the same protocol-first hierarchy established
+ *   by the hero, product index, architecture, and roadmap sections.
+ *
+ * Historical Notes:
+ * v2.0 — Interaction fix + alignment.
  *   1. FIX: entrance animations used `animate` (fired on page mount) —
  *      this section sits at the very bottom, so the animation always
  *      completed long before the user scrolled to it. Now whileInView.
@@ -16,7 +22,7 @@
  *   - Keep whileInView here — do not revert to animate.
  *   - Whitepaper URL must match Footer; change both together.
  *
- * Last Modified: v2.3 — Final CTA control geometry polish
+ * Last Modified: v2.4 — Final CTA eyebrow rhythm alignment
  * ============================================
  */
 
@@ -44,6 +50,9 @@ const SophisticatedCTA = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: EASE }}
           >
+            <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
+              Build On AeroNyx
+            </div>
             <h2 className="text-display-xl font-light mb-4 md:mb-6 px-4">
               {copy.line1}
               <span className="block font-medium">{copy.line2}</span>
