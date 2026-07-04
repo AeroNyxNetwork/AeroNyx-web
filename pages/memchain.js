@@ -5,7 +5,15 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
- * Modification Reason: v1.6 - Protocol continuity bridge.
+ * Modification Reason: v1.7 - Evidence lab refinement.
+ *   Upgraded the interactive advantage lab so every selected axis explains
+ *   the user outcome, what the storage node can see, and the public proof
+ *   surface. This turns the section from a feature comparison into a
+ *   VC-grade trust model without adding new files or weakening the
+ *   node-blind privacy boundary.
+ *
+ * Historical Notes:
+ * v1.6 - Protocol continuity bridge.
  *   Added a compact secondary-page bridge that connects MemChain to Privacy
  *   Network under the same blind AeroNyx protocol invariant: private traffic
  *   in motion and private memory at rest. Also removed finance-adjacent
@@ -72,6 +80,7 @@
  * Last Modified: v1.4 - VC-grade product page refinement
  * Last Modified: v1.5 - Product-grade memory flow animation
  * Last Modified: v1.6 - Protocol continuity bridge
+ * Last Modified: v1.7 - Evidence lab refinement
  * ============================================
  */
 
@@ -250,6 +259,9 @@ const advantageAxes = [
     title: 'The node holds memory it cannot open.',
     description:
       'MemChain stores ciphertext, blind indexes, and opaque relationship edges. The storage node can sync and order memory, but it cannot read or re-sign the facts.',
+    userOutcome: 'AI remembers without server-readable memory',
+    nodeView: 'ciphertext, blind index, opaque edges',
+    proofSurface: '0 readable bytes on storage node',
     memchain: {
       title: 'MemChain',
       headline: 'Cryptographically unreadable',
@@ -270,6 +282,9 @@ const advantageAxes = [
     title: 'Recall should feel instant, not like a cloud round trip.',
     description:
       'Node-side recall measured at 2-5ms. Local recall is designed for a 15-40ms path, while typical cloud memory often lives in the hundreds-of-milliseconds to seconds range.',
+    userOutcome: 'memory appears while the conversation is still flowing',
+    nodeView: 'search request over sealed indexes',
+    proofSurface: 'millisecond-class recall path',
     memchain: {
       title: 'MemChain',
       headline: '2-5ms node / 15-40ms local',
@@ -290,6 +305,9 @@ const advantageAxes = [
     title: 'Memory should survive a bad network.',
     description:
       'MemChain keeps an encrypted local copy. When the relevant memory is present locally, recall continues without contacting the storage node.',
+    userOutcome: 'private context works during weak connectivity',
+    nodeView: 'sync backlog after local recall',
+    proofSurface: 'local encrypted hippocampus',
     memchain: {
       title: 'MemChain',
       headline: 'local encrypted hippocampus',
@@ -310,6 +328,9 @@ const advantageAxes = [
     title: 'The memory layer should not lock you to one model.',
     description:
       'MemChain separates memory ownership from model choice. Users can choose an external AI provider or a local model, while the memory layer remains portable.',
+    userOutcome: 'memory follows the user across model choices',
+    nodeView: 'encrypted memory envelope, not model output',
+    proofSurface: 'portable identity-derived memory',
     memchain: {
       title: 'MemChain',
       headline: 'bring your own brain',
@@ -330,6 +351,9 @@ const advantageAxes = [
     title: 'Search should not burn a model call every time.',
     description:
       'MemChain retrieval uses search and ranking instead of model inference. Models are used for distillation and answers, not for every memory lookup.',
+    userOutcome: 'fast recall without token spend on lookup',
+    nodeView: 'ranked encrypted reference set',
+    proofSurface: '0 model calls for retrieval',
     memchain: {
       title: 'MemChain',
       headline: 'zero LLM calls for retrieval',
@@ -696,6 +720,24 @@ const MemoryAdvantageLab = () => {
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58 md:text-base">
                 {activeAxis.description}
               </p>
+              <div className="mt-5 border border-brand-line bg-brand-faint p-3 sm:hidden">
+                <div className="text-[9px] uppercase tracking-[0.12em] text-brand-light">proof surface</div>
+                <div className="mt-1 text-xs leading-relaxed text-white/72">{activeAxis.proofSurface}</div>
+              </div>
+              <div className="mt-5 hidden grid-cols-3 gap-2 sm:grid">
+                {[
+                  ['user outcome', activeAxis.userOutcome],
+                  ['node view', activeAxis.nodeView],
+                  ['proof surface', activeAxis.proofSurface],
+                ].map(([label, value]) => (
+                  <div key={label} className="min-w-0 border border-white/10 bg-white/[0.025] p-2.5 md:p-3">
+                    <div className="text-[9px] uppercase tracking-[0.12em] text-white/34">{label}</div>
+                    <div className="mt-2 text-xs leading-snug text-white/68 md:text-sm md:leading-relaxed">
+                      {value}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="grid lg:grid-cols-[1fr_0.42fr_1fr]">

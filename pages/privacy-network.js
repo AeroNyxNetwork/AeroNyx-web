@@ -4,7 +4,14 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v1.7 - Product continuity bridge.
+ * Modification Reason: v1.8 - Trustworthy stats dashboard.
+ *   Refined the live protocol stats section into a protection evidence panel:
+ *   each metric now states the user-facing signal and the privacy-preserving
+ *   public evidence boundary. This keeps the page product-grade while avoiding
+ *   user-level telemetry or route disclosure.
+ *
+ * Historical Notes:
+ * v1.7 - Product continuity bridge.
  *   Added a secondary-page bridge that connects Privacy Network to MemChain
  *   as the same blind protocol trust boundary: private traffic in motion and
  *   private memory at rest. Public telemetry wording was also tightened away
@@ -73,6 +80,7 @@
  * Last Modified: v1.5 - Product assurance bridge
  * Last Modified: v1.6 - Blind routing animation polish
  * Last Modified: v1.7 - Product continuity bridge
+ * Last Modified: v1.8 - Trustworthy stats dashboard
  * ============================================
  */
 
@@ -504,6 +512,8 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
     {
       label: 'Encrypted traffic',
       description: 'Total encrypted payload bytes relayed by AeroNyx protocol nodes.',
+      userSignal: 'Your route is carrying encrypted work',
+      publicEvidence: 'aggregate bytes only',
       liveValue: stats.encryptedTrafficBytes,
       fallback: stats.encryptedTraffic,
       suffix: copy.join.stats.bytesUnit,
@@ -512,6 +522,8 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
     {
       label: 'Encrypted packets',
       description: 'Encrypted protocol packets forwarded for routing, messaging, memory, and agent coordination.',
+      userSignal: 'The blind protocol is actively forwarding ciphertext',
+      publicEvidence: 'packet count without content',
       liveValue: stats.encryptedMessagesRaw,
       fallback: stats.encryptedMessages,
       suffix: copy.join.stats.packetsUnit,
@@ -520,6 +532,8 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
     {
       label: 'Protocol health',
       description: 'Readiness score from aggregate protocol foundation checks.',
+      userSignal: 'The node layer is reporting usable protection',
+      publicEvidence: 'foundation checks only',
       fallback: `${healthPercent}%`,
       suffix: 'ready',
     },
@@ -535,6 +549,19 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
             The product shows enough to feel protected without exposing who users are,
             where they go, or what they send.
           </p>
+        </div>
+        <div className="mb-4 grid grid-cols-3 gap-2">
+          {[
+            ['user sees', 'protected', 'hidden address, encrypted route, healthy protocol'],
+            ['public sees', 'aggregate', 'aggregate counters and readiness only'],
+            ['nodes see', 'ciphertext', 'ciphertext and signed operational metadata'],
+          ].map(([label, mobileValue, value]) => (
+            <div key={label} className="border border-white/10 bg-black/25 px-3 py-2.5">
+              <div className="text-[9px] uppercase tracking-[0.12em] text-white/34">{label}</div>
+              <div className="mt-1 text-xs leading-relaxed text-white/62 md:hidden">{mobileValue}</div>
+              <div className="mt-1 hidden text-sm leading-relaxed text-white/62 md:block">{value}</div>
+            </div>
+          ))}
         </div>
         <div className="grid gap-4 lg:grid-cols-3">
           {metrics.map((item) => (
@@ -554,7 +581,17 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
                 )}
               </div>
               <div className="mt-3 text-[10px] uppercase tracking-eyebrow text-white/42">{item.label}</div>
-              <p className="mt-3 text-sm leading-relaxed text-white/48">{item.description}</p>
+              <p className="mt-3 hidden text-sm leading-relaxed text-white/48 sm:block">{item.description}</p>
+              <div className="mt-5 grid gap-2">
+                <div className="border border-brand-line bg-brand-faint px-3 py-2">
+                  <div className="text-[9px] uppercase tracking-[0.12em] text-brand-light">user signal</div>
+                  <div className="mt-1 text-xs leading-relaxed text-white/70">{item.userSignal}</div>
+                </div>
+                <div className="hidden border border-white/10 bg-black/25 px-3 py-2 md:block">
+                  <div className="text-[9px] uppercase tracking-[0.12em] text-white/34">public evidence</div>
+                  <div className="mt-1 text-xs leading-relaxed text-white/50">{item.publicEvidence}</div>
+                </div>
+              </div>
             </article>
           ))}
         </div>
