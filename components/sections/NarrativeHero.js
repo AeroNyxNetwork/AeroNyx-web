@@ -2,9 +2,15 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.3.0
+ * Version: 8.4.0
  *
  * Modification Reason:
+ *   v8.4 — Mobile Lens compatibility polish. Desktop keeps the cinematic
+ *   auto-sweep proof, while iPhone-class viewports start with the conversation
+ *   almost fully readable and let the user drag into ciphertext. This prevents
+ *   first-load chat bubbles from looking accidentally clipped on small screens
+ *   while preserving the "infrastructure sees ciphertext" interaction.
+ *
  *   v8.3 — Apple-grade control polish. Hero CTAs now keep a 48px minimum
  *   touch target, stable full-width mobile geometry, and centered labels so
  *   the first viewport feels like a finished product surface on iOS/Android.
@@ -56,6 +62,7 @@
  *     not show it during auto-sweep or it loses all meaning.
  *
  * Last Modified: v8.3.0 — Hero CTA touch geometry polish
+ * Last Modified: v8.4.0 — Mobile Lens first-paint readability polish
  * ============================================================================
  */
 
@@ -71,6 +78,7 @@ const ACCENT_LT = '#9788F7';
 const SCAN = '#5FBBF7';
 
 const EASE = [0.16, 1, 0.3, 1];
+const COMPACT_LENS_START = 96;
 
 const HEXC = '0123456789abcdef';
 const rhex = (n) =>
@@ -356,7 +364,7 @@ function Bubble({ msg, cipher, idx }) {
   if (cipher)
     return (
       <div className={`flex ${isYou ? 'justify-end' : 'justify-start'} mb-3`}>
-        <div className="max-w-[78%] rounded-md px-4 py-3"
+        <div className="max-w-[86%] rounded-md px-3 py-2.5 sm:max-w-[78%] sm:px-4 sm:py-3"
           style={{ background: 'rgba(95,187,247,0.04)', border: '1px solid rgba(95,187,247,0.14)' }}>
           <div className="text-[9px] break-all leading-relaxed"
             style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(95,187,247,0.45)' }}>
@@ -372,7 +380,7 @@ function Bubble({ msg, cipher, idx }) {
   if (msg.receipt)
     return (
       <div className="flex justify-start mb-3">
-        <div className="max-w-[78%] rounded-md px-4 py-3"
+        <div className="max-w-[86%] rounded-md px-3 py-2.5 sm:max-w-[78%] sm:px-4 sm:py-3"
           style={{ background: 'rgba(119,98,243,0.08)', border: '1px solid rgba(119,98,243,0.28)' }}>
           <div className="flex items-center gap-2 mb-1.5">
             <span className="w-4 h-4 rounded-full flex items-center justify-center text-[9px]"
@@ -391,7 +399,7 @@ function Bubble({ msg, cipher, idx }) {
     );
   return (
     <div className={`flex ${isYou ? 'justify-end' : 'justify-start'} mb-3`}>
-      <div className="max-w-[78%] rounded-md px-4 py-2.5 text-sm leading-relaxed"
+      <div className="max-w-[86%] rounded-md px-3 py-2.5 text-sm leading-relaxed sm:max-w-[78%] sm:px-4"
         style={isYou
           ? { background: 'rgba(119,98,243,0.12)', border: '1px solid rgba(119,98,243,0.2)', color: 'rgba(255,255,255,0.92)' }
           : { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)' }}>
@@ -403,11 +411,11 @@ function Bubble({ msg, cipher, idx }) {
 
 function Scene({ cipher }) {
   return (
-    <div className="absolute inset-0 flex flex-col px-5 sm:px-8 pt-5 pb-12">
-      <div className="flex items-center justify-between pb-4 mb-4 border-b"
+    <div className="absolute inset-0 flex flex-col px-4 pt-4 pb-10 sm:px-8 sm:pt-5 sm:pb-12">
+      <div className="flex items-center justify-between pb-3 mb-3 border-b sm:mb-4 sm:pb-4"
         style={{ borderColor: cipher ? 'rgba(95,187,247,0.1)' : 'rgba(255,255,255,0.07)' }}>
         {cipher ? (
-          <span className="text-[10px] tracking-widest"
+          <span className="block min-w-0 truncate text-[10px] tracking-widest"
             style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(95,187,247,0.45)' }}>
             INTERCEPT — udp :51820 · classified: HTTPS
           </span>
@@ -448,6 +456,7 @@ const stageItem = {
 const NarrativeHero = () => {
   const [reduced, setReduced] = useState(false);
   const [split, setSplit] = useState(50);
+  const [isCompactLens, setIsCompactLens] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
   const boxRef = useRef(null);
@@ -478,8 +487,30 @@ const NarrativeHero = () => {
     };
   }, []);
 
+  // v8.4: small screens cannot make a vertical before/after split feel
+  // effortless on first paint. Keep the proof interactive, but start from a
+  // readable conversation so the hero never looks accidentally cropped.
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(max-width: 767px)');
+    const syncCompactLens = (eventOrQuery) => {
+      setIsCompactLens(Boolean(eventOrQuery.matches));
+    };
+
+    syncCompactLens(mq);
+
+    if (mq.addEventListener) mq.addEventListener('change', syncCompactLens);
+    else if (mq.addListener) mq.addListener(syncCompactLens);
+
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener('change', syncCompactLens);
+      else if (mq.removeListener) mq.removeListener(syncCompactLens);
+    };
+  }, []);
+
   // Auto-sweep (preserved) — pauses forever once the visitor takes over.
   useEffect(() => {
+    if (isCompactLens) { setSplit(COMPACT_LENS_START); return; }
     if (reduced) { setSplit(50); return; }
     let raf, segStart = performance.now();
     const loop = (now) => {
@@ -499,7 +530,7 @@ const NarrativeHero = () => {
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [reduced]);
+  }, [reduced, isCompactLens]);
 
   // Pointer + touch drag (preserved from v7.5)
   useEffect(() => {
@@ -653,7 +684,7 @@ const NarrativeHero = () => {
             >
               {/* Caption elevated from hint to narrative (v8.0) */}
               <p className="text-center text-xs tracking-wide mb-3" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                Drag the lens — <span style={{ color: 'rgba(138,209,255,0.75)' }}>infrastructure only sees ciphertext.</span>
+                {isCompactLens ? 'Drag left to reveal the network view' : 'Drag the lens'} — <span style={{ color: 'rgba(138,209,255,0.75)' }}>infrastructure only sees ciphertext.</span>
               </p>
 
               <div
@@ -672,7 +703,7 @@ const NarrativeHero = () => {
                   background: 'rgba(10,10,17,0.92)',
                   WebkitBackdropFilter: 'blur(6px)',
                   backdropFilter: 'blur(6px)',
-                  height: '440px',
+                  height: isCompactLens ? '390px' : '440px',
                   touchAction: 'none',
                   cursor: reduced ? 'default' : 'ew-resize',
                   boxShadow: '0 0 80px rgba(0,0,0,0.8)',
