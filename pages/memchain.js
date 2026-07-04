@@ -5,7 +5,15 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
- * Modification Reason: v1.9 - Homepage typography alignment.
+ * Modification Reason: v2.0 - Secondary page action alignment.
+ *   Aligned the MemChain hero and closing action buttons with the homepage
+ *   product-action system: 48px touch targets, brand-primary emphasis,
+ *   restrained tracking, visible focus states, and predictable mobile widths.
+ *   This keeps MemChain visually connected to the protocol homepage while
+ *   preserving the approved node-blind claims, routes, and privacy boundary.
+ *
+ * Historical Notes:
+ * v1.9 - Homepage typography alignment.
  *   Aligned the MemChain hero with the homepage NarrativeHero typography by
  *   using the shared `.hero-title` contract and matching the lighter subtitle
  *   rhythm. This keeps the secondary product page visually connected to the
@@ -98,6 +106,7 @@
  * Last Modified: v1.7 - Evidence lab refinement
  * Last Modified: v1.8 - Mobile product interaction polish
  * Last Modified: v1.9 - Homepage typography alignment
+ * Last Modified: v2.0 - Secondary page action alignment
  * ============================================
  */
 
@@ -470,16 +479,16 @@ const Hero = () => (
               that can sync across devices without giving storage nodes readable data.
             </span>
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex w-full flex-col items-start gap-3 sm:w-auto sm:flex-row sm:gap-4">
             <Link
               href="/privacy-network"
-              className="inline-flex min-h-[44px] items-center justify-center border border-white/20 px-6 py-3 text-center text-xs uppercase leading-none tracking-eyebrow text-white transition-colors hover:border-brand-line hover:bg-brand-faint md:text-sm"
+              className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border border-brand-line bg-brand px-7 py-3.5 text-center text-sm font-semibold tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.22)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto"
             >
               Explore privacy network
             </Link>
             <a
               href="#privacy-boundary"
-              className="inline-flex min-h-[44px] items-center justify-center border border-white/10 px-6 py-3 text-center text-xs uppercase leading-none tracking-eyebrow text-white/60 transition-colors hover:text-white md:text-sm"
+              className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border border-white/15 px-7 py-3.5 text-center text-sm font-medium tracking-wide text-white/78 transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 sm:w-auto"
             >
               Read privacy boundary
             </a>
@@ -1032,16 +1041,16 @@ const MemChainAction = () => (
           humans and agents can remember across tools without handing readable
           memory to infrastructure.
         </p>
-        <div className="mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-2">
+        <div className="mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-2 sm:gap-4">
           <Link
             href="/privacy-network"
-            className="inline-flex min-h-[48px] items-center justify-center bg-white px-5 py-3 text-center text-xs uppercase tracking-eyebrow text-black transition-colors hover:bg-white/90"
+            className="inline-flex min-h-[48px] items-center justify-center rounded border border-brand-line bg-brand px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.18)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light"
           >
             Explore Privacy Network
           </Link>
           <a
             href="#privacy-boundary"
-            className="inline-flex min-h-[48px] items-center justify-center border border-white/15 px-5 py-3 text-center text-xs uppercase tracking-eyebrow text-white/70 transition-colors hover:border-brand-line hover:bg-brand-faint hover:text-white"
+            className="inline-flex min-h-[48px] items-center justify-center rounded border border-white/15 px-6 py-3.5 text-center text-sm font-medium tracking-wide text-white/76 transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
           >
             Review Privacy Boundary
           </a>

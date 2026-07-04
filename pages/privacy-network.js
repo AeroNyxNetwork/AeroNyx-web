@@ -4,7 +4,15 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v2.1 - Homepage typography alignment.
+ * Modification Reason: v2.2 - Secondary page action alignment.
+ *   Aligned the Privacy Network hero actions with the homepage product-action
+ *   system: 48px touch targets, brand-primary emphasis, restrained tracking,
+ *   visible focus states, and predictable mobile widths. This keeps the page
+ *   premium and consistent without changing the Privacy Network narrative,
+ *   aggregate stats, public telemetry boundary, or download route.
+ *
+ * Historical Notes:
+ * v2.1 - Homepage typography alignment.
  *   Aligned the Privacy Network hero with the homepage NarrativeHero
  *   typography by using the shared `.hero-title` contract and matching
  *   the lighter subtitle rhythm. The page keeps the existing Privacy
@@ -105,6 +113,7 @@
  * Last Modified: v1.9 - Decentralized node naming
  * Last Modified: v2.0 - Mobile protection experience polish
  * Last Modified: v2.1 - Homepage typography alignment
+ * Last Modified: v2.2 - Secondary page action alignment
  * ============================================
  */
 
@@ -329,16 +338,16 @@ const Hero = () => (
               operators worldwide.
             </span>
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex w-full flex-col items-start gap-3 sm:w-auto sm:flex-row sm:gap-4">
             <a
               href="#privacy-access"
-              className="inline-flex min-h-[44px] items-center justify-center bg-white px-6 py-3 text-center text-xs uppercase leading-none tracking-eyebrow text-black transition-colors hover:bg-white/90 md:text-sm"
+              className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border border-brand-line bg-brand px-7 py-3.5 text-center text-sm font-semibold tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.22)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto"
             >
               Get Privacy Network
             </a>
             <a
               href="#protocol-stats"
-              className="inline-flex min-h-[44px] items-center justify-center border border-white/10 px-6 py-3 text-center text-xs uppercase leading-none tracking-eyebrow text-white/60 transition-colors hover:border-brand-line hover:text-white md:text-sm"
+              className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border border-white/15 px-7 py-3.5 text-center text-sm font-medium tracking-wide text-white/78 transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 sm:w-auto"
             >
               View protocol health
             </a>
