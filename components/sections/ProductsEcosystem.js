@@ -2,7 +2,14 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v4.5 - North Star Plan visibility.
+ * Modification Reason: v4.6 - North Star anchor entry.
+ *   Added a stable homepage `#north-star-plan` anchor for the promoted North
+ *   Star Plan covenant so the hero can link directly into the infrastructure
+ *   promise. This keeps the concept discoverable from the first viewport and
+ *   shareable as a URL fragment.
+ *
+ * Historical Notes:
+ * v4.5 - North Star Plan visibility.
  *   Promoted the North Star Plan / 北極星計劃 into a visible homepage covenant
  *   band before the core product cards. This makes the privacy infrastructure
  *   promise legible on the first page instead of hiding it in a later
@@ -114,6 +121,7 @@
  * Last Modified: v4.3 - Decentralized node product naming
  * Last Modified: v4.4 - Core product entrance polish
  * Last Modified: v4.5 - North Star Plan visibility
+ * Last Modified: v4.6 - North Star anchor entry
  * ============================================
  */
 
@@ -354,7 +362,7 @@ const ProductsEcosystem = () => {
             </p>
           </div>
 
-          <div className="mb-8 border-y border-white/10 bg-white/[0.014] px-4 py-5 text-left md:mb-10 md:px-5 md:py-6">
+          <div id="north-star-plan" className="mb-8 scroll-mt-24 border-y border-white/10 bg-white/[0.014] px-4 py-5 text-left md:mb-10 md:px-5 md:py-6">
             <div className="grid gap-5 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
               <div>
                 <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
