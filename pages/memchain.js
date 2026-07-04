@@ -5,7 +5,17 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
- * Modification Reason: v1.5 - Product-grade memory flow animation.
+ * Modification Reason: v1.6 - Protocol continuity bridge.
+ *   Added a compact secondary-page bridge that connects MemChain to Privacy
+ *   Network under the same blind AeroNyx protocol invariant: private traffic
+ *   in motion and private memory at rest. Also removed finance-adjacent
+ *   identity wording from the FAQ so the page stays focused on protocol
+ *   identity, node-blind storage, and local-first memory. Mobile hero proof
+ *   rails and the memory visual now collapse into compact state summaries so
+ *   the first product bridge appears sooner on phone-class screens.
+ *
+ * Historical Notes:
+ * v1.5 - Product-grade memory flow animation.
  *   Upgraded the hero visual from a static sealed-fact list into a live
  *   remember/store/recall flow: facts are sealed on device, synced as
  *   ciphertext to a blind node, and recalled back into the local hippocampus.
@@ -45,11 +55,11 @@
  *   1. Render SEO metadata and shared background/header.
  *   2. Present the MemChain hero and claim-safe positioning.
  *   3. Explain pipeline, pillars, benchmarks, comparison, privacy boundary,
- *      FAQ, and product actions without overstating zero-knowledge or
+ *      FAQ, and product actions without overstating formal privacy proofs or
  *      benchmark leadership.
  *
  * Important Note for Next Developer:
- *   - Do not call MemChain a blockchain or a zero-knowledge proof system.
+ *   - Do not call MemChain a public chain or a formal proof system.
  *   - Keep the external AI provider limitation visible: if users choose an
  *     external LLM for distillation/answers, relevant plaintext goes to that
  *     provider; AeroNyx storage nodes still cannot read memory contents.
@@ -61,6 +71,7 @@
  * Last Modified: v1.3 - Market-category context and mobile metric polish
  * Last Modified: v1.4 - VC-grade product page refinement
  * Last Modified: v1.5 - Product-grade memory flow animation
+ * Last Modified: v1.6 - Protocol continuity bridge
  * ============================================
  */
 
@@ -114,6 +125,25 @@ const heroProofs = [
     value: 'offline',
     label: 'local hippocampus',
     detail: 'recall works when the encrypted local copy has the memory',
+  },
+];
+
+const protocolContinuityCards = [
+  {
+    label: 'Traffic in motion',
+    title: 'Privacy Network',
+    href: '/privacy-network',
+    description:
+      'Encrypted routes move through blind Rust nodes while the public surface shows aggregate health, not user destinations or payloads.',
+    signal: 'private connection',
+  },
+  {
+    label: 'Memory at rest',
+    title: 'MemChain',
+    href: '#privacy-boundary',
+    description:
+      'Personal and agent context is sealed locally, synced as ciphertext, and recalled without giving storage nodes readable memory.',
+    signal: 'private context',
   },
 ];
 
@@ -326,7 +356,7 @@ const faqs = [
   },
   {
     q: 'Can a new device recover memory?',
-    a: 'Yes, the new device can refill from the encrypted node backup and rebuild local indexes. If the identity or wallet backup is lost, encrypted memories cannot be recovered.',
+    a: 'Yes, the new device can refill from the encrypted node backup and rebuild local indexes. If the identity backup is lost, encrypted memories cannot be recovered.',
   },
   {
     q: 'Does memory work offline?',
@@ -360,6 +390,7 @@ export default function MemChainPage() {
 
       <main className="relative z-10 pt-24 md:pt-32">
         <Hero />
+        <ProtocolContinuity />
         <MemoryAdvantageLab />
         <Pipeline />
         <Pillars />
@@ -410,16 +441,16 @@ const Hero = () => (
             </a>
           </div>
 
-          <div className="mt-8 grid gap-2.5 sm:grid-cols-3">
+          <div className="mt-8 grid grid-cols-3 gap-2.5">
             {heroProofs.map((item) => (
-              <div key={item.label} className="page-card min-w-0 border p-3 md:p-4">
-                <div className="font-mono text-2xl font-light leading-none text-white md:text-3xl">
+              <div key={item.label} className="page-card min-w-0 border p-2.5 md:p-4">
+                <div className="font-mono text-xl font-light leading-none text-white md:text-3xl">
                   {item.value}
                 </div>
-                <div className="mt-2 text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
+                <div className="mt-2 text-[9px] uppercase leading-4 tracking-eyebrow text-brand-light">
                   {item.label}
                 </div>
-                <div className="mt-2 text-xs leading-relaxed text-white/42">
+                <div className="mt-2 hidden text-xs leading-relaxed text-white/42 sm:block">
                   {item.detail}
                 </div>
               </div>
@@ -439,22 +470,68 @@ const Hero = () => (
   </section>
 );
 
+const ProtocolContinuity = () => (
+  <section className="pb-12 md:pb-20">
+    <Container>
+      <div className="page-surface border p-4 md:p-6">
+        <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+              One blind protocol
+            </div>
+            <h2 className="mt-3 text-display-md font-light text-white">
+              Private movement and private memory should share one trust boundary.
+            </h2>
+            <p className="mt-4 max-w-copy text-sm leading-relaxed text-white/58 md:text-base">
+              AeroNyx is not a collection of disconnected tools. Privacy Network
+              protects where encrypted work moves; MemChain protects what humans,
+              apps, and agents need to remember.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 md:gap-3">
+            {protocolContinuityCards.map((item) => (
+              <Link
+                key={item.title}
+                href={item.href}
+                className="group min-w-0 border border-white/10 bg-white/[0.025] p-3 transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint md:p-4"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[10px] uppercase tracking-eyebrow text-white/35">
+                    {item.label}
+                  </span>
+                  <span className="h-2 w-2 rounded-pill bg-brand-light/70 transition-transform duration-fast group-hover:scale-125" />
+                </div>
+                <h3 className="mt-4 text-lg font-light text-white md:text-xl">{item.title}</h3>
+                <p className="mt-3 hidden text-sm leading-relaxed text-white/56 sm:block">{item.description}</p>
+                <div className="mt-5 border border-brand-line bg-black/20 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-brand-light md:px-3">
+                  {item.signal}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+);
+
 const MemoryVisual = () => {
   const reduced = useReducedMotion();
 
   return (
-    <div className="page-surface relative min-h-[31rem] overflow-hidden border p-4 md:min-h-[34rem] md:p-5">
+    <div className="page-surface relative min-h-[24rem] overflow-hidden border p-4 md:min-h-[34rem] md:p-5">
       <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.24) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.24) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/50 to-transparent" />
 
-      <div className="relative z-10 flex h-full min-h-[28rem] flex-col md:min-h-[31rem]">
+      <div className="relative z-10 flex h-full min-h-[22rem] flex-col md:min-h-[31rem]">
         <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
           <span className="font-mono text-xs uppercase tracking-eyebrow text-white/35">device hippocampus</span>
           <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">local first</span>
         </div>
 
         <div className="relative mt-5 overflow-hidden border border-white/10 bg-black/30 p-4 md:p-5">
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid grid-cols-3 gap-2 md:gap-3">
             <MemoryNodeCard
               label="Device"
               title="Plain memory stays local"
@@ -475,7 +552,7 @@ const MemoryVisual = () => {
             />
           </div>
 
-          <div className="relative mt-5 h-40 overflow-hidden sm:h-28">
+          <div className="relative mt-5 h-32 overflow-hidden sm:h-28">
             <div className="absolute left-[10%] right-[10%] top-[36%] h-px bg-white/10" />
             <motion.div
               className="absolute left-[10%] top-[36%] h-px w-[80%] origin-left bg-brand-light/70"
@@ -509,16 +586,16 @@ const MemoryVisual = () => {
           </div>
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div className="mt-4 grid grid-cols-3 gap-2 md:gap-3">
           {['ciphertext', 'blind index', 'opaque edge'].map((label, index) => (
             <motion.div
               key={label}
-              className="border border-white/10 bg-black/40 p-3"
+              className="border border-white/10 bg-black/40 p-2.5 md:p-3"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.25 + index * 0.08, ease: EASE }}
             >
-              <div className="font-mono text-lg text-white">0x{label.length}ae</div>
+              <div className="font-mono text-sm text-white md:text-lg">0x{label.length}ae</div>
               <div className="mt-1 text-[10px] uppercase tracking-eyebrow text-white/36">{label}</div>
             </motion.div>
           ))}
@@ -532,17 +609,17 @@ const MemoryNodeCard = ({ label, title, detail, tone }) => {
   const active = tone !== 'node';
 
   return (
-    <div className={`min-w-0 border p-3 ${
+    <div className={`min-w-0 border p-2.5 md:p-3 ${
       active ? 'border-brand-line bg-brand-faint' : 'border-white/10 bg-white/[0.025]'
     }`}>
-      <div className={`mb-4 flex h-9 w-9 items-center justify-center rounded-pill border ${
+      <div className={`mb-3 flex h-7 w-7 items-center justify-center rounded-pill border md:mb-4 md:h-9 md:w-9 ${
         active ? 'border-brand-line text-brand-light' : 'border-white/10 text-white/36'
       }`}>
         <span className="h-2 w-2 rounded-pill bg-current" />
       </div>
       <div className="text-[10px] uppercase tracking-eyebrow text-white/35">{label}</div>
-      <h3 className="mt-2 text-sm font-medium leading-snug text-white">{title}</h3>
-      <p className="mt-2 text-xs leading-relaxed text-white/45">{detail}</p>
+      <h3 className="mt-2 hidden text-sm font-medium leading-snug text-white md:block">{title}</h3>
+      <p className="mt-2 hidden text-xs leading-relaxed text-white/45 md:block">{detail}</p>
     </div>
   );
 };
@@ -794,7 +871,7 @@ const Benchmarks = () => (
         ))}
       </div>
       <div className="mt-6 border border-warn/25 bg-warn/[0.06] p-4 text-sm leading-relaxed text-white/60">
-        Honest boundary: we do not claim SOTA accuracy, industry-best scores, or a formally proven zero-knowledge system. The differentiation is privacy, speed, cost, offline recall, and user ownership.
+        Honest boundary: we do not claim accuracy leadership or a formally proven privacy proof system. The differentiation is privacy, speed, cost, offline recall, and user ownership.
       </div>
     </Container>
   </section>

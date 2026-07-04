@@ -4,7 +4,16 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v1.6 - Blind routing animation polish.
+ * Modification Reason: v1.7 - Product continuity bridge.
+ *   Added a secondary-page bridge that connects Privacy Network to MemChain
+ *   as the same blind protocol trust boundary: private traffic in motion and
+ *   private memory at rest. Public telemetry wording was also tightened away
+ *   from finance-adjacent identity language. Mobile route visuals now collapse
+ *   actor cards and privacy boundary chips into compact status summaries so
+ *   the first bridge and North Star sections appear sooner on phone screens.
+ *
+ * Historical Notes:
+ * v1.6 - Blind routing animation polish.
  *   Replaced the static hero assurance list with a protocol route visual that
  *   shows humans, apps, and agents entering a blind routing boundary while only
  *   aggregate health evidence exits. The animation respects reduced motion,
@@ -29,7 +38,7 @@
  * Historical Notes:
  * v1.3 - Privacy Network narrative cleanup.
  *   Renames the active header/background/download section dependencies away
- *   from legacy AIL/VPN implementation names. Visible copy stays focused on
+ *   from legacy tunnel implementation names. Visible copy stays focused on
  *   Privacy Network and AeroNyx Privacy Protocol.
  *
  * Historical Notes:
@@ -63,11 +72,13 @@
  * Last Modified: v1.4 - North Star infrastructure narrative
  * Last Modified: v1.5 - Product assurance bridge
  * Last Modified: v1.6 - Blind routing animation polish
+ * Last Modified: v1.7 - Product continuity bridge
  * ============================================
  */
 
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion, useReducedMotion } from 'framer-motion';
 import SEO from '../components/ui/SEO';
@@ -106,6 +117,25 @@ const protectionSignals = [
   {
     title: 'Built for humans and agents',
     description: 'The same privacy boundary supports people, apps, and autonomous agents coordinating through blind protocol primitives.',
+  },
+];
+
+const protocolContinuityCards = [
+  {
+    label: 'Traffic in motion',
+    title: 'Privacy Network',
+    href: '#protocol-stats',
+    description:
+      'Routes encrypted traffic through blind Rust nodes and surfaces only aggregate proof that the network is protecting work.',
+    signal: 'hidden route',
+  },
+  {
+    label: 'Memory at rest',
+    title: 'MemChain',
+    href: '/memchain',
+    description:
+      'Preserves durable human and agent context as node-blind encrypted memory, so coordination can remember without readable server state.',
+    signal: 'sealed memory',
   },
 ];
 
@@ -155,7 +185,7 @@ const privacyBoundaries = [
   'No domains or URLs',
   'No browsing history',
   'No node public keys on public cards',
-  'No wallet-level traffic graph',
+  'No identity-level traffic graph',
 ];
 
 const routeActors = [
@@ -212,6 +242,7 @@ export default function PrivacyNetworkPage() {
 
       <main className="relative z-10 pt-24 md:pt-32">
         <Hero />
+        <ProtocolContinuity />
         <NorthStarPlan />
         <LiveProtocolStats stats={stats} isLoading={isLoading} copy={copy} healthPercent={healthPercent} />
         <AssuranceModel />
@@ -276,31 +307,77 @@ const Hero = () => (
   </section>
 );
 
+const ProtocolContinuity = () => (
+  <section className="pb-12 md:pb-20">
+    <Container>
+      <div className="page-surface border p-4 md:p-6">
+        <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+              One blind protocol
+            </div>
+            <h2 className="mt-3 text-display-md font-light text-white">
+              The network protects movement. MemChain protects memory.
+            </h2>
+            <p className="mt-4 max-w-copy text-sm leading-relaxed text-white/58 md:text-base">
+              A privacy product becomes infrastructure when traffic, messages,
+              memory, and agent coordination share the same rule: nodes can help
+              route and synchronize, but they cannot read the payload.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 md:gap-3">
+            {protocolContinuityCards.map((item) => (
+              <Link
+                key={item.title}
+                href={item.href}
+                className="group min-w-0 border border-white/10 bg-white/[0.025] p-3 transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint md:p-4"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[10px] uppercase tracking-eyebrow text-white/35">
+                    {item.label}
+                  </span>
+                  <span className="h-2 w-2 rounded-pill bg-brand-light/70 transition-transform duration-fast group-hover:scale-125" />
+                </div>
+                <h3 className="mt-4 text-lg font-light text-white md:text-xl">{item.title}</h3>
+                <p className="mt-3 hidden text-sm leading-relaxed text-white/56 sm:block">{item.description}</p>
+                <div className="mt-5 border border-brand-line bg-black/20 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-brand-light md:px-3">
+                  {item.signal}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+);
+
 const PrivacyRouteVisual = () => {
   const reduced = useReducedMotion();
 
   return (
-    <div className="page-surface relative min-h-[29rem] w-full max-w-full overflow-hidden border p-4 md:min-h-[32rem] md:p-5">
+    <div className="page-surface relative min-h-[24rem] w-full max-w-full overflow-hidden border p-4 md:min-h-[32rem] md:p-5">
       <div className="absolute inset-0 opacity-[0.045]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/60 to-transparent" />
 
-      <div className="relative z-10 flex min-h-[26rem] flex-col md:min-h-[29rem]">
+      <div className="relative z-10 flex min-h-[22rem] flex-col md:min-h-[29rem]">
         <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
           <span className="text-[10px] uppercase tracking-eyebrow text-white/36">blind routing boundary</span>
           <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">protected</span>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-3 gap-2 md:gap-3">
           {routeActors.map((actor, index) => (
             <motion.div
               key={actor.label}
-              className="border border-white/10 bg-white/[0.025] p-3"
+              className="border border-white/10 bg-white/[0.025] p-2.5 md:p-3"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.12 + index * 0.07, ease: EASE }}
             >
               <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{actor.label}</div>
-              <div className="mt-2 text-xs leading-relaxed text-white/58">{actor.detail}</div>
+              <div className="mt-2 hidden text-xs leading-relaxed text-white/58 md:block">{actor.detail}</div>
             </motion.div>
           ))}
         </div>
@@ -361,9 +438,9 @@ const PrivacyRouteVisual = () => {
           </div>
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div className="mt-4 grid grid-cols-3 gap-2 md:gap-3">
           {['No payloads', 'No DNS', 'No history'].map((item) => (
-            <div key={item} className="border border-white/10 bg-white/[0.025] p-3 text-center text-[10px] uppercase tracking-eyebrow text-white/42">
+            <div key={item} className="border border-white/10 bg-white/[0.025] p-2.5 text-center text-[10px] uppercase tracking-eyebrow text-white/42 md:p-3">
               {item}
             </div>
           ))}
