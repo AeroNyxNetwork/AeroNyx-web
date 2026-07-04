@@ -2,9 +2,17 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.7.0
+ * Version: 8.8.0
  *
  * Modification Reason:
+ *   v8.8 — Product conversion CTA restoration.
+ *   Restored the secondary hero CTA to a concrete "Download client" action
+ *   that routes users to the Privacy Network access surface. North Star Plan
+ *   remains on the homepage as the infrastructure covenant, but the first
+ *   viewport now prioritizes real product adoption instead of making the
+ *   covenant compete with conversion.
+ *
+ * Historical Notes:
  *   v8.7 — North Star first-screen entry.
  *   The secondary hero CTA now points to the homepage North Star Plan
  *   covenant instead of the later join section. This makes the project's
@@ -85,6 +93,7 @@
  * Last Modified: v8.5.0 — Mobile top spacing alignment
  * Last Modified: v8.6.0 — CTA contrast and first-screen cadence polish
  * Last Modified: v8.7.0 — North Star Plan first-screen entry
+ * Last Modified: v8.8.0 — Product conversion CTA restoration
  * ============================================================================
  */
 
@@ -669,10 +678,10 @@ const NarrativeHero = () => {
                   style={{ background: ACCENT, borderColor: 'rgba(151,136,247,0.38)', color: '#fff', boxShadow: `0 18px 50px ${ACCENT}33` }}>
                   Explore the coordination layer
                 </a>
-                <a href="#north-star-plan"
+                <a href="/privacy-network#privacy-access"
                   className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border px-7 py-3.5 text-center text-sm font-medium tracking-wide transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 sm:w-auto"
                   style={{ borderColor: 'rgba(255,255,255,0.16)', color: 'rgba(255,255,255,0.82)' }}>
-                  North Star Plan
+                  Download client
                 </a>
               </motion.div>
 
