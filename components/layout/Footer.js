@@ -2,7 +2,14 @@
  * ============================================
  * File: components/layout/Footer.jsx
  * ============================================
- * Modification Reason: v2.4 - 2026 social icon and protocol link polish.
+ * Modification Reason: v2.5 - Mobile footer navigation polish.
+ *   Footer navigation now uses native mobile accordions while preserving 44px
+ *   touch targets. This keeps Products, Resources, and About scannable near
+ *   the bottom of the page instead of turning the footer into a long stacked
+ *   link list on iPhone and Android. Desktop keeps the expanded column layout.
+ *
+ * Historical Notes:
+ * v2.4 - 2026 social icon and protocol link polish.
  *   Updated the X social icon away from the legacy Twitter bird and tuned the
  *   developer/resource labels so the footer feels current and protocol-first.
  *
@@ -48,6 +55,7 @@
  * Last Modified: v2.2 — Footer link tap-target polish
  * Last Modified: v2.3 - Consistent footer hit areas and link formatting
  * Last Modified: v2.4 - X icon and protocol link polish
+ * Last Modified: v2.5 - Mobile footer navigation polish
  * ============================================
  */
 
@@ -57,17 +65,17 @@ import AeroNyxLogo from '../ui/AeroNyxLogo';
 
 const Footer = () => {
   return (
-    <footer className="border-t border-white/10 py-14 md:py-16" style={{ background: 'var(--surface-0, #08080D)' }}>
+    <footer className="border-t border-white/10 py-10 md:py-16" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
-          <div className="lg:col-span-2">
-            <Link href="/" className="mb-6 inline-flex min-h-[44px] items-center space-x-2">
+        <div className="grid gap-8 lg:grid-cols-[1.15fr_1.85fr] lg:gap-12">
+          <div className="max-w-xl">
+            <Link href="/" className="mb-4 inline-flex min-h-[44px] items-center space-x-2 md:mb-6">
               <span className="h-10 w-10 flex items-center justify-center">
                 <AeroNyxLogo width={40} height={40} />
               </span>
               <span className="text-xl font-light">AeroNyx</span>
             </Link>
-            <p className="text-white/55 mb-6 max-w-md text-sm leading-relaxed">
+            <p className="mb-5 max-w-md text-sm leading-relaxed text-white/55 md:mb-6">
               AeroNyx is the encrypted coordination layer for humans, apps, and
               autonomous agents: private routing, encrypted messages, node-blind
               memory, and blind protocol services.
@@ -78,47 +86,49 @@ const Footer = () => {
             </div>
           </div>
 
-          <FooterColumn
-            heading="Products"
-            links={[
-              { href: '/privacy-network', label: 'Privacy Network' },
-              { href: '/memchain', label: 'MemChain' },
-              { href: 'https://docs.aeronyx.network/developer-documentation/overview', label: 'Developer Docs' },
-              { href: 'https://app.aeronyx.network/', label: 'Nodeboard' },
-            ]}
-          />
+          <div className="grid gap-0 md:grid-cols-3 md:gap-6">
+            <FooterColumn
+              heading="Products"
+              links={[
+                { href: '/privacy-network', label: 'Privacy Network' },
+                { href: '/memchain', label: 'MemChain' },
+                { href: 'https://docs.aeronyx.network/developer-documentation/overview', label: 'Developer Docs' },
+                { href: 'https://app.aeronyx.network/', label: 'Nodeboard' },
+              ]}
+            />
 
-          <FooterColumn
-            heading="Resources"
-            links={[
-              { href: 'https://docs.aeronyx.network/', label: 'Documentation' },
-              { href: 'https://docs.aeronyx.network/aeronyx-whitepaper/technical-white-paper', label: 'Whitepaper' },
-              { href: 'https://github.com/AeroNyxNetwork', label: 'GitHub' },
-              { href: 'https://app.aeronyx.network/', label: 'App' },
-            ]}
-          />
+            <FooterColumn
+              heading="Resources"
+              links={[
+                { href: 'https://docs.aeronyx.network/', label: 'Documentation' },
+                { href: 'https://docs.aeronyx.network/aeronyx-whitepaper/technical-white-paper', label: 'Whitepaper' },
+                { href: 'https://github.com/AeroNyxNetwork', label: 'GitHub' },
+                { href: 'https://app.aeronyx.network/', label: 'App' },
+              ]}
+            />
 
-          <FooterColumn
-            heading="About"
-            links={[
-              { href: 'https://twitter.com/AeroNyxNetwork', label: 'X' },
-              { href: 'https://t.me/AeroNyxNetwork', label: 'Telegram' },
-              { href: 'https://docs.aeronyx.network/media-resources', label: 'Press Kit' },
-              { href: 'mailto:hi@aeronyx.network', label: 'hi@aeronyx.network' }, // v2.0 fix
-            ]}
-          />
+            <FooterColumn
+              heading="About"
+              links={[
+                { href: 'https://twitter.com/AeroNyxNetwork', label: 'X' },
+                { href: 'https://t.me/AeroNyxNetwork', label: 'Telegram' },
+                { href: 'https://docs.aeronyx.network/media-resources', label: 'Press Kit' },
+                { href: 'mailto:hi@aeronyx.network', label: 'hi@aeronyx.network' }, // v2.0 fix
+              ]}
+            />
+          </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 md:flex-row">
-          <p className="text-white/35 text-sm">
+        <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-5 md:mt-12 md:flex-row md:items-center md:pt-6">
+          <p className="text-sm text-white/35">
             © {new Date().getFullYear()} AeroNyx Network. All rights reserved.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          <div className="grid w-full grid-cols-2 gap-2 md:w-auto md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-6 md:gap-y-2">
             <a
               href="https://docs.aeronyx.network/articles/aeronyx-privacy-policy"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] items-center text-sm text-white/35 hover:text-white transition-colors duration-fast"
+              className="inline-flex min-h-[44px] items-center text-sm text-white/35 transition-colors duration-fast hover:text-white"
             >
               Privacy Policy
             </a>
@@ -126,7 +136,7 @@ const Footer = () => {
               href="https://docs.aeronyx.network/articles/aeronyx-user-agreement"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] items-center text-sm text-white/35 hover:text-white transition-colors duration-fast"
+              className="inline-flex min-h-[44px] items-center justify-end text-right text-sm text-white/35 transition-colors duration-fast hover:text-white md:justify-start md:text-left"
             >
               Terms of Service
             </a>
@@ -138,33 +148,56 @@ const Footer = () => {
 };
 
 const FooterColumn = ({ heading, links }) => (
-  <div>
-    <h4 className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-4">{heading}</h4>
-    <ul className="space-y-2">
-      {links.map((link, index) => {
-        const external = link.href.startsWith('http') || link.href.startsWith('mailto:');
-        return (
-          <li key={index}>
-            {external ? (
-              <a
-                href={link.href}
-                target={link.href.startsWith('mailto:') ? undefined : '_blank'}
-                rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-                className="inline-flex min-h-[44px] items-center text-sm text-white/55 hover:text-white transition-colors duration-fast"
-              >
-                {link.label}
-              </a>
-            ) : (
-              <Link href={link.href} className="inline-flex min-h-[44px] items-center text-sm text-white/55 hover:text-white transition-colors duration-fast">
-                {link.label}
-              </Link>
-            )}
+  <div className="border-t border-white/10 md:border-t-0">
+    <details className="group md:hidden">
+      <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between text-[10px] uppercase tracking-eyebrow text-white/48 transition-colors duration-fast hover:text-white [&::-webkit-details-marker]:hidden">
+        <span>{heading}</span>
+        <span aria-hidden="true" className="relative h-4 w-4 text-white/35">
+          <span className="absolute left-1/2 top-1/2 h-px w-3 -translate-x-1/2 -translate-y-1/2 bg-current" />
+          <span className="absolute left-1/2 top-1/2 h-3 w-px -translate-x-1/2 -translate-y-1/2 bg-current transition-opacity duration-fast group-open:opacity-0" />
+        </span>
+      </summary>
+      <ul className="grid grid-cols-2 gap-x-3 gap-y-1 pb-4">
+        {links.map((link, index) => (
+          <li key={index} className="min-w-0">
+            <FooterNavLink link={link} />
           </li>
-        );
-      })}
-    </ul>
+        ))}
+      </ul>
+    </details>
+
+    <div className="hidden md:block">
+      <h4 className="mb-4 text-[10px] uppercase tracking-eyebrow text-white/40">{heading}</h4>
+      <ul className="space-y-2">
+        {links.map((link, index) => (
+          <li key={index} className="min-w-0">
+            <FooterNavLink link={link} />
+          </li>
+        ))}
+      </ul>
+    </div>
   </div>
 );
+
+const FooterNavLink = ({ link }) => {
+  const external = link.href.startsWith('http') || link.href.startsWith('mailto:');
+  const className = "inline-flex min-h-[44px] w-full min-w-0 items-center text-sm leading-snug text-white/55 transition-colors duration-fast hover:text-white";
+
+  return external ? (
+    <a
+      href={link.href}
+      target={link.href.startsWith('mailto:') ? undefined : '_blank'}
+      rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+      className={className}
+    >
+      {link.label}
+    </a>
+  ) : (
+    <Link href={link.href} className={className}>
+      {link.label}
+    </Link>
+  );
+};
 
 const SocialLink = ({ href, label, icon }) => (
   <a
