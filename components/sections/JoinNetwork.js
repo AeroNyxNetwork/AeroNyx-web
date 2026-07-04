@@ -276,7 +276,10 @@ const JoinNetwork = () => {
                 <React.Fragment key={index}>
                   <button
                     onClick={() => setActiveStep(index)}
-                    aria-label={`Step ${index + 1}: ${step.title}`}
+                    aria-label={formatTemplate(copy.stepAriaLabel || 'Step {number}: {title}', {
+                      number: index + 1,
+                      title: step.title,
+                    })}
                     className={`flex min-h-[44px] min-w-[44px] flex-shrink-0 items-center justify-center rounded-sm transition-all duration-base ease-out-brand ${
                       index === activeStep
                         ? 'scale-110'

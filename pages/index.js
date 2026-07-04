@@ -240,13 +240,11 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const evidenceModeLabel = (
     protocolCopy.evidenceModeLabels?.[stats.protocolFoundationRelayEvidenceMode]
     || protocolCopy.evidenceModeLabels?.idle
-    || stats.protocolFoundationRelayEvidenceMode
     || copy.homeStats.syncing
   );
   const readinessReasonLabel = (
     protocolCopy.readinessReasonLabels?.[stats.protocolFoundationRelayReadinessReason]
     || protocolCopy.readinessReasonLabels?.idle_waiting_for_relay
-    || stats.protocolFoundationRelayReadinessReason
     || copy.homeStats.syncing
   );
   const recoverySources = (stats.protocolRecoverySources || [])
