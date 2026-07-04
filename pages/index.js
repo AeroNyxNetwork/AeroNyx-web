@@ -3,11 +3,11 @@
  * index.js - Homepage with Encrypted Coordination Layer Narrative
  * ============================================
  *
- * Modification Reason: v5.7 - Mobile protocol evidence density polish.
- *   The public evidence panel now uses tighter iPhone-safe spacing, two-column
- *   compact proof grids, and calmer Syncing typography so live protocol data
- *   reads like a premium product signal instead of a stacked engineering
- *   report on small screens.
+ * Modification Reason: v5.8 - Core primitives narrative restructure.
+ *   Adds the CorePrimitives module directly after live protocol evidence so
+ *   Privacy Network and MemChain read as the two load-bearing primitives of
+ *   the encrypted coordination layer: private traffic in motion and private
+ *   memory at rest. The approved hero title/subtitle remain unchanged.
  *
  * Historical Notes:
  * v5.3 - Homepage module polish pass.
@@ -25,12 +25,13 @@
  * Section Order (v5.4):
  * 1. NarrativeHero      — "Infrastructure AI Agents Can Use"
  * 2. HomeNetworkStats   — Aggregate protocol evidence only
- * 3. ProductsEcosystem  — Privacy Network / MemChain before x402
- * 4. ProblemToX402      — Agent coordination payment problem/solution
- * 5. HowAILWorks        — Technical deep-dive
- * 6. JoinNetwork        — Node/protocol operator CTA
- * 7. FutureVision       — Roadmap
- * 8. SophisticatedCTA   — Final conversion
+ * 3. CorePrimitives     — Privacy Network + MemChain as one protocol story
+ * 4. ProductsEcosystem  — Product/service capability index
+ * 5. ProblemToX402      — Agent coordination payment problem/solution
+ * 6. HowAILWorks        — Technical deep-dive
+ * 7. JoinNetwork        — Node/protocol operator CTA
+ * 8. FutureVision       — Roadmap
+ * 9. SophisticatedCTA   — Final conversion
  *
  * Last Modified: v4.0 - Added MemChainShowcase
  * Last Modified: v4.1 - Added privacy-safe protocol network_story card sourced
@@ -68,7 +69,7 @@
  * Last Modified: v5.3 - Homepage module rhythm and responsive evidence polish.
  * Last Modified: v5.4 - Product layers moved before x402 payment narrative.
  * Last Modified: v5.5 - iPhone-safe public evidence layout
- * Last Modified: v5.7 - Mobile protocol evidence density polish
+ * Last Modified: v5.8 - Added CorePrimitives homepage narrative
  * ============================================
  */
 
@@ -102,6 +103,7 @@ import ProblemToX402 from '../components/sections/ProblemToX402';
 import HowAILWorks from '../components/sections/HowAILWorks';
 import JoinNetwork from '../components/sections/JoinNetwork';
 import ProductsEcosystem from '../components/sections/ProductsEcosystem';
+import CorePrimitives from '../components/sections/CorePrimitives';
 import FutureVision from '../components/sections/FutureVision';
 import SophisticatedCTA from '../components/sections/SophisticatedCTA';
 import Footer from '../components/layout/Footer';
@@ -142,22 +144,25 @@ export default function Home() {
 
         <HomeNetworkStats stats={stats} isLoading={isLoading} copy={copy} />
 
-        {/* 3. Protocol capability index. Product deep-dives live on secondary pages. */}
+        {/* 3. Core protocol primitives: private traffic + private memory. */}
+        <CorePrimitives />
+
+        {/* 4. Protocol capability index. Product deep-dives live on secondary pages. */}
         <ProductsEcosystem />
 
-        {/* 4. Agent payment narrative comes after Privacy Network and MemChain. */}
+        {/* 5. Agent payment narrative comes after Privacy Network and MemChain. */}
         <ProblemToX402 />
 
-        {/* 5. How it works — technical deep-dive */}
+        {/* 6. How it works — technical deep-dive */}
         <HowAILWorks />
 
-        {/* 6. Join the network */}
+        {/* 7. Join the network */}
         <JoinNetwork />
 
-        {/* 7. Vision for the future */}
+        {/* 8. Vision for the future */}
         <FutureVision />
 
-        {/* 8. Call to action */}
+        {/* 9. Call to action */}
         <SophisticatedCTA />
       </main>
 

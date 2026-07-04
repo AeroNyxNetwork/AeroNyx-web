@@ -2,11 +2,11 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v3.7 - Protocol naming consistency polish.
- *   The Privacy Access product visual no longer carries the legacy tunnel-era
- *   component name internally. This keeps implementation vocabulary aligned
- *   with the public AeroNyx Privacy Protocol / Privacy Access narrative while
- *   preserving the product id and all routing behavior.
+ * Modification Reason: v3.8 - Post-primitives capability index polish.
+ *   The homepage now introduces Privacy Network and MemChain together in
+ *   CorePrimitives, so this section is reframed as the capability index built
+ *   on those two primitives. Product data, routing, keyboard behavior, and
+ *   tab semantics are preserved.
  *
  * Historical Notes:
  * v3.4 — Product hierarchy order correction.
@@ -67,7 +67,7 @@
  * Last Modified: v3.3 — Homepage product index spacing and interaction polish
  * Last Modified: v3.4 — Privacy Access and MemChain ordered before x402 rails
  * Last Modified: v3.5 — Mobile snap selector and detail card rhythm polish
- * Last Modified: v3.7 - Privacy Access visual naming polish
+ * Last Modified: v3.8 - Reframed after CorePrimitives section
  * ============================================
  */
 
@@ -294,12 +294,16 @@ const ProductsEcosystem = () => {
 
           {/* Header */}
           <div className="mb-8 text-center md:mb-12">
+            <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
+              Built On The Two Primitives
+            </div>
             <h2 className="text-display-lg font-light mb-4 md:mb-6">
-              Protocol layers &amp; products
+              From private connection to agent services.
             </h2>
             <p className="text-base md:text-xl text-white/60 max-w-copy mx-auto px-4">
-              AeroNyx separates the open privacy protocol from the products built on
-              top: privacy access, encrypted relay, Memory Chain, and agent-native services.
+              Privacy Network and MemChain form the foundation. The layers below
+              turn private routing and private context into encrypted relay,
+              protocol services, and agent-native coordination.
             </p>
           </div>
 
