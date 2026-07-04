@@ -5,7 +5,16 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
- * Modification Reason: v2.0 - Secondary page action alignment.
+ * Modification Reason: v2.1 - Secondary page internationalization.
+ *   Moved the visible MemChain narrative, proof rails, memory visual labels,
+ *   comparison lab, pipeline, pillars, benchmarks, comparison, FAQ, privacy
+ *   boundary, and closing action copy into lib/i18n.js so every supported
+ *   locale renders the full product page instead of falling back to English.
+ *   Long localized headings now use safer wrapping while preserving the
+ *   existing Apple-style hero typography and touch target rhythm.
+ *
+ * Historical Notes:
+ * v2.0 - Secondary page action alignment.
  *   Aligned the MemChain hero and closing action buttons with the homepage
  *   product-action system: 48px touch targets, brand-primary emphasis,
  *   restrained tracking, visible focus states, and predictable mobile widths.
@@ -107,6 +116,7 @@
  * Last Modified: v1.8 - Mobile product interaction polish
  * Last Modified: v1.9 - Homepage typography alignment
  * Last Modified: v2.0 - Secondary page action alignment
+ * Last Modified: v2.1 - Secondary page internationalization
  * ============================================
  */
 
@@ -119,7 +129,7 @@ import SEO from '../components/ui/SEO';
 import Container from '../components/ui/Container';
 import SiteHeader from '../components/layout/SiteHeader';
 import Footer from '../components/layout/Footer';
-import { DEFAULT_LOCALE } from '../lib/i18n';
+import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
 
 const ProtocolBackground = dynamic(
   () => import('../components/ui/ProtocolBackground'),
@@ -422,14 +432,16 @@ export default function MemChainPage() {
   const { locale } = useRouter();
   const activeLocale = locale || DEFAULT_LOCALE;
   const canonicalPath = activeLocale === DEFAULT_LOCALE ? '/memchain' : `/${activeLocale}/memchain`;
+  const copy = getMessages(activeLocale);
+  const pageCopy = copy.memchainPage || getMessages(DEFAULT_LOCALE).memchainPage;
 
   return (
     <>
       <SEO
-        title="MemChain | Node-blind AI memory by AeroNyx"
-        description="MemChain is local-first, node-blind AI memory: your AI remembers you, while AeroNyx storage nodes cannot read your memories."
+        title={pageCopy.seo.title}
+        description={pageCopy.seo.description}
         canonicalUrl={`https://aeronyx.network${canonicalPath}`}
-        keywords={keywords}
+        keywords={pageCopy.seo.keywords}
       />
 
       <Suspense fallback={<div className="fixed inset-0" style={{ background: 'var(--surface-0, #08080D)' }} />}>
@@ -439,16 +451,16 @@ export default function MemChainPage() {
       <SiteHeader />
 
       <main className="relative z-10 pt-24 md:pt-32">
-        <Hero />
-        <ProtocolContinuity />
-        <MemoryAdvantageLab />
-        <Pipeline />
-        <Pillars />
-        <Benchmarks />
-        <Comparison />
-        <PrivacyBoundary />
-        <FAQ />
-        <MemChainAction />
+        <Hero copy={pageCopy.hero} />
+        <ProtocolContinuity copy={pageCopy.protocolContinuity} />
+        <MemoryAdvantageLab copy={pageCopy.advantageLab} />
+        <Pipeline copy={pageCopy.pipeline} />
+        <Pillars copy={pageCopy.pillars} />
+        <Benchmarks copy={pageCopy.benchmarks} />
+        <Comparison copy={pageCopy.comparison} />
+        <PrivacyBoundary copy={pageCopy.privacyBoundary} />
+        <FAQ copy={pageCopy.faq} />
+        <MemChainAction copy={pageCopy.action} />
       </main>
 
       <Footer />
@@ -456,7 +468,7 @@ export default function MemChainPage() {
   );
 }
 
-const Hero = () => (
+const Hero = ({ copy }) => (
   <section data-hero-section className="pb-12 md:pb-24">
     <Container>
       <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
@@ -466,17 +478,16 @@ const Hero = () => (
           transition={{ duration: 0.7, ease: EASE }}
           className="min-w-0"
         >
-          <div className="inline-flex items-center gap-2 border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
-            MemChain / Node-blind memory
+          <div className="inline-flex max-w-full items-center gap-2 border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
+            <span className="break-words">{copy.eyebrow}</span>
           </div>
-          <h1 className="hero-title mt-6 max-w-4xl text-white">
-            The first AI memory your server cannot read.
+          <h1 className="hero-title mt-6 max-w-4xl break-words text-white">
+            {copy.title}
           </h1>
           <p className="mt-6 max-w-2xl text-base font-light leading-relaxed text-white/62 sm:text-lg md:text-xl">
-            Your AI remembers you; the memory belongs to you alone.
+            {copy.description}
             <span className="hidden sm:inline">
-              {' '}MemChain turns personal context into encrypted, local-first memory
-              that can sync across devices without giving storage nodes readable data.
+              {' '}{copy.desktopDescription}
             </span>
           </p>
           <div className="mt-8 flex w-full flex-col items-start gap-3 sm:w-auto sm:flex-row sm:gap-4">
@@ -484,23 +495,23 @@ const Hero = () => (
               href="/privacy-network"
               className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border border-brand-line bg-brand px-7 py-3.5 text-center text-sm font-semibold tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.22)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto"
             >
-              Explore privacy network
+              {copy.primaryCta}
             </Link>
             <a
               href="#privacy-boundary"
               className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border border-white/15 px-7 py-3.5 text-center text-sm font-medium tracking-wide text-white/78 transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 sm:w-auto"
             >
-              Read privacy boundary
+              {copy.secondaryCta}
             </a>
           </div>
 
           <div className="-mx-4 mt-8 flex snap-x gap-2.5 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
-            {heroProofs.map((item) => (
+            {copy.proofs.map((item) => (
               <div key={item.label} className="page-card min-w-[9.5rem] snap-start border p-3 sm:min-w-0 md:p-4">
                 <div className="font-mono text-[1.55rem] font-light leading-none text-white md:text-3xl">
                   {item.value}
                 </div>
-                <div className="mt-2 text-[9px] uppercase leading-4 tracking-eyebrow text-brand-light">
+                <div className="mt-2 break-words text-[9px] uppercase leading-4 tracking-eyebrow text-brand-light">
                   {item.label}
                 </div>
                 <div className="mt-2 hidden text-xs leading-relaxed text-white/42 sm:block">
@@ -517,34 +528,32 @@ const Hero = () => (
           transition={{ duration: 0.7, delay: 0.12, ease: EASE }}
           className="min-w-0"
         >
-          <MemoryVisual />
+          <MemoryVisual copy={copy.visual} />
         </motion.div>
       </div>
     </Container>
   </section>
 );
 
-const ProtocolContinuity = () => (
+const ProtocolContinuity = ({ copy }) => (
   <section className="pb-12 md:pb-20">
     <Container>
       <div className="page-surface border p-4 md:p-6">
         <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
           <div className="min-w-0">
             <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
-              One blind protocol
+              {copy.eyebrow}
             </div>
-            <h2 className="mt-3 text-display-md font-light text-white">
-              Private movement and private memory should share one trust boundary.
+            <h2 className="mt-3 max-w-3xl break-words text-display-md font-light text-white">
+              {copy.title}
             </h2>
             <p className="mt-4 max-w-copy text-sm leading-relaxed text-white/58 md:text-base">
-              AeroNyx is not a collection of disconnected tools. Privacy Network
-              protects where encrypted work moves; MemChain protects what humans,
-              apps, and agents need to remember.
+              {copy.description}
             </p>
           </div>
 
           <div className="grid gap-2 sm:grid-cols-2 md:gap-3">
-            {protocolContinuityCards.map((item) => (
+            {copy.cards.map((item) => (
               <Link
                 key={item.title}
                 href={item.href}
@@ -556,7 +565,7 @@ const ProtocolContinuity = () => (
                   </span>
                   <span className="h-2 w-2 rounded-pill bg-brand-light/70 transition-transform duration-fast group-hover:scale-125" />
                 </div>
-                <h3 className="mt-4 text-lg font-light text-white md:text-xl">{item.title}</h3>
+                <h3 className="mt-4 break-words text-lg font-light text-white md:text-xl">{item.title}</h3>
                 <p className="mt-3 hidden text-sm leading-relaxed text-white/56 sm:block">{item.description}</p>
                 <div className="mt-5 border border-brand-line bg-black/20 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-brand-light md:px-3">
                   {item.signal}
@@ -570,7 +579,7 @@ const ProtocolContinuity = () => (
   </section>
 );
 
-const MemoryVisual = () => {
+const MemoryVisual = ({ copy }) => {
   const reduced = useReducedMotion();
 
   return (
@@ -580,28 +589,22 @@ const MemoryVisual = () => {
 
       <div className="relative z-10 flex h-full min-h-[18rem] flex-col sm:min-h-[22rem] md:min-h-[31rem]">
         <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
-          <span className="font-mono text-xs uppercase tracking-eyebrow text-white/35">device hippocampus</span>
-          <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">local first</span>
+          <span className="min-w-0 break-words font-mono text-xs uppercase tracking-eyebrow text-white/35">{copy.boundaryLabel}</span>
+          <span className="shrink-0 border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.localFirstLabel}</span>
         </div>
 
         <div className="relative mt-4 overflow-hidden border border-white/10 bg-black/30 p-3 sm:mt-5 sm:p-4 md:p-5">
           <div className="grid grid-cols-3 gap-2 md:gap-3">
             <MemoryNodeCard
-              label="Device"
-              title="Plain memory stays local"
-              detail="conversation distilled before sync"
+              {...copy.nodes.device}
               tone="device"
             />
             <MemoryNodeCard
-              label="Blind node"
-              title="Cannot read contents"
-              detail="ciphertext + blind index"
+              {...copy.nodes.blindNode}
               tone="node"
             />
             <MemoryNodeCard
-              label="Recall"
-              title="Answer uses local context"
-              detail="node never sees the fact"
+              {...copy.nodes.recall}
               tone="recall"
             />
           </div>
@@ -623,7 +626,7 @@ const MemoryVisual = () => {
               <span className="h-2 w-2 rounded-pill bg-brand-light" />
             </motion.div>
             <div className="absolute inset-x-0 bottom-0 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {memoryFlowStages.map((stage, index) => (
+              {copy.flowStages.map((stage, index) => (
                 <motion.div
                   key={stage.label}
                   className="min-w-0 border border-white/10 bg-white/[0.025] px-2 py-2"
@@ -641,7 +644,7 @@ const MemoryVisual = () => {
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2 md:gap-3">
-          {['ciphertext', 'blind index', 'opaque edge'].map((label, index) => (
+          {copy.sealedLabels.map((label, index) => (
             <motion.div
               key={label}
               className="border border-white/10 bg-black/40 p-2.5 md:p-3"
@@ -678,9 +681,9 @@ const MemoryNodeCard = ({ label, title, detail, tone }) => {
   );
 };
 
-const MemoryAdvantageLab = () => {
-  const [activeAxisId, setActiveAxisId] = useState('blind');
-  const activeAxis = advantageAxes.find((axis) => axis.id === activeAxisId) || advantageAxes[0];
+const MemoryAdvantageLab = ({ copy }) => {
+  const [activeAxisId, setActiveAxisId] = useState(copy.axes[0]?.id || 'blind');
+  const activeAxis = copy.axes.find((axis) => axis.id === activeAxisId) || copy.axes[0];
 
   return (
     <section className="border-y border-white/10 bg-white/[0.015] py-12 md:py-20">
@@ -694,22 +697,20 @@ const MemoryAdvantageLab = () => {
             className="min-w-0 lg:sticky lg:top-28"
           >
             <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
-              Interactive proof
+              {copy.eyebrow}
             </div>
-            <h2 className="mt-4 text-display-lg font-light text-white">
-              Not another memory table. A different trust model.
+            <h2 className="mt-4 max-w-3xl break-words text-display-lg font-light text-white">
+              {copy.title}
             </h2>
             <p className="mt-4 max-w-copy text-base leading-relaxed text-white/58 md:text-lg">
-              Tap each axis to see the core MemChain advantage: the server cannot
-              read memory, recall feels instant, offline memory works, model choice
-              stays open, and retrieval does not spend a model call.
+              {copy.description}
             </p>
             <div className="mt-4 max-w-copy border border-white/10 bg-black/20 px-3 py-2 text-[11px] uppercase leading-relaxed tracking-[0.14em] text-white/34">
-              Category context: Zep / Mem0 / Supermemory / ChatGPT Memory-style cloud memory
+              {copy.categoryContext}
             </div>
 
             <div className="-mx-4 mt-6 flex max-w-full snap-x gap-2 overflow-x-auto px-4 pb-2 scrollbar-hide lg:mx-0 lg:grid lg:overflow-visible lg:px-0 lg:pb-0">
-              {advantageAxes.map((axis) => {
+              {copy.axes.map((axis) => {
                 const active = axis.id === activeAxisId;
                 return (
                   <button
@@ -723,7 +724,7 @@ const MemoryAdvantageLab = () => {
                     }`}
                     aria-pressed={active}
                   >
-                    <span className="min-w-0 text-sm font-medium">{axis.label}</span>
+                    <span className="min-w-0 break-words text-sm font-medium">{axis.label}</span>
                     <span className={`whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] ${
                       active ? 'text-brand-light' : 'text-white/36'
                     }`}>
@@ -751,14 +752,14 @@ const MemoryAdvantageLab = () => {
                 {activeAxis.description}
               </p>
               <div className="mt-5 border border-brand-line bg-brand-faint p-3 sm:hidden">
-                <div className="text-[9px] uppercase tracking-[0.12em] text-brand-light">proof surface</div>
+                <div className="text-[9px] uppercase tracking-[0.12em] text-brand-light">{copy.labels.proofSurface}</div>
                 <div className="mt-1 text-xs leading-relaxed text-white/72">{activeAxis.proofSurface}</div>
               </div>
               <div className="mt-5 hidden grid-cols-3 gap-2 sm:grid">
                 {[
-                  ['user outcome', activeAxis.userOutcome],
-                  ['node view', activeAxis.nodeView],
-                  ['proof surface', activeAxis.proofSurface],
+                  [copy.labels.userOutcome, activeAxis.userOutcome],
+                  [copy.labels.nodeView, activeAxis.nodeView],
+                  [copy.labels.proofSurface, activeAxis.proofSurface],
                 ].map(([label, value]) => (
                   <div key={label} className="min-w-0 border border-white/10 bg-white/[0.025] p-2.5 md:p-3">
                     <div className="text-[9px] uppercase tracking-[0.12em] text-white/34">{label}</div>
@@ -772,7 +773,7 @@ const MemoryAdvantageLab = () => {
 
             <div className="grid lg:grid-cols-[1fr_0.42fr_1fr]">
               <MemoryModeCard mode={activeAxis.memchain} tone="memchain" />
-              <MemoryAxisVisual axisId={activeAxis.id} />
+              <MemoryAxisVisual axis={activeAxis} />
               <MemoryModeCard mode={activeAxis.cloud} tone="cloud" />
             </div>
           </motion.div>
@@ -812,15 +813,8 @@ const MemoryModeCard = ({ mode, tone }) => {
   );
 };
 
-const MemoryAxisVisual = ({ axisId }) => {
-  const labels = {
-    blind: ['plaintext', 'ciphertext'],
-    speed: ['850ms', '5ms'],
-    offline: ['offline miss', 'local hit'],
-    brain: ['locked', 'BYO'],
-    cost: ['model call', '0 calls'],
-  };
-  const [cloudLabel, memchainLabel] = labels[axisId] || labels.blind;
+const MemoryAxisVisual = ({ axis }) => {
+  const [cloudLabel, memchainLabel] = axis.visualLabels;
 
   return (
     <div className="relative flex min-h-[12rem] items-center justify-center overflow-hidden border-b border-white/10 bg-black/35 p-4 md:min-h-[16rem] md:p-5 lg:border-b-0">
@@ -838,17 +832,17 @@ const MemoryAxisVisual = ({ axisId }) => {
         </div>
         <div className="relative h-2 overflow-hidden rounded-pill bg-white/10">
           <motion.div
-            key={axisId}
+            key={axis.id}
             initial={{ width: '18%' }}
-            animate={{ width: axisId === 'speed' ? '96%' : '86%' }}
+            animate={{ width: axis.id === 'speed' ? '96%' : '86%' }}
             transition={{ duration: 0.75, ease: EASE }}
             className="h-full rounded-pill bg-brand-light"
           />
         </div>
         <div className="mt-8 grid grid-cols-3 gap-2">
-          {['seal', 'rank', 'recall'].map((step, index) => (
+          {axis.steps.map((step, index) => (
             <motion.div
-              key={`${axisId}-${step}`}
+              key={`${axis.id}-${step}`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: index * 0.08, ease: EASE }}
@@ -866,16 +860,16 @@ const MemoryAxisVisual = ({ axisId }) => {
   );
 };
 
-const Pipeline = () => (
+const Pipeline = ({ copy }) => (
   <section className="border-y border-white/10 bg-white/[0.015] py-12 md:py-20">
     <Container>
       <SectionHeader
-        eyebrow="Pipeline"
-        title="Remember, store, recall - without readable server memory."
-        description="MemChain is designed as a three-stage privacy path: device-side distillation, blind encrypted storage, and local-first recall."
+        eyebrow={copy.eyebrow}
+        title={copy.title}
+        description={copy.description}
       />
       <div className="mt-10 grid gap-4 md:grid-cols-3">
-        {pipeline.map((item, index) => (
+        {copy.items.map((item, index) => (
           <motion.article
             key={item.label}
             initial={{ opacity: 0, y: 18 }}
@@ -885,7 +879,7 @@ const Pipeline = () => (
             className="page-card border p-4 md:p-5"
           >
             <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{item.label}</div>
-            <h2 className="mt-4 text-2xl font-light text-white">{item.title}</h2>
+            <h2 className="mt-4 break-words text-2xl font-light text-white">{item.title}</h2>
             <p className="mt-3 text-sm leading-relaxed text-white/58">{item.description}</p>
             <ul className="mt-5 space-y-2">
               {item.details.map((detail) => (
@@ -902,18 +896,18 @@ const Pipeline = () => (
   </section>
 );
 
-const Pillars = () => (
+const Pillars = ({ copy }) => (
   <section className="py-14 md:py-20">
     <Container>
       <SectionHeader
-        eyebrow="Pillars"
-        title="Privacy is the architecture, not a policy sentence."
-        description="MemChain is built around precise claims the product can defend: node-blind storage, local-first recall, and user-selected AI models."
+        eyebrow={copy.eyebrow}
+        title={copy.title}
+        description={copy.description}
       />
       <div className="mt-10 grid gap-4 lg:grid-cols-3">
-        {pillars.map((pillar) => (
+        {copy.items.map((pillar) => (
           <article key={pillar.title} className="page-card border p-4 md:p-5">
-            <h2 className="text-2xl font-light text-white">{pillar.title}</h2>
+            <h2 className="break-words text-2xl font-light text-white">{pillar.title}</h2>
             <p className="mt-3 text-sm leading-relaxed text-white/58">{pillar.description}</p>
             <div className="mt-5 border border-brand-line bg-brand-faint p-3 text-xs leading-relaxed text-brand-light/88">
               {pillar.boundary}
@@ -925,52 +919,52 @@ const Pillars = () => (
   </section>
 );
 
-const Benchmarks = () => (
+const Benchmarks = ({ copy }) => (
   <section className="border-y border-white/10 bg-black/40 py-14 md:py-20">
     <Container>
       <SectionHeader
-        eyebrow="Claim-safe benchmark"
-        title="Fast, private recall is the wedge."
-        description="Measured with our LongMemEval-S internal runs in July 2026. The page states measured results and keeps model-tier projections out of product claims."
+        eyebrow={copy.eyebrow}
+        title={copy.title}
+        description={copy.description}
       />
       <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {benchmarkCards.map((item) => (
+        {copy.cards.map((item) => (
           <div key={item.label} className="page-card border p-4 md:p-5">
             <div className="font-mono text-3xl font-light text-white md:text-4xl">{item.value}</div>
-            <div className="mt-3 text-[10px] uppercase tracking-eyebrow text-white/42">{item.label}</div>
+            <div className="mt-3 break-words text-[10px] uppercase tracking-eyebrow text-white/42">{item.label}</div>
             <p className="mt-3 text-xs leading-relaxed text-white/46">{item.note}</p>
           </div>
         ))}
       </div>
       <div className="mt-6 border border-warn/25 bg-warn/[0.06] p-4 text-sm leading-relaxed text-white/60">
-        Honest boundary: we do not claim accuracy leadership or a formally proven privacy proof system. The differentiation is privacy, speed, cost, offline recall, and user ownership.
+        {copy.honestBoundary}
       </div>
     </Container>
   </section>
 );
 
-const Comparison = () => (
+const Comparison = ({ copy }) => (
   <section className="py-14 md:py-20">
     <Container>
       <SectionHeader
-        eyebrow="Comparison"
-        title="MemChain vs typical cloud memory services."
-        description="The product difference is structural: who can read memory, where recall happens, and whether users can leave with their context."
+        eyebrow={copy.eyebrow}
+        title={copy.title}
+        description={copy.description}
       />
       <div className="mt-10 grid gap-3">
-        {comparisonRows.map(([dimension, memchain, cloud]) => (
-          <article key={dimension} className="page-card grid gap-4 border p-4 md:grid-cols-[0.72fr_1fr_1fr] md:p-5">
+        {copy.rows.map((row) => (
+          <article key={row.dimension} className="page-card grid gap-4 border p-4 md:grid-cols-[0.72fr_1fr_1fr] md:p-5">
             <div>
-              <div className="text-[10px] uppercase tracking-eyebrow text-white/35">dimension</div>
-              <h3 className="mt-2 text-lg font-light text-white">{dimension}</h3>
+              <div className="text-[10px] uppercase tracking-eyebrow text-white/35">{copy.labels.dimension}</div>
+              <h3 className="mt-2 break-words text-lg font-light text-white">{row.dimension}</h3>
             </div>
             <div className="border border-brand-line bg-brand-faint p-3">
-              <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">MemChain</div>
-              <p className="mt-2 text-sm leading-relaxed text-white">{memchain}</p>
+              <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.labels.memchain}</div>
+              <p className="mt-2 text-sm leading-relaxed text-white">{row.memchain}</p>
             </div>
             <div className="border border-white/10 bg-black/25 p-3">
-              <div className="text-[10px] uppercase tracking-eyebrow text-white/34">Typical cloud memory</div>
-              <p className="mt-2 text-sm leading-relaxed text-white/50">{cloud}</p>
+              <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{copy.labels.cloud}</div>
+              <p className="mt-2 text-sm leading-relaxed text-white/50">{row.cloud}</p>
             </div>
           </article>
         ))}
@@ -979,45 +973,36 @@ const Comparison = () => (
   </section>
 );
 
-const PrivacyBoundary = () => (
+const PrivacyBoundary = ({ copy }) => (
   <section id="privacy-boundary" className="border-y border-white/10 bg-white/[0.015] py-14 md:py-20">
     <Container>
       <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
         <div>
-          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">Privacy boundary</div>
-          <h2 className="mt-4 text-display-md font-light text-white">The node is blind. The chosen brain still matters.</h2>
+          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.eyebrow}</div>
+          <h2 className="mt-4 max-w-3xl break-words text-display-md font-light text-white">{copy.title}</h2>
         </div>
         <div className="space-y-4 text-base leading-relaxed text-white/62">
-          <p>
-            MemChain storage nodes are cryptographically unable to read your memories.
-            They hold only device-encrypted ciphertext and irreversible blind indexes.
-            Encryption, decryption, and search happen on your device, with keys derived
-            from your identity and never uploaded.
-          </p>
-          <p>
-            Important limitation: when you choose an external AI service to distill or
-            answer over memories, the relevant plaintext is sent to that provider of
-            your choosing. With a local AI model, memory can remain on device through
-            the full memory path.
-          </p>
+          {copy.paragraphs.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
         </div>
       </div>
     </Container>
   </section>
 );
 
-const FAQ = () => (
+const FAQ = ({ copy }) => (
   <section className="py-14 md:py-20">
     <Container>
       <SectionHeader
-        eyebrow="FAQ"
-        title="Short answers for users, builders, and AI search."
-        description="These answers are intentionally direct so product pages, docs, and AI engines can cite them without ambiguity."
+        eyebrow={copy.eyebrow}
+        title={copy.title}
+        description={copy.description}
       />
       <div className="mt-10 grid gap-4 md:grid-cols-2">
-        {faqs.map((item) => (
+        {copy.items.map((item) => (
           <article key={item.q} className="page-card border p-4 md:p-5">
-            <h2 className="text-lg font-medium text-white">{item.q}</h2>
+            <h2 className="break-words text-lg font-medium text-white">{item.q}</h2>
             <p className="mt-3 text-sm leading-relaxed text-white/58">{item.a}</p>
           </article>
         ))}
@@ -1026,33 +1011,31 @@ const FAQ = () => (
   </section>
 );
 
-const MemChainAction = () => (
+const MemChainAction = ({ copy }) => (
   <section className="border-t border-white/10 py-14 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
     <Container>
       <div className="page-surface border p-5 text-center md:p-8">
         <div className="mx-auto mb-4 inline-flex border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
-          Own the memory layer
+          {copy.eyebrow}
         </div>
-        <h2 className="mx-auto max-w-3xl text-display-md font-light text-white">
-          A private memory system should make AI more useful without making the server more powerful.
+        <h2 className="mx-auto max-w-3xl break-words text-display-md font-light text-white">
+          {copy.title}
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/58 md:text-lg">
-          MemChain keeps durable context portable, encrypted, and local-first so
-          humans and agents can remember across tools without handing readable
-          memory to infrastructure.
+          {copy.description}
         </p>
         <div className="mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-2 sm:gap-4">
           <Link
             href="/privacy-network"
             className="inline-flex min-h-[48px] items-center justify-center rounded border border-brand-line bg-brand px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.18)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light"
           >
-            Explore Privacy Network
+            {copy.primaryCta}
           </Link>
           <a
             href="#privacy-boundary"
             className="inline-flex min-h-[48px] items-center justify-center rounded border border-white/15 px-6 py-3.5 text-center text-sm font-medium tracking-wide text-white/76 transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
           >
-            Review Privacy Boundary
+            {copy.secondaryCta}
           </a>
         </div>
       </div>
@@ -1063,7 +1046,7 @@ const MemChainAction = () => (
 const SectionHeader = ({ eyebrow, title, description }) => (
   <div className="max-w-3xl">
     <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{eyebrow}</div>
-    <h2 className="mt-3 text-display-md font-light text-white">{title}</h2>
+    <h2 className="mt-3 max-w-3xl break-words text-display-md font-light text-white">{title}</h2>
     <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">{description}</p>
   </div>
 );

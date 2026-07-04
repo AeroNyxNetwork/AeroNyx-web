@@ -4,7 +4,15 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v2.3 - North Star Plan visibility.
+ * Modification Reason: v2.4 - Secondary page internationalization.
+ *   Moved the Privacy Network hero, protocol bridge, North Star Plan, live
+ *   protocol proof, assurance model, daily dashboard signals, and telemetry
+ *   boundary copy into lib/i18n.js. Long-language mobile layouts now use
+ *   safer wrapping and compact rails so Russian, Spanish, Korean, Japanese,
+ *   Traditional Chinese, and Simplified Chinese remain polished.
+ *
+ * Historical Notes:
+ * v2.3 - North Star Plan visibility.
  *   Made the North Star Plan / 北極星計劃 directly visible and anchorable on the
  *   Privacy Network page so the infrastructure covenant is not reduced to a
  *   small English eyebrow. The section now states the same product thesis as
@@ -122,6 +130,7 @@
  * Last Modified: v2.1 - Homepage typography alignment
  * Last Modified: v2.2 - Secondary page action alignment
  * Last Modified: v2.3 - North Star Plan visibility
+ * Last Modified: v2.4 - Secondary page internationalization
  * ============================================
  */
 
@@ -150,125 +159,12 @@ const ProtocolBackground = dynamic(
 
 const EASE = [0.16, 1, 0.3, 1];
 
-const protectionSignals = [
-  {
-    title: 'Your IP is masked',
-    description: 'User traffic exits through privacy nodes instead of exposing the local network address to destinations.',
-  },
-  {
-    title: 'Traffic travels encrypted',
-    description: 'The page shows aggregate encrypted bytes and packets, never destinations, URLs, DNS contents, or browsing history.',
-  },
-  {
-    title: 'Node health is aggregate-only',
-    description: 'Public health surfaces show protocol readiness and encrypted relay evidence without user-level telemetry.',
-  },
-  {
-    title: 'Built for humans and agents',
-    description: 'The same privacy boundary supports people, apps, and autonomous agents coordinating through blind protocol primitives.',
-  },
-];
-
-const protocolContinuityCards = [
-  {
-    label: 'Traffic in motion',
-    title: 'Privacy Network',
-    href: '#protocol-stats',
-    description:
-      'Routes encrypted traffic through blind decentralized nodes and surfaces only aggregate proof that the network is protecting work.',
-    signal: 'hidden route',
-  },
-  {
-    label: 'Memory at rest',
-    title: 'MemChain',
-    href: '/memchain',
-    description:
-      'Preserves durable human and agent context as node-blind encrypted memory, so coordination can remember without readable server state.',
-    signal: 'sealed memory',
-  },
-];
-
-const northStarPrinciples = [
-  {
-    label: '01',
-    title: 'More private by default',
-    description:
-      'The protocol boundary is blind first: nodes route encrypted operations and expose aggregate health, not user destinations, payloads, DNS contents, or browsing history.',
-  },
-  {
-    label: '02',
-    title: 'Open source infrastructure',
-    description:
-      'Decentralized node software, protocol surfaces, and operational assumptions should be inspectable so the network earns trust through review, not brand promises.',
-  },
-  {
-    label: '03',
-    title: 'Built for global use',
-    description:
-      'Independent nodes across regions should be able to join, recover, report health safely, and keep the network usable for humans, apps, and autonomous agents.',
-  },
-];
-
-const assurancePairs = [
-  {
-    promise: 'Your IP is hidden',
-    evidence: 'The app can show route protection while public stats remain aggregate-only. No destination, URL, DNS, or browsing history appears on the public surface.',
-  },
-  {
-    promise: 'This connection is stable',
-    evidence: 'Protocol health is derived from relay readiness, restart recovery, and signed peer state rather than private session inspection.',
-  },
-  {
-    promise: 'Your traffic is encrypted',
-    evidence: 'The website can display encrypted bytes and packets because nodes report counters, not payloads or user-level traffic graphs.',
-  },
-  {
-    promise: 'Agents can use the same privacy layer',
-    evidence: 'Humans, apps, and autonomous agents share blind routing primitives, so agent coordination does not require a separate trusted network operator.',
-  },
-];
-
-const privacyBoundaries = [
-  'No packet payloads',
-  'No DNS contents',
-  'No domains or URLs',
-  'No browsing history',
-  'No node public keys on public cards',
-  'No identity-level traffic graph',
-];
-
-const routeActors = [
-  { label: 'human', detail: 'private traffic' },
-  { label: 'app', detail: 'encrypted request' },
-  { label: 'agent', detail: 'coordination packet' },
-];
-
-const routeEvidence = [
-  'encrypted route',
-  'hidden address',
-  'aggregate health',
-];
-
-const privacyHeroSignals = [
-  {
-    label: 'Address',
-    value: 'masked',
-  },
-  {
-    label: 'Route',
-    value: 'encrypted',
-  },
-  {
-    label: 'Telemetry',
-    value: 'aggregate',
-  },
-];
-
 export default function PrivacyNetworkPage() {
   const { locale } = useRouter();
   const activeLocale = locale || DEFAULT_LOCALE;
   const canonicalPath = activeLocale === DEFAULT_LOCALE ? '/privacy-network' : `/${activeLocale}/privacy-network`;
   const copy = getMessages(activeLocale);
+  const pageCopy = copy.privacyNetworkPage || getMessages(DEFAULT_LOCALE).privacyNetworkPage;
   const { stats, isLoading } = useNetworkStats({
     period: '30d',
     autoRefresh: true,
@@ -282,20 +178,10 @@ export default function PrivacyNetworkPage() {
   return (
     <>
       <SEO
-        title="AeroNyx Privacy Network | More private, open-source, global routing"
-        description="AeroNyx Privacy Network is a more private, open-source network for global use, built on auditable decentralized node infrastructure and a blind protocol boundary."
+        title={pageCopy.seo.title}
+        description={pageCopy.seo.description}
         canonicalUrl={`https://aeronyx.network${canonicalPath}`}
-        keywords={[
-          'AeroNyx Privacy Network',
-          'AeroNyx Privacy Protocol',
-          'open source privacy network',
-          'decentralized privacy infrastructure',
-          'private routing',
-          'encrypted routing',
-          'blind relay network',
-          'privacy-safe network stats',
-          'AI agent privacy routing',
-        ]}
+        keywords={pageCopy.seo.keywords}
       />
 
       <Suspense fallback={<div className="fixed inset-0" style={{ background: 'var(--surface-0, #08080D)' }} />}>
@@ -305,13 +191,19 @@ export default function PrivacyNetworkPage() {
       <SiteHeader />
 
       <main className="relative z-10 pt-24 md:pt-32">
-        <Hero />
-        <ProtocolContinuity />
-        <NorthStarPlan />
-        <LiveProtocolStats stats={stats} isLoading={isLoading} copy={copy} healthPercent={healthPercent} />
-        <AssuranceModel />
-        <ProtectionSignals />
-        <PrivacyBoundary />
+        <Hero copy={pageCopy.hero} />
+        <ProtocolContinuity copy={pageCopy.protocolContinuity} />
+        <NorthStarPlan copy={pageCopy.northStar} />
+        <LiveProtocolStats
+          stats={stats}
+          isLoading={isLoading}
+          siteCopy={copy}
+          copy={pageCopy.liveProtocolStats}
+          healthPercent={healthPercent}
+        />
+        <AssuranceModel copy={pageCopy.assurance} />
+        <ProtectionSignals copy={pageCopy.protection} />
+        <PrivacyBoundary copy={pageCopy.boundary} />
         <PrivacyAccessSection />
       </main>
 
@@ -320,7 +212,7 @@ export default function PrivacyNetworkPage() {
   );
 }
 
-const Hero = () => (
+const Hero = ({ copy }) => (
   <section data-hero-section className="pb-12 md:pb-24">
     <Container>
       <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
@@ -330,20 +222,16 @@ const Hero = () => (
           transition={{ duration: 0.7, ease: EASE }}
           className="min-w-0"
         >
-          <div className="inline-flex items-center gap-2 border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
-            More private. Open source. Global.
+          <div className="inline-flex max-w-full items-center gap-2 border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
+            <span className="break-words">{copy.eyebrow}</span>
           </div>
-          <h1 className="hero-title mt-6 max-w-4xl text-white">
-            A more private, open source network for global use.
+          <h1 className="hero-title mt-6 max-w-4xl break-words text-white">
+            {copy.title}
           </h1>
           <p className="mt-6 max-w-2xl text-base font-light leading-relaxed text-white/62 sm:text-lg md:text-xl">
-            AeroNyx Privacy Network lets humans, apps, and autonomous agents route
-            traffic through encrypted protocol nodes.
+            {copy.description}
             <span className="hidden sm:inline">
-              {' '}It avoids turning public observability into user surveillance.
-              The decentralized node layer is built as real privacy infrastructure:
-              auditable, blind by default, and designed to run across independent
-              operators worldwide.
+              {' '}{copy.desktopDescription}
             </span>
           </p>
           <div className="mt-8 flex w-full flex-col items-start gap-3 sm:w-auto sm:flex-row sm:gap-4">
@@ -351,21 +239,21 @@ const Hero = () => (
               href="#privacy-access"
               className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border border-brand-line bg-brand px-7 py-3.5 text-center text-sm font-semibold tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.22)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto"
             >
-              Get Privacy Network
+              {copy.primaryCta}
             </a>
             <a
               href="#protocol-stats"
               className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border border-white/15 px-7 py-3.5 text-center text-sm font-medium tracking-wide text-white/78 transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 sm:w-auto"
             >
-              View protocol health
+              {copy.secondaryCta}
             </a>
           </div>
 
           <div className="-mx-4 mt-8 flex snap-x gap-2.5 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
-            {privacyHeroSignals.map((item) => (
+            {copy.signals.map((item) => (
               <div key={item.label} className="page-card min-w-[9rem] snap-start border p-3 sm:min-w-0 md:p-4">
-                <div className="text-[10px] uppercase tracking-eyebrow text-white/36">{item.label}</div>
-                <div className="mt-2 text-lg font-light text-white md:text-2xl">{item.value}</div>
+                <div className="break-words text-[10px] uppercase tracking-eyebrow text-white/36">{item.label}</div>
+                <div className="mt-2 break-words text-lg font-light text-white md:text-2xl">{item.value}</div>
               </div>
             ))}
           </div>
@@ -377,34 +265,32 @@ const Hero = () => (
           transition={{ duration: 0.7, delay: 0.12, ease: EASE }}
           className="min-w-0"
         >
-          <PrivacyRouteVisual />
+          <PrivacyRouteVisual copy={copy.visual} />
         </motion.div>
       </div>
     </Container>
   </section>
 );
 
-const ProtocolContinuity = () => (
+const ProtocolContinuity = ({ copy }) => (
   <section className="pb-12 md:pb-20">
     <Container>
       <div className="page-surface border p-4 md:p-6">
         <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
           <div className="min-w-0">
             <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
-              One blind protocol
+              {copy.eyebrow}
             </div>
-            <h2 className="mt-3 text-display-md font-light text-white">
-              The network protects movement. MemChain protects memory.
+            <h2 className="mt-3 max-w-3xl break-words text-display-md font-light text-white">
+              {copy.title}
             </h2>
             <p className="mt-4 max-w-copy text-sm leading-relaxed text-white/58 md:text-base">
-              A privacy product becomes infrastructure when traffic, messages,
-              memory, and agent coordination share the same rule: nodes can help
-              route and synchronize, but they cannot read the payload.
+              {copy.description}
             </p>
           </div>
 
           <div className="grid gap-2 sm:grid-cols-2 md:gap-3">
-            {protocolContinuityCards.map((item) => (
+            {copy.cards.map((item) => (
               <Link
                 key={item.title}
                 href={item.href}
@@ -416,7 +302,7 @@ const ProtocolContinuity = () => (
                   </span>
                   <span className="h-2 w-2 rounded-pill bg-brand-light/70 transition-transform duration-fast group-hover:scale-125" />
                 </div>
-                <h3 className="mt-4 text-lg font-light text-white md:text-xl">{item.title}</h3>
+                <h3 className="mt-4 break-words text-lg font-light text-white md:text-xl">{item.title}</h3>
                 <p className="mt-3 hidden text-sm leading-relaxed text-white/56 sm:block">{item.description}</p>
                 <div className="mt-5 border border-brand-line bg-black/20 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-brand-light md:px-3">
                   {item.signal}
@@ -430,7 +316,7 @@ const ProtocolContinuity = () => (
   </section>
 );
 
-const PrivacyRouteVisual = () => {
+const PrivacyRouteVisual = ({ copy }) => {
   const reduced = useReducedMotion();
 
   return (
@@ -440,12 +326,12 @@ const PrivacyRouteVisual = () => {
 
       <div className="relative z-10 flex min-h-[18rem] flex-col sm:min-h-[22rem] md:min-h-[29rem]">
         <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-4 sm:mb-5">
-          <span className="text-[10px] uppercase tracking-eyebrow text-white/36">blind routing boundary</span>
-          <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">protected</span>
+          <span className="min-w-0 break-words text-[10px] uppercase tracking-eyebrow text-white/36">{copy.boundaryLabel}</span>
+          <span className="shrink-0 border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.protectedLabel}</span>
         </div>
 
         <div className="grid grid-cols-3 gap-2 md:gap-3">
-          {routeActors.map((actor, index) => (
+          {copy.actors.map((actor, index) => (
             <motion.div
               key={actor.label}
               className="border border-white/10 bg-white/[0.025] p-2.5 md:p-3"
@@ -453,7 +339,7 @@ const PrivacyRouteVisual = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.12 + index * 0.07, ease: EASE }}
             >
-              <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{actor.label}</div>
+              <div className="break-words text-[10px] uppercase tracking-eyebrow text-white/34">{actor.label}</div>
               <div className="mt-2 hidden text-xs leading-relaxed text-white/58 md:block">{actor.detail}</div>
             </motion.div>
           ))}
@@ -475,7 +361,7 @@ const PrivacyRouteVisual = () => {
 
           <div className="relative z-10 grid w-full max-w-full grid-cols-1 items-center gap-3 sm:max-w-sm sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
             <div className="space-y-2">
-              {['source', 'payload', 'intent'].map((label, index) => (
+              {copy.privateLabels.map((label, index) => (
                 <motion.div
                   key={label}
                   className="border border-white/10 bg-white/[0.025] px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-white/42"
@@ -495,12 +381,12 @@ const PrivacyRouteVisual = () => {
               />
               <div className="text-center">
                 <div className="font-mono text-lg text-white">0x</div>
-                <div className="mt-1 text-[9px] uppercase tracking-[0.12em] text-brand-light">blind</div>
+                <div className="mt-1 text-[9px] uppercase tracking-[0.12em] text-brand-light">{copy.blindLabel}</div>
               </div>
             </div>
 
             <div className="space-y-2">
-              {routeEvidence.map((label, index) => (
+              {copy.evidence.map((label, index) => (
                 <motion.div
                   key={label}
                   className="border border-brand-line bg-brand-faint px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-brand-light"
@@ -516,7 +402,7 @@ const PrivacyRouteVisual = () => {
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2 md:gap-3">
-          {['No payloads', 'No DNS', 'No history'].map((item) => (
+          {copy.boundaries.map((item) => (
             <div key={item} className="border border-white/10 bg-white/[0.025] p-2.5 text-center text-[10px] uppercase tracking-eyebrow text-white/42 md:p-3">
               {item}
             </div>
@@ -527,7 +413,7 @@ const PrivacyRouteVisual = () => {
   );
 };
 
-const NorthStarPlan = () => (
+const NorthStarPlan = ({ copy }) => (
   <section id="north-star-plan" className="scroll-mt-24 border-y border-white/10 bg-white/[0.012] py-14 md:py-20">
     <Container>
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
@@ -538,26 +424,21 @@ const NorthStarPlan = () => (
           transition={{ duration: 0.6, ease: EASE }}
         >
           <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
-            North Star Plan / 北極星計劃
+            {copy.eyebrow}
           </div>
-          <h2 className="mt-3 text-display-md font-light text-white">
-            More private. Open source. Global by default.
+          <h2 className="mt-3 max-w-3xl break-words text-display-md font-light text-white">
+            {copy.title}
           </h2>
           <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">
-            The Privacy Network is not a closed app feature. It is AeroNyx's
-            infrastructure covenant: decentralized nodes that can survive global
-            audit, real operation, and worldwide participation while preserving
-            the blind protocol boundary.
+            {copy.description}
           </p>
           <p className="mt-4 text-sm leading-relaxed text-white/48 md:text-base">
-            The public surface can expose aggregate node health, signed peer
-            state, restart recovery, and route evidence. It must never become a
-            user-level surveillance system.
+            {copy.secondaryDescription}
           </p>
         </motion.div>
 
         <div className="grid gap-3">
-          {northStarPrinciples.map((item, index) => (
+          {copy.principles.map((item, index) => (
             <motion.article
               key={item.title}
               className="page-card border p-4 md:p-5"
@@ -569,7 +450,7 @@ const NorthStarPlan = () => (
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                 <div className="font-mono text-sm text-brand-light">{item.label}</div>
                 <div>
-                  <h3 className="text-xl font-light text-white">{item.title}</h3>
+                  <h3 className="break-words text-xl font-light text-white">{item.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-white/56 md:text-base">
                     {item.description}
                   </p>
@@ -583,35 +464,26 @@ const NorthStarPlan = () => (
   </section>
 );
 
-const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
+const LiveProtocolStats = ({ stats, isLoading, siteCopy, copy, healthPercent }) => {
   const metrics = [
     {
-      label: 'Encrypted traffic',
-      description: 'Total encrypted payload bytes relayed by AeroNyx protocol nodes.',
-      userSignal: 'Your route is carrying encrypted work',
-      publicEvidence: 'aggregate bytes only',
+      ...copy.metrics.encryptedTraffic,
       liveValue: stats.encryptedTrafficBytes,
       fallback: stats.encryptedTraffic,
-      suffix: copy.join.stats.bytesUnit,
+      suffix: siteCopy.join.stats.bytesUnit,
       defaultStep: 1024,
     },
     {
-      label: 'Encrypted packets',
-      description: 'Encrypted protocol packets forwarded for routing, messaging, memory, and agent coordination.',
-      userSignal: 'The blind protocol is actively forwarding ciphertext',
-      publicEvidence: 'packet count without content',
+      ...copy.metrics.encryptedPackets,
       liveValue: stats.encryptedMessagesRaw,
       fallback: stats.encryptedMessages,
-      suffix: copy.join.stats.packetsUnit,
+      suffix: siteCopy.join.stats.packetsUnit,
       defaultStep: 1,
     },
     {
-      label: 'Protocol health',
-      description: 'Readiness score from aggregate protocol foundation checks.',
-      userSignal: 'The node layer is reporting usable protection',
-      publicEvidence: 'foundation checks only',
+      ...copy.metrics.protocolHealth,
       fallback: `${healthPercent}%`,
-      suffix: 'ready',
+      suffix: copy.metrics.protocolHealth.suffix,
     },
   ];
 
@@ -619,23 +491,18 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
     <section id="protocol-stats" className="border-y border-white/10 bg-white/[0.015] py-14 md:py-20">
       <Container>
         <div className="mb-10 max-w-3xl">
-          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">AeroNyx Privacy Protocol</div>
-          <h2 className="mt-3 text-display-md font-light text-white">A dashboard users can trust.</h2>
+          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.eyebrow}</div>
+          <h2 className="mt-3 max-w-3xl break-words text-display-md font-light text-white">{copy.title}</h2>
           <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">
-            The product shows enough to feel protected without exposing who users are,
-            where they go, or what they send.
+            {copy.description}
           </p>
         </div>
         <div className="-mx-4 mb-4 flex snap-x gap-2 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
-          {[
-            ['user sees', 'protected', 'hidden address, encrypted route, healthy protocol'],
-            ['public sees', 'aggregate', 'aggregate counters and readiness only'],
-            ['nodes see', 'ciphertext', 'ciphertext and signed operational metadata'],
-          ].map(([label, mobileValue, value]) => (
-            <div key={label} className="min-w-[10rem] snap-start border border-white/10 bg-black/25 px-3 py-2.5 sm:min-w-0">
-              <div className="text-[9px] uppercase tracking-[0.12em] text-white/34">{label}</div>
-              <div className="mt-1 text-xs leading-relaxed text-white/62 md:hidden">{mobileValue}</div>
-              <div className="mt-1 hidden text-sm leading-relaxed text-white/62 md:block">{value}</div>
+          {copy.visibility.map((item) => (
+            <div key={item.label} className="min-w-[10rem] snap-start border border-white/10 bg-black/25 px-3 py-2.5 sm:min-w-0">
+              <div className="break-words text-[9px] uppercase tracking-[0.12em] text-white/34">{item.label}</div>
+              <div className="mt-1 text-xs leading-relaxed text-white/62 md:hidden">{item.mobileValue}</div>
+              <div className="mt-1 hidden text-sm leading-relaxed text-white/62 md:block">{item.value}</div>
             </div>
           ))}
         </div>
@@ -656,15 +523,15 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
                   <span className="text-3xl md:text-4xl">{item.fallback}</span>
                 )}
               </div>
-              <div className="mt-3 text-[10px] uppercase tracking-eyebrow text-white/42">{item.label}</div>
+              <div className="mt-3 break-words text-[10px] uppercase tracking-eyebrow text-white/42">{item.label}</div>
               <p className="mt-3 hidden text-sm leading-relaxed text-white/48 sm:block">{item.description}</p>
               <div className="mt-5 grid gap-2">
                 <div className="border border-brand-line bg-brand-faint px-3 py-2">
-                  <div className="text-[9px] uppercase tracking-[0.12em] text-brand-light">user signal</div>
+                  <div className="text-[9px] uppercase tracking-[0.12em] text-brand-light">{copy.userSignalLabel}</div>
                   <div className="mt-1 text-xs leading-relaxed text-white/70">{item.userSignal}</div>
                 </div>
                 <div className="hidden border border-white/10 bg-black/25 px-3 py-2 md:block">
-                  <div className="text-[9px] uppercase tracking-[0.12em] text-white/34">public evidence</div>
+                  <div className="text-[9px] uppercase tracking-[0.12em] text-white/34">{copy.publicEvidenceLabel}</div>
                   <div className="mt-1 text-xs leading-relaxed text-white/50">{item.publicEvidence}</div>
                 </div>
               </div>
@@ -676,7 +543,7 @@ const LiveProtocolStats = ({ stats, isLoading, copy, healthPercent }) => {
   );
 };
 
-const AssuranceModel = () => (
+const AssuranceModel = ({ copy }) => (
   <section className="py-14 md:py-20">
     <Container>
       <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
@@ -687,20 +554,17 @@ const AssuranceModel = () => (
           transition={{ duration: 0.6, ease: EASE }}
           className="lg:sticky lg:top-28"
         >
-          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">Protection model</div>
-          <h2 className="mt-3 text-display-md font-light text-white">
-            Make privacy visible without making users observable.
+          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.eyebrow}</div>
+          <h2 className="mt-3 max-w-3xl break-words text-display-md font-light text-white">
+            {copy.title}
           </h2>
           <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">
-            A world-class privacy product should give users confidence every day:
-            hidden address, encrypted route, stable connection, healthy nodes.
-            AeroNyx maps those signals to aggregate decentralized node evidence instead
-            of turning protection into surveillance.
+            {copy.description}
           </p>
         </motion.div>
 
         <div className="grid gap-3">
-          {assurancePairs.map((item, index) => (
+          {copy.pairs.map((item, index) => (
             <motion.article
               key={item.promise}
               className="page-card border p-4 md:p-5"
@@ -711,11 +575,11 @@ const AssuranceModel = () => (
             >
               <div className="grid gap-4 md:grid-cols-[0.74fr_1.26fr] md:items-start">
                 <div>
-                  <div className="text-[10px] uppercase tracking-eyebrow text-white/34">user promise</div>
-                  <h3 className="mt-2 text-xl font-light text-white">{item.promise}</h3>
+                  <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{copy.userPromiseLabel}</div>
+                  <h3 className="mt-2 break-words text-xl font-light text-white">{item.promise}</h3>
                 </div>
                 <div className="border border-brand-line bg-brand-faint p-3">
-                  <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">protocol evidence</div>
+                  <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.protocolEvidenceLabel}</div>
                   <p className="mt-2 text-sm leading-relaxed text-white/64 md:text-base">{item.evidence}</p>
                 </div>
               </div>
@@ -727,22 +591,20 @@ const AssuranceModel = () => (
   </section>
 );
 
-const ProtectionSignals = () => (
+const ProtectionSignals = ({ copy }) => (
   <section className="border-y border-white/10 bg-white/[0.012] py-14 md:py-20">
     <Container>
       <div className="mb-10 max-w-3xl">
-        <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">Daily assurance</div>
-        <h2 className="mt-3 text-display-md font-light text-white">A dashboard that feels protective, not technical.</h2>
+        <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.eyebrow}</div>
+        <h2 className="mt-3 max-w-3xl break-words text-display-md font-light text-white">{copy.title}</h2>
         <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">
-          Privacy products should make users feel protected every time they open
-          the app. The interface should prioritize clear status, regional context,
-          and connection confidence over raw node internals.
+          {copy.description}
         </p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
-        {protectionSignals.map((item) => (
+        {copy.signals.map((item) => (
           <article key={item.title} className="page-card border p-4 md:p-5">
-            <h2 className="text-xl font-light text-white">{item.title}</h2>
+            <h2 className="break-words text-xl font-light text-white">{item.title}</h2>
             <p className="mt-3 text-sm leading-relaxed text-white/56">{item.description}</p>
           </article>
         ))}
@@ -751,20 +613,19 @@ const ProtectionSignals = () => (
   </section>
 );
 
-const PrivacyBoundary = () => (
+const PrivacyBoundary = ({ copy }) => (
   <section className="border-y border-white/10 bg-black/40 py-14 md:py-20">
     <Container>
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div>
-          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">Public telemetry boundary</div>
-          <h2 className="mt-3 text-display-md font-light text-white">Aggregate health only.</h2>
+          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.eyebrow}</div>
+          <h2 className="mt-3 max-w-3xl break-words text-display-md font-light text-white">{copy.title}</h2>
           <p className="mt-4 text-base leading-relaxed text-white/58">
-            The public website can show encrypted traffic, encrypted packets, relay
-            evidence, and protocol readiness. It must never become a user surveillance surface.
+            {copy.description}
           </p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          {privacyBoundaries.map((item) => (
+          {copy.items.map((item) => (
             <div key={item} className="page-card border p-4 text-sm text-white/62">
               {item}
             </div>
