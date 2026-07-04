@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v4.1 - North Star privacy infrastructure wording.
+ * Modification Reason: v4.2 - MemChain terminology and visual cleanup.
+ *   Removed legacy ledger/reward wording from the MemChain tab so the homepage
+ *   presents MemChain as node-blind, local-first encrypted memory. The visual
+ *   now labels it as an encrypted memory flow.
+ *
+ * Historical Notes:
+ * v4.1 - North Star privacy infrastructure wording.
  *   Tightened the Privacy Network and Protocol Foundation tabs around the
  *   North Star Plan: more private, open source, globally usable networking
  *   built on auditable Rust node infrastructure.
@@ -83,6 +89,7 @@
  * Last Modified: v3.9 - Removed standalone payment rails tab from homepage
  * Last Modified: v4.0 - Privacy Network naming and selector polish
  * Last Modified: v4.1 - North Star privacy infrastructure wording
+ * Last Modified: v4.2 - MemChain terminology and visual cleanup
  * ============================================
  */
 
@@ -140,15 +147,15 @@ const ProductsEcosystem = () => {
         savings: 'Own the private context layer without exposing raw conversation history.',
       },
       features: [
-        'Ed25519 signed, SHA-256 hashed memory facts',
-        'Merkle tree blocks mined every hour',
-        'Cross-device sync via encrypted protocol channels',
-        'Agent integration with wallet-based identity',
+        'Node-blind encrypted memory records',
+        'Local-first recall path for fast private context',
+        'Cross-device sync through encrypted protocol channels',
+        'Bring-your-own-brain model choice',
       ],
       comparison: {
         traditional: 'Vendor memory: locked to one platform',
-        aeronyx: 'MemChain: Owned by you, on your devices',
-        savings: 'Total data sovereignty',
+        aeronyx: 'MemChain: memory belongs to the user',
+        savings: 'Private context without readable server memory',
       },
       status: 'beta',
       cta: { text: 'Explore MemChain', link: '/memchain' },
@@ -588,7 +595,7 @@ const MemChainProductVisual = () => (
       </div>
 
       <div className="text-center pt-4 text-xs text-white/40">
-        Private Memory Chain
+        Encrypted Memory Flow
       </div>
     </div>
   </div>

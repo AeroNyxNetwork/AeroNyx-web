@@ -1,7 +1,32 @@
 import Head from 'next/head';
 
 /**
- * SEO component for page-specific metadata
+ * ============================================
+ * File Creation/Modification Notes
+ * ============================================
+ * File Purpose:
+ *   Shared SEO metadata component for AeroNyx website pages.
+ *
+ * Modification Reason: v1.1 - Protocol-first default metadata.
+ *   Replaced legacy fallback keywords with AeroNyx's current protocol narrative
+ *   so future pages that do not provide explicit metadata still describe the
+ *   open blind coordination layer.
+ *
+ * Main Functionality:
+ *   - Emits title, description, keywords, canonical, Open Graph, and Twitter
+ *     metadata for page-level SEO/GEO surfaces.
+ *
+ * Dependencies:
+ *   - next/head for document metadata injection.
+ *
+ * Important Note for Next Developer:
+ *   - Page-specific SEO props should still be preferred.
+ *   - Keep fallback copy aligned with the protocol narrative: encrypted
+ *     routing, encrypted messaging, private memory, and blind open protocol.
+ *
+ * Last Modified: v1.1 - Protocol-first default metadata
+ * ============================================
+ *
  * @param {Object} props - Component props
  * @param {string} props.title - Page title
  * @param {string} props.description - Page description
@@ -11,12 +36,12 @@ import Head from 'next/head';
  * @param {Array} props.keywords - Array of keywords for the page
  */
 const SEO = ({ 
-  title = 'AeroNyx Network | Privacy-First Decentralized Computing',
-  description = 'AeroNyx Network empowers billions of devices with its privacy-first SDK, establishing a secure foundation for decentralized networks.',
+  title = 'AeroNyx | Encrypted coordination layer for autonomous agents',
+  description = 'AeroNyx lets humans, apps, and AI agents route traffic, exchange encrypted messages, preserve private memory, and coordinate work through a blind, open protocol.',
   canonicalUrl = 'https://aeronyx.network/',
   ogImage = 'https://binary.aeronyx.network/aeronyx_logo.png',
   ogType = 'website',
-  keywords = ['privacy', 'decentralized computing', 'blockchain', 'network', 'SDK', 'secure computing', 'privacy-first']
+  keywords = ['encrypted coordination layer', 'blind protocol', 'privacy network', 'private AI memory', 'encrypted messaging', 'agent coordination', 'open Rust nodes']
 }) => {
   // Canonical URL without trailing slash
   const canonical = canonicalUrl.endsWith('/') 

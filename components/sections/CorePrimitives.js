@@ -30,7 +30,14 @@
  *      same node-blind invariant.
  *   4. Proof strip reinforces "infrastructure routes/stores ciphertext only".
  *
- * Modification Reason: v1.2 - Privacy Network North Star wording.
+ * Modification Reason: v1.3 - Homepage primitive animation handoff.
+ *   Polished the two homepage primitive cards so they visually hand off to the
+ *   deeper MemChain and Privacy Network pages: subtle hover lift, a breathing
+ *   protocol spine, richer encrypted-route motion, and a sealed-memory flow
+ *   that keeps the node-blind invariant visible before users click through.
+ *
+ * Historical Notes:
+ * v1.2 - Privacy Network North Star wording.
  *   Refined the Privacy Network card so the homepage names the product as a
  *   more private, open source network for global use and tees up the Rust node
  *   infrastructure story now carried by /privacy-network.
@@ -50,6 +57,7 @@
  * Last Modified: v1.0 - Initial core primitives section
  * Last Modified: v1.1 - Proof strip and mobile CTA polish
  * Last Modified: v1.2 - Privacy Network North Star wording
+ * Last Modified: v1.3 - Homepage primitive animation handoff
  * ============================================
  */
 
@@ -177,9 +185,10 @@ const PrimitiveCard = ({ primitive, reduced }) => (
   <motion.div
     initial={reduced ? false : { opacity: 0, y: 18 }}
     whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
+    whileHover={reduced ? undefined : { y: -4 }}
     viewport={{ once: true }}
     transition={{ duration: 0.55, ease: EASE }}
-    className="page-surface group relative min-w-0 overflow-hidden rounded border p-5 md:p-6"
+    className="page-surface group relative min-w-0 overflow-hidden rounded border p-5 transition-colors duration-base hover:border-brand-line md:p-6"
   >
     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/35 to-transparent opacity-60" />
     <div className="grid gap-5 md:grid-cols-[0.92fr_1.08fr] md:items-center lg:block">
@@ -231,6 +240,12 @@ const ProtocolSpine = ({ reduced }) => (
   >
     <div className="absolute left-1/2 top-4 hidden h-[calc(100%-2rem)] w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-brand-light/30 to-transparent lg:block" />
     <div className="absolute inset-y-1/2 left-4 right-4 h-px bg-gradient-to-r from-transparent via-brand-light/30 to-transparent lg:hidden" />
+    <motion.div
+      aria-hidden="true"
+      className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-pill border border-brand-line bg-brand-faint"
+      animate={reduced ? undefined : { scale: [0.92, 1.08, 0.92], opacity: [0.42, 0.82, 0.42] }}
+      transition={reduced ? undefined : { duration: 3.2, repeat: Infinity, ease: EASE }}
+    />
     <div className="relative z-10 grid grid-cols-3 gap-2 text-center sm:gap-3 lg:grid-cols-1">
       {['Route', 'Coordinate', 'Remember'].map((word) => (
         <div key={word} className="rounded-sm border border-white/10 bg-black/35 px-1.5 py-2 sm:px-2.5">
@@ -244,7 +259,7 @@ const ProtocolSpine = ({ reduced }) => (
 );
 
 const PrimitiveVisual = ({ type, reduced }) => (
-  <div className="relative mb-5 h-44 overflow-hidden rounded border border-white/10 bg-black/25 md:mb-0 lg:mb-6">
+  <div className="relative mb-5 h-48 overflow-hidden rounded border border-white/10 bg-black/25 md:mb-0 lg:mb-6">
     <div
       className="absolute inset-0 opacity-[0.06]"
       style={{
@@ -257,14 +272,23 @@ const PrimitiveVisual = ({ type, reduced }) => (
 );
 
 const TrafficVisual = ({ reduced }) => (
-  <svg className="absolute inset-0 h-full w-full" viewBox="0 0 420 180" fill="none">
-    <line x1="52" y1="92" x2="368" y2="92" stroke="rgba(151,136,247,0.22)" />
-    <line x1="126" y1="52" x2="294" y2="128" stroke="rgba(95,187,247,0.14)" />
-    {[52, 154, 266, 368].map((x, index) => (
+  <svg className="absolute inset-0 h-full w-full" viewBox="0 0 420 190" fill="none">
+    <path d="M48 104H372" stroke="rgba(151,136,247,0.16)" />
+    <path d="M72 68C136 36 224 42 348 76" stroke="rgba(95,187,247,0.12)" />
+    <path d="M72 140C148 164 236 152 348 112" stroke="rgba(95,187,247,0.10)" />
+    <motion.path
+      d="M48 104H372"
+      stroke="rgba(151,136,247,0.62)"
+      strokeWidth="1.4"
+      initial={{ pathLength: 0, opacity: 0.4 }}
+      animate={reduced ? { pathLength: 1, opacity: 0.65 } : { pathLength: [0, 1, 1], opacity: [0.28, 0.75, 0.28] }}
+      transition={reduced ? { duration: 0 } : { duration: 3.4, repeat: Infinity, ease: EASE }}
+    />
+    {[48, 156, 264, 372].map((x, index) => (
       <g key={x}>
-        <circle cx={x} cy="92" r="18" fill="rgba(119,98,243,0.07)" stroke="rgba(151,136,247,0.22)" />
-        <circle cx={x} cy="92" r="3" fill="rgba(151,136,247,0.72)" />
-        <text x={x} y="130" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 9, fill: 'rgba(255,255,255,0.34)' }}>
+        <circle cx={x} cy="104" r="18" fill="rgba(119,98,243,0.07)" stroke="rgba(151,136,247,0.22)" />
+        <circle cx={x} cy="104" r="3" fill="rgba(151,136,247,0.72)" />
+        <text x={x} y="143" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 9, fill: 'rgba(255,255,255,0.34)' }}>
           N{index + 1}
         </text>
       </g>
@@ -272,41 +296,59 @@ const TrafficVisual = ({ reduced }) => (
     <motion.circle
       r="4"
       fill="#9788F7"
-      initial={{ cx: 52, cy: 92, opacity: 0.6 }}
-      animate={reduced ? undefined : { cx: [52, 154, 266, 368], opacity: [0.45, 1, 1, 0.45] }}
-      transition={reduced ? undefined : { duration: 3.2, repeat: Infinity, ease: 'linear' }}
+      initial={{ cx: 48, cy: 104, opacity: 0.6 }}
+      animate={reduced ? undefined : { cx: [48, 156, 264, 372], opacity: [0.45, 1, 1, 0.45] }}
+      transition={reduced ? undefined : { duration: 3.4, repeat: Infinity, ease: 'linear' }}
     />
-    <text x="210" y="44" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, fill: 'rgba(95,187,247,0.6)' }}>
-      ciphertext in motion
+    <motion.circle
+      r="3"
+      fill="#8AD1FF"
+      initial={{ cx: 72, cy: 68, opacity: 0.45 }}
+      animate={reduced ? undefined : { cx: [72, 156, 264, 348], cy: [68, 54, 60, 76], opacity: [0.28, 0.8, 0.8, 0.28] }}
+      transition={reduced ? undefined : { duration: 4.2, repeat: Infinity, ease: 'linear', delay: 0.45 }}
+    />
+    <text x="210" y="42" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, fill: 'rgba(95,187,247,0.6)' }}>
+      encrypted route · aggregate health only
     </text>
   </svg>
 );
 
 const MemoryVisual = ({ reduced }) => (
-  <svg className="absolute inset-0 h-full w-full" viewBox="0 0 420 180" fill="none">
-    {[0, 1, 2].map((index) => {
-      const x = 86 + index * 92;
-      const y = 56 + index * 18;
-      return (
-        <motion.g
-          key={index}
-          initial={reduced ? false : { opacity: 0, y: 8 }}
-          whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.45, delay: index * 0.12, ease: EASE }}
-        >
-          <rect x={x} y={y} width="74" height="46" rx="4" fill="rgba(119,98,243,0.07)" stroke="rgba(151,136,247,0.22)" />
-          <path d={`M${x + 12} ${y + 16}H${x + 50}`} stroke="rgba(255,255,255,0.28)" />
-          <path d={`M${x + 12} ${y + 27}H${x + 36}`} stroke="rgba(95,187,247,0.24)" />
-          <text x={x + 37} y={y + 60} textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 9, fill: 'rgba(255,255,255,0.34)' }}>
-            v{index + 1}
-          </text>
-        </motion.g>
-      );
-    })}
-    <path d="M160 82H178M252 100H270" stroke="rgba(151,136,247,0.24)" />
-    <text x="210" y="36" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, fill: 'rgba(95,187,247,0.6)' }}>
-      encrypted context chain
+  <svg className="absolute inset-0 h-full w-full" viewBox="0 0 420 190" fill="none">
+    <text x="210" y="38" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, fill: 'rgba(95,187,247,0.6)' }}>
+      local memory · sealed sync · blind node
+    </text>
+    {[
+      { x: 42, title: 'local', body: 'fact' },
+      { x: 172, title: 'sealed', body: 'cipher' },
+      { x: 302, title: 'blind', body: 'node' },
+    ].map((item, index) => (
+      <motion.g
+        key={item.title}
+        initial={reduced ? false : { opacity: 0, y: 8 }}
+        whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.45, delay: index * 0.12, ease: EASE }}
+      >
+        <rect x={item.x} y="70" width="78" height="58" rx="4" fill={index === 1 ? 'rgba(119,98,243,0.09)' : 'rgba(255,255,255,0.025)'} stroke={index === 1 ? 'rgba(151,136,247,0.28)' : 'rgba(255,255,255,0.12)'} />
+        <text x={item.x + 39} y="94" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, fill: index === 1 ? 'rgba(151,136,247,0.88)' : 'rgba(255,255,255,0.42)' }}>
+          {item.title}
+        </text>
+        <text x={item.x + 39} y="113" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 9, fill: 'rgba(255,255,255,0.34)' }}>
+          {item.body}
+        </text>
+      </motion.g>
+    ))}
+    <path d="M120 99H172M250 99H302" stroke="rgba(151,136,247,0.22)" />
+    <motion.circle
+      r="4"
+      fill="#9788F7"
+      initial={{ cx: 81, cy: 99, opacity: 0.58 }}
+      animate={reduced ? undefined : { cx: [81, 211, 341], opacity: [0.42, 1, 0.42] }}
+      transition={reduced ? undefined : { duration: 3.6, repeat: Infinity, ease: 'linear' }}
+    />
+    <text x="210" y="154" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 9, fill: 'rgba(255,255,255,0.34)' }}>
+      node stores memory it cannot read
     </text>
   </svg>
 );
