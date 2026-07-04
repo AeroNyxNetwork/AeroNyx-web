@@ -30,7 +30,13 @@
  *      same node-blind invariant.
  *   4. Proof strip reinforces "infrastructure routes/stores ciphertext only".
  *
- * Modification Reason: v1.1 - Proof strip and mobile CTA polish.
+ * Modification Reason: v1.2 - Privacy Network North Star wording.
+ *   Refined the Privacy Network card so the homepage names the product as a
+ *   more private, open source network for global use and tees up the Rust node
+ *   infrastructure story now carried by /privacy-network.
+ *
+ * Historical Notes:
+ * v1.1 - Proof strip and mobile CTA polish.
  *   The three proof cells now read as product invariants instead of abstract
  *   protocol labels. Primitive CTAs also keep full-width touch geometry on
  *   iPhone-class screens while preserving compact desktop alignment.
@@ -43,6 +49,7 @@
  *
  * Last Modified: v1.0 - Initial core primitives section
  * Last Modified: v1.1 - Proof strip and mobile CTA polish
+ * Last Modified: v1.2 - Privacy Network North Star wording
  * ============================================
  */
 
@@ -59,13 +66,13 @@ const primitiveCards = [
     title: 'Privacy Network',
     label: 'Traffic in motion',
     description:
-      'AeroNyx Privacy Network gives humans, apps, and agents a blind routing layer for live encrypted traffic. Nodes coordinate packets and relay state without reading user content.',
+      'AeroNyx Privacy Network is a more private, open source network for global use. Rust nodes coordinate encrypted traffic and relay state without reading user content.',
     cta: 'Explore Privacy Network',
     href: '/privacy-network',
     checks: [
+      'Open Rust node infrastructure',
       'Blind relay boundary',
       'Aggregate health only',
-      'Agent-ready private access',
     ],
     visual: 'motion',
   },

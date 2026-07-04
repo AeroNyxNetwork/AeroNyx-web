@@ -4,7 +4,15 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v1.3 - Privacy Network narrative cleanup.
+ * Modification Reason: v1.4 - North Star infrastructure narrative.
+ *   Added the North Star Plan as the engineering covenant for the Privacy
+ *   Network: more private, open source, globally usable, and built on Rust
+ *   node infrastructure that can stand up to public audit and real operation.
+ *   The hero assurance panel now animates vertically to avoid transient
+ *   horizontal overflow on iPhone-class screens.
+ *
+ * Historical Notes:
+ * v1.3 - Privacy Network narrative cleanup.
  *   Renames the active header/background/download section dependencies away
  *   from legacy AIL/VPN implementation names. Visible copy stays focused on
  *   Privacy Network and AeroNyx Privacy Protocol.
@@ -26,7 +34,8 @@
  *   1. Render SEO and shared site chrome.
  *   2. Explain what the privacy network gives users without making the
  *      homepage product-heavy.
- *   3. Show aggregate encrypted traffic/packet/health metrics and route users
+ *   3. State the North Star engineering covenant for Rust node infrastructure.
+ *   4. Show aggregate encrypted traffic/packet/health metrics and route users
  *      to downloads.
  *
  * Important Note for Next Developer:
@@ -36,6 +45,7 @@
  *     compatibility; do not rename API paths without coordinating clients.
  *
  * Last Modified: v1.3 - Removed old download surface wording
+ * Last Modified: v1.4 - North Star infrastructure narrative
  * ============================================
  */
 
@@ -82,6 +92,27 @@ const protectionSignals = [
   },
 ];
 
+const northStarPrinciples = [
+  {
+    label: '01',
+    title: 'More private by default',
+    description:
+      'The protocol boundary is blind first: nodes route encrypted operations and expose aggregate health, not user destinations, payloads, DNS contents, or browsing history.',
+  },
+  {
+    label: '02',
+    title: 'Open source infrastructure',
+    description:
+      'Rust node software, protocol surfaces, and operational assumptions should be inspectable so the network earns trust through review, not brand promises.',
+  },
+  {
+    label: '03',
+    title: 'Built for global use',
+    description:
+      'Independent nodes across regions should be able to join, recover, report health safely, and keep the network usable for humans, apps, and autonomous agents.',
+  },
+];
+
 const privacyBoundaries = [
   'No packet payloads',
   'No DNS contents',
@@ -109,12 +140,14 @@ export default function PrivacyNetworkPage() {
   return (
     <>
       <SEO
-        title="AeroNyx Privacy Network | Private routing on the AeroNyx Protocol"
-        description="AeroNyx Privacy Network gives humans, apps, and AI agents encrypted routing through a blind protocol boundary, with public aggregate health and no user-level telemetry."
+        title="AeroNyx Privacy Network | More private, open-source, global routing"
+        description="AeroNyx Privacy Network is a more private, open-source network for global use, built on auditable Rust node infrastructure and a blind protocol boundary."
         canonicalUrl={`https://aeronyx.network${canonicalPath}`}
         keywords={[
           'AeroNyx Privacy Network',
           'AeroNyx Privacy Protocol',
+          'open source privacy network',
+          'Rust privacy infrastructure',
           'private routing',
           'encrypted routing',
           'blind relay network',
@@ -131,6 +164,7 @@ export default function PrivacyNetworkPage() {
 
       <main className="relative z-10 pt-24 md:pt-32">
         <Hero />
+        <NorthStarPlan />
         <LiveProtocolStats stats={stats} isLoading={isLoading} copy={copy} healthPercent={healthPercent} />
         <ProtectionSignals />
         <PrivacyBoundary />
@@ -152,15 +186,17 @@ const Hero = () => (
           transition={{ duration: 0.7, ease: EASE }}
         >
           <div className="inline-flex items-center gap-2 border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
-            AeroNyx Privacy Network
+            More private. Open source. Global.
           </div>
           <h1 className="mt-6 max-w-4xl text-display-xl font-light text-white">
-            Private routing built on a blind open protocol.
+            A more private, open source network for global use.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/62 md:text-xl">
             AeroNyx Privacy Network lets humans, apps, and autonomous agents route
             traffic through encrypted protocol nodes without turning public
-            observability into user surveillance.
+            observability into user surveillance. The Rust node layer is built as
+            real privacy infrastructure: auditable, blind by default, and designed
+            to run across independent operators worldwide.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
@@ -179,8 +215,8 @@ const Hero = () => (
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.12, ease: EASE }}
           className="page-surface border p-4 md:p-5"
         >
@@ -189,7 +225,7 @@ const Hero = () => (
             <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">protected</span>
           </div>
           <div className="space-y-4">
-            {['Encrypted route established', 'Public IP hidden', 'No destinations in public telemetry', 'Protocol health verified'].map((item) => (
+            {['Encrypted route established', 'Public IP hidden', 'Open Rust node foundation', 'Protocol health verified'].map((item) => (
               <div key={item} className="flex items-center justify-between gap-4 border border-white/10 bg-white/[0.025] p-4">
                 <span className="min-w-0 text-sm text-white/70">{item}</span>
                 <span className="h-2.5 w-2.5 rounded-pill bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.75)]" />
@@ -197,6 +233,55 @@ const Hero = () => (
             ))}
           </div>
         </motion.div>
+      </div>
+    </Container>
+  </section>
+);
+
+const NorthStarPlan = () => (
+  <section className="border-y border-white/10 bg-white/[0.012] py-14 md:py-20">
+    <Container>
+      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: EASE }}
+        >
+          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">North Star Plan</div>
+          <h2 className="mt-3 text-display-md font-light text-white">
+            Rust nodes that can survive global audit and real operation.
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">
+            The Privacy Network is not a closed app feature. It is the public
+            operating surface for AeroNyx's blind protocol: open Rust nodes,
+            privacy-safe telemetry, signed peer state, restart recovery, and
+            route evidence that can be inspected without exposing users.
+          </p>
+        </motion.div>
+
+        <div className="grid gap-3">
+          {northStarPrinciples.map((item, index) => (
+            <motion.article
+              key={item.title}
+              className="page-card border p-4 md:p-5"
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: index * 0.06, ease: EASE }}
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                <div className="font-mono text-sm text-brand-light">{item.label}</div>
+                <div>
+                  <h3 className="text-xl font-light text-white">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/56 md:text-base">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            </motion.article>
+          ))}
+        </div>
       </div>
     </Container>
   </section>

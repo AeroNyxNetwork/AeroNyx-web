@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v4.0 - Privacy Network naming and selector polish.
+ * Modification Reason: v4.1 - North Star privacy infrastructure wording.
+ *   Tightened the Privacy Network and Protocol Foundation tabs around the
+ *   North Star Plan: more private, open source, globally usable networking
+ *   built on auditable Rust node infrastructure.
+ *
+ * Historical Notes:
+ * v4.0 - Privacy Network naming and selector polish.
  *   Renamed the user-facing first product to Privacy Network so the homepage
  *   reads as a protocol/product system rather than a
  *   download funnel. Mobile selector tabs now keep stable widths and truncate
@@ -76,6 +82,7 @@
  * Last Modified: v3.8 - Reframed after CorePrimitives section
  * Last Modified: v3.9 - Removed standalone payment rails tab from homepage
  * Last Modified: v4.0 - Privacy Network naming and selector polish
+ * Last Modified: v4.1 - North Star privacy infrastructure wording
  * ============================================
  */
 
@@ -102,22 +109,22 @@ const ProductsEcosystem = () => {
       id: 'vpn',
       name: 'Privacy Network',
       category: 'Private Routing Layer',
-      tagline: 'Private routing without trusting a company',
+      tagline: 'More private, open source, globally usable',
       useCase: {
-        pain: 'Centralized privacy apps ask users to trust one company with all routing metadata',
-        solution: 'AeroNyx routes through a blind privacy protocol where nodes see encrypted operations, not user content',
-        savings: 'Use privacy as a protocol primitive, not another subscription silo.',
+        pain: 'Centralized privacy apps ask users to trust one company with routing metadata and operational visibility',
+        solution: 'AeroNyx routes through open Rust nodes where public health is aggregate-only and user payloads remain encrypted',
+        savings: 'Use privacy as a global protocol primitive, not another closed subscription silo.',
       },
       features: [
+        'Open Rust node infrastructure',
         'Blind relay fabric for encrypted routing',
         'Public aggregate network health without user-level telemetry',
         'Privacy access for humans, apps, and autonomous agents',
-        'Agent-ready private access without centralized routing trust',
       ],
       comparison: {
         traditional: 'Centralized privacy app: trust the provider',
-        aeronyx: 'AeroNyx: verify the protocol boundary',
-        savings: 'Own the privacy layer',
+        aeronyx: 'AeroNyx: inspect the protocol boundary',
+        savings: 'A more private network for global use',
       },
       status: 'live',
       cta: { text: 'Explore Privacy Network', link: '/privacy-network' },
@@ -174,10 +181,10 @@ const ProductsEcosystem = () => {
       id: 'foundation',
       name: 'Protocol Foundation',
       category: 'Rust Node Layer',
-      tagline: 'Open Rust nodes, signed peer state, public health',
+      tagline: 'Auditable Rust nodes, signed peer state, public health',
       useCase: {
         pain: 'Privacy products fail when every feature depends on a centralized service that can observe or be forced to disclose user behavior',
-        solution: 'AeroNyx separates protocol state, node operations, public aggregates, and user-encrypted payloads from the start',
+        solution: 'AeroNyx separates protocol state, node operations, public aggregates, and user-encrypted payloads so the node layer can be audited worldwide',
         savings: 'Build on an auditable privacy boundary instead of retrofitting one later.',
       },
       features: [
