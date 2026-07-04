@@ -2,7 +2,12 @@
  * ============================================
  * File: components/sections/JoinNetwork.jsx
  * ============================================
- * Modification Reason: v2.6 - Mobile operator journey density polish.
+ * Modification Reason: v2.7 - Developer CTA route alignment.
+ *   Updated the final build step to the canonical developer documentation
+ *   path so the operator journey resolves into the maintained docs surface.
+ *
+ * Historical Notes:
+ * v2.6 - Mobile operator journey density polish.
  *   Operator stats now use calmer loading typography and tighter mobile card
  *   spacing so the node journey keeps product-grade rhythm without turning
  *   into a tall engineering dashboard on iPhone-class screens.
@@ -38,6 +43,7 @@
  * Last Modified: v2.3 — Apple-grade operator journey control polish
  * Last Modified: v2.4 - iPhone-safe journey order and control sizing
  * Last Modified: v2.6 - Mobile operator journey density polish
+ * Last Modified: v2.7 - Developer CTA route alignment
  * ============================================
  */
 
@@ -142,7 +148,7 @@ const JoinNetwork = () => {
       subtitle: copy.steps[3].subtitle,
       description: copy.steps[3].description,
       features: copy.steps[3].features,
-      cta: { text: copy.steps[3].cta, link: 'https://docs.aeronyx.network/developers' },
+      cta: { text: copy.steps[3].cta, link: 'https://docs.aeronyx.network/developer-documentation/overview' },
       visual: <BuildVisual liveLabel={copy.live} activeNodesLabel={copy.activeNodesWorldwide} />,
     },
   ];

@@ -2,7 +2,14 @@
  * ============================================
  * File: components/sections/SophisticatedCTA.jsx
  * ============================================
- * Modification Reason: v2.4 — Final conversion rhythm polish.
+ * Modification Reason: v2.5 — Product-action closing surface.
+ *   Replaced the two-action whitepaper/contact ending with a clearer
+ *   three-action product surface: protocol docs, MemChain, and Nodeboard.
+ *   The partnership email remains as a quiet secondary link below the main
+ *   actions so the page resolves into what users can actually do next.
+ *
+ * Historical Notes:
+ * v2.4 — Final conversion rhythm polish.
  *   Added a restrained final eyebrow before the closing CTA so the bottom of
  *   the homepage resolves with the same protocol-first hierarchy established
  *   by the hero, product index, architecture, and roadmap sections.
@@ -23,10 +30,12 @@
  *   - Whitepaper URL must match Footer; change both together.
  *
  * Last Modified: v2.4 — Final CTA eyebrow rhythm alignment
+ * Last Modified: v2.5 — Product-action closing surface
  * ============================================
  */
 
 import React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import Container from '../ui/Container';
@@ -37,6 +46,26 @@ const EASE = [0.16, 1, 0.3, 1];
 const SophisticatedCTA = () => {
   const { locale } = useRouter();
   const copy = getMessages(locale || DEFAULT_LOCALE).cta;
+  const actions = [
+    {
+      label: copy.docs || copy.whitepaper,
+      href: 'https://docs.aeronyx.network/aeronyx-whitepaper/technical-white-paper',
+      external: true,
+      tone: 'primary',
+    },
+    {
+      label: copy.memchain || 'Explore MemChain',
+      href: '/memchain',
+      external: false,
+      tone: 'secondary',
+    },
+    {
+      label: copy.nodeboard || 'Open Nodeboard',
+      href: 'https://app.aeronyx.network/',
+      external: true,
+      tone: 'secondary',
+    },
+  ];
 
   return (
     <section className="border-t border-white/10 py-14 md:py-24" style={{ background: 'var(--surface-0, #08080D)' }}>
@@ -65,34 +94,56 @@ const SophisticatedCTA = () => {
 
           {/* Actions */}
           <motion.div
-            className="flex flex-col items-center justify-center gap-4 px-4 sm:flex-row sm:gap-8"
+            className="mx-auto grid max-w-3xl grid-cols-1 gap-3 px-4 sm:grid-cols-3"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
           >
-            <a
-              href="https://docs.aeronyx.network/aeronyx-whitepaper/technical-white-paper"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative w-full sm:w-auto"
-            >
-              <div className="flex min-h-[50px] items-center justify-center rounded border border-white/20 px-8 py-3.5 text-center transition-colors duration-fast group-hover:border-brand-line group-hover:bg-brand-faint sm:px-12 sm:py-4">
-                <span className="text-xs sm:text-sm uppercase tracking-eyebrow">
-                  {copy.whitepaper}
-                </span>
-              </div>
-            </a>
-
-            <a
-              href="mailto:partnerships@aeronyx.network"
-              className="inline-flex min-h-[44px] items-center justify-center rounded px-4 py-2 text-white/40 hover:text-white transition-colors duration-fast"
-            >
-              <span className="text-xs sm:text-sm uppercase tracking-eyebrow">
-                {copy.partnership}
-              </span>
-            </a>
+            {actions.map((action) => (
+              action.external ? (
+                <a
+                  key={action.href}
+                  href={action.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`group flex min-h-[52px] items-center justify-center rounded border px-5 py-3 text-center transition-colors duration-fast ${
+                    action.tone === 'primary'
+                      ? 'border-brand-line bg-brand-faint text-white hover:bg-brand/15'
+                      : 'border-white/15 text-white/68 hover:border-brand-line hover:bg-white/[0.035] hover:text-white'
+                  }`}
+                >
+                  <span className="text-xs uppercase tracking-eyebrow sm:text-[13px]">
+                    {action.label}
+                  </span>
+                </a>
+              ) : (
+                <Link
+                  key={action.href}
+                  href={action.href}
+                  locale={locale || DEFAULT_LOCALE}
+                  className="group flex min-h-[52px] items-center justify-center rounded border border-white/15 px-5 py-3 text-center text-white/68 transition-colors duration-fast hover:border-brand-line hover:bg-white/[0.035] hover:text-white"
+                >
+                  <span className="text-xs uppercase tracking-eyebrow sm:text-[13px]">
+                    {action.label}
+                  </span>
+                </Link>
+              )
+            ))}
           </motion.div>
+
+          <motion.a
+            href="mailto:partnerships@aeronyx.network"
+            className="mx-auto mt-6 inline-flex min-h-[44px] items-center justify-center rounded px-4 py-2 text-white/40 transition-colors duration-fast hover:text-white"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.28, ease: EASE }}
+          >
+            <span className="text-xs uppercase tracking-eyebrow sm:text-sm">
+              {copy.partnership}
+            </span>
+          </motion.a>
         </div>
       </Container>
     </section>
