@@ -2,12 +2,11 @@
  * ============================================
  * File: styles/globals.css
  * ============================================
- * Modification Reason: v3.4 — Mobile typography token cleanup.
- *   Legacy global mobile h1/h2/h3 overrides were still forcing every heading
- *   back to older !important sizes after the fixed Apple-style type scale had
- *   been introduced. The compatibility rules now target the legacy
- *   .section-heading utility only, so hero-title/text-display tokens remain
- *   the single source of truth on iOS, Android, macOS, and Windows.
+ * Modification Reason: v3.5 — Hero-owned mobile spacing fix.
+ *   The homepage hero now explicitly owns its first-viewport spacing, so the
+ *   legacy global mobile `section` padding rules skip `[data-hero-section]`.
+ *   This prevents the first section from stacking old top padding on top of
+ *   NarrativeHero's own spacing and keeps mobile first paint tight.
  *
  * Historical Notes:
  *   v3.2 — Apple-grade homepage typography compatibility.
@@ -74,7 +73,7 @@
  *     referenced by older sections — do not delete.
  *   - Heading text-shadow must stay neutral black. No colored glows.
  *
- * Last Modified: v3.4 — Removed global mobile heading overrides
+ * Last Modified: v3.5 — Exempt hero from legacy mobile section padding
  * ============================================
  */
 
@@ -519,11 +518,11 @@ img, svg {
     justify-content: center;
   }
 
-  section {
+  section:not([data-hero-section]) {
     padding-top: 3rem;
     padding-bottom: 3rem;
   }
-  section:first-of-type {
+  section:first-of-type:not([data-hero-section]) {
     padding-top: 5rem;
   }
 
@@ -538,7 +537,7 @@ img, svg {
   .section-heading {
     font-size: 1.375rem !important;
   }
-  section:first-of-type {
+  section:first-of-type:not([data-hero-section]) {
     padding-top: 4.5rem;
   }
 }

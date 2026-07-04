@@ -2,9 +2,16 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.4.0
+ * Version: 8.5.0
  *
  * Modification Reason:
+ *   v8.5 — Mobile first-viewport spacing fix.
+ *   The hero now opts out of legacy global mobile section padding with a
+ *   data-owned-layout marker and uses a tighter mobile top rhythm. This fixes
+ *   the stacked gap caused by `section:first-of-type` padding plus the hero's
+ *   own pt-28 spacing, bringing the first claim into view sooner on iPhone
+ *   and Android while keeping desktop composition intact.
+ *
  *   v8.4 — Mobile Lens compatibility polish. Desktop keeps the cinematic
  *   auto-sweep proof, while iPhone-class viewports start with the conversation
  *   almost fully readable and let the user drag into ciphertext. This prevents
@@ -62,7 +69,7 @@
  *     not show it during auto-sweep or it loses all meaning.
  *
  * Last Modified: v8.3.0 — Hero CTA touch geometry polish
- * Last Modified: v8.4.0 — Mobile Lens first-paint readability polish
+ * Last Modified: v8.5.0 — Mobile top spacing alignment
  * ============================================================================
  */
 
@@ -592,7 +599,7 @@ const NarrativeHero = () => {
   const showStamp = hasInteracted && split > 92;
 
   return (
-    <section className="relative overflow-hidden" style={{ background: 'var(--surface-0, #08080D)' }}>
+    <section data-hero-section className="relative overflow-hidden" style={{ background: 'var(--surface-0, #08080D)' }}>
       {/* Solid backdrop covers the global background within this section. */}
       <div className="absolute inset-0" style={{ background: 'var(--surface-0, #08080D)', zIndex: 0 }} />
 
@@ -600,7 +607,7 @@ const NarrativeHero = () => {
       <WatcherField reduced={reduced} splitRef={splitRef} />
 
       <Container className="relative">
-        <div className="relative pt-28 sm:pt-32 md:pt-28 pb-16 md:pb-24" style={{ zIndex: 10 }}>
+        <div className="relative pt-24 sm:pt-28 md:pt-28 pb-16 md:pb-24" style={{ zIndex: 10 }}>
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
 
             {/* ---- Left: the claim ---- */}
