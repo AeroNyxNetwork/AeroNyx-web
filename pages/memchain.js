@@ -5,7 +5,14 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
- * Modification Reason: v2.1 - Secondary page internationalization.
+ * Modification Reason: v2.2 - Multilingual mobile resilience.
+ *   Tightened long-locale wrapping for MemChain proof rails, comparison cards,
+ *   mode cards, and the animated memory visual so Japanese, Korean, Russian,
+ *   Spanish, Simplified Chinese, and Traditional Chinese can render without
+ *   clipped metric labels or cramped card text on phone-class viewports.
+ *
+ * Historical Notes:
+ * v2.1 - Secondary page internationalization.
  *   Moved the visible MemChain narrative, proof rails, memory visual labels,
  *   comparison lab, pipeline, pillars, benchmarks, comparison, FAQ, privacy
  *   boundary, and closing action copy into lib/i18n.js so every supported
@@ -117,6 +124,7 @@
  * Last Modified: v1.9 - Homepage typography alignment
  * Last Modified: v2.0 - Secondary page action alignment
  * Last Modified: v2.1 - Secondary page internationalization
+ * Last Modified: v2.2 - Multilingual mobile resilience
  * ============================================
  */
 
@@ -141,292 +149,6 @@ const ProtocolBackground = dynamic(
 );
 
 const EASE = [0.16, 1, 0.3, 1];
-
-const keywords = [
-  'node-blind memory',
-  'end-to-end encrypted memory',
-  'private AI memory',
-  'local-first AI memory',
-  'offline recall',
-  'encrypted cross-device sync',
-  'personal AI memory',
-  'on-device embeddings',
-  'bring your own LLM',
-  'MemChain',
-];
-
-const heroProofs = [
-  {
-    value: '0',
-    label: 'readable bytes on node',
-    detail: 'ciphertext + blind indexes only',
-  },
-  {
-    value: '2-40ms',
-    label: 'recall class',
-    detail: 'node-side 2-5ms / local 15-40ms design path',
-  },
-  {
-    value: 'offline',
-    label: 'local hippocampus',
-    detail: 'recall works when the encrypted local copy has the memory',
-  },
-];
-
-const protocolContinuityCards = [
-  {
-    label: 'Traffic in motion',
-    title: 'Privacy Network',
-    href: '/privacy-network',
-    description:
-      'Encrypted routes move through blind decentralized nodes while the public surface shows aggregate health, not user destinations or payloads.',
-    signal: 'private connection',
-  },
-  {
-    label: 'Memory at rest',
-    title: 'MemChain',
-    href: '#privacy-boundary',
-    description:
-      'Personal and agent context is sealed locally, synced as ciphertext, and recalled without giving storage nodes readable memory.',
-    signal: 'private context',
-  },
-];
-
-const memoryFlowStages = [
-  {
-    label: 'Remember',
-    title: 'Device distills',
-    detail: 'fact extracted locally',
-  },
-  {
-    label: 'Seal',
-    title: 'Key wraps memory',
-    detail: 'AES envelope + signature',
-  },
-  {
-    label: 'Store',
-    title: 'Blind node sync',
-    detail: 'ciphertext only',
-  },
-  {
-    label: 'Recall',
-    title: 'Local answer',
-    detail: 'memory returns unreadable to node',
-  },
-];
-
-const pipeline = [
-  {
-    label: 'Remember',
-    title: 'Distill on the device',
-    description: 'AI conversations are distilled into self-contained facts, categorized, encrypted, signed, and kept locally before any sync.',
-    details: ['Conversation sensing is limited to AI memory flows', 'Fact distillation and classification happen client-side', 'AES-256-GCM envelope plus device signature'],
-  },
-  {
-    label: 'Store',
-    title: 'Nodes stay blind',
-    description: 'Storage nodes receive ciphertext, blind indexes, client-computed vectors, and opaque relationship edges. They cannot read or re-sign memories.',
-    details: ['Ciphertext only', 'Keyed blind indexes', 'Content addressing and deduplication'],
-  },
-  {
-    label: 'Recall',
-    title: 'Local-first retrieval',
-    description: 'Recall starts from the encrypted local copy, then fuses semantic, keyword, time, and structured search before injecting only the relevant memory.',
-    details: ['Offline recall when local data is present', 'No LLM call for retrieval', 'Node fallback only when local cache misses'],
-  },
-];
-
-const pillars = [
-  {
-    title: 'Node-blind',
-    description: 'The node stores memory, but cannot read it. This is not a promise to look away; the infrastructure lacks the keys.',
-    boundary: 'Precise claim: AeroNyx storage nodes cannot read memory contents.',
-  },
-  {
-    title: 'Local-first',
-    description: 'Every memory keeps an encrypted local copy, making recall fast, resilient, and usable offline when the local copy has the answer.',
-    boundary: 'Measured node-side recall is 2-5ms. Local recall is designed for a 15-40ms class path.',
-  },
-  {
-    title: 'Bring your own brain',
-    description: 'Users can choose DeepSeek, OpenAI, local models, or any OpenAI-compatible model. The memory layer is not locked to one vendor.',
-    boundary: 'If an external AI provider is selected, relevant plaintext is sent to that provider by user choice.',
-  },
-];
-
-const benchmarkCards = [
-  {
-    value: '95-99%',
-    label: 'retrieval hit rate',
-    note: 'Measured in our LongMemEval-S runs under end-to-end encrypted memory constraints.',
-  },
-  {
-    value: '66-68%',
-    label: 'economic-brain end-to-end score',
-    note: 'Measured with an economical model tier, ahead of GPT-4o reading full history in the same setup baseline.',
-  },
-  {
-    value: '2-5ms',
-    label: 'node-side recall latency',
-    note: 'Recall path avoids model inference and stays in the millisecond class.',
-  },
-  {
-    value: '0',
-    label: 'LLM calls for retrieval',
-    note: 'Search and ranking do not burn model tokens; models are used for distillation and answers.',
-  },
-];
-
-const comparisonRows = [
-  ['Server can read memory', 'No. Ciphertext plus blind indexes.', 'Usually yes. Cloud memory is commonly stored in readable form.'],
-  ['Primary location', 'User device plus blind encrypted backup.', 'Provider cloud.'],
-  ['Recall latency', 'Millisecond-class local or node recall.', 'Typically hundreds of milliseconds to seconds.'],
-  ['Offline usage', 'Yes, when the local encrypted copy has the memory.', 'Usually no.'],
-  ['AI model choice', 'User selected model or local model.', 'Platform selected model.'],
-  ['Cross-device recovery', 'Identity-derived keys and encrypted sync.', 'Account-centric cloud sync.'],
-  ['Retrieval cost', 'No model inference for retrieval.', 'Often depends on hosted inference or platform search.'],
-];
-
-const advantageAxes = [
-  {
-    id: 'blind',
-    label: 'Server Blindness',
-    metric: '0 readable bytes',
-    title: 'The node holds memory it cannot open.',
-    description:
-      'MemChain stores ciphertext, blind indexes, and opaque relationship edges. The storage node can sync and order memory, but it cannot read or re-sign the facts.',
-    userOutcome: 'AI remembers without server-readable memory',
-    nodeView: 'ciphertext, blind index, opaque edges',
-    proofSurface: '0 readable bytes on storage node',
-    memchain: {
-      title: 'MemChain',
-      headline: 'Cryptographically unreadable',
-      proof: 'ciphertext + blind index',
-      detail: 'Infrastructure lacks the keys, so privacy is enforced by architecture instead of policy.',
-    },
-    cloud: {
-      title: 'Typical cloud memory',
-      headline: 'Readable service memory',
-      proof: 'plaintext service record',
-      detail: 'The provider can commonly inspect, rank, migrate, or expose memory because the server owns the readable state.',
-    },
-  },
-  {
-    id: 'speed',
-    label: 'Recall Speed',
-    metric: '2-40ms',
-    title: 'Recall should feel instant, not like a cloud round trip.',
-    description:
-      'Node-side recall measured at 2-5ms. Local recall is designed for a 15-40ms path, while typical cloud memory often lives in the hundreds-of-milliseconds to seconds range.',
-    userOutcome: 'memory appears while the conversation is still flowing',
-    nodeView: 'search request over sealed indexes',
-    proofSurface: 'millisecond-class recall path',
-    memchain: {
-      title: 'MemChain',
-      headline: '2-5ms node / 15-40ms local',
-      proof: 'millisecond-class recall',
-      detail: 'Retrieval avoids model inference and starts from the device-side encrypted hippocampus.',
-    },
-    cloud: {
-      title: 'Typical cloud memory',
-      headline: 'hundreds of ms to seconds',
-      proof: 'network + hosted retrieval',
-      detail: 'Recall usually depends on remote services, queueing, hosted search, and model-adjacent orchestration.',
-    },
-  },
-  {
-    id: 'offline',
-    label: 'Offline Recall',
-    metric: 'works offline',
-    title: 'Memory should survive a bad network.',
-    description:
-      'MemChain keeps an encrypted local copy. When the relevant memory is present locally, recall continues without contacting the storage node.',
-    userOutcome: 'private context works during weak connectivity',
-    nodeView: 'sync backlog after local recall',
-    proofSurface: 'local encrypted hippocampus',
-    memchain: {
-      title: 'MemChain',
-      headline: 'local encrypted hippocampus',
-      proof: 'offline recall path',
-      detail: 'The device can search its own encrypted memory copy and sync later.',
-    },
-    cloud: {
-      title: 'Typical cloud memory',
-      headline: 'cloud dependency',
-      proof: 'offline miss',
-      detail: 'If the memory only exists in a provider cloud, the product degrades when the network disappears.',
-    },
-  },
-  {
-    id: 'brain',
-    label: 'BYO Brain',
-    metric: 'user chosen',
-    title: 'The memory layer should not lock you to one model.',
-    description:
-      'MemChain separates memory ownership from model choice. Users can choose an external AI provider or a local model, while the memory layer remains portable.',
-    userOutcome: 'memory follows the user across model choices',
-    nodeView: 'encrypted memory envelope, not model output',
-    proofSurface: 'portable identity-derived memory',
-    memchain: {
-      title: 'MemChain',
-      headline: 'bring your own brain',
-      proof: 'OpenAI-compatible or local',
-      detail: 'Memory gets better as the user changes models; it is not trapped inside one assistant product.',
-    },
-    cloud: {
-      title: 'Typical cloud memory',
-      headline: 'platform-selected brain',
-      proof: 'vendor lock-in',
-      detail: 'Memory quality, portability, and model access are often bound to the platform that stores the memory.',
-    },
-  },
-  {
-    id: 'cost',
-    label: 'Recall Cost',
-    metric: '0 model calls',
-    title: 'Search should not burn a model call every time.',
-    description:
-      'MemChain retrieval uses search and ranking instead of model inference. Models are used for distillation and answers, not for every memory lookup.',
-    userOutcome: 'fast recall without token spend on lookup',
-    nodeView: 'ranked encrypted reference set',
-    proofSurface: '0 model calls for retrieval',
-    memchain: {
-      title: 'MemChain',
-      headline: 'zero LLM calls for retrieval',
-      proof: 'search/rank only',
-      detail: 'Recall can stay fast and cheap because the retrieval path is not an inference path.',
-    },
-    cloud: {
-      title: 'Typical cloud memory',
-      headline: 'often inference-adjacent',
-      proof: 'hosted retrieval cost',
-      detail: 'Hosted memory systems often couple search, ranking, and summarization to provider-side compute.',
-    },
-  },
-];
-
-const faqs = [
-  {
-    q: 'Can AeroNyx read my memories?',
-    a: 'No. MemChain storage nodes hold only device-encrypted ciphertext and irreversible blind indexes. Without your identity-derived keys, the node cannot decrypt memory contents.',
-  },
-  {
-    q: 'Where is memory stored?',
-    a: 'The primary copy lives on your device in encrypted form. Nodes keep an encrypted backup for cross-device sync and recovery.',
-  },
-  {
-    q: 'Can a new device recover memory?',
-    a: 'Yes, the new device can refill from the encrypted node backup and rebuild local indexes. If the identity backup is lost, encrypted memories cannot be recovered.',
-  },
-  {
-    q: 'Does memory work offline?',
-    a: 'Yes. Offline recall works when the relevant memory is already in the local encrypted copy.',
-  },
-  {
-    q: 'Is it on by default?',
-    a: 'No. Memory should require explicit first-use consent, and users must be able to disable it and delete memory from settings.',
-  },
-];
 
 export default function MemChainPage() {
   const { locale } = useRouter();
@@ -560,14 +282,14 @@ const ProtocolContinuity = ({ copy }) => (
                 className="group min-w-0 border border-white/10 bg-white/[0.025] p-3 transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint md:p-4"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-[10px] uppercase tracking-eyebrow text-white/35">
+                  <span className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/35">
                     {item.label}
                   </span>
                   <span className="h-2 w-2 rounded-pill bg-brand-light/70 transition-transform duration-fast group-hover:scale-125" />
                 </div>
                 <h3 className="mt-4 break-words text-lg font-light text-white md:text-xl">{item.title}</h3>
                 <p className="mt-3 hidden text-sm leading-relaxed text-white/56 sm:block">{item.description}</p>
-                <div className="mt-5 border border-brand-line bg-black/20 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-brand-light md:px-3">
+                <div className="mt-5 break-words border border-brand-line bg-black/20 px-2.5 py-2 font-mono text-[10px] uppercase leading-4 tracking-[0.14em] text-brand-light md:px-3">
                   {item.signal}
                 </div>
               </Link>
@@ -634,9 +356,9 @@ const MemoryVisual = ({ copy }) => {
                   animate={reduced ? { opacity: 1, y: 0 } : { opacity: [0.45, 1, 0.58], y: [8, 0, 8] }}
                   transition={reduced ? { duration: 0 } : { duration: 4.8, repeat: Infinity, delay: index * 0.62, ease: EASE }}
                 >
-                  <div className="text-[9px] uppercase tracking-[0.12em] text-brand-light">{stage.label}</div>
-                  <div className="mt-1 truncate text-xs text-white/72">{stage.title}</div>
-                  <div className="mt-0.5 hidden truncate text-[10px] text-white/42 sm:block">{stage.detail}</div>
+                  <div className="break-words text-[9px] uppercase leading-4 tracking-[0.12em] text-brand-light">{stage.label}</div>
+                  <div className="mt-1 min-h-[2rem] break-words text-xs leading-snug text-white/72 sm:min-h-0">{stage.title}</div>
+                  <div className="mt-0.5 hidden break-words text-[10px] leading-snug text-white/42 sm:block">{stage.detail}</div>
                 </motion.div>
               ))}
             </div>
@@ -653,7 +375,7 @@ const MemoryVisual = ({ copy }) => {
               transition={{ duration: 0.45, delay: 0.25 + index * 0.08, ease: EASE }}
             >
               <div className="font-mono text-sm text-white md:text-lg">0x{label.length}ae</div>
-              <div className="mt-1 text-[10px] uppercase tracking-eyebrow text-white/36">{label}</div>
+              <div className="mt-1 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/36">{label}</div>
             </motion.div>
           ))}
         </div>
@@ -674,8 +396,8 @@ const MemoryNodeCard = ({ label, title, detail, tone }) => {
       }`}>
         <span className="h-2 w-2 rounded-pill bg-current" />
       </div>
-      <div className="text-[10px] uppercase tracking-eyebrow text-white/35">{label}</div>
-      <h3 className="mt-2 hidden text-sm font-medium leading-snug text-white md:block">{title}</h3>
+      <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/35">{label}</div>
+      <h3 className="mt-2 hidden break-words text-sm font-medium leading-snug text-white md:block">{title}</h3>
       <p className="mt-2 hidden text-xs leading-relaxed text-white/45 md:block">{detail}</p>
     </div>
   );
@@ -724,8 +446,8 @@ const MemoryAdvantageLab = ({ copy }) => {
                     }`}
                     aria-pressed={active}
                   >
-                    <span className="min-w-0 break-words text-sm font-medium">{axis.label}</span>
-                    <span className={`whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] ${
+                    <span className="min-w-0 break-words text-sm font-medium leading-snug">{axis.label}</span>
+                    <span className={`max-w-[5.5rem] break-words text-right font-mono text-[10px] uppercase leading-4 tracking-[0.14em] ${
                       active ? 'text-brand-light' : 'text-white/36'
                     }`}>
                       {axis.metric}
@@ -747,7 +469,7 @@ const MemoryAdvantageLab = ({ copy }) => {
               <div className="mb-3 inline-flex border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">
                 {activeAxis.metric}
               </div>
-              <h3 className="text-display-md font-light text-white">{activeAxis.title}</h3>
+              <h3 className="break-words text-display-md font-light text-white">{activeAxis.title}</h3>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58 md:text-base">
                 {activeAxis.description}
               </p>
@@ -763,7 +485,7 @@ const MemoryAdvantageLab = ({ copy }) => {
                 ].map(([label, value]) => (
                   <div key={label} className="min-w-0 border border-white/10 bg-white/[0.025] p-2.5 md:p-3">
                     <div className="text-[9px] uppercase tracking-[0.12em] text-white/34">{label}</div>
-                    <div className="mt-2 text-xs leading-snug text-white/68 md:text-sm md:leading-relaxed">
+                    <div className="mt-2 break-words text-xs leading-snug text-white/68 md:text-sm md:leading-relaxed">
                       {value}
                     </div>
                   </div>
@@ -800,8 +522,8 @@ const MemoryModeCard = ({ mode, tone }) => {
           isMemChain ? 'bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.75)]' : 'bg-white/20'
         }`} />
       </div>
-      <h4 className="text-xl font-light text-white md:text-3xl">{mode.headline}</h4>
-      <div className={`mt-5 border px-3 py-2 font-mono text-xs uppercase tracking-[0.14em] ${
+      <h4 className="break-words text-xl font-light leading-tight text-white md:text-3xl">{mode.headline}</h4>
+      <div className={`mt-5 break-words border px-3 py-2 font-mono text-xs uppercase leading-5 tracking-[0.14em] ${
         isMemChain
           ? 'border-brand-line bg-black/25 text-brand-light'
           : 'border-white/10 bg-white/[0.025] text-white/40'
@@ -826,9 +548,9 @@ const MemoryAxisVisual = ({ axis }) => {
         }}
       />
       <div className="relative z-10 w-full max-w-[15rem]">
-        <div className="mb-4 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.14em]">
-          <span className="text-white/34">{cloudLabel}</span>
-          <span className="text-brand-light">{memchainLabel}</span>
+        <div className="mb-4 flex items-start justify-between gap-3 font-mono text-[10px] uppercase leading-4 tracking-[0.14em]">
+          <span className="min-w-0 break-words text-white/34">{cloudLabel}</span>
+          <span className="min-w-0 break-words text-right text-brand-light">{memchainLabel}</span>
         </div>
         <div className="relative h-2 overflow-hidden rounded-pill bg-white/10">
           <motion.div
@@ -849,7 +571,7 @@ const MemoryAxisVisual = ({ axis }) => {
               className="border border-white/10 bg-white/[0.035] px-2 py-3 text-center"
             >
               <div className="mx-auto mb-2 h-2 w-2 rounded-pill bg-brand-light/80" />
-              <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/42">
+              <div className="break-words font-mono text-[9px] uppercase leading-4 tracking-[0.12em] text-white/42">
                 {step}
               </div>
             </motion.div>
@@ -876,7 +598,7 @@ const Pipeline = ({ copy }) => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.08, ease: EASE }}
-            className="page-card border p-4 md:p-5"
+            className="page-card min-w-0 border p-4 md:p-5"
           >
             <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{item.label}</div>
             <h2 className="mt-4 break-words text-2xl font-light text-white">{item.title}</h2>
@@ -906,10 +628,10 @@ const Pillars = ({ copy }) => (
       />
       <div className="mt-10 grid gap-4 lg:grid-cols-3">
         {copy.items.map((pillar) => (
-          <article key={pillar.title} className="page-card border p-4 md:p-5">
+          <article key={pillar.title} className="page-card min-w-0 border p-4 md:p-5">
             <h2 className="break-words text-2xl font-light text-white">{pillar.title}</h2>
             <p className="mt-3 text-sm leading-relaxed text-white/58">{pillar.description}</p>
-            <div className="mt-5 border border-brand-line bg-brand-faint p-3 text-xs leading-relaxed text-brand-light/88">
+            <div className="mt-5 break-words border border-brand-line bg-brand-faint p-3 text-xs leading-relaxed text-brand-light/88">
               {pillar.boundary}
             </div>
           </article>
@@ -929,9 +651,9 @@ const Benchmarks = ({ copy }) => (
       />
       <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {copy.cards.map((item) => (
-          <div key={item.label} className="page-card border p-4 md:p-5">
+          <div key={item.label} className="page-card min-w-0 border p-4 md:p-5">
             <div className="font-mono text-3xl font-light text-white md:text-4xl">{item.value}</div>
-            <div className="mt-3 break-words text-[10px] uppercase tracking-eyebrow text-white/42">{item.label}</div>
+            <div className="mt-3 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/42">{item.label}</div>
             <p className="mt-3 text-xs leading-relaxed text-white/46">{item.note}</p>
           </div>
         ))}
@@ -953,18 +675,18 @@ const Comparison = ({ copy }) => (
       />
       <div className="mt-10 grid gap-3">
         {copy.rows.map((row) => (
-          <article key={row.dimension} className="page-card grid gap-4 border p-4 md:grid-cols-[0.72fr_1fr_1fr] md:p-5">
-            <div>
-              <div className="text-[10px] uppercase tracking-eyebrow text-white/35">{copy.labels.dimension}</div>
+          <article key={row.dimension} className="page-card grid min-w-0 gap-4 border p-4 md:grid-cols-[0.72fr_1fr_1fr] md:p-5">
+            <div className="min-w-0">
+              <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/35">{copy.labels.dimension}</div>
               <h3 className="mt-2 break-words text-lg font-light text-white">{row.dimension}</h3>
             </div>
-            <div className="border border-brand-line bg-brand-faint p-3">
-              <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.labels.memchain}</div>
-              <p className="mt-2 text-sm leading-relaxed text-white">{row.memchain}</p>
+            <div className="min-w-0 border border-brand-line bg-brand-faint p-3">
+              <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">{copy.labels.memchain}</div>
+              <p className="mt-2 break-words text-sm leading-relaxed text-white">{row.memchain}</p>
             </div>
-            <div className="border border-white/10 bg-black/25 p-3">
-              <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{copy.labels.cloud}</div>
-              <p className="mt-2 text-sm leading-relaxed text-white/50">{row.cloud}</p>
+            <div className="min-w-0 border border-white/10 bg-black/25 p-3">
+              <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/34">{copy.labels.cloud}</div>
+              <p className="mt-2 break-words text-sm leading-relaxed text-white/50">{row.cloud}</p>
             </div>
           </article>
         ))}
