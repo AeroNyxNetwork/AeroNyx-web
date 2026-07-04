@@ -2,9 +2,15 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.5.0
+ * Version: 8.6.0
  *
  * Modification Reason:
+ *   v8.6 — CTA contrast and first-screen cadence polish.
+ *   Tightened the mobile hero grid gap, made both CTAs feel more deliberate
+ *   with visible focus states and stronger primary contrast, and constrained
+ *   the live proof card to the same mobile width as the CTA stack. The
+ *   approved hero thesis and subtitle are unchanged.
+ *
  *   v8.5 — Mobile first-viewport spacing fix.
  *   The hero now opts out of legacy global mobile section padding with a
  *   data-owned-layout marker and uses a tighter mobile top rhythm. This fixes
@@ -70,6 +76,7 @@
  *
  * Last Modified: v8.3.0 — Hero CTA touch geometry polish
  * Last Modified: v8.5.0 — Mobile top spacing alignment
+ * Last Modified: v8.6.0 — CTA contrast and first-screen cadence polish
  * ============================================================================
  */
 
@@ -607,8 +614,8 @@ const NarrativeHero = () => {
       <WatcherField reduced={reduced} splitRef={splitRef} />
 
       <Container className="relative">
-        <div className="relative pt-24 sm:pt-28 md:pt-28 pb-16 md:pb-24" style={{ zIndex: 10 }}>
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
+        <div className="relative pb-12 pt-24 sm:pt-28 md:pb-24 md:pt-28" style={{ zIndex: 10 }}>
+          <div className="mx-auto grid max-w-6xl items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-14">
 
             {/* ---- Left: the claim ---- */}
             <motion.div
@@ -650,13 +657,13 @@ const NarrativeHero = () => {
                 className="mb-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4 lg:items-start lg:justify-start"
               >
                 <a href="#how-it-works"
-                  className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded px-7 py-3.5 text-center text-sm font-medium tracking-wide transition-transform duration-fast hover:scale-[1.02] sm:w-auto"
-                  style={{ background: ACCENT, color: '#fff', boxShadow: `0 0 30px ${ACCENT}40` }}>
+                  className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border px-7 py-3.5 text-center text-sm font-semibold tracking-wide transition duration-fast hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto"
+                  style={{ background: ACCENT, borderColor: 'rgba(151,136,247,0.38)', color: '#fff', boxShadow: `0 18px 50px ${ACCENT}33` }}>
                   Explore the coordination layer
                 </a>
                 <a href="#join-network"
-                  className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border px-7 py-3.5 text-center text-sm tracking-wide transition-colors duration-fast hover:border-white/40 sm:w-auto"
-                  style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.75)' }}>
+                  className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border px-7 py-3.5 text-center text-sm font-medium tracking-wide transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 sm:w-auto"
+                  style={{ borderColor: 'rgba(255,255,255,0.16)', color: 'rgba(255,255,255,0.82)' }}>
                   Join the protocol
                 </a>
               </motion.div>
@@ -664,7 +671,7 @@ const NarrativeHero = () => {
               {/* Live proof (v8.0): the claim, happening right now */}
               <motion.div
                 variants={stageItem}
-                className="inline-block border border-white/10 rounded bg-white/[0.02] px-4 py-3 text-left"
+                className="inline-block w-full max-w-xs rounded border border-white/10 bg-white/[0.025] px-4 py-3 text-left sm:w-auto"
               >
                 <div className="flex items-center gap-2 text-[9px] uppercase tracking-eyebrow text-white/35 mb-1.5">
                   <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: ACCENT_LT }} />

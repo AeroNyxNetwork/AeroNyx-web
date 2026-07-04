@@ -30,6 +30,11 @@
  *      same node-blind invariant.
  *   4. Proof strip reinforces "infrastructure routes/stores ciphertext only".
  *
+ * Modification Reason: v1.1 - Proof strip and mobile CTA polish.
+ *   The three proof cells now read as product invariants instead of abstract
+ *   protocol labels. Primitive CTAs also keep full-width touch geometry on
+ *   iPhone-class screens while preserving compact desktop alignment.
+ *
  * ⚠️ Important Note for Next Developer:
  *   - Do not turn this section into another feature grid. It exists to make
  *     Privacy Network and MemChain feel like one protocol-level product.
@@ -37,6 +42,7 @@
  *   - Brand rule: no green, no emojis, no rounded-xl/2xl.
  *
  * Last Modified: v1.0 - Initial core primitives section
+ * Last Modified: v1.1 - Proof strip and mobile CTA polish
  * ============================================
  */
 
@@ -82,9 +88,21 @@ const primitiveCards = [
 ];
 
 const proofItems = [
-  { label: 'Plaintext at nodes', value: '0 B' },
-  { label: 'Shared invariant', value: 'Blind' },
-  { label: 'Coordination surface', value: 'Protocol' },
+  {
+    value: 'Node-blind',
+    label: 'Infrastructure cannot read payloads or memory.',
+    detail: 'Nodes route and store ciphertext only',
+  },
+  {
+    value: 'Local-first',
+    label: 'Private memory remains useful from the device path.',
+    detail: 'Designed for offline recall and fast sync',
+  },
+  {
+    value: 'Protocol',
+    label: 'Humans, apps, and agents share one coordination layer.',
+    detail: 'Routing + memory hold the same invariant',
+  },
 ];
 
 const CorePrimitives = () => {
@@ -129,12 +147,15 @@ const CorePrimitives = () => {
             className="mt-4 grid gap-2.5 sm:grid-cols-3 md:mt-5"
           >
             {proofItems.map((item) => (
-              <div key={item.label} className="page-card min-w-0 rounded border px-4 py-3">
-                <div className="font-mono text-lg font-light leading-none text-white md:text-xl">
+              <div key={item.label} className="page-card min-w-0 rounded border px-4 py-4 md:min-h-[8.25rem] md:px-5">
+                <div className="font-mono text-lg font-light leading-none text-brand-light md:text-xl">
                   {item.value}
                 </div>
-                <div className="mt-2 text-[10px] uppercase leading-4 tracking-eyebrow text-white/42">
+                <div className="mt-2 text-sm leading-relaxed text-white/70">
                   {item.label}
+                </div>
+                <div className="mt-3 text-[10px] uppercase leading-4 tracking-eyebrow text-white/38">
+                  {item.detail}
                 </div>
               </div>
             ))}
@@ -184,7 +205,7 @@ const PrimitiveCard = ({ primitive, reduced }) => (
 
         <Link
           href={primitive.href}
-          className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded border border-white/15 px-5 py-2.5 text-center text-xs uppercase tracking-eyebrow text-white/72 transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint hover:text-white"
+          className="mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded border border-white/15 px-5 py-2.5 text-center text-xs uppercase tracking-eyebrow text-white/72 transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint hover:text-white sm:w-auto"
         >
           {primitive.cta}
         </Link>
