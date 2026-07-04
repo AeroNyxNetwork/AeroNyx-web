@@ -5,7 +5,16 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
- * Modification Reason: v1.4 - VC-grade product page refinement.
+ * Modification Reason: v1.5 - Product-grade memory flow animation.
+ *   Upgraded the hero visual from a static sealed-fact list into a live
+ *   remember/store/recall flow: facts are sealed on device, synced as
+ *   ciphertext to a blind node, and recalled back into the local hippocampus.
+ *   The animation respects prefers-reduced-motion, avoids horizontal
+ *   transforms on mobile, and keeps all privacy claims within the approved
+ *   node-blind boundary.
+ *
+ * Historical Notes:
+ * v1.4 - VC-grade product page refinement.
  *   Added a compact hero proof rail, converted the comparison table into
  *   responsive claim cards, and added a closing product action band. These
  *   changes make MemChain easier to understand from a first-principles
@@ -51,6 +60,7 @@
  * Last Modified: v1.2 - Interactive MemChain advantage lab
  * Last Modified: v1.3 - Market-category context and mobile metric polish
  * Last Modified: v1.4 - VC-grade product page refinement
+ * Last Modified: v1.5 - Product-grade memory flow animation
  * ============================================
  */
 
@@ -58,7 +68,7 @@ import { Suspense, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import SEO from '../components/ui/SEO';
 import Container from '../components/ui/Container';
 import SiteHeader from '../components/layout/SiteHeader';
@@ -104,6 +114,29 @@ const heroProofs = [
     value: 'offline',
     label: 'local hippocampus',
     detail: 'recall works when the encrypted local copy has the memory',
+  },
+];
+
+const memoryFlowStages = [
+  {
+    label: 'Remember',
+    title: 'Device distills',
+    detail: 'fact extracted locally',
+  },
+  {
+    label: 'Seal',
+    title: 'Key wraps memory',
+    detail: 'AES envelope + signature',
+  },
+  {
+    label: 'Store',
+    title: 'Blind node sync',
+    detail: 'ciphertext only',
+  },
+  {
+    label: 'Recall',
+    title: 'Local answer',
+    detail: 'memory returns unreadable to node',
   },
 ];
 
@@ -406,40 +439,113 @@ const Hero = () => (
   </section>
 );
 
-const MemoryVisual = () => (
-  <div className="page-surface relative min-h-[26rem] overflow-hidden border p-4 md:min-h-[32rem] md:p-5">
-    <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.24) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.24) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-    <div className="relative z-10 flex h-full min-h-[23rem] flex-col justify-between md:min-h-[29rem]">
-      <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
-        <span className="font-mono text-xs uppercase tracking-eyebrow text-white/35">device hippocampus</span>
-        <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">local first</span>
-      </div>
-      <div className="space-y-3">
-        {['allergic to shellfish', 'prefers quiet work blocks', 'project uses Rust relay nodes', 'asks for Traditional Chinese summaries'].map((item, index) => (
-          <motion.div
-            key={item}
-            initial={{ opacity: 0, x: -14 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.45, delay: 0.2 + index * 0.08, ease: EASE }}
-            className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border border-white/10 bg-white/[0.035] p-3"
-          >
-            <span className="h-2 w-2 rounded-pill bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.75)]" />
-            <span className="min-w-0 text-sm text-white/72">{item}</span>
-            <span className="font-mono text-[10px] uppercase tracking-eyebrow text-cipher-light">sealed</span>
-          </motion.div>
-        ))}
-      </div>
-      <div className="grid gap-3 sm:grid-cols-3">
-        {['ciphertext', 'blind index', 'opaque edge'].map((label) => (
-          <div key={label} className="border border-white/10 bg-black/40 p-3">
-            <div className="font-mono text-lg text-white">0x{label.length}ae</div>
-            <div className="mt-1 text-[10px] uppercase tracking-eyebrow text-white/36">{label}</div>
+const MemoryVisual = () => {
+  const reduced = useReducedMotion();
+
+  return (
+    <div className="page-surface relative min-h-[31rem] overflow-hidden border p-4 md:min-h-[34rem] md:p-5">
+      <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.24) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.24) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/50 to-transparent" />
+
+      <div className="relative z-10 flex h-full min-h-[28rem] flex-col md:min-h-[31rem]">
+        <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
+          <span className="font-mono text-xs uppercase tracking-eyebrow text-white/35">device hippocampus</span>
+          <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">local first</span>
+        </div>
+
+        <div className="relative mt-5 overflow-hidden border border-white/10 bg-black/30 p-4 md:p-5">
+          <div className="grid gap-3 md:grid-cols-3">
+            <MemoryNodeCard
+              label="Device"
+              title="Plain memory stays local"
+              detail="conversation distilled before sync"
+              tone="device"
+            />
+            <MemoryNodeCard
+              label="Blind node"
+              title="Cannot read contents"
+              detail="ciphertext + blind index"
+              tone="node"
+            />
+            <MemoryNodeCard
+              label="Recall"
+              title="Answer uses local context"
+              detail="node never sees the fact"
+              tone="recall"
+            />
           </div>
-        ))}
+
+          <div className="relative mt-5 h-40 overflow-hidden sm:h-28">
+            <div className="absolute left-[10%] right-[10%] top-[36%] h-px bg-white/10" />
+            <motion.div
+              className="absolute left-[10%] top-[36%] h-px w-[80%] origin-left bg-brand-light/70"
+              initial={{ scaleX: 0 }}
+              animate={reduced ? { scaleX: 1 } : { scaleX: [0, 0.48, 0.72, 1] }}
+              transition={reduced ? { duration: 0 } : { duration: 4.8, repeat: Infinity, ease: EASE, times: [0, 0.42, 0.68, 1] }}
+            />
+            <motion.div
+              className="absolute top-[36%] flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-pill border border-brand-line bg-brand-faint shadow-[0_0_28px_rgba(151,136,247,0.35)]"
+              initial={{ left: '8%' }}
+              animate={reduced ? { left: '50%' } : { left: ['8%', '39%', '66%', '88%'] }}
+              transition={reduced ? { duration: 0 } : { duration: 4.8, repeat: Infinity, ease: EASE, times: [0, 0.42, 0.68, 1] }}
+            >
+              <span className="h-2 w-2 rounded-pill bg-brand-light" />
+            </motion.div>
+            <div className="absolute inset-x-0 bottom-0 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {memoryFlowStages.map((stage, index) => (
+                <motion.div
+                  key={stage.label}
+                  className="min-w-0 border border-white/10 bg-white/[0.025] px-2 py-2"
+                  initial={{ opacity: 0.45, y: 8 }}
+                  animate={reduced ? { opacity: 1, y: 0 } : { opacity: [0.45, 1, 0.58], y: [8, 0, 8] }}
+                  transition={reduced ? { duration: 0 } : { duration: 4.8, repeat: Infinity, delay: index * 0.62, ease: EASE }}
+                >
+                  <div className="text-[9px] uppercase tracking-[0.12em] text-brand-light">{stage.label}</div>
+                  <div className="mt-1 truncate text-xs text-white/72">{stage.title}</div>
+                  <div className="mt-0.5 hidden truncate text-[10px] text-white/42 sm:block">{stage.detail}</div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          {['ciphertext', 'blind index', 'opaque edge'].map((label, index) => (
+            <motion.div
+              key={label}
+              className="border border-white/10 bg-black/40 p-3"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.25 + index * 0.08, ease: EASE }}
+            >
+              <div className="font-mono text-lg text-white">0x{label.length}ae</div>
+              <div className="mt-1 text-[10px] uppercase tracking-eyebrow text-white/36">{label}</div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
+
+const MemoryNodeCard = ({ label, title, detail, tone }) => {
+  const active = tone !== 'node';
+
+  return (
+    <div className={`min-w-0 border p-3 ${
+      active ? 'border-brand-line bg-brand-faint' : 'border-white/10 bg-white/[0.025]'
+    }`}>
+      <div className={`mb-4 flex h-9 w-9 items-center justify-center rounded-pill border ${
+        active ? 'border-brand-line text-brand-light' : 'border-white/10 text-white/36'
+      }`}>
+        <span className="h-2 w-2 rounded-pill bg-current" />
+      </div>
+      <div className="text-[10px] uppercase tracking-eyebrow text-white/35">{label}</div>
+      <h3 className="mt-2 text-sm font-medium leading-snug text-white">{title}</h3>
+      <p className="mt-2 text-xs leading-relaxed text-white/45">{detail}</p>
+    </div>
+  );
+};
 
 const MemoryAdvantageLab = () => {
   const [activeAxisId, setActiveAxisId] = useState('blind');

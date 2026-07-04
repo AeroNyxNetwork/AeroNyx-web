@@ -4,7 +4,15 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v1.5 - Product assurance bridge.
+ * Modification Reason: v1.6 - Blind routing animation polish.
+ *   Replaced the static hero assurance list with a protocol route visual that
+ *   shows humans, apps, and agents entering a blind routing boundary while only
+ *   aggregate health evidence exits. The animation respects reduced motion,
+ *   avoids horizontal page overflow, and reinforces the Privacy Network story
+ *   without exposing user-level telemetry.
+ *
+ * Historical Notes:
+ * v1.5 - Product assurance bridge.
  *   Added a user promise/protocol evidence bridge so the page explains how
  *   daily protection signals map to auditable Rust-node evidence without
  *   exposing user telemetry. This makes the secondary page feel like a mature
@@ -54,13 +62,14 @@
  * Last Modified: v1.3 - Removed old download surface wording
  * Last Modified: v1.4 - North Star infrastructure narrative
  * Last Modified: v1.5 - Product assurance bridge
+ * Last Modified: v1.6 - Blind routing animation polish
  * ============================================
  */
 
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import SEO from '../components/ui/SEO';
 import Container from '../components/ui/Container';
 import AnimatedMessageCounter from '../components/ui/AnimatedMessageCounter';
@@ -147,6 +156,18 @@ const privacyBoundaries = [
   'No browsing history',
   'No node public keys on public cards',
   'No wallet-level traffic graph',
+];
+
+const routeActors = [
+  { label: 'human', detail: 'private traffic' },
+  { label: 'app', detail: 'encrypted request' },
+  { label: 'agent', detail: 'coordination packet' },
+];
+
+const routeEvidence = [
+  'encrypted route',
+  'hidden address',
+  'aggregate health',
 ];
 
 export default function PrivacyNetworkPage() {
@@ -246,25 +267,111 @@ const Hero = () => (
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.12, ease: EASE }}
-          className="page-surface border p-4 md:p-5"
+          className="min-w-0"
         >
-          <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
-            <span className="text-[10px] uppercase tracking-eyebrow text-white/36">connection assurance</span>
-            <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">protected</span>
-          </div>
-          <div className="space-y-4">
-            {['Encrypted route established', 'Public IP hidden', 'Open Rust node foundation', 'Protocol health verified'].map((item) => (
-              <div key={item} className="flex items-center justify-between gap-4 border border-white/10 bg-white/[0.025] p-4">
-                <span className="min-w-0 text-sm text-white/70">{item}</span>
-                <span className="h-2.5 w-2.5 rounded-pill bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.75)]" />
-              </div>
-            ))}
-          </div>
+          <PrivacyRouteVisual />
         </motion.div>
       </div>
     </Container>
   </section>
 );
+
+const PrivacyRouteVisual = () => {
+  const reduced = useReducedMotion();
+
+  return (
+    <div className="page-surface relative min-h-[29rem] w-full max-w-full overflow-hidden border p-4 md:min-h-[32rem] md:p-5">
+      <div className="absolute inset-0 opacity-[0.045]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.22) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/60 to-transparent" />
+
+      <div className="relative z-10 flex min-h-[26rem] flex-col md:min-h-[29rem]">
+        <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
+          <span className="text-[10px] uppercase tracking-eyebrow text-white/36">blind routing boundary</span>
+          <span className="border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">protected</span>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-3">
+          {routeActors.map((actor, index) => (
+            <motion.div
+              key={actor.label}
+              className="border border-white/10 bg-white/[0.025] p-3"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.12 + index * 0.07, ease: EASE }}
+            >
+              <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{actor.label}</div>
+              <div className="mt-2 text-xs leading-relaxed text-white/58">{actor.detail}</div>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="relative mt-5 flex flex-1 items-center justify-center overflow-hidden border border-white/10 bg-black/35 p-4">
+          <div className="absolute left-5 right-5 top-1/2 h-px bg-white/10" />
+          <div className="absolute left-1/2 top-5 bottom-5 w-px bg-white/10" />
+
+          {[0, 1, 2].map((ring) => (
+            <motion.div
+              key={ring}
+              className="absolute h-28 w-28 rounded-pill border border-brand/20 md:h-36 md:w-36"
+              initial={{ scale: 0.82, opacity: 0 }}
+              animate={reduced ? { scale: 1, opacity: 0.22 } : { scale: [0.82, 1.35, 1.7], opacity: [0, 0.34, 0] }}
+              transition={reduced ? { duration: 0 } : { duration: 3.4, repeat: Infinity, delay: ring * 0.9, ease: EASE }}
+            />
+          ))}
+
+          <div className="relative z-10 grid w-full max-w-full grid-cols-1 items-center gap-3 sm:max-w-sm sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+            <div className="space-y-2">
+              {['source', 'payload', 'intent'].map((label, index) => (
+                <motion.div
+                  key={label}
+                  className="border border-white/10 bg-white/[0.025] px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-white/42"
+                  animate={reduced ? undefined : { opacity: [0.45, 1, 0.45] }}
+                  transition={reduced ? undefined : { duration: 2.8, repeat: Infinity, delay: index * 0.42 }}
+                >
+                  {label}
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-pill border border-brand-line bg-brand-faint md:h-28 md:w-28">
+              <motion.div
+                className="absolute inset-3 rounded-pill border border-brand-light/40"
+                animate={reduced ? undefined : { rotate: 360 }}
+                transition={reduced ? undefined : { duration: 8, repeat: Infinity, ease: 'linear' }}
+              />
+              <div className="text-center">
+                <div className="font-mono text-lg text-white">0x</div>
+                <div className="mt-1 text-[9px] uppercase tracking-[0.12em] text-brand-light">blind</div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              {routeEvidence.map((label, index) => (
+                <motion.div
+                  key={label}
+                  className="border border-brand-line bg-brand-faint px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-brand-light"
+                  initial={{ opacity: 0.55, x: 8 }}
+                  animate={reduced ? { opacity: 1, x: 0 } : { opacity: [0.55, 1, 0.72], x: [8, 0, 8] }}
+                  transition={reduced ? { duration: 0 } : { duration: 3.2, repeat: Infinity, delay: index * 0.38, ease: EASE }}
+                >
+                  {label}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          {['No payloads', 'No DNS', 'No history'].map((item) => (
+            <div key={item} className="border border-white/10 bg-white/[0.025] p-3 text-center text-[10px] uppercase tracking-eyebrow text-white/42">
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const NorthStarPlan = () => (
   <section className="border-y border-white/10 bg-white/[0.012] py-14 md:py-20">
