@@ -4,6 +4,11 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
+ * Modification Reason: v2.5 - Mobile proof rail stabilization.
+ *   Hero and protocol-visibility proof cards now render as a stable mobile
+ *   grid instead of a horizontal snap rail. This avoids half-visible cards on
+ *   iPhone-class screens while preserving the desktop three-column proof layout.
+ *
  * Modification Reason: v2.4 - Secondary page internationalization.
  *   Moved the Privacy Network hero, protocol bridge, North Star Plan, live
  *   protocol proof, assurance model, daily dashboard signals, and telemetry
@@ -131,6 +136,7 @@
  * Last Modified: v2.2 - Secondary page action alignment
  * Last Modified: v2.3 - North Star Plan visibility
  * Last Modified: v2.4 - Secondary page internationalization
+ * Last Modified: v2.5 - Mobile proof rail stabilization
  * ============================================
  */
 
@@ -249,9 +255,9 @@ const Hero = ({ copy }) => (
             </a>
           </div>
 
-          <div className="-mx-4 mt-8 flex snap-x gap-2.5 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
+          <div className="mt-8 grid gap-2.5 min-[480px]:grid-cols-3">
             {copy.signals.map((item) => (
-              <div key={item.label} className="page-card min-w-[9rem] snap-start border p-3 sm:min-w-0 md:p-4">
+              <div key={item.label} className="page-card min-w-0 border p-3 md:p-4">
                 <div className="break-words text-[10px] uppercase tracking-eyebrow text-white/36">{item.label}</div>
                 <div className="mt-2 break-words text-lg font-light text-white md:text-2xl">{item.value}</div>
               </div>
@@ -497,9 +503,9 @@ const LiveProtocolStats = ({ stats, isLoading, siteCopy, copy, healthPercent }) 
             {copy.description}
           </p>
         </div>
-        <div className="-mx-4 mb-4 flex snap-x gap-2 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
+        <div className="mb-4 grid gap-2 min-[480px]:grid-cols-3">
           {copy.visibility.map((item) => (
-            <div key={item.label} className="min-w-[10rem] snap-start border border-white/10 bg-black/25 px-3 py-2.5 sm:min-w-0">
+            <div key={item.label} className="min-w-0 border border-white/10 bg-black/25 px-3 py-2.5">
               <div className="break-words text-[9px] uppercase tracking-[0.12em] text-white/34">{item.label}</div>
               <div className="mt-1 text-xs leading-relaxed text-white/62 md:hidden">{item.mobileValue}</div>
               <div className="mt-1 hidden text-sm leading-relaxed text-white/62 md:block">{item.value}</div>

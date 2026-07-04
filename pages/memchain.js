@@ -5,6 +5,11 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
+ * Modification Reason: v2.3 - Mobile hero proof rail stabilization.
+ *   Hero proof cards now render as a stable mobile grid instead of a
+ *   horizontal snap rail, preventing half-visible proof cards on iPhone-class
+ *   screens while keeping the desktop three-column evidence layout.
+ *
  * Modification Reason: v2.2 - Multilingual mobile resilience.
  *   Tightened long-locale wrapping for MemChain proof rails, comparison cards,
  *   mode cards, and the animated memory visual so Japanese, Korean, Russian,
@@ -125,6 +130,7 @@
  * Last Modified: v2.0 - Secondary page action alignment
  * Last Modified: v2.1 - Secondary page internationalization
  * Last Modified: v2.2 - Multilingual mobile resilience
+ * Last Modified: v2.3 - Mobile hero proof rail stabilization
  * ============================================
  */
 
@@ -227,9 +233,9 @@ const Hero = ({ copy }) => (
             </a>
           </div>
 
-          <div className="-mx-4 mt-8 flex snap-x gap-2.5 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
+          <div className="mt-8 grid gap-2.5 min-[480px]:grid-cols-3">
             {copy.proofs.map((item) => (
-              <div key={item.label} className="page-card min-w-[9.5rem] snap-start border p-3 sm:min-w-0 md:p-4">
+              <div key={item.label} className="page-card min-w-0 border p-3 md:p-4">
                 <div className="font-mono text-[1.55rem] font-light leading-none text-white md:text-3xl">
                   {item.value}
                 </div>
