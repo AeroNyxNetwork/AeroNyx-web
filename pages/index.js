@@ -3,11 +3,11 @@
  * index.js - Homepage with Encrypted Coordination Layer Narrative
  * ============================================
  *
- * Modification Reason: v5.5 - Mobile evidence layout polish.
- *   The public protocol stats panel now prioritizes single-column mobile
- *   reading for long counters, readiness checks, and fabric metrics. This
- *   keeps full values visible on iPhone-class widths without turning the
- *   homepage into a cramped engineering dashboard.
+ * Modification Reason: v5.6 - Mobile evidence loading-state polish.
+ *   Public proof counters now show a readable Syncing state while live
+ *   aggregates hydrate instead of anonymous gray bars. This keeps the mobile
+ *   homepage feeling like a finished protocol surface even before the public
+ *   stats endpoint responds.
  *
  * Historical Notes:
  * v5.3 - Homepage module polish pass.
@@ -68,6 +68,7 @@
  * Last Modified: v5.3 - Homepage module rhythm and responsive evidence polish.
  * Last Modified: v5.4 - Product layers moved before x402 payment narrative.
  * Last Modified: v5.5 - iPhone-safe public evidence layout
+ * Last Modified: v5.6 - Product-grade mobile syncing state
  * ============================================
  */
 
@@ -338,6 +339,12 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     },
   ];
   const meshNodeCount = Math.max(2, Math.min(4, Number(stats.protocolNetworkStoryReportedNodes || stats.protocolReportedNodes || 2)));
+  const syncingLabel = copy.homeStats.syncing || 'Syncing';
+  const renderSyncingMetric = (className = '') => (
+    <span className={`inline-flex min-h-[2.35rem] items-end text-[clamp(1.75rem,9vw,2.65rem)] font-light leading-none tracking-normal text-white/55 ${className}`}>
+      {syncingLabel}
+    </span>
+  );
 
   return (
     <section aria-label={copy.homeStats.ariaLabel} className="relative z-20 -mt-4 pb-10 md:-mt-10 md:pb-16">
@@ -359,7 +366,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                 <div key={item.label} className="min-w-0 border-t border-white/10 p-5 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0 md:p-7">
                   <div className="min-h-[2.65rem] min-w-0 font-light text-white">
                     {isLoading ? (
-                      <span className="block h-8 w-28 animate-pulse bg-white/10" />
+                      renderSyncingMetric()
                     ) : item.isLiveCounter ? (
                       <AnimatedMessageCounter
                         value={item.liveValue}
@@ -480,7 +487,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
                 <div key={item.label} className="page-card min-w-0 border p-3.5 md:p-5">
                   <div className="break-words text-xl font-light leading-tight tracking-normal text-white md:text-3xl">
                     {isLoading ? (
-                      <span className="block h-8 w-20 animate-pulse bg-white/10" />
+                      renderSyncingMetric('text-xl md:text-3xl')
                     ) : (
                       item.value || copy.homeStats.syncing
                     )}

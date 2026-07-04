@@ -2,10 +2,10 @@
  * ============================================
  * File: components/sections/JoinNetwork.jsx
  * ============================================
- * Modification Reason: v2.4 - Mobile operator journey polish.
- *   The node-operator journey now reads text-first on phones, uses compact
- *   4:3 visuals before expanding to square cards, and keeps the progress
- *   controls at 44px touch geometry without forcing horizontal compression.
+ * Modification Reason: v2.5 - Mobile stats loading-state polish.
+ *   Operator stats now render a readable Syncing state while aggregate data
+ *   hydrates instead of gray skeleton bars. This keeps the mobile journey
+ *   credible and complete even when the public stats endpoint is warming.
  *
  * Historical Notes:
  * v2.1 — SSR fix + protocol-node credibility pass.
@@ -37,6 +37,7 @@
  *
  * Last Modified: v2.3 — Apple-grade operator journey control polish
  * Last Modified: v2.4 - iPhone-safe journey order and control sizing
+ * Last Modified: v2.5 - Product-grade stats syncing state
  * ============================================
  */
 
@@ -100,6 +101,7 @@ const JoinNetwork = () => {
       stage: protocolHealthStageLabel,
     }
   );
+  const syncingLabel = messages.homeStats?.syncing || 'Syncing';
 
   // Live counters source: GET /api/privacy_network/vpn/public/network-stats/
   // Backend: /root/aeronyx/privacy_network/api/vpn_observability.py
@@ -211,7 +213,9 @@ const JoinNetwork = () => {
               >
                 <div className="min-h-[2.65rem] min-w-0 font-light leading-none text-white">
                   {isLoading ? (
-                    <span className="block h-8 w-28 bg-white/10 animate-pulse" />
+                    <span className="inline-flex min-h-[2.35rem] items-end text-[clamp(1.75rem,9vw,2.65rem)] tracking-normal text-white/55">
+                      {syncingLabel}
+                    </span>
                   ) : item.isLiveCounter ? (
                     <AnimatedMessageCounter
                       value={item.liveValue}
