@@ -5,7 +5,14 @@
  * Creation Reason: Create a dedicated MemChain landing page so the homepage
  * can return to protocol-layer storytelling while Memory Chain gets a
  * citation-ready SEO/GEO surface of its own.
- * Modification Reason: v1.8 - Mobile product interaction polish.
+ * Modification Reason: v1.9 - Homepage typography alignment.
+ *   Aligned the MemChain hero with the homepage NarrativeHero typography by
+ *   using the shared `.hero-title` contract and matching the lighter subtitle
+ *   rhythm. This keeps the secondary product page visually connected to the
+ *   protocol homepage without changing claims, routes, or data surfaces.
+ *
+ * Historical Notes:
+ * v1.8 - Mobile product interaction polish.
  *   Tightened the MemChain mobile journey so the hero owns its spacing,
  *   proof cards use a touch-friendly snap rail, the memory animation is
  *   shorter on phone-class screens, and the advantage lab becomes a
@@ -90,6 +97,7 @@
  * Last Modified: v1.6 - Protocol continuity bridge
  * Last Modified: v1.7 - Evidence lab refinement
  * Last Modified: v1.8 - Mobile product interaction polish
+ * Last Modified: v1.9 - Homepage typography alignment
  * ============================================
  */
 
@@ -452,10 +460,10 @@ const Hero = () => (
           <div className="inline-flex items-center gap-2 border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
             MemChain / Node-blind memory
           </div>
-          <h1 className="mt-6 max-w-4xl text-display-xl font-light text-white">
+          <h1 className="hero-title mt-6 max-w-4xl text-white">
             The first AI memory your server cannot read.
           </h1>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/62 md:text-xl">
+          <p className="mt-6 max-w-2xl text-base font-light leading-relaxed text-white/62 sm:text-lg md:text-xl">
             Your AI remembers you; the memory belongs to you alone.
             <span className="hidden sm:inline">
               {' '}MemChain turns personal context into encrypted, local-first memory

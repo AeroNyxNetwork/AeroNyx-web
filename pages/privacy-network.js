@@ -4,7 +4,14 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v2.0 - Mobile protection experience polish.
+ * Modification Reason: v2.1 - Homepage typography alignment.
+ *   Aligned the Privacy Network hero with the homepage NarrativeHero
+ *   typography by using the shared `.hero-title` contract and matching
+ *   the lighter subtitle rhythm. The page keeps the existing Privacy
+ *   Network narrative, aggregate stats, and public telemetry boundary.
+ *
+ * Historical Notes:
+ * v2.0 - Mobile protection experience polish.
  *   Tightened the Privacy Network mobile journey so the hero owns its
  *   spacing, protection signals appear as a touch-friendly status rail,
  *   the blind-route visual is shorter on phones, and aggregate evidence
@@ -97,6 +104,7 @@
  * Last Modified: v1.8 - Trustworthy stats dashboard
  * Last Modified: v1.9 - Decentralized node naming
  * Last Modified: v2.0 - Mobile protection experience polish
+ * Last Modified: v2.1 - Homepage typography alignment
  * ============================================
  */
 
@@ -308,10 +316,10 @@ const Hero = () => (
           <div className="inline-flex items-center gap-2 border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
             More private. Open source. Global.
           </div>
-          <h1 className="mt-6 max-w-4xl text-display-xl font-light text-white">
+          <h1 className="hero-title mt-6 max-w-4xl text-white">
             A more private, open source network for global use.
           </h1>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/62 md:text-xl">
+          <p className="mt-6 max-w-2xl text-base font-light leading-relaxed text-white/62 sm:text-lg md:text-xl">
             AeroNyx Privacy Network lets humans, apps, and autonomous agents route
             traffic through encrypted protocol nodes.
             <span className="hidden sm:inline">
