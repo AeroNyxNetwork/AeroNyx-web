@@ -2,6 +2,10 @@
  * ============================================
  * File: components/sections/PrivacyAccessSection.js
  * ============================================
+ * Modification Reason: v2.6 - Localized phone mock title.
+ *   The in-phone product title now reads from the existing Privacy Network
+ *   copy contract so localized pages do not show an English-only app mockup.
+ *
  * Modification Reason: v2.5 - Mobile conversion polish.
  *   Reordered the mobile section so the product promise and download action
  *   appear before the device mockup and before secondary feature cards,
@@ -42,6 +46,7 @@
  * Last Modified: v2.3 - Privacy Network product wording
  * Last Modified: v2.4 - Product-grade protection mockup
  * Last Modified: v2.5 - Mobile conversion polish
+ * Last Modified: v2.6 - Localized phone mock title
  * ============================================
  */
 
@@ -159,7 +164,7 @@ const PrivacyAccessVisual = ({ copy }) => {
           {/* App content */}
           <div className="flex-1 flex flex-col">
             <div className="mb-4 md:mb-6">
-              <div className="text-xl md:text-2xl font-light leading-tight">AeroNyx Privacy Network</div>
+              <div className="break-words text-xl font-light leading-tight md:text-2xl">{copy.title}</div>
               <div className="mt-2 inline-flex border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">
                 {isConnected ? copy.protected : copy.unprotected}
               </div>

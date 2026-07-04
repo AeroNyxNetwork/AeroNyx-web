@@ -2,6 +2,11 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
+ * Modification Reason: v4.8 - Localized product visual microcopy.
+ *   Product illustration captions now read `productsEcosystem.visualCopy`
+ *   instead of hardcoded English labels, keeping the homepage product index
+ *   visually coherent across all supported languages.
+ *
  * Modification Reason: v4.6 - North Star anchor entry.
  *   Added a stable homepage `#north-star-plan` anchor for the promoted North
  *   Star Plan covenant so the hero can link directly into the infrastructure
@@ -130,6 +135,7 @@
  * Last Modified: v4.5 - North Star Plan visibility
  * Last Modified: v4.6 - North Star anchor entry
  * Last Modified: v4.7 - Homepage ecosystem i18n shell
+ * Last Modified: v4.8 - Localized product visual microcopy
  * ============================================
  */
 
@@ -531,7 +537,7 @@ const ProductsEcosystem = () => {
             >
               {/* Visual */}
               <div className="order-2 md:order-1 hidden md:block">
-                <ProductVisual productId={activeProduct.id} />
+                <ProductVisual productId={activeProduct.id} visualCopy={copy.visualCopy} />
               </div>
 
               {/* Content */}
@@ -649,12 +655,12 @@ const ProductsEcosystem = () => {
 // Product Visual Components
 // ============================================
 
-const ProductVisual = ({ productId }) => {
+const ProductVisual = ({ productId, visualCopy = {} }) => {
   const visuals = {
     foundation: <FoundationVisual />,
-    vpn: <PrivacyAccessVisual />,
-    cdn: <CDNVisual />,
-    memchain: <MemChainProductVisual />,
+    vpn: <PrivacyAccessVisual copy={visualCopy.privacyNetwork} />,
+    cdn: <CDNVisual copy={visualCopy.encryptedRelay} />,
+    memchain: <MemChainProductVisual copy={visualCopy.memchain} />,
   };
 
   return (
@@ -662,7 +668,7 @@ const ProductVisual = ({ productId }) => {
       className="page-card flex aspect-square items-center justify-center rounded border p-8"
       style={{ background: 'var(--surface-1, #0C0C13)' }}
     >
-      {visuals[productId] || <div className="text-white/20">Visual</div>}
+      {visuals[productId] || <div className="text-white/20">{visualCopy.defaultLabel || 'Visual'}</div>}
     </div>
   );
 };
@@ -691,7 +697,7 @@ const FoundationVisual = () => (
   </div>
 );
 
-const PrivacyAccessVisual = () => (
+const PrivacyAccessVisual = ({ copy = {} }) => (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="text-center">
       <div className="w-24 h-24 mx-auto mb-4 rounded-pill border-2 border-white/20 flex items-center justify-center">
@@ -703,12 +709,12 @@ const PrivacyAccessVisual = () => (
           </svg>
         </div>
       </div>
-      <div className="text-sm text-white/60">Blind · Private · Verifiable</div>
+      <div className="text-sm text-white/60">{copy.caption || 'Blind · Private · Verifiable'}</div>
     </div>
   </div>
 );
 
-const CDNVisual = () => {
+const CDNVisual = ({ copy = {} }) => {
   const reduced = useReducedMotion();
 
   return (
@@ -734,13 +740,13 @@ const CDNVisual = () => {
             );
           })}
         </motion.div>
-        <div className="mt-4 text-xs text-white/40">Encrypted Relay</div>
+        <div className="mt-4 text-xs text-white/40">{copy.caption || 'Encrypted Relay'}</div>
       </div>
     </div>
   );
 };
 
-const MemChainProductVisual = () => (
+const MemChainProductVisual = ({ copy = {} }) => (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="space-y-3 w-full max-w-xs">
       {[3, 2, 1].map((height) => (
@@ -755,7 +761,7 @@ const MemChainProductVisual = () => (
             <span className="text-xs font-mono text-brand-light">#{height}</span>
           </div>
           <div className="flex-1 h-px bg-brand/20" />
-          <div className="text-xs text-white/40">{height * 5 + 3} facts</div>
+          <div className="text-xs text-white/40">{String(copy.factCount || '{count} facts').replace('{count}', height * 5 + 3)}</div>
         </motion.div>
       ))}
 
@@ -765,11 +771,11 @@ const MemChainProductVisual = () => (
           <span className="block w-2 h-2 rounded-pill bg-white/25 animate-pulse" />
         </div>
         <div className="flex-1 h-px bg-white/10" />
-        <div className="text-xs text-white/30 font-mono">pending</div>
+        <div className="text-xs text-white/30 font-mono">{copy.pending || 'pending'}</div>
       </div>
 
       <div className="text-center pt-4 text-xs text-white/40">
-        Encrypted Memory Flow
+        {copy.caption || 'Encrypted Memory Flow'}
       </div>
     </div>
   </div>

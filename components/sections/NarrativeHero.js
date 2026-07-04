@@ -2,7 +2,14 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.9.0
+ * Version: 8.10.0
+ *
+ * Modification Reason:
+ *   v8.10 — Lens scene microcopy internationalization.
+ *   The foreground Lens proof now reads `homeHero.sceneCopy` for the chat
+ *   mock, receipt, intercept label, and route-proof captions. This prevents
+ *   localized homepages from falling back to English inside the most visible
+ *   proof animation while preserving the existing ciphertext split behavior.
  *
  * Modification Reason:
  *   v8.9 — Homepage hero internationalization pass.
@@ -103,6 +110,7 @@
  * Last Modified: v8.7.0 — North Star Plan first-screen entry
  * Last Modified: v8.8.0 — Product conversion CTA restoration
  * Last Modified: v8.9.0 — Homepage hero internationalization pass
+ * Last Modified: v8.10.0 — Lens scene microcopy internationalization
  * ============================================================================
  */
 
@@ -133,6 +141,16 @@ const CONVO = [
   { from: 'you', text: 'Book it. Pay from my wallet.' },
   { from: 'ai', receipt: true },
 ];
+const DEFAULT_SCENE_COPY = {
+  messages: CONVO,
+  senderUnknown: 'sender unknown',
+  receiptTitle: 'Booked & routed',
+  receiptBody: 'NH 854 · Fri 09:40 → 16:10',
+  routeProof: 'blind route · signed Ed25519 ✓',
+  interceptLabel: 'INTERCEPT — udp :51820 · classified: HTTPS',
+  agentName: 'Aria — your agent',
+  secureLine: 'end-to-end encrypted · verified',
+};
 const CIPHER = CONVO.map((m) => ({
   hex: rhex(m.receipt ? 96 : Math.min((m.text ? m.text.length * 2 : 60), 72)),
   size: m.receipt ? 412 : 180 + ((Math.random() * 140) | 0),
@@ -401,8 +419,9 @@ function WatcherField({ reduced, splitRef }) {
 // ============================================================================
 // FOREGROUND — scene bubbles (radii aligned to tokens in v8.0)
 // ============================================================================
-function Bubble({ msg, cipher, idx }) {
+function Bubble({ msg, cipher, idx, sceneCopy = DEFAULT_SCENE_COPY }) {
   const isYou = msg.from === 'you';
+  const cipherPacket = CIPHER[idx] || CIPHER[0];
   if (cipher)
     return (
       <div className={`flex ${isYou ? 'justify-end' : 'justify-start'} mb-3`}>
@@ -410,11 +429,11 @@ function Bubble({ msg, cipher, idx }) {
           style={{ background: 'rgba(95,187,247,0.04)', border: '1px solid rgba(95,187,247,0.14)' }}>
           <div className="text-[9px] break-all leading-relaxed"
             style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(95,187,247,0.45)' }}>
-            {CIPHER[idx].hex}
+            {cipherPacket.hex}
           </div>
           <div className="text-[8px] mt-1.5 tracking-wider"
             style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(95,187,247,0.3)' }}>
-            TLS 1.3 · {CIPHER[idx].size} B · sender unknown
+            TLS 1.3 · {cipherPacket.size} B · {sceneCopy.senderUnknown || DEFAULT_SCENE_COPY.senderUnknown}
           </div>
         </div>
       </div>
@@ -427,14 +446,14 @@ function Bubble({ msg, cipher, idx }) {
           <div className="flex items-center gap-2 mb-1.5">
             <span className="w-4 h-4 rounded-full flex items-center justify-center text-[9px]"
               style={{ background: ACCENT, color: '#fff' }}>✓</span>
-            <span className="text-xs font-medium" style={{ color: ACCENT_LT }}>Booked &amp; routed</span>
+            <span className="text-xs font-medium" style={{ color: ACCENT_LT }}>{sceneCopy.receiptTitle || DEFAULT_SCENE_COPY.receiptTitle}</span>
           </div>
           <div className="text-xs" style={{ color: 'rgba(255,255,255,0.75)' }}>
-            NH 854 · Fri 09:40 → 16:10
+            {sceneCopy.receiptBody || DEFAULT_SCENE_COPY.receiptBody}
           </div>
           <div className="text-[9px] mt-1.5 tracking-wide"
             style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(255,255,255,0.35)' }}>
-            blind route · signed Ed25519 ✓
+            {sceneCopy.routeProof || DEFAULT_SCENE_COPY.routeProof}
           </div>
         </div>
       </div>
@@ -451,7 +470,8 @@ function Bubble({ msg, cipher, idx }) {
   );
 }
 
-function Scene({ cipher }) {
+function Scene({ cipher, sceneCopy = DEFAULT_SCENE_COPY }) {
+  const messages = sceneCopy.messages || DEFAULT_SCENE_COPY.messages;
   return (
     <div className="absolute inset-0 flex flex-col px-4 pt-4 pb-10 sm:px-8 sm:pt-5 sm:pb-12">
       <div className="flex items-center justify-between pb-3 mb-3 border-b sm:mb-4 sm:pb-4"
@@ -459,23 +479,23 @@ function Scene({ cipher }) {
         {cipher ? (
           <span className="block min-w-0 truncate text-[10px] tracking-widest"
             style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(95,187,247,0.45)' }}>
-            INTERCEPT — udp :51820 · classified: HTTPS
+            {sceneCopy.interceptLabel || DEFAULT_SCENE_COPY.interceptLabel}
           </span>
         ) : (
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold"
               style={{ background: 'rgba(119,98,243,0.18)', color: ACCENT_LT }}>A</div>
             <div>
-              <div className="text-sm font-medium">Aria — your agent</div>
+              <div className="text-sm font-medium">{sceneCopy.agentName || DEFAULT_SCENE_COPY.agentName}</div>
               <div className="text-[9px] tracking-wide" style={{ color: ACCENT_LT, fontFamily: 'var(--font-mono), monospace' }}>
-                end-to-end encrypted · verified
+                {sceneCopy.secureLine || DEFAULT_SCENE_COPY.secureLine}
               </div>
             </div>
           </div>
         )}
       </div>
       <div className="flex-1">
-        {CONVO.map((m, i) => <Bubble key={i} msg={m} cipher={cipher} idx={i} />)}
+        {messages.map((m, i) => <Bubble key={i} msg={m} cipher={cipher} idx={i} sceneCopy={sceneCopy} />)}
       </div>
     </div>
   );
@@ -499,6 +519,11 @@ const NarrativeHero = () => {
   const { locale } = useRouter();
   const messages = getMessages(locale || DEFAULT_LOCALE);
   const copy = messages.homeHero || getMessages(DEFAULT_LOCALE).homeHero;
+  const sceneCopy = {
+    ...DEFAULT_SCENE_COPY,
+    ...(copy.sceneCopy || {}),
+    messages: copy.sceneCopy?.messages || DEFAULT_SCENE_COPY.messages,
+  };
   const privacyAccessHref =
     locale && locale !== DEFAULT_LOCALE
       ? `/${locale}/privacy-network#privacy-access`
@@ -757,10 +782,10 @@ const NarrativeHero = () => {
                   boxShadow: '0 0 80px rgba(0,0,0,0.8)',
                 }}
               >
-                <Scene cipher={false} />
+                <Scene cipher={false} sceneCopy={sceneCopy} />
                 <div className="absolute inset-0"
                   style={{ clipPath: `inset(0 0 0 ${split}%)`, background: '#070c10' }}>
-                  <Scene cipher />
+                  <Scene cipher sceneCopy={sceneCopy} />
                 </div>
 
                 {/* divider + handle */}

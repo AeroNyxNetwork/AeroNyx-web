@@ -2,6 +2,11 @@
  * ============================================
  * File: components/sections/JoinNetwork.jsx
  * ============================================
+ * Modification Reason: v2.9 - Localized protocol visual microcopy.
+ *   The AI coordination and Nodeboard proof mock visuals now read from
+ *   `join.visualCopy` so non-English pages do not expose English-only
+ *   protocol dashboard captions inside the operator journey.
+ *
  * Modification Reason: v2.8 - Public node summary wording.
  *   Public protocol-health copy now says node summary instead of exposing
  *   implementation-language reporting details in the user-facing stat source.
@@ -50,6 +55,7 @@
  * Last Modified: v2.6 - Mobile operator journey density polish
  * Last Modified: v2.7 - Developer CTA route alignment
  * Last Modified: v2.8 - Public node summary wording
+ * Last Modified: v2.9 - Localized protocol visual microcopy
  * ============================================
  */
 
@@ -80,6 +86,7 @@ const JoinNetwork = () => {
   const { locale } = useRouter();
   const messages = getMessages(locale || DEFAULT_LOCALE);
   const copy = messages.join;
+  const visualCopy = copy.visualCopy || {};
   const protocolCopy = messages.homeStats?.protocol || {};
   const { stats, isLoading } = useNetworkStats({
     period: '30d',
@@ -137,7 +144,7 @@ const JoinNetwork = () => {
       description: copy.steps[1].description,
       features: copy.steps[1].features,
       cta: { text: copy.steps[1].cta, link: 'https://docs.aeronyx.network/' },
-      visual: <AIVisual />,
+      visual: <AIVisual copy={visualCopy.ai} />,
     },
     {
       number: '03',
@@ -146,7 +153,7 @@ const JoinNetwork = () => {
       description: copy.steps[2].description,
       features: copy.steps[2].features,
       cta: { text: copy.steps[2].cta, link: 'https://app.aeronyx.network' },
-      visual: <ResourceVisual />,
+      visual: <ResourceVisual copy={visualCopy.resource} />,
     },
     {
       number: '04',
@@ -423,12 +430,12 @@ const NodeVisual = () => (
   </div>
 );
 
-const AIVisual = () => (
+const AIVisual = ({ copy = {} }) => (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="w-full max-w-sm">
       <div className="flex justify-end mb-3">
         <span className="text-[9px] uppercase tracking-eyebrow text-white/30 border border-white/10 rounded-sm px-2 py-0.5">
-          Protocol view
+          {copy.badge || 'Protocol view'}
         </span>
       </div>
       <div className="space-y-4">
@@ -438,8 +445,8 @@ const AIVisual = () => (
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, ease: EASE }}
         >
-          <div className="text-brand-light mb-1">App:</div>
-          <div className="text-white/80">Route this agent request through a blind relay path.</div>
+          <div className="text-brand-light mb-1">{copy.appLabel || 'App:'}</div>
+          <div className="text-white/80">{copy.appMessage || 'Route this agent request through a blind relay path.'}</div>
         </motion.div>
 
         <motion.div
@@ -448,8 +455,8 @@ const AIVisual = () => (
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, ease: EASE }}
         >
-          <div className="text-brand-light mb-1">AeroNyx:</div>
-          <div className="text-white/80">Peer view verified. Relay candidate selected. Payload remains ciphertext.</div>
+          <div className="text-brand-light mb-1">{copy.aeronyxLabel || 'AeroNyx:'}</div>
+          <div className="text-white/80">{copy.aeronyxMessage || 'Peer view verified. Relay candidate selected. Payload remains ciphertext.'}</div>
         </motion.div>
 
         <motion.div
@@ -459,28 +466,31 @@ const AIVisual = () => (
           transition={{ delay: 1 }}
         >
           <div className="w-2 h-2 bg-brand-light rounded-pill animate-pulse" />
-          blind coordination path ready
+          {copy.readyLabel || 'blind coordination path ready'}
         </motion.div>
       </div>
     </div>
   </div>
 );
 
-const ResourceVisual = () => (
+const ResourceVisual = ({ copy = {} }) => {
+  const resources = copy.resources || [
+    { name: 'Peer Store', usage: 82, state: 'synced' },
+    { name: 'Blind Relay', usage: 64, state: 'ready' },
+    { name: 'Restart Recovery', usage: 76, state: 'proved' },
+    { name: 'Memory Chain', usage: 38, state: 'local' },
+  ];
+
+  return (
   <div className="relative w-full h-full flex items-center justify-center">
     <div className="w-full">
       <div className="flex justify-end mb-3">
         <span className="text-[9px] uppercase tracking-eyebrow text-white/30 border border-white/10 rounded-sm px-2 py-0.5">
-          Nodeboard
+          {copy.badge || 'Nodeboard'}
         </span>
       </div>
       <div className="space-y-4">
-        {[
-          { name: 'Peer Store', usage: 82, state: 'synced' },
-          { name: 'Blind Relay', usage: 64, state: 'ready' },
-          { name: 'Restart Recovery', usage: 76, state: 'proved' },
-          { name: 'Memory Chain', usage: 38, state: 'local' },
-        ].map((resource, i) => (
+        {resources.map((resource, i) => (
           <motion.div
             key={resource.name}
             initial={{ opacity: 0, y: 8 }}
@@ -508,13 +518,14 @@ const ResourceVisual = () => (
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
         >
-          <div className="text-xs text-white/40">Protocol evidence</div>
-          <div className="text-2xl font-light text-brand-light font-mono">observed</div>
+          <div className="text-xs text-white/40">{copy.evidenceLabel || 'Protocol evidence'}</div>
+          <div className="text-2xl font-light text-brand-light font-mono">{copy.evidenceValue || 'observed'}</div>
         </motion.div>
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const BuildVisual = ({ liveLabel = 'Live', activeNodesLabel = 'Active Nodes Worldwide' }) => (
   <div className="relative w-full h-full flex items-center justify-center">
