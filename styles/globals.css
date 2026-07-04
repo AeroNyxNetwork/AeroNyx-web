@@ -2,7 +2,13 @@
  * ============================================
  * File: styles/globals.css
  * ============================================
- * Modification Reason: v3.5 — Hero-owned mobile spacing fix.
+ * Modification Reason: v3.6 — Locale-aware microcopy tracking.
+ *   CJK pages now reduce the global eyebrow letter spacing on small labels and
+ *   chips. English/Russian/Spanish keep the wider uppercase product rhythm,
+ *   while Chinese, Japanese, and Korean avoid stretched microcopy on mobile.
+ *
+ * Historical Notes:
+ *   v3.5 — Hero-owned mobile spacing fix.
  *   The homepage hero now explicitly owns its first-viewport spacing, so the
  *   legacy global mobile `section` padding rules skip `[data-hero-section]`.
  *   This prevents the first section from stacking old top padding on top of
@@ -236,6 +242,13 @@ p, li {
   line-height: 1.68;
 }
 
+:lang(zh-Hant) .tracking-eyebrow,
+:lang(zh-Hans) .tracking-eyebrow,
+:lang(ja) .tracking-eyebrow,
+:lang(ko) .tracking-eyebrow {
+  letter-spacing: 0.04em;
+}
+
 .font-mono,
 code,
 pre {
@@ -315,6 +328,13 @@ pre {
 
   .tracking-eyebrow {
     letter-spacing: 0.1em;
+  }
+
+  :lang(zh-Hant) .tracking-eyebrow,
+  :lang(zh-Hans) .tracking-eyebrow,
+  :lang(ja) .tracking-eyebrow,
+  :lang(ko) .tracking-eyebrow {
+    letter-spacing: 0.04em;
   }
 
   a[class*='px-'],
