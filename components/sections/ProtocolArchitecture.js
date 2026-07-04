@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/ProtocolArchitecture.js
  * ============================================
- * Modification Reason: v4.7 - Motion accessibility and identity wording.
+ * Modification Reason: v4.8 - Decentralized node public naming.
+ *   The public architecture copy now describes decentralized protocol nodes
+ *   instead of exposing the underlying implementation language in user-facing
+ *   narrative.
+ *
+ * Historical Notes:
+ * v4.7 - Motion accessibility and identity wording.
  *   The architecture visuals now respect prefers-reduced-motion so the public
  *   protocol page keeps Apple-grade accessibility. Service-layer copy also
  *   moves from legacy credential wording to identity-derived permission scopes,
@@ -55,6 +61,7 @@
  * Last Modified: v4.6 - Reframed service layer away from payment-first copy
  * and toward encrypted coordination services.
  * Last Modified: v4.7 - Reduced-motion support and identity wording
+ * Last Modified: v4.8 - Decentralized node public naming
  * ============================================
  */
 
@@ -69,7 +76,7 @@ const PILLARS = [
     tag: 'The Protocol',
     title: 'Blind Privacy Fabric',
     description:
-      'AeroNyx Rust nodes exchange signed peer summaries, route encrypted payloads, and report only aggregate health. Nodes move data without ever reading user content.',
+      'AeroNyx decentralized protocol nodes exchange signed peer summaries, route encrypted payloads, and report only aggregate health. Nodes move data without ever reading user content.',
     impact:
       'The trust boundary investors and users can understand: the protocol coordinates the work, but the infrastructure is intentionally blind.',
     technical: [

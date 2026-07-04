@@ -143,7 +143,7 @@ const protocolContinuityCards = [
     title: 'Privacy Network',
     href: '/privacy-network',
     description:
-      'Encrypted routes move through blind Rust nodes while the public surface shows aggregate health, not user destinations or payloads.',
+      'Encrypted routes move through blind decentralized nodes while the public surface shows aggregate health, not user destinations or payloads.',
     signal: 'private connection',
   },
   {

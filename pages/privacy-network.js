@@ -4,7 +4,15 @@
  * ============================================
  * Creation Reason: Move the user-facing privacy network product story off the
  * homepage so the first page can focus on the AeroNyx protocol layer.
- * Modification Reason: v1.8 - Trustworthy stats dashboard.
+ * Modification Reason: v1.9 - Decentralized node naming.
+ *   Replaced user-facing implementation-language node wording with
+ *   decentralized node language
+ *   so the public page describes the product network instead of the
+ *   implementation language. Technical source-path comments remain intact for
+ *   maintainers.
+ *
+ * Historical Notes:
+ * v1.8 - Trustworthy stats dashboard.
  *   Refined the live protocol stats section into a protection evidence panel:
  *   each metric now states the user-facing signal and the privacy-preserving
  *   public evidence boundary. This keeps the page product-grade while avoiding
@@ -30,14 +38,14 @@
  * Historical Notes:
  * v1.5 - Product assurance bridge.
  *   Added a user promise/protocol evidence bridge so the page explains how
- *   daily protection signals map to auditable Rust-node evidence without
+ *   daily protection signals map to auditable decentralized node evidence without
  *   exposing user telemetry. This makes the secondary page feel like a mature
  *   product surface instead of a collection of engineering claims.
  *
  * Historical Notes:
  * v1.4 - North Star infrastructure narrative.
  *   Added the North Star Plan as the engineering covenant for the Privacy
- *   Network: more private, open source, globally usable, and built on Rust
+ *   Network: more private, open source, globally usable, and built on decentralized
  *   node infrastructure that can stand up to public audit and real operation.
  *   The hero assurance panel now animates vertically to avoid transient
  *   horizontal overflow on iPhone-class screens.
@@ -65,7 +73,7 @@
  *   1. Render SEO and shared site chrome.
  *   2. Explain what the privacy network gives users without making the
  *      homepage product-heavy.
- *   3. State the North Star engineering covenant for Rust node infrastructure.
+ *   3. State the North Star engineering covenant for decentralized node infrastructure.
  *   4. Show aggregate encrypted traffic/packet/health metrics and route users
  *      to downloads.
  *
@@ -81,6 +89,7 @@
  * Last Modified: v1.6 - Blind routing animation polish
  * Last Modified: v1.7 - Product continuity bridge
  * Last Modified: v1.8 - Trustworthy stats dashboard
+ * Last Modified: v1.9 - Decentralized node naming
  * ============================================
  */
 
@@ -134,7 +143,7 @@ const protocolContinuityCards = [
     title: 'Privacy Network',
     href: '#protocol-stats',
     description:
-      'Routes encrypted traffic through blind Rust nodes and surfaces only aggregate proof that the network is protecting work.',
+      'Routes encrypted traffic through blind decentralized nodes and surfaces only aggregate proof that the network is protecting work.',
     signal: 'hidden route',
   },
   {
@@ -158,7 +167,7 @@ const northStarPrinciples = [
     label: '02',
     title: 'Open source infrastructure',
     description:
-      'Rust node software, protocol surfaces, and operational assumptions should be inspectable so the network earns trust through review, not brand promises.',
+      'Decentralized node software, protocol surfaces, and operational assumptions should be inspectable so the network earns trust through review, not brand promises.',
   },
   {
     label: '03',
@@ -227,13 +236,13 @@ export default function PrivacyNetworkPage() {
     <>
       <SEO
         title="AeroNyx Privacy Network | More private, open-source, global routing"
-        description="AeroNyx Privacy Network is a more private, open-source network for global use, built on auditable Rust node infrastructure and a blind protocol boundary."
+        description="AeroNyx Privacy Network is a more private, open-source network for global use, built on auditable decentralized node infrastructure and a blind protocol boundary."
         canonicalUrl={`https://aeronyx.network${canonicalPath}`}
         keywords={[
           'AeroNyx Privacy Network',
           'AeroNyx Privacy Protocol',
           'open source privacy network',
-          'Rust privacy infrastructure',
+          'decentralized privacy infrastructure',
           'private routing',
           'encrypted routing',
           'blind relay network',
@@ -282,7 +291,7 @@ const Hero = () => (
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/62 md:text-xl">
             AeroNyx Privacy Network lets humans, apps, and autonomous agents route
             traffic through encrypted protocol nodes without turning public
-            observability into user surveillance. The Rust node layer is built as
+            observability into user surveillance. The decentralized node layer is built as
             real privacy infrastructure: auditable, blind by default, and designed
             to run across independent operators worldwide.
           </p>
@@ -470,11 +479,11 @@ const NorthStarPlan = () => (
         >
           <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">North Star Plan</div>
           <h2 className="mt-3 text-display-md font-light text-white">
-            Rust nodes that can survive global audit and real operation.
+            Decentralized nodes that can survive global audit and real operation.
           </h2>
           <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">
             The Privacy Network is not a closed app feature. It is the public
-            operating surface for AeroNyx's blind protocol: open Rust nodes,
+            operating surface for AeroNyx's blind protocol: open decentralized nodes,
             privacy-safe telemetry, signed peer state, restart recovery, and
             route evidence that can be inspected without exposing users.
           </p>
@@ -618,7 +627,7 @@ const AssuranceModel = () => (
           <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">
             A world-class privacy product should give users confidence every day:
             hidden address, encrypted route, stable connection, healthy nodes.
-            AeroNyx maps those signals to aggregate Rust-node evidence instead
+            AeroNyx maps those signals to aggregate decentralized node evidence instead
             of turning protection into surveillance.
           </p>
         </motion.div>

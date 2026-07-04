@@ -7,7 +7,13 @@ import Head from 'next/head';
  * File Purpose:
  *   Shared SEO metadata component for AeroNyx website pages.
  *
- * Modification Reason: v1.1 - Protocol-first default metadata.
+ * Modification Reason: v1.2 - Decentralized node keyword alignment.
+ *   Replaced implementation-language fallback keywords with public product
+ *   wording so metadata describes open decentralized nodes rather than the
+ *   underlying implementation language.
+ *
+ * Historical Notes:
+ * v1.1 - Protocol-first default metadata.
  *   Replaced legacy fallback keywords with AeroNyx's current protocol narrative
  *   so future pages that do not provide explicit metadata still describe the
  *   open blind coordination layer.
@@ -25,6 +31,7 @@ import Head from 'next/head';
  *     routing, encrypted messaging, private memory, and blind open protocol.
  *
  * Last Modified: v1.1 - Protocol-first default metadata
+ * Last Modified: v1.2 - Decentralized node keyword alignment
  * ============================================
  *
  * @param {Object} props - Component props
@@ -41,7 +48,7 @@ const SEO = ({
   canonicalUrl = 'https://aeronyx.network/',
   ogImage = 'https://binary.aeronyx.network/aeronyx_logo.png',
   ogType = 'website',
-  keywords = ['encrypted coordination layer', 'blind protocol', 'privacy network', 'private AI memory', 'encrypted messaging', 'agent coordination', 'open Rust nodes']
+  keywords = ['encrypted coordination layer', 'blind protocol', 'privacy network', 'private AI memory', 'encrypted messaging', 'agent coordination', 'open decentralized nodes']
 }) => {
   // Canonical URL without trailing slash
   const canonical = canonicalUrl.endsWith('/') 

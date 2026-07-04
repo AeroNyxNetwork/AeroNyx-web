@@ -2,7 +2,13 @@
  * ============================================
  * File: components/sections/ProductsEcosystem.js
  * ============================================
- * Modification Reason: v4.2 - MemChain terminology and visual cleanup.
+ * Modification Reason: v4.3 - Decentralized node product naming.
+ *   Product ecosystem copy now describes open decentralized nodes and the
+ *   Decentralized Node Layer instead of presenting implementation language as
+ *   the user-facing product category.
+ *
+ * Historical Notes:
+ * v4.2 - MemChain terminology and visual cleanup.
  *   Removed legacy ledger/reward wording from the MemChain tab so the homepage
  *   presents MemChain as node-blind, local-first encrypted memory. The visual
  *   now labels it as an encrypted memory flow.
@@ -11,7 +17,7 @@
  * v4.1 - North Star privacy infrastructure wording.
  *   Tightened the Privacy Network and Protocol Foundation tabs around the
  *   North Star Plan: more private, open source, globally usable networking
- *   built on auditable Rust node infrastructure.
+ *   built on auditable decentralized node infrastructure.
  *
  * Historical Notes:
  * v4.0 - Privacy Network naming and selector polish.
@@ -90,6 +96,7 @@
  * Last Modified: v4.0 - Privacy Network naming and selector polish
  * Last Modified: v4.1 - North Star privacy infrastructure wording
  * Last Modified: v4.2 - MemChain terminology and visual cleanup
+ * Last Modified: v4.3 - Decentralized node product naming
  * ============================================
  */
 
@@ -119,11 +126,11 @@ const ProductsEcosystem = () => {
       tagline: 'More private, open source, globally usable',
       useCase: {
         pain: 'Centralized privacy apps ask users to trust one company with routing metadata and operational visibility',
-        solution: 'AeroNyx routes through open Rust nodes where public health is aggregate-only and user payloads remain encrypted',
+        solution: 'AeroNyx routes through open decentralized nodes where public health is aggregate-only and user payloads remain encrypted',
         savings: 'Use privacy as a global protocol primitive, not another closed subscription silo.',
       },
       features: [
-        'Open Rust node infrastructure',
+        'Open decentralized node infrastructure',
         'Blind relay fabric for encrypted routing',
         'Public aggregate network health without user-level telemetry',
         'Privacy access for humans, apps, and autonomous agents',
@@ -187,15 +194,15 @@ const ProductsEcosystem = () => {
     {
       id: 'foundation',
       name: 'Protocol Foundation',
-      category: 'Rust Node Layer',
-      tagline: 'Auditable Rust nodes, signed peer state, public health',
+      category: 'Decentralized Node Layer',
+      tagline: 'Auditable decentralized nodes, signed peer state, public health',
       useCase: {
         pain: 'Privacy products fail when every feature depends on a centralized service that can observe or be forced to disclose user behavior',
         solution: 'AeroNyx separates protocol state, node operations, public aggregates, and user-encrypted payloads so the node layer can be audited worldwide',
         savings: 'Build on an auditable privacy boundary instead of retrofitting one later.',
       },
       features: [
-        'Rust node peer discovery and persistent peer store',
+        'Decentralized node peer discovery and persistent peer store',
         'Privacy-safe heartbeat and lifecycle event reporting',
         'Nodeboard operations for health, capacity, and incidents',
         'Public network stats without user-level surveillance',

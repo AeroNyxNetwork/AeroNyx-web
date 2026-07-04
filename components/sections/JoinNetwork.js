@@ -2,7 +2,12 @@
  * ============================================
  * File: components/sections/JoinNetwork.jsx
  * ============================================
- * Modification Reason: v2.7 - Developer CTA route alignment.
+ * Modification Reason: v2.8 - Public node summary wording.
+ *   Public protocol-health copy now says node summary instead of exposing
+ *   implementation-language reporting details in the user-facing stat source.
+ *
+ * Historical Notes:
+ * v2.7 - Developer CTA route alignment.
  *   Updated the final build step to the canonical developer documentation
  *   path so the operator journey resolves into the maintained docs surface.
  *
@@ -44,6 +49,7 @@
  * Last Modified: v2.4 - iPhone-safe journey order and control sizing
  * Last Modified: v2.6 - Mobile operator journey density polish
  * Last Modified: v2.7 - Developer CTA route alignment
+ * Last Modified: v2.8 - Public node summary wording
  * ============================================
  */
 
@@ -101,7 +107,7 @@ const JoinNetwork = () => {
     }
   );
   const protocolHealthSource = formatTemplate(
-    copy.stats.protocolHealthSource || 'Rust summary {summary} · {stage}',
+    copy.stats.protocolHealthSource || 'Node summary {summary} · {stage}',
     {
       summary: stats.protocolDiscoverySummaryReportedNodes || 0,
       stage: protocolHealthStageLabel,

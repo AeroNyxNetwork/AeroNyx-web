@@ -30,7 +30,13 @@
  *      same node-blind invariant.
  *   4. Proof strip reinforces "infrastructure routes/stores ciphertext only".
  *
- * Modification Reason: v1.3 - Homepage primitive animation handoff.
+ * Modification Reason: v1.4 - Decentralized node public naming.
+ *   Public primitive copy now says decentralized nodes instead of exposing the
+ *   implementation language, keeping the homepage product-led for users and
+ *   investors.
+ *
+ * Historical Notes:
+ * v1.3 - Homepage primitive animation handoff.
  *   Polished the two homepage primitive cards so they visually hand off to the
  *   deeper MemChain and Privacy Network pages: subtle hover lift, a breathing
  *   protocol spine, richer encrypted-route motion, and a sealed-memory flow
@@ -39,7 +45,7 @@
  * Historical Notes:
  * v1.2 - Privacy Network North Star wording.
  *   Refined the Privacy Network card so the homepage names the product as a
- *   more private, open source network for global use and tees up the Rust node
+ *   more private, open source network for global use and tees up the decentralized node
  *   infrastructure story now carried by /privacy-network.
  *
  * Historical Notes:
@@ -58,6 +64,7 @@
  * Last Modified: v1.1 - Proof strip and mobile CTA polish
  * Last Modified: v1.2 - Privacy Network North Star wording
  * Last Modified: v1.3 - Homepage primitive animation handoff
+ * Last Modified: v1.4 - Decentralized node public naming
  * ============================================
  */
 
@@ -74,11 +81,11 @@ const primitiveCards = [
     title: 'Privacy Network',
     label: 'Traffic in motion',
     description:
-      'AeroNyx Privacy Network is a more private, open source network for global use. Rust nodes coordinate encrypted traffic and relay state without reading user content.',
+      'AeroNyx Privacy Network is a more private, open source network for global use. Decentralized nodes coordinate encrypted traffic and relay state without reading user content.',
     cta: 'Explore Privacy Network',
     href: '/privacy-network',
     checks: [
-      'Open Rust node infrastructure',
+      'Open decentralized node infrastructure',
       'Blind relay boundary',
       'Aggregate health only',
     ],
