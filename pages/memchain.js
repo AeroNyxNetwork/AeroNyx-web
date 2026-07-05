@@ -30,6 +30,11 @@
  *   hiding two of the three trust claims. FAQ and pipeline cards also receive
  *   tighter min-width and wrapping protection for long localized copy.
  *
+ * Modification Reason: v2.7 - Benchmark and boundary evidence polish.
+ *   Benchmark cards, comparison rows, and the privacy boundary now read as
+ *   claim-safe evidence surfaces instead of plain data tables. The measured
+ *   claim, market comparison, and limitation copy remain unchanged.
+ *
  * Modification Reason: v2.2 - Multilingual mobile resilience.
  *   Tightened long-locale wrapping for MemChain proof rails, comparison cards,
  *   mode cards, and the animated memory visual so Japanese, Korean, Russian,
@@ -154,6 +159,7 @@
  * Last Modified: v2.4 - Advantage lab mobile metric wrapping
  * Last Modified: v2.5 - MemChain mobile trust-flow polish
  * Last Modified: v2.6 - Advantage evidence stack polish
+ * Last Modified: v2.7 - Benchmark and boundary evidence polish
  * ============================================
  */
 
@@ -683,17 +689,23 @@ const Benchmarks = ({ copy }) => (
         title={copy.title}
         description={copy.description}
       />
-      <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-10 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         {copy.cards.map((item) => (
-          <div key={item.label} className="page-card min-w-0 border p-4 md:p-5">
-            <div className="font-mono text-3xl font-light text-white md:text-4xl">{item.value}</div>
-            <div className="mt-3 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/42">{item.label}</div>
-            <p className="mt-3 text-xs leading-relaxed text-white/46">{item.note}</p>
+          <div key={item.label} className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/45 to-transparent" />
+            <div className="flex min-h-[4.5rem] flex-col justify-end">
+              <div className="break-words font-mono text-3xl font-light leading-none text-white md:text-4xl">{item.value}</div>
+              <div className="mt-3 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">{item.label}</div>
+            </div>
+            <p className="mt-4 border-t border-white/10 pt-3 text-xs leading-relaxed text-white/50">{item.note}</p>
           </div>
         ))}
       </div>
-      <div className="mt-6 border border-warn/25 bg-warn/[0.06] p-4 text-sm leading-relaxed text-white/60">
-        {copy.honestBoundary}
+      <div className="mt-6 grid gap-3 border border-warn/25 bg-warn/[0.055] p-4 md:grid-cols-[auto_minmax(0,1fr)] md:items-start">
+        <span aria-hidden="true" className="mt-1 hidden h-2 w-2 rounded-pill bg-warn/80 md:block" />
+        <p className="min-w-0 break-words text-sm leading-relaxed text-white/64">
+          {copy.honestBoundary}
+        </p>
       </div>
     </Container>
   </section>
@@ -708,17 +720,23 @@ const Comparison = ({ copy }) => (
         description={copy.description}
       />
       <div className="mt-10 grid gap-3">
-        {copy.rows.map((row) => (
-          <article key={row.dimension} className="page-card grid min-w-0 gap-4 border p-4 md:grid-cols-[0.72fr_1fr_1fr] md:p-5">
-            <div className="min-w-0">
+        {copy.rows.map((row, index) => (
+          <article key={row.dimension} className="page-card grid min-w-0 gap-4 border p-4 md:grid-cols-[0.58fr_1fr_1fr] md:p-5">
+            <div className="min-w-0 border-b border-white/10 pb-3 md:border-b-0 md:pb-0">
+              <div className="font-mono text-2xl font-light leading-none text-white/18 md:text-3xl">
+                {String(index + 1).padStart(2, '0')}
+              </div>
               <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/35">{copy.labels.dimension}</div>
               <h3 className="mt-2 break-words text-lg font-light text-white">{row.dimension}</h3>
             </div>
-            <div className="min-w-0 border border-brand-line bg-brand-faint p-3">
-              <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">{copy.labels.memchain}</div>
+            <div className="min-w-0 border border-brand-line bg-brand-faint p-3 md:p-4">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 shrink-0 rounded-pill bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.65)]" />
+                <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">{copy.labels.memchain}</div>
+              </div>
               <p className="mt-2 break-words text-sm leading-relaxed text-white">{row.memchain}</p>
             </div>
-            <div className="min-w-0 border border-white/10 bg-black/25 p-3">
+            <div className="min-w-0 border border-white/10 bg-black/25 p-3 md:p-4">
               <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/34">{copy.labels.cloud}</div>
               <p className="mt-2 break-words text-sm leading-relaxed text-white/50">{row.cloud}</p>
             </div>
@@ -737,9 +755,18 @@ const PrivacyBoundary = ({ copy }) => (
           <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.eyebrow}</div>
           <h2 className="mt-4 max-w-3xl break-words text-display-md font-light text-white">{copy.title}</h2>
         </div>
-        <div className="space-y-4 text-base leading-relaxed text-white/62">
-          {copy.paragraphs.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
+        <div className="grid gap-3">
+          {copy.paragraphs.map((paragraph, index) => (
+            <div
+              key={paragraph}
+              className={`min-w-0 border p-4 text-base leading-relaxed ${
+                index === 0
+                  ? 'border-brand-line bg-brand-faint text-white/72'
+                  : 'border-warn/25 bg-warn/[0.045] text-white/62'
+              }`}
+            >
+              <p className="break-words">{paragraph}</p>
+            </div>
           ))}
         </div>
       </div>
