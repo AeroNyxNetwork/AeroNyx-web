@@ -62,7 +62,7 @@
  * Last Modified: v2.3 - Consistent footer hit areas and link formatting
  * Last Modified: v2.4 - X icon and protocol link polish
  * Last Modified: v2.5 - Mobile footer navigation polish
- * Last Modified: v2.6 - Footer internationalization pass
+ * Last Modified: v2.7 - Mobile footer long-label wrapping
  * ============================================
  */
 
@@ -168,14 +168,14 @@ const Footer = ({ activeLocale: providedLocale }) => {
 const FooterColumn = ({ heading, links }) => (
   <div className="border-t border-white/10 md:border-t-0">
     <details className="group md:hidden">
-      <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between text-[10px] uppercase tracking-eyebrow text-white/48 transition-colors duration-fast hover:text-white [&::-webkit-details-marker]:hidden">
-        <span>{heading}</span>
+      <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between gap-3 text-[10px] uppercase tracking-eyebrow text-white/48 transition-colors duration-fast hover:text-white [&::-webkit-details-marker]:hidden">
+        <span className="min-w-0 break-words leading-4">{heading}</span>
         <span aria-hidden="true" className="relative h-4 w-4 text-white/35">
           <span className="absolute left-1/2 top-1/2 h-px w-3 -translate-x-1/2 -translate-y-1/2 bg-current" />
           <span className="absolute left-1/2 top-1/2 h-3 w-px -translate-x-1/2 -translate-y-1/2 bg-current transition-opacity duration-fast group-open:opacity-0" />
         </span>
       </summary>
-      <ul className="grid grid-cols-2 gap-x-3 gap-y-1 pb-4">
+      <ul className="grid grid-cols-1 gap-y-1 pb-4 sm:grid-cols-2 sm:gap-x-3">
         {links.map((link, index) => (
           <li key={index} className="min-w-0">
             <FooterNavLink link={link} />
@@ -199,7 +199,7 @@ const FooterColumn = ({ heading, links }) => (
 
 const FooterNavLink = ({ link }) => {
   const external = link.href.startsWith('http') || link.href.startsWith('mailto:');
-  const className = "inline-flex min-h-[44px] w-full min-w-0 items-center text-sm leading-snug text-white/55 transition-colors duration-fast hover:text-white";
+  const className = "inline-flex min-h-[44px] w-full min-w-0 items-center break-words text-sm leading-snug text-white/55 transition-colors duration-fast hover:text-white";
 
   return external ? (
     <a

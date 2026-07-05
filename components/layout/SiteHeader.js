@@ -13,6 +13,12 @@
  *   The mobile open/close aria labels now come from lib/i18n nav copy so
  *   localized pages do not expose English-only accessibility text.
  *
+ * Modification Reason: v2.9 - Mobile multilingual navigation wrapping.
+ *   Mobile menu links, CTA text, and language items now allow long localized
+ *   labels to wrap cleanly inside their touch targets. This avoids squeezed or
+ *   clipped labels on Russian, Spanish, Japanese, Korean, Traditional Chinese,
+ *   and Simplified Chinese pages without changing routes or desktop layout.
+ *
  * Historical Notes:
  * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
@@ -51,7 +57,7 @@
  *
  * Last Modified: v2.5 - Renamed active header component to SiteHeader
  * Last Modified: v2.6 - Download client CTA alignment
- * Last Modified: v2.8 - Mobile menu accessibility localization
+ * Last Modified: v2.9 - Mobile multilingual navigation wrapping
  * ============================================
  */
 
@@ -81,7 +87,7 @@ const SiteHeader = () => {
     }`
   );
   const mobileNavClass = (href) => (
-    `flex min-h-[44px] items-center rounded px-3 py-2 text-base transition-colors ${
+    `flex min-h-[44px] min-w-0 items-center rounded px-3 py-2 text-base leading-snug break-words transition-colors ${
       isActiveRoute(href)
         ? 'bg-white/[0.04] text-white'
         : 'text-white/60 hover:bg-white/[0.03] hover:text-white'
@@ -332,7 +338,7 @@ const SiteHeader = () => {
                 href={clientAccessHref}
                 locale={locale}
                 onClick={() => setIsOpen(false)}
-                className="mt-2 flex min-h-[48px] items-center justify-center border border-white/20 px-4 py-3 text-center transition-colors hover:border-white/40 hover:bg-white/[0.03]"
+                className="mt-2 flex min-h-[48px] min-w-0 items-center justify-center break-words border border-white/20 px-4 py-3 text-center leading-snug transition-colors hover:border-white/40 hover:bg-white/[0.03]"
               >
                 {clientAccessLabel}
               </Link>
@@ -344,7 +350,7 @@ const SiteHeader = () => {
                     href={router.asPath || '/'}
                     locale={item.code}
                     onClick={() => setIsOpen(false)}
-                    className={`flex min-h-[44px] items-center rounded-sm border px-3 py-2 text-sm transition-colors ${
+                    className={`flex min-h-[44px] min-w-0 items-center rounded-sm border px-3 py-2 text-sm leading-snug break-words transition-colors ${
                       item.code === locale
                         ? 'border-white/30 text-white'
                         : 'border-white/10 text-white/50 hover:text-white'
