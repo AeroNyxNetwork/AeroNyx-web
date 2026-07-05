@@ -87,10 +87,17 @@ const formatTemplate = (template, values) => (
   ))
 );
 
-const JoinNetwork = () => {
+const normalizeLocaleCode = (locale, asPath) => {
+  const candidate = locale || String(asPath || '').split('/').filter(Boolean)[0];
+  if (candidate === 'kr' || String(candidate).toLowerCase().startsWith('ko')) return 'ko';
+  return candidate || DEFAULT_LOCALE;
+};
+
+const JoinNetwork = ({ activeLocale: providedLocale }) => {
   const [activeStep, setActiveStep] = useState(0);
-  const { locale } = useRouter();
-  const messages = getMessages(locale || DEFAULT_LOCALE);
+  const { locale, asPath } = useRouter();
+  const activeLocale = normalizeLocaleCode(providedLocale || locale, asPath);
+  const messages = getMessages(activeLocale);
   const copy = messages.join;
   const visualCopy = copy.visualCopy || {};
   const protocolCopy = messages.homeStats?.protocol || {};

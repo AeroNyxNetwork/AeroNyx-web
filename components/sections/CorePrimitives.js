@@ -84,6 +84,12 @@ import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
 const EASE = [0.16, 1, 0.3, 1];
 
+const normalizeLocaleCode = (locale, asPath) => {
+  const candidate = locale || String(asPath || '').split('/').filter(Boolean)[0];
+  if (candidate === 'kr' || String(candidate).toLowerCase().startsWith('ko')) return 'ko';
+  return candidate || DEFAULT_LOCALE;
+};
+
 const defaultPrimitiveCards = [
   {
     id: 'privacy-network',
@@ -137,9 +143,10 @@ const defaultProofItems = [
   },
 ];
 
-const CorePrimitives = () => {
-  const { locale } = useRouter();
-  const messages = getMessages(locale || DEFAULT_LOCALE);
+const CorePrimitives = ({ activeLocale: providedLocale }) => {
+  const { locale, asPath } = useRouter();
+  const activeLocale = normalizeLocaleCode(providedLocale || locale, asPath);
+  const messages = getMessages(activeLocale);
   const copy = messages.corePrimitives || getMessages(DEFAULT_LOCALE).corePrimitives;
   const reduced = useReducedMotion();
   const primitiveCards = defaultPrimitiveCards.map((card, index) => ({

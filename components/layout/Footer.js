@@ -72,9 +72,16 @@ import Container from '../ui/Container';
 import AeroNyxLogo from '../ui/AeroNyxLogo';
 import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
-const Footer = () => {
-  const { locale } = useRouter();
-  const messages = getMessages(locale || DEFAULT_LOCALE);
+const normalizeLocaleCode = (locale, asPath) => {
+  const candidate = locale || String(asPath || '').split('/').filter(Boolean)[0];
+  if (candidate === 'kr' || String(candidate).toLowerCase().startsWith('ko')) return 'ko';
+  return candidate || DEFAULT_LOCALE;
+};
+
+const Footer = ({ activeLocale: providedLocale }) => {
+  const { locale, asPath } = useRouter();
+  const activeLocale = normalizeLocaleCode(providedLocale || locale, asPath);
+  const messages = getMessages(activeLocale);
   const copy = messages.footer || getMessages(DEFAULT_LOCALE).footer;
 
   return (

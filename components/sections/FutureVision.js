@@ -55,9 +55,16 @@ import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
 const EASE = [0.16, 1, 0.3, 1];
 
-const FutureVision = () => {
-  const { locale } = useRouter();
-  const messages = getMessages(locale || DEFAULT_LOCALE);
+const normalizeLocaleCode = (locale, asPath) => {
+  const candidate = locale || String(asPath || '').split('/').filter(Boolean)[0];
+  if (candidate === 'kr' || String(candidate).toLowerCase().startsWith('ko')) return 'ko';
+  return candidate || DEFAULT_LOCALE;
+};
+
+const FutureVision = ({ activeLocale: providedLocale }) => {
+  const { locale, asPath } = useRouter();
+  const activeLocale = normalizeLocaleCode(providedLocale || locale, asPath);
+  const messages = getMessages(activeLocale);
   const copy = messages.futureVision || getMessages(DEFAULT_LOCALE).futureVision;
   const visions = copy.visions || [];
 

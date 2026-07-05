@@ -3,11 +3,17 @@
  * index.js - Homepage with Encrypted Coordination Layer Narrative
  * ============================================
  *
- * Modification Reason: v5.8 - Core primitives narrative restructure.
- *   Adds the CorePrimitives module directly after live protocol evidence so
- *   Privacy Network and MemChain read as the two load-bearing primitives of
- *   the encrypted coordination layer: private traffic in motion and private
- *   memory at rest. The approved hero title/subtitle remain unchanged.
+ * Modification Reason: v6.1 - Build-time locale propagation.
+ *   Added getStaticProps({ locale }) so static HTML for /ru, /zh-Hant,
+ *   /zh-Hans, /ja, /ko, and /es receives the correct locale during SSR.
+ *   This prevents localized pages from being generated with default English
+ *   section copy before client hydration.
+ *
+ * Modification Reason: v6.0 - Explicit section locale propagation.
+ *   The homepage now passes the resolved activeLocale into locale-aware
+ *   sections. This avoids section-level router fallback during static
+ *   multilingual builds and keeps Korean/Japanese/Chinese/Russian/Spanish
+ *   modules from silently falling back to English.
  *
  * Historical Notes:
  * v5.3 - Homepage module polish pass.
@@ -71,6 +77,8 @@
  * Last Modified: v5.8 - Added CorePrimitives homepage narrative
  * Last Modified: v5.9 - Removed standalone payment block from the homepage so
  * the first-page story stays focused on the blind coordination protocol.
+ * Last Modified: v6.0 - Explicit section locale propagation
+ * Last Modified: v6.1 - Build-time locale propagation
  * ============================================
  */
 
@@ -108,9 +116,9 @@ import FutureVision from '../components/sections/FutureVision';
 import SophisticatedCTA from '../components/sections/SophisticatedCTA';
 import Footer from '../components/layout/Footer';
 
-export default function Home() {
+export default function Home({ pageLocale = DEFAULT_LOCALE }) {
   const { locale } = useRouter();
-  const activeLocale = locale || DEFAULT_LOCALE;
+  const activeLocale = pageLocale || locale || DEFAULT_LOCALE;
   const copy = getMessages(activeLocale);
   const canonicalPath = activeLocale === DEFAULT_LOCALE ? '' : `/${activeLocale}`;
   const { stats, isLoading } = useNetworkStats({
@@ -140,33 +148,41 @@ export default function Home() {
       {/* Main content */}
       <main className="relative z-10">
         {/* 1. Opening narrative */}
-        <NarrativeHero />
+        <NarrativeHero activeLocale={activeLocale} />
 
         <HomeNetworkStats stats={stats} isLoading={isLoading} copy={copy} />
 
         {/* 3. Core protocol primitives: private traffic + private memory. */}
-        <CorePrimitives />
+        <CorePrimitives activeLocale={activeLocale} />
 
         {/* 4. Protocol capability index. Product deep-dives live on secondary pages. */}
         <ProductsEcosystem />
 
         {/* 5. How it works — technical deep-dive */}
-        <ProtocolArchitecture />
+        <ProtocolArchitecture activeLocale={activeLocale} />
 
         {/* 6. Join the network */}
-        <JoinNetwork />
+        <JoinNetwork activeLocale={activeLocale} />
 
         {/* 7. Vision for the future */}
-        <FutureVision />
+        <FutureVision activeLocale={activeLocale} />
 
         {/* 8. Call to action */}
         <SophisticatedCTA />
       </main>
 
       {/* Footer */}
-      <Footer />
+      <Footer activeLocale={activeLocale} />
     </>
   );
+}
+
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      pageLocale: locale || DEFAULT_LOCALE,
+    },
+  };
 }
 
 const formatCompactCount = (value) => (

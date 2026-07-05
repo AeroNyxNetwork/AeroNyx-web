@@ -130,6 +130,12 @@ const SCAN = '#5FBBF7';
 const EASE = [0.16, 1, 0.3, 1];
 const COMPACT_LENS_START = 96;
 
+const normalizeLocaleCode = (locale, asPath) => {
+  const candidate = locale || String(asPath || '').split('/').filter(Boolean)[0];
+  if (candidate === 'kr' || String(candidate).toLowerCase().startsWith('ko')) return 'ko';
+  return candidate || DEFAULT_LOCALE;
+};
+
 const HEXC = '0123456789abcdef';
 const rhex = (n) =>
   Array.from({ length: n }, () => HEXC[(Math.random() * 16) | 0]).join('');
@@ -515,9 +521,10 @@ const stageItem = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
 };
 
-const NarrativeHero = () => {
-  const { locale } = useRouter();
-  const messages = getMessages(locale || DEFAULT_LOCALE);
+const NarrativeHero = ({ activeLocale: providedLocale }) => {
+  const { locale, asPath } = useRouter();
+  const activeLocale = normalizeLocaleCode(providedLocale || locale, asPath);
+  const messages = getMessages(activeLocale);
   const copy = messages.homeHero || getMessages(DEFAULT_LOCALE).homeHero;
   const sceneCopy = {
     ...DEFAULT_SCENE_COPY,
@@ -525,8 +532,8 @@ const NarrativeHero = () => {
     messages: copy.sceneCopy?.messages || DEFAULT_SCENE_COPY.messages,
   };
   const privacyAccessHref =
-    locale && locale !== DEFAULT_LOCALE
-      ? `/${locale}/privacy-network#privacy-access`
+    activeLocale && activeLocale !== DEFAULT_LOCALE
+      ? `/${activeLocale}/privacy-network#privacy-access`
       : '/privacy-network#privacy-access';
   const [reduced, setReduced] = useState(false);
   const [split, setSplit] = useState(50);

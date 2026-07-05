@@ -196,7 +196,7 @@ export default function PrivacyNetworkPage() {
 
       <SiteHeader />
 
-      <main className="relative z-10 pt-24 md:pt-32">
+      <main className="relative z-10 overflow-x-hidden pt-24 md:pt-32">
         <Hero copy={pageCopy.hero} />
         <ProtocolContinuity copy={pageCopy.protocolContinuity} />
         <NorthStarPlan copy={pageCopy.northStar} />
