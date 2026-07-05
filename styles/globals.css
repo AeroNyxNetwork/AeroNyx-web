@@ -2,10 +2,17 @@
  * ============================================
  * File: styles/globals.css
  * ============================================
- * Modification Reason: v3.6 — Locale-aware microcopy tracking.
- *   CJK pages now reduce the global eyebrow letter spacing on small labels and
- *   chips. English/Russian/Spanish keep the wider uppercase product rhythm,
- *   while Chinese, Japanese, and Korean avoid stretched microcopy on mobile.
+ * Modification Reason: v3.7 — Apple-grade zero tracking.
+ *   All small UI labels, buttons, badges, and arbitrary Tailwind tracking
+ *   utilities now render with zero letter spacing. This improves multilingual
+ *   mobile fit and keeps Chinese, Japanese, Korean, Russian, and Spanish pages
+ *   closer to modern system typography instead of stretched marketing text.
+ *
+ * Historical Notes:
+ *   v3.6 — Locale-aware microcopy tracking.
+ *   CJK pages reduced global eyebrow letter spacing on small labels and chips.
+ *   v3.7 supersedes that approach because the product now prioritizes Apple-
+ *   style system readability and strict mobile compatibility across locales.
  *
  * Historical Notes:
  *   v3.5 — Hero-owned mobile spacing fix.
@@ -79,7 +86,7 @@
  *     referenced by older sections — do not delete.
  *   - Heading text-shadow must stay neutral black. No colored glows.
  *
- * Last Modified: v3.5 — Exempt hero from legacy mobile section padding
+ * Last Modified: v3.7 — Zero tracking for multilingual UI surfaces
  * ============================================
  */
 
@@ -246,7 +253,14 @@ p, li {
 :lang(zh-Hans) .tracking-eyebrow,
 :lang(ja) .tracking-eyebrow,
 :lang(ko) .tracking-eyebrow {
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
+}
+
+.tracking-eyebrow,
+.tracking-wide,
+.tracking-wider,
+[class*='tracking-['] {
+  letter-spacing: 0 !important;
 }
 
 .font-mono,
@@ -327,14 +341,14 @@ pre {
   }
 
   .tracking-eyebrow {
-    letter-spacing: 0.1em;
+    letter-spacing: 0;
   }
 
   :lang(zh-Hant) .tracking-eyebrow,
   :lang(zh-Hans) .tracking-eyebrow,
   :lang(ja) .tracking-eyebrow,
   :lang(ko) .tracking-eyebrow {
-    letter-spacing: 0.04em;
+    letter-spacing: 0;
   }
 
   a[class*='px-'],
