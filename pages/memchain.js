@@ -17,6 +17,13 @@
  *   looking clipped or overly fragmented in Spanish, Russian, Japanese, and
  *   Korean.
  *
+ * Modification Reason: v2.5 - MemChain mobile trust-flow polish.
+ *   The hero memory visual now stacks node-state cards on phone-class screens
+ *   and keeps their titles visible, making the "device -> blind node -> recall"
+ *   story understandable without relying on tiny desktop-only labels. Page-level
+ *   overflow protection and CTA wrapping were tightened for long localized
+ *   MemChain copy.
+ *
  * Modification Reason: v2.2 - Multilingual mobile resilience.
  *   Tightened long-locale wrapping for MemChain proof rails, comparison cards,
  *   mode cards, and the animated memory visual so Japanese, Korean, Russian,
@@ -139,6 +146,7 @@
  * Last Modified: v2.2 - Multilingual mobile resilience
  * Last Modified: v2.3 - Mobile hero proof rail stabilization
  * Last Modified: v2.4 - Advantage lab mobile metric wrapping
+ * Last Modified: v2.5 - MemChain mobile trust-flow polish
  * ============================================
  */
 
@@ -186,7 +194,7 @@ export default function MemChainPage() {
 
       <SiteHeader />
 
-      <main className="relative z-10 pt-24 md:pt-32">
+      <main className="relative z-10 overflow-x-hidden pt-24 md:pt-32">
         <Hero copy={pageCopy.hero} />
         <ProtocolContinuity copy={pageCopy.protocolContinuity} />
         <MemoryAdvantageLab copy={pageCopy.advantageLab} />
@@ -229,13 +237,13 @@ const Hero = ({ copy }) => (
           <div className="mt-8 flex w-full flex-col items-start gap-3 sm:w-auto sm:flex-row sm:gap-4">
             <Link
               href="/privacy-network"
-              className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border border-brand-line bg-brand px-7 py-3.5 text-center text-sm font-semibold tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.22)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto"
+              className="inline-flex min-h-[48px] w-full max-w-xs min-w-0 items-center justify-center break-words rounded border border-brand-line bg-brand px-7 py-3.5 text-center text-sm font-semibold leading-snug tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.22)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto"
             >
               {copy.primaryCta}
             </Link>
             <a
               href="#privacy-boundary"
-              className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border border-white/15 px-7 py-3.5 text-center text-sm font-medium tracking-wide text-white/78 transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 sm:w-auto"
+              className="inline-flex min-h-[48px] w-full max-w-xs min-w-0 items-center justify-center break-words rounded border border-white/15 px-7 py-3.5 text-center text-sm font-medium leading-snug tracking-wide text-white/78 transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 sm:w-auto"
             >
               {copy.secondaryCta}
             </a>
@@ -330,7 +338,7 @@ const MemoryVisual = ({ copy }) => {
         </div>
 
         <div className="relative mt-4 overflow-hidden border border-white/10 bg-black/30 p-3 sm:mt-5 sm:p-4 md:p-5">
-          <div className="grid grid-cols-3 gap-2 md:gap-3">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 md:gap-3">
             <MemoryNodeCard
               {...copy.nodes.device}
               tone="device"
@@ -379,7 +387,7 @@ const MemoryVisual = ({ copy }) => {
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-2 md:gap-3">
+        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3 md:gap-3">
           {copy.sealedLabels.map((label, index) => (
             <motion.div
               key={label}
@@ -411,8 +419,8 @@ const MemoryNodeCard = ({ label, title, detail, tone }) => {
         <span className="h-2 w-2 rounded-pill bg-current" />
       </div>
       <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/35">{label}</div>
-      <h3 className="mt-2 hidden break-words text-sm font-medium leading-snug text-white md:block">{title}</h3>
-      <p className="mt-2 hidden text-xs leading-relaxed text-white/45 md:block">{detail}</p>
+      <h3 className="mt-2 break-words text-sm font-medium leading-snug text-white">{title}</h3>
+      <p className="mt-2 hidden text-xs leading-relaxed text-white/45 sm:block">{detail}</p>
     </div>
   );
 };
@@ -763,13 +771,13 @@ const MemChainAction = ({ copy }) => (
         <div className="mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-2 sm:gap-4">
           <Link
             href="/privacy-network"
-            className="inline-flex min-h-[48px] items-center justify-center rounded border border-brand-line bg-brand px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.18)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light"
+            className="inline-flex min-h-[48px] min-w-0 items-center justify-center break-words rounded border border-brand-line bg-brand px-6 py-3.5 text-center text-sm font-semibold leading-snug tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.18)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light"
           >
             {copy.primaryCta}
           </Link>
           <a
             href="#privacy-boundary"
-            className="inline-flex min-h-[48px] items-center justify-center rounded border border-white/15 px-6 py-3.5 text-center text-sm font-medium tracking-wide text-white/76 transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
+            className="inline-flex min-h-[48px] min-w-0 items-center justify-center break-words rounded border border-white/15 px-6 py-3.5 text-center text-sm font-medium leading-snug tracking-wide text-white/76 transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
           >
             {copy.secondaryCta}
           </a>
