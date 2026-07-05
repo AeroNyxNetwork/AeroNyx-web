@@ -41,6 +41,12 @@
  *   clearer trust-boundary evidence strip while preserving every approved
  *   privacy claim and benchmark limitation.
  *
+ * Modification Reason: v2.9 - Benchmark and comparison surface polish.
+ *   The benchmark section now presents one primary measured proof beside a
+ *   compact supporting evidence grid, and the comparison section uses a cleaner
+ *   row-based decision surface. This improves VC-grade scanability on desktop
+ *   and mobile without changing any approved claims or limitations.
+ *
  * Modification Reason: v2.2 - Multilingual mobile resilience.
  *   Tightened long-locale wrapping for MemChain proof rails, comparison cards,
  *   mode cards, and the animated memory visual so Japanese, Korean, Russian,
@@ -167,6 +173,7 @@
  * Last Modified: v2.6 - Advantage evidence stack polish
  * Last Modified: v2.7 - Benchmark and boundary evidence polish
  * Last Modified: v2.8 - Pipeline and pillar rhythm polish
+ * Last Modified: v2.9 - Benchmark and comparison surface polish
  * ============================================
  */
 
@@ -703,35 +710,59 @@ const Pillars = ({ copy }) => (
   </section>
 );
 
-const Benchmarks = ({ copy }) => (
-  <section className="border-y border-white/10 bg-black/40 py-14 md:py-20">
-    <Container>
-      <SectionHeader
-        eyebrow={copy.eyebrow}
-        title={copy.title}
-        description={copy.description}
-      />
-      <div className="mt-10 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-        {copy.cards.map((item) => (
-          <div key={item.label} className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5">
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/45 to-transparent" />
-            <div className="flex min-h-[4.5rem] flex-col justify-end">
-              <div className="break-words font-mono text-3xl font-light leading-none text-white md:text-4xl">{item.value}</div>
-              <div className="mt-3 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">{item.label}</div>
+const Benchmarks = ({ copy }) => {
+  const [primaryCard, ...supportingCards] = copy.cards;
+
+  return (
+    <section className="border-y border-white/10 bg-black/40 py-14 md:py-20">
+      <Container>
+        <SectionHeader
+          eyebrow={copy.eyebrow}
+          title={copy.title}
+          description={copy.description}
+        />
+        <div className="mt-10 grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
+          {primaryCard ? (
+            <div className="page-surface relative min-w-0 overflow-hidden border p-5 md:p-6">
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/60 to-transparent" />
+              <div className="mb-10 flex items-center justify-between gap-3">
+                <div className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
+                  {primaryCard.label}
+                </div>
+                <span className="h-2 w-2 shrink-0 rounded-pill bg-brand-light shadow-[0_0_20px_rgba(151,136,247,0.6)]" />
+              </div>
+              <div className="break-words font-mono text-[3rem] font-light leading-none text-white sm:text-[4rem] lg:text-[4.6rem]">
+                {primaryCard.value}
+              </div>
+              <p className="mt-5 max-w-copy break-words border-t border-white/10 pt-4 text-sm leading-relaxed text-white/58">
+                {primaryCard.note}
+              </p>
             </div>
-            <p className="mt-4 border-t border-white/10 pt-3 text-xs leading-relaxed text-white/50">{item.note}</p>
+          ) : null}
+
+          <div className="grid min-w-0 gap-3 sm:grid-cols-3 lg:grid-cols-1">
+            {supportingCards.map((item) => (
+              <div key={item.label} className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5">
+                <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-brand-light/45 to-transparent" />
+                <div className="flex min-h-[4rem] flex-col justify-end">
+                  <div className="break-words font-mono text-3xl font-light leading-none text-white md:text-4xl">{item.value}</div>
+                  <div className="mt-3 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">{item.label}</div>
+                </div>
+                <p className="mt-4 border-t border-white/10 pt-3 text-xs leading-relaxed text-white/50">{item.note}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="mt-6 grid gap-3 border border-warn/25 bg-warn/[0.055] p-4 md:grid-cols-[auto_minmax(0,1fr)] md:items-start">
-        <span aria-hidden="true" className="mt-1 hidden h-2 w-2 rounded-pill bg-warn/80 md:block" />
-        <p className="min-w-0 break-words text-sm leading-relaxed text-white/64">
-          {copy.honestBoundary}
-        </p>
-      </div>
-    </Container>
-  </section>
-);
+        </div>
+        <div className="mt-6 grid gap-3 border border-warn/25 bg-warn/[0.055] p-4 md:grid-cols-[auto_minmax(0,1fr)] md:items-start">
+          <span aria-hidden="true" className="mt-1 hidden h-2 w-2 rounded-pill bg-warn/80 md:block" />
+          <p className="min-w-0 break-words text-sm leading-relaxed text-white/64">
+            {copy.honestBoundary}
+          </p>
+        </div>
+      </Container>
+    </section>
+  );
+};
 
 const Comparison = ({ copy }) => (
   <section className="py-14 md:py-20">
@@ -741,25 +772,29 @@ const Comparison = ({ copy }) => (
         title={copy.title}
         description={copy.description}
       />
-      <div className="mt-10 grid gap-3">
+      <div className="page-surface mt-10 min-w-0 overflow-hidden border">
+        <div className="hidden grid-cols-[0.58fr_1fr_1fr] border-b border-white/10 px-5 py-3 md:grid">
+          <div className="text-[10px] uppercase tracking-eyebrow text-white/30">{copy.labels.dimension}</div>
+          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.labels.memchain}</div>
+          <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{copy.labels.cloud}</div>
+        </div>
         {copy.rows.map((row, index) => (
-          <article key={row.dimension} className="page-card grid min-w-0 gap-4 border p-4 md:grid-cols-[0.58fr_1fr_1fr] md:p-5">
-            <div className="min-w-0 border-b border-white/10 pb-3 md:border-b-0 md:pb-0">
+          <article key={row.dimension} className="grid min-w-0 gap-4 border-b border-white/10 p-4 last:border-b-0 md:grid-cols-[0.58fr_1fr_1fr] md:gap-5 md:p-5">
+            <div className="min-w-0 md:pr-3">
               <div className="font-mono text-2xl font-light leading-none text-white/18 md:text-3xl">
                 {String(index + 1).padStart(2, '0')}
               </div>
-              <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/35">{copy.labels.dimension}</div>
               <h3 className="mt-2 break-words text-lg font-light text-white">{row.dimension}</h3>
             </div>
-            <div className="min-w-0 border border-brand-line bg-brand-faint p-3 md:p-4">
+            <div className="min-w-0 border border-brand-line bg-brand-faint p-3 md:border-0 md:bg-transparent md:p-0">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 shrink-0 rounded-pill bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.65)]" />
-                <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">{copy.labels.memchain}</div>
+                <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light md:hidden">{copy.labels.memchain}</div>
               </div>
-              <p className="mt-2 break-words text-sm leading-relaxed text-white">{row.memchain}</p>
+              <p className="mt-2 break-words text-sm leading-relaxed text-white md:mt-0">{row.memchain}</p>
             </div>
-            <div className="min-w-0 border border-white/10 bg-black/25 p-3 md:p-4">
-              <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/34">{copy.labels.cloud}</div>
+            <div className="min-w-0 border border-white/10 bg-black/25 p-3 md:border-0 md:bg-transparent md:p-0">
+              <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/34 md:hidden">{copy.labels.cloud}</div>
               <p className="mt-2 break-words text-sm leading-relaxed text-white/50">{row.cloud}</p>
             </div>
           </article>
