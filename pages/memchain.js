@@ -35,6 +35,12 @@
  *   claim-safe evidence surfaces instead of plain data tables. The measured
  *   claim, market comparison, and limitation copy remain unchanged.
  *
+ * Modification Reason: v2.8 - Pipeline and pillar rhythm polish.
+ *   The Remember -> Store -> Recall flow now reads as an ordered architecture
+ *   path with step numbers and desktop connectors. Pillar cards receive a
+ *   clearer trust-boundary evidence strip while preserving every approved
+ *   privacy claim and benchmark limitation.
+ *
  * Modification Reason: v2.2 - Multilingual mobile resilience.
  *   Tightened long-locale wrapping for MemChain proof rails, comparison cards,
  *   mode cards, and the animated memory visual so Japanese, Korean, Russian,
@@ -160,6 +166,7 @@
  * Last Modified: v2.5 - MemChain mobile trust-flow polish
  * Last Modified: v2.6 - Advantage evidence stack polish
  * Last Modified: v2.7 - Benchmark and boundary evidence polish
+ * Last Modified: v2.8 - Pipeline and pillar rhythm polish
  * ============================================
  */
 
@@ -630,7 +637,9 @@ const Pipeline = ({ copy }) => (
         title={copy.title}
         description={copy.description}
       />
-      <div className="mt-10 grid gap-4 md:grid-cols-3">
+      <div className="relative mt-10">
+        <div className="pointer-events-none absolute left-[16.66%] right-[16.66%] top-8 hidden h-px bg-gradient-to-r from-transparent via-brand-light/30 to-transparent md:block" />
+        <div className="grid gap-4 md:grid-cols-3">
         {copy.items.map((item, index) => (
           <motion.article
             key={item.label}
@@ -638,9 +647,15 @@ const Pipeline = ({ copy }) => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.08, ease: EASE }}
-            className="page-card min-w-0 border p-4 md:p-5"
+            className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5"
           >
-            <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{item.label}</div>
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/45 to-transparent" />
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <div className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">{item.label}</div>
+              <div className="shrink-0 font-mono text-2xl font-light leading-none text-white/18">
+                {String(index + 1).padStart(2, '0')}
+              </div>
+            </div>
             <h2 className="mt-4 break-words text-2xl font-light text-white">{item.title}</h2>
             <p className="mt-3 text-sm leading-relaxed text-white/58">{item.description}</p>
             <ul className="mt-5 space-y-2">
@@ -653,6 +668,7 @@ const Pipeline = ({ copy }) => (
             </ul>
           </motion.article>
         ))}
+        </div>
       </div>
     </Container>
   </section>
@@ -667,11 +683,17 @@ const Pillars = ({ copy }) => (
         description={copy.description}
       />
       <div className="mt-10 grid gap-4 lg:grid-cols-3">
-        {copy.items.map((pillar) => (
-          <article key={pillar.title} className="page-card min-w-0 border p-4 md:p-5">
+        {copy.items.map((pillar, index) => (
+          <article key={pillar.title} className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5">
+            <div className="absolute right-4 top-4 font-mono text-3xl font-light leading-none text-white/10">
+              {String(index + 1).padStart(2, '0')}
+            </div>
+            <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-pill border border-brand-line bg-brand-faint text-brand-light">
+              <span className="h-2 w-2 rounded-pill bg-current" />
+            </div>
             <h2 className="break-words text-2xl font-light text-white">{pillar.title}</h2>
             <p className="mt-3 text-sm leading-relaxed text-white/58">{pillar.description}</p>
-            <div className="mt-5 break-words border border-brand-line bg-brand-faint p-3 text-xs leading-relaxed text-brand-light/88">
+            <div className="mt-5 min-w-0 break-words border border-brand-line bg-brand-faint p-3 text-xs leading-relaxed text-brand-light/88">
               {pillar.boundary}
             </div>
           </article>
