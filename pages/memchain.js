@@ -24,6 +24,12 @@
  *   overflow protection and CTA wrapping were tightened for long localized
  *   MemChain copy.
  *
+ * Modification Reason: v2.6 - Advantage evidence stack polish.
+ *   The interactive advantage lab now keeps user outcome, node view, and proof
+ *   surface visible on mobile as a calm stacked evidence group instead of
+ *   hiding two of the three trust claims. FAQ and pipeline cards also receive
+ *   tighter min-width and wrapping protection for long localized copy.
+ *
  * Modification Reason: v2.2 - Multilingual mobile resilience.
  *   Tightened long-locale wrapping for MemChain proof rails, comparison cards,
  *   mode cards, and the animated memory visual so Japanese, Korean, Russian,
@@ -147,6 +153,7 @@
  * Last Modified: v2.3 - Mobile hero proof rail stabilization
  * Last Modified: v2.4 - Advantage lab mobile metric wrapping
  * Last Modified: v2.5 - MemChain mobile trust-flow polish
+ * Last Modified: v2.6 - Advantage evidence stack polish
  * ============================================
  */
 
@@ -495,18 +502,23 @@ const MemoryAdvantageLab = ({ copy }) => {
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58 md:text-base">
                 {activeAxis.description}
               </p>
-              <div className="mt-5 border border-brand-line bg-brand-faint p-3 sm:hidden">
-                <div className="text-[9px] uppercase tracking-[0.12em] text-brand-light">{copy.labels.proofSurface}</div>
-                <div className="mt-1 text-xs leading-relaxed text-white/72">{activeAxis.proofSurface}</div>
-              </div>
-              <div className="mt-5 hidden grid-cols-3 gap-2 sm:grid">
+              <div className="mt-5 grid gap-2 sm:grid-cols-3">
                 {[
                   [copy.labels.userOutcome, activeAxis.userOutcome],
                   [copy.labels.nodeView, activeAxis.nodeView],
                   [copy.labels.proofSurface, activeAxis.proofSurface],
-                ].map(([label, value]) => (
-                  <div key={label} className="min-w-0 border border-white/10 bg-white/[0.025] p-2.5 md:p-3">
-                    <div className="text-[9px] uppercase tracking-[0.12em] text-white/34">{label}</div>
+                ].map(([label, value], index) => (
+                  <div
+                    key={label}
+                    className={`min-w-0 border p-2.5 md:p-3 ${
+                      index === 2
+                        ? 'border-brand-line bg-brand-faint'
+                        : 'border-white/10 bg-white/[0.025]'
+                    }`}
+                  >
+                    <div className={`text-[9px] uppercase tracking-[0.12em] ${
+                      index === 2 ? 'text-brand-light' : 'text-white/34'
+                    }`}>{label}</div>
                     <div className="mt-2 break-words text-xs leading-snug text-white/68 md:text-sm md:leading-relaxed">
                       {value}
                     </div>
@@ -627,9 +639,9 @@ const Pipeline = ({ copy }) => (
             <p className="mt-3 text-sm leading-relaxed text-white/58">{item.description}</p>
             <ul className="mt-5 space-y-2">
               {item.details.map((detail) => (
-                <li key={detail} className="flex gap-2 text-sm text-white/48">
+                <li key={detail} className="flex min-w-0 gap-2 text-sm text-white/48">
                   <span className="mt-2 h-1 w-1 shrink-0 rounded-pill bg-brand-light/70" />
-                  <span>{detail}</span>
+                  <span className="min-w-0 break-words">{detail}</span>
                 </li>
               ))}
             </ul>
@@ -745,9 +757,9 @@ const FAQ = ({ copy }) => (
       />
       <div className="mt-10 grid gap-4 md:grid-cols-2">
         {copy.items.map((item) => (
-          <article key={item.q} className="page-card border p-4 md:p-5">
+          <article key={item.q} className="page-card min-w-0 border p-4 md:p-5">
             <h2 className="break-words text-lg font-medium text-white">{item.q}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-white/58">{item.a}</p>
+            <p className="mt-3 break-words text-sm leading-relaxed text-white/58">{item.a}</p>
           </article>
         ))}
       </div>
