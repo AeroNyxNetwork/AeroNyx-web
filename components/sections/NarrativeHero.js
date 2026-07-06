@@ -2,7 +2,7 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.10.0
+ * Version: 8.11.0
  *
  * Modification Reason:
  *   v8.10 — Lens scene microcopy internationalization.
@@ -13,7 +13,7 @@
  *
  * Modification Reason:
  *   v8.11 — First-viewport app launch CTA.
- *   The primary hero CTA now opens the AeroNyx app/Nodeboard surface instead
+ *   The primary hero CTA now opens the AeroNyx app surface instead
  *   of jumping to the protocol explanation section. This makes the first
  *   viewport product-actionable while the secondary CTA remains the client
  *   download path and protocol exploration stays available in navigation and
@@ -119,6 +119,7 @@
  * Last Modified: v8.8.0 — Product conversion CTA restoration
  * Last Modified: v8.9.0 — Homepage hero internationalization pass
  * Last Modified: v8.10.0 — Lens scene microcopy internationalization
+ * Last Modified: v8.11.0 — First-viewport app launch CTA
  * ============================================================================
  */
 
