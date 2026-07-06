@@ -11,6 +11,12 @@
  *   (v2.0/v2.1 changes retained: delegated smooth scroll, zoom unlock,
  *   orientationchange --vh, next/font self-hosting.)
  *
+ * Modification Reason: v2.6 - Page SEO ownership cleanup.
+ *   Page-specific SEO is now owned by components/ui/SEO.js, including canonical
+ *   and hreflang alternates. _app keeps only global document-level metadata so
+ *   MemChain, Privacy Network, homepage, and localized error pages do not emit
+ *   duplicate canonical/Open Graph tags.
+ *
  * ⚠️ Important Notes for Next Developer:
  *   - Keep --font-display on var(--font-display-tight). It is the approved
  *     display face for the autonomous-agent coordination narrative.
@@ -20,6 +26,7 @@
  *     Apple-grade CJK fallback and line-height rules for multilingual pages.
  *
  * Last Modified: v2.5 — Locale-aware typography root
+ * Last Modified: v2.6 - Page SEO ownership cleanup
  * ============================================
  */
 
@@ -29,7 +36,7 @@ import Head from 'next/head';
 import { Inter, Inter_Tight, JetBrains_Mono } from 'next/font/google';
 import '../styles/globals.css';
 import '../styles/scrollbar.css';
-import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
+import { DEFAULT_LOCALE } from '../lib/i18n';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'], display: 'swap', variable: '--font-inter' });
 const display = Inter_Tight({
@@ -40,9 +47,6 @@ const display = Inter_Tight({
 const mono = JetBrains_Mono({ subsets: ['latin'], display: 'swap', variable: '--font-jbmono' });
 function MyApp({ Component, pageProps, router }) {
   const locale = router.locale || DEFAULT_LOCALE;
-  const copy = getMessages(locale);
-  const canonicalPath = locale === DEFAULT_LOCALE ? '' : `/${locale}`;
-  const canonicalUrl = `https://aeronyx.network${canonicalPath}/`;
 
   useEffect(() => {
     document.documentElement.classList.add('loaded');
@@ -92,23 +96,8 @@ function MyApp({ Component, pageProps, router }) {
       }}
     >
       <Head>
-        <title>{copy.seo.title}</title>
-        <meta name="description" content={copy.seo.description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:title" content={copy.seo.title} />
-        <meta property="og:description" content={copy.seo.description} />
-        <meta property="og:image" content="https://binary.aeronyx.network/aeronyx_logo.png" />
-        <meta property="og:locale" content={locale} />
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={canonicalUrl} />
-        <meta property="twitter:title" content={copy.seo.title} />
-        <meta property="twitter:description" content={copy.seo.description} />
-        <meta property="twitter:image" content="https://binary.aeronyx.network/aeronyx_logo.png" />
-        <meta name="keywords" content={copy.seo.keywords.join(', ')} />
         <meta name="author" content="AeroNyx Network" />
-        <link rel="canonical" href={canonicalUrl} />
       </Head>
 
       <AnimatePresence mode="wait">
