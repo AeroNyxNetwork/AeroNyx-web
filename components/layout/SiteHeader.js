@@ -31,6 +31,11 @@
  *   focused on protocol, MemChain, Privacy Network, Docs, GitHub, language, and
  *   the primary client access CTA.
  *
+ * Modification Reason: v2.12 - iPhone-safe mobile menu scrolling.
+ *   The mobile navigation panel now has its own viewport-bounded scroll area
+ *   so long localized labels plus the language grid remain reachable on small
+ *   devices without pushing content below the screen.
+ *
  * Historical Notes:
  * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
@@ -72,6 +77,7 @@
  * Last Modified: v2.9 - Mobile multilingual navigation wrapping
  * Last Modified: v2.10 - Nodeboard operator console navigation
  * Last Modified: v2.11 - Protocol-first navigation simplification
+ * Last Modified: v2.12 - iPhone-safe mobile menu scrolling
  * ============================================
  */
 
@@ -312,7 +318,7 @@ const SiteHeader = () => {
             <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
             <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
             
-            <nav className="relative z-10 flex flex-col space-y-3 p-4">
+            <nav className="relative z-10 flex max-h-[calc(100vh-4rem)] flex-col space-y-3 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               {navLinks.map((link) => (
                 link.external ? (
                   <a
