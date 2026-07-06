@@ -20,6 +20,12 @@
  *   slugs, so Footer now points to Protocol Architecture and node discovery
  *   documentation pages.
  *
+ * Modification Reason: v2.9 - Footer product navigation simplification.
+ *   Removed the hard-coded Nodeboard product link from the footer Products
+ *   column so global navigation stays protocol-first. The lower-priority App
+ *   link remains in Resources, while homepage sections keep their contextual
+ *   operator-console entry points.
+ *
  * Historical Notes:
  * v2.4 - 2026 social icon and protocol link polish.
  *   Updated the X social icon away from the legacy Twitter bird and tuned the
@@ -70,6 +76,7 @@
  * Last Modified: v2.5 - Mobile footer navigation polish
  * Last Modified: v2.7 - Mobile footer long-label wrapping
  * Last Modified: v2.8 - Maintained docs URL alignment
+ * Last Modified: v2.9 - Footer product navigation simplification
  * ============================================
  */
 
@@ -118,7 +125,6 @@ const Footer = ({ activeLocale: providedLocale }) => {
                 { href: '/privacy-network', label: copy.links.privacyNetwork },
                 { href: '/memchain', label: copy.links.memchain },
                 { href: 'https://docs.aeronyx.network/network/node-discovery-and-relay-foundation', label: copy.links.developerDocs },
-                { href: 'https://app.aeronyx.network/', label: 'Nodeboard' },
               ]}
             />
 
