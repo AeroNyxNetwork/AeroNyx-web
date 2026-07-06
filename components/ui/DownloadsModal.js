@@ -19,6 +19,12 @@
  *   close. This keeps the client-download flow accessible without changing
  *   platform URLs or visible copy.
  *
+ * Modification Reason: v2.3 - Mobile viewport-safe dialog layout.
+ *   The download surface now owns its scroll area, respects iOS/Android
+ *   dynamic viewport height, and adds safe-area padding so the close button,
+ *   recommended device card, platform grid, and final close action remain
+ *   reachable on narrow phones without the background page moving.
+ *
  * Main Functionality:
  *   - Detects the user's OS and promotes the matching AeroNyx client first.
  *   - Lists all supported desktop/mobile platforms.
@@ -37,6 +43,7 @@
  * Last Modified: v2.0 - Internationalized client download modal
  * Last Modified: v2.1 - Dialog accessibility and scroll restoration
  * Last Modified: v2.2 - Keyboard focus containment
+ * Last Modified: v2.3 - Mobile viewport-safe dialog layout
  * ============================================
  */
 
@@ -258,7 +265,7 @@ const DownloadsModal = ({ isOpen, onClose }) => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-[calc(0.75rem+env(safe-area-inset-top))] sm:items-center sm:p-4">
           {/* Backdrop with blur effect */}
           <motion.div 
             className="fixed inset-0 bg-black/72 backdrop-blur-md"
@@ -273,6 +280,7 @@ const DownloadsModal = ({ isOpen, onClose }) => {
           <motion.div
             ref={modalRef}
             className="relative w-full max-w-lg"
+            style={{ maxHeight: 'calc(100dvh - 1.5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom))' }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="downloads-modal-title"
@@ -285,7 +293,7 @@ const DownloadsModal = ({ isOpen, onClose }) => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* The glass modal */}
-            <div className="relative overflow-hidden rounded border border-white/10">
+            <div className="relative max-h-full overflow-hidden rounded border border-white/10">
               {/* Glass effect background */}
               <div className="absolute inset-0 bg-[rgba(12,12,19,0.92)] backdrop-blur-xl" />
               
@@ -293,7 +301,7 @@ const DownloadsModal = ({ isOpen, onClose }) => {
               <div className="absolute top-0 left-5 right-5 h-px bg-white/20" />
               
               {/* Content */}
-              <div className="relative z-10 p-6">
+              <div className="relative z-10 max-h-full overflow-y-auto overscroll-contain p-5 sm:p-6">
                 {/* Header with close button - Fixed for better mobile accessibility */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center">
