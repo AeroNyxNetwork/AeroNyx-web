@@ -47,6 +47,12 @@
  *   row-based decision surface. This improves VC-grade scanability on desktop
  *   and mobile without changing any approved claims or limitations.
  *
+ * Modification Reason: v3.0 - Privacy boundary and FAQ close polish.
+ *   The final trust-boundary section now uses numbered evidence panels and the
+ *   FAQ/closing action area has stronger scan rhythm, mobile wrapping, and
+ *   restrained product-page depth while keeping every approved privacy limit
+ *   and user-facing answer unchanged.
+ *
  * Modification Reason: v2.2 - Multilingual mobile resilience.
  *   Tightened long-locale wrapping for MemChain proof rails, comparison cards,
  *   mode cards, and the animated memory visual so Japanese, Korean, Russian,
@@ -174,6 +180,7 @@
  * Last Modified: v2.7 - Benchmark and boundary evidence polish
  * Last Modified: v2.8 - Pipeline and pillar rhythm polish
  * Last Modified: v2.9 - Benchmark and comparison surface polish
+ * Last Modified: v3.0 - Privacy boundary and FAQ close polish
  * ============================================
  */
 
@@ -808,7 +815,7 @@ const PrivacyBoundary = ({ copy }) => (
   <section id="privacy-boundary" className="border-y border-white/10 bg-white/[0.015] py-14 md:py-20">
     <Container>
       <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-        <div>
+        <div className="min-w-0 lg:sticky lg:top-28">
           <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.eyebrow}</div>
           <h2 className="mt-4 max-w-3xl break-words text-display-md font-light text-white">{copy.title}</h2>
         </div>
@@ -816,13 +823,25 @@ const PrivacyBoundary = ({ copy }) => (
           {copy.paragraphs.map((paragraph, index) => (
             <div
               key={paragraph}
-              className={`min-w-0 border p-4 text-base leading-relaxed ${
+              className={`relative min-w-0 overflow-hidden border p-4 text-base leading-relaxed md:p-5 ${
                 index === 0
                   ? 'border-brand-line bg-brand-faint text-white/72'
                   : 'border-warn/25 bg-warn/[0.045] text-white/62'
               }`}
             >
-              <p className="break-words">{paragraph}</p>
+              <div className={`absolute right-4 top-4 font-mono text-4xl font-light leading-none ${
+                index === 0 ? 'text-brand-light/12' : 'text-warn/14'
+              }`}>
+                {String(index + 1).padStart(2, '0')}
+              </div>
+              <div className={`mb-5 flex h-9 w-9 items-center justify-center rounded-pill border ${
+                index === 0
+                  ? 'border-brand-line bg-black/20 text-brand-light'
+                  : 'border-warn/25 bg-black/20 text-warn'
+              }`}>
+                <span className="h-2 w-2 rounded-pill bg-current" />
+              </div>
+              <p className="relative break-words pr-4 md:pr-8">{paragraph}</p>
             </div>
           ))}
         </div>
@@ -839,10 +858,17 @@ const FAQ = ({ copy }) => (
         title={copy.title}
         description={copy.description}
       />
-      <div className="mt-10 grid gap-4 md:grid-cols-2">
-        {copy.items.map((item) => (
-          <article key={item.q} className="page-card min-w-0 border p-4 md:p-5">
-            <h2 className="break-words text-lg font-medium text-white">{item.q}</h2>
+      <div className="mt-10 grid gap-3 md:grid-cols-2">
+        {copy.items.map((item, index) => (
+          <article key={item.q} className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/18 to-transparent" />
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div className="min-w-0 break-words font-mono text-xs uppercase leading-4 tracking-[0.14em] text-brand-light/80">
+                {String(index + 1).padStart(2, '0')}
+              </div>
+              <span className="mt-1 h-2 w-2 shrink-0 rounded-pill bg-brand-light/65" />
+            </div>
+            <h2 className="break-words text-lg font-medium leading-snug text-white">{item.q}</h2>
             <p className="mt-3 break-words text-sm leading-relaxed text-white/58">{item.a}</p>
           </article>
         ))}
@@ -854,17 +880,19 @@ const FAQ = ({ copy }) => (
 const MemChainAction = ({ copy }) => (
   <section className="border-t border-white/10 py-14 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
     <Container>
-      <div className="page-surface border p-5 text-center md:p-8">
-        <div className="mx-auto mb-4 inline-flex border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
+      <div className="page-surface relative overflow-hidden border p-5 text-center md:p-8">
+        <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/50 to-transparent" />
+        <div className="pointer-events-none absolute -top-24 left-1/2 h-48 w-48 -translate-x-1/2 rounded-pill bg-brand/10 blur-3xl" />
+        <div className="relative mx-auto mb-4 inline-flex max-w-full border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
           {copy.eyebrow}
         </div>
-        <h2 className="mx-auto max-w-3xl break-words text-display-md font-light text-white">
+        <h2 className="relative mx-auto max-w-3xl break-words text-display-md font-light text-white">
           {copy.title}
         </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/58 md:text-lg">
+        <p className="relative mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/58 md:text-lg">
           {copy.description}
         </p>
-        <div className="mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-2 sm:gap-4">
+        <div className="relative mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-2 sm:gap-4">
           <Link
             href="/privacy-network"
             className="inline-flex min-h-[48px] min-w-0 items-center justify-center break-words rounded border border-brand-line bg-brand px-6 py-3.5 text-center text-sm font-semibold leading-snug tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.18)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light"
