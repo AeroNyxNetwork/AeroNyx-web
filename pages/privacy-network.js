@@ -15,6 +15,12 @@
  *   and restrained product-page depth. Aggregate data logic, privacy boundary
  *   wording, and public telemetry limits remain unchanged.
  *
+ * Modification Reason: v2.7 - Protection assurance surface polish.
+ *   Assurance, daily protection, and telemetry boundary sections now use
+ *   numbered evidence cards, status dots, and stronger mobile wrapping so the
+ *   page closes with the same mature product rhythm as the hero. No user-level
+ *   telemetry, API behavior, or visible narrative copy was changed.
+ *
  * Modification Reason: v2.4 - Secondary page internationalization.
  *   Moved the Privacy Network hero, protocol bridge, North Star Plan, live
  *   protocol proof, assurance model, daily dashboard signals, and telemetry
@@ -144,6 +150,7 @@
  * Last Modified: v2.4 - Secondary page internationalization
  * Last Modified: v2.5 - Mobile proof rail stabilization
  * Last Modified: v2.6 - Status evidence panel polish
+ * Last Modified: v2.7 - Protection assurance surface polish
  * ============================================
  */
 
@@ -598,20 +605,29 @@ const AssuranceModel = ({ copy }) => (
           {copy.pairs.map((item, index) => (
             <motion.article
               key={item.promise}
-              className="page-card border p-4 md:p-5"
+              className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5"
               initial={{ opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.55, delay: index * 0.05, ease: EASE }}
             >
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/35 to-transparent" />
               <div className="grid gap-4 md:grid-cols-[0.74fr_1.26fr] md:items-start">
-                <div>
-                  <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{copy.userPromiseLabel}</div>
+                <div className="min-w-0">
+                  <div className="mb-5 flex items-start justify-between gap-3">
+                    <div className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/34">{copy.userPromiseLabel}</div>
+                    <div className="shrink-0 font-mono text-2xl font-light leading-none text-white/12">
+                      {String(index + 1).padStart(2, '0')}
+                    </div>
+                  </div>
                   <h3 className="mt-2 break-words text-xl font-light text-white">{item.promise}</h3>
                 </div>
-                <div className="border border-brand-line bg-brand-faint p-3">
-                  <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.protocolEvidenceLabel}</div>
-                  <p className="mt-2 text-sm leading-relaxed text-white/64 md:text-base">{item.evidence}</p>
+                <div className="min-w-0 border border-brand-line bg-brand-faint p-3 md:p-4">
+                  <div className="flex items-start gap-2">
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-pill bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.55)]" />
+                    <div className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">{copy.protocolEvidenceLabel}</div>
+                  </div>
+                  <p className="mt-2 break-words text-sm leading-relaxed text-white/64 md:text-base">{item.evidence}</p>
                 </div>
               </div>
             </motion.article>
@@ -633,9 +649,15 @@ const ProtectionSignals = ({ copy }) => (
         </p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
-        {copy.signals.map((item) => (
-          <article key={item.title} className="page-card border p-4 md:p-5">
-            <h2 className="break-words text-xl font-light text-white">{item.title}</h2>
+        {copy.signals.map((item, index) => (
+          <article key={item.title} className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5">
+            <div className="absolute right-4 top-4 font-mono text-3xl font-light leading-none text-white/10">
+              {String(index + 1).padStart(2, '0')}
+            </div>
+            <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-pill border border-brand-line bg-brand-faint text-brand-light">
+              <span className="h-2 w-2 rounded-pill bg-current" />
+            </div>
+            <h2 className="break-words pr-8 text-xl font-light leading-tight text-white">{item.title}</h2>
             <p className="mt-3 text-sm leading-relaxed text-white/56">{item.description}</p>
           </article>
         ))}
@@ -648,7 +670,7 @@ const PrivacyBoundary = ({ copy }) => (
   <section className="border-y border-white/10 bg-black/40 py-14 md:py-20">
     <Container>
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-        <div>
+        <div className="min-w-0 lg:sticky lg:top-28">
           <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.eyebrow}</div>
           <h2 className="mt-3 max-w-3xl break-words text-display-md font-light text-white">{copy.title}</h2>
           <p className="mt-4 text-base leading-relaxed text-white/58">
@@ -656,9 +678,15 @@ const PrivacyBoundary = ({ copy }) => (
           </p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          {copy.items.map((item) => (
-            <div key={item} className="page-card border p-4 text-sm text-white/62">
-              {item}
+          {copy.items.map((item, index) => (
+            <div key={item} className="page-card relative min-w-0 overflow-hidden border p-4 text-sm leading-relaxed text-white/62">
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <span className="h-2 w-2 shrink-0 rounded-pill bg-brand-light/70" />
+                <span className="font-mono text-xs leading-none text-white/18">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+              </div>
+              <div className="break-words">{item}</div>
             </div>
           ))}
         </div>
