@@ -8,6 +8,11 @@
  *   rest of the 2026 AeroNyx website. This prevents localized pages from
  *   opening an English-only, legacy-styled modal.
  *
+ * Modification Reason: v2.1 - Dialog accessibility and scroll restoration.
+ *   Added dialog semantics, Escape-to-close behavior, and exact body overflow
+ *   restoration so the download surface behaves like a production modal across
+ *   desktop browsers, iOS Safari, Android Chrome, and assistive technologies.
+ *
  * Main Functionality:
  *   - Detects the user's OS and promotes the matching AeroNyx client first.
  *   - Lists all supported desktop/mobile platforms.
@@ -24,6 +29,7 @@
  *     PrivacyAccessSection and lib/i18n.downloadsModal.
  *
  * Last Modified: v2.0 - Internationalized client download modal
+ * Last Modified: v2.1 - Dialog accessibility and scroll restoration
  * ============================================
  */
 
@@ -96,15 +102,29 @@ const DownloadsModal = ({ isOpen, onClose }) => {
   // Detect user's OS
   const userOs = useOsDetection();
   
-  // Handle body scroll locking
+  // Handle body scroll locking while preserving any pre-existing page state.
   useEffect(() => {
     if (!isOpen) return;
-    
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = previousOverflow;
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
   
   if (!isOpen) return null;
   
@@ -205,6 +225,10 @@ const DownloadsModal = ({ isOpen, onClose }) => {
           {/* Modal */}
           <motion.div
             className="relative w-full max-w-lg"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="downloads-modal-title"
+            aria-describedby="downloads-modal-description"
             variants={modalVariants}
             initial="hidden"
             animate="visible"
@@ -231,8 +255,8 @@ const DownloadsModal = ({ isOpen, onClose }) => {
                       </div>
                     </div>
                     <div>
-                      <h2 className="text-xl font-medium leading-tight">{copy.title}</h2>
-                      <p className="text-sm leading-relaxed text-white/52">{copy.subtitle}</p>
+                      <h2 id="downloads-modal-title" className="text-xl font-medium leading-tight">{copy.title}</h2>
+                      <p id="downloads-modal-description" className="text-sm leading-relaxed text-white/52">{copy.subtitle}</p>
                     </div>
                   </div>
                   
