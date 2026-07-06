@@ -13,6 +13,11 @@
  *   English-only roadmap content. Timeline text now uses safer line-height
  *   and break behavior for long translated phrases.
  *
+ * Modification Reason: v2.7 - Protocol roadmap panel polish.
+ *   Roadmap milestones now render as calm protocol-stage panels with compact
+ *   proof chips and a dedicated closing promise card, reducing mobile bulk
+ *   while keeping roadmap copy unchanged and credibility-bounded.
+ *
  * Historical Notes:
  * v2.4 — Roadmap section rhythm polish.
  *   Added the shared homepage eyebrow pattern before the roadmap headline so
@@ -44,6 +49,7 @@
  * Last Modified: v2.4 — Roadmap eyebrow rhythm alignment
  * Last Modified: v2.5 - Protocol identity wording
  * Last Modified: v2.6 - Roadmap internationalization
+ * Last Modified: v2.7 - Protocol roadmap panel polish
  * ============================================
  */
 
@@ -83,47 +89,62 @@ const FutureVision = ({ activeLocale: providedLocale }) => {
             <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
               {copy.eyebrow}
             </div>
-            <h2 className="text-display-lg font-light mb-4 md:mb-6">
+            <h2 className="mb-4 text-[clamp(2.35rem,9vw,5.5rem)] font-light leading-[0.96] tracking-normal md:mb-6">
               {copy.title}
             </h2>
-            <p className="text-base md:text-xl text-white/40 max-w-copy">
+            <p className="max-w-copy text-base leading-relaxed text-white/48 md:text-xl">
               {copy.description}
             </p>
           </motion.div>
 
           {/* Vision timeline */}
-          <div className="space-y-4 md:space-y-5">
+          <div className="space-y-3 md:space-y-4" role="list">
             {visions.map((vision, index) => (
               <motion.div
                 key={vision.year}
-                className="page-card grid gap-5 rounded border p-5 md:grid-cols-[0.72fr_2fr] md:gap-8 md:p-6"
+                role="listitem"
+                className="page-card relative overflow-hidden rounded border p-4 md:p-6"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.15, duration: 0.6, ease: EASE }}
               >
-                <div className="md:text-right">
-                  <div className="mb-1 font-mono text-3xl font-extralight text-white/18 md:text-5xl">
-                    {vision.year}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-display-md font-light mb-3 break-words md:mb-4">{vision.title}</h3>
-                  <p className="text-sm md:text-base text-white/60 mb-4 md:mb-6 leading-relaxed break-words">
-                    {vision.description}
-                  </p>
-
-                  <div className="space-y-2">
-                    <div className="text-[10px] md:text-xs uppercase tracking-eyebrow text-white/40 mb-2 md:mb-3">
-                      {copy.unlocksLabel}
+                <div className="grid gap-5 md:grid-cols-[0.64fr_2fr] md:gap-8">
+                  <div className="flex items-start justify-between gap-4 md:block md:text-right">
+                    <div className="font-mono text-[11px] uppercase tracking-eyebrow text-brand-light/70">
+                      {String(index + 1).padStart(2, '0')}
                     </div>
-                    {vision.implications.map((implication, i) => (
-                      <div key={i} className="flex items-start">
-                        <div className="w-px h-3 md:h-4 bg-brand-light/40 mr-2 md:mr-3 mt-0.5 md:mt-1" />
-                        <span className="break-words text-sm leading-relaxed text-white/60 md:text-base">{implication}</span>
+                    <div className="font-mono text-[clamp(2.1rem,13vw,4.6rem)] font-extralight leading-none text-white/16">
+                      {vision.year}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="mb-3 break-words text-[clamp(1.5rem,6vw,2.55rem)] font-light leading-[1.04] tracking-normal md:mb-4">
+                      {vision.title}
+                    </h3>
+                    <p className="mb-4 break-words text-sm leading-relaxed text-white/62 md:mb-6 md:text-base">
+                      {vision.description}
+                    </p>
+
+                    <div>
+                      <div className="mb-2 text-[10px] uppercase tracking-eyebrow text-white/40 md:mb-3 md:text-xs">
+                        {copy.unlocksLabel}
                       </div>
-                    ))}
+                      <div className="grid gap-2 sm:grid-cols-3">
+                        {vision.implications.map((implication, i) => (
+                          <div
+                            key={implication}
+                            className="min-h-[4.25rem] rounded border border-white/10 bg-white/[0.025] p-3"
+                          >
+                            <div className="mb-2 font-mono text-[10px] uppercase tracking-eyebrow text-brand-light/65">
+                              {String(i + 1).padStart(2, '0')}
+                            </div>
+                            <span className="break-words text-sm leading-relaxed text-white/60">{implication}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -132,20 +153,20 @@ const FutureVision = ({ activeLocale: providedLocale }) => {
 
           {/* Closing statement */}
           <motion.div
-            className="mt-12 border-t border-white/10 pt-8 md:mt-16 md:pt-12"
+            className="page-card mt-10 rounded border p-6 text-center md:mt-14 md:p-10"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="text-center">
-              <h3 className="text-display-md font-light mb-6 md:mb-8">
+            <div>
+              <h3 className="mb-5 text-[clamp(1.75rem,7vw,3.35rem)] font-light leading-[1.02] tracking-normal md:mb-7">
                 {copy.closingTitle}
               </h3>
-              <p className="text-base md:text-xl text-white/60 max-w-copy mx-auto leading-relaxed px-4">
+              <p className="mx-auto max-w-copy text-base leading-relaxed text-white/62 md:text-xl">
                 {copy.closingDescription}
               </p>
-              <p className="text-xl md:text-2xl font-light mt-6 md:mt-8 text-brand-light">
+              <p className="mt-6 text-lg font-light leading-relaxed text-brand-light md:mt-8 md:text-2xl">
                 {copy.finalLine}
               </p>
             </div>
