@@ -30,6 +30,12 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  *   polished user experience while telling search engines not to index error
  *   surfaces as product content.
  *
+ * Modification Reason: v1.6 - Page-specific structured data extension.
+ *   Added an additive JSON-LD graph extension path so product pages can expose
+ *   claim-safe FAQPage, Article, or other schema nodes while preserving the
+ *   shared AeroNyx Organization, WebSite, WebPage, and SoftwareApplication
+ *   graph. This improves GEO extraction without duplicating base metadata.
+ *
  * Historical Notes:
  * v1.1 - Protocol-first default metadata.
  *   Replaced legacy fallback keywords with AeroNyx's current protocol narrative
@@ -39,6 +45,8 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  * Main Functionality:
  *   - Emits title, description, keywords, canonical, Open Graph, and Twitter
  *     metadata for page-level SEO/GEO surfaces.
+ *   - Emits shared JSON-LD entity graph and optional page-specific graph
+ *     additions for answer-engine citation surfaces.
  *
  * Dependencies:
  *   - next/head for document metadata injection.
@@ -53,6 +61,7 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  * Last Modified: v1.3 - Multilingual alternate links
  * Last Modified: v1.4 - Entity structured data for GEO
  * Last Modified: v1.5 - Error-page index control
+ * Last Modified: v1.6 - Page-specific structured data extension
  * ============================================
  *
  * @param {Object} props - Component props
@@ -63,6 +72,7 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  * @param {string} props.ogType - Open Graph type
  * @param {Array} props.keywords - Array of keywords for the page
  * @param {Object} props.structuredData - Optional JSON-LD override
+ * @param {Object|Array} props.extraStructuredData - Optional additive JSON-LD graph nodes
  * @param {boolean} props.noIndex - Whether crawlers should avoid indexing page
  */
 const SITE_ORIGIN = 'https://aeronyx.network';
@@ -174,6 +184,31 @@ const buildStructuredData = ({
   ],
 });
 
+const normalizeStructuredDataItems = (items) => {
+  if (!items) {
+    return [];
+  }
+
+  return (Array.isArray(items) ? items : [items]).filter(Boolean);
+};
+
+const mergeStructuredData = (baseData, extraItems) => {
+  const additions = normalizeStructuredDataItems(extraItems);
+
+  if (additions.length === 0) {
+    return baseData;
+  }
+
+  const baseGraph = Array.isArray(baseData?.['@graph'])
+    ? baseData['@graph']
+    : normalizeStructuredDataItems(baseData);
+
+  return {
+    '@context': baseData?.['@context'] || 'https://schema.org',
+    '@graph': [...baseGraph, ...additions],
+  };
+};
+
 const SEO = ({ 
   title = 'AeroNyx | Encrypted coordination layer for autonomous agents',
   description = 'AeroNyx lets humans, apps, and AI agents route traffic, exchange encrypted messages, preserve private memory, and coordinate work through a blind, open protocol.',
@@ -182,19 +217,20 @@ const SEO = ({
   ogType = 'website',
   keywords = ['encrypted coordination layer', 'blind protocol', 'privacy network', 'private AI memory', 'encrypted messaging', 'agent coordination', 'open decentralized nodes'],
   structuredData,
+  extraStructuredData,
   noIndex = false,
 }) => {
   const canonical = getCanonicalUrl(canonicalUrl);
   const keywordText = Array.isArray(keywords) ? keywords.join(', ') : String(keywords || '');
   const activeLocale = getLocaleFromCanonical(canonical);
   const ogLocale = OG_LOCALE_BY_CODE[activeLocale] || OG_LOCALE_BY_CODE[DEFAULT_LOCALE];
-  const jsonLd = structuredData || buildStructuredData({
+  const jsonLd = mergeStructuredData(structuredData || buildStructuredData({
     title,
     description,
     canonical,
     keywordText,
     ogImage,
-  });
+  }), extraStructuredData);
   
   return (
     <Head>

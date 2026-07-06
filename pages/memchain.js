@@ -59,6 +59,11 @@
  *   three overly narrow columns before enough width is available. This improves
  *   first-read trust without changing approved MemChain claims or routes.
  *
+ * Modification Reason: v3.2 - FAQ structured data for GEO.
+ *   The visible localized FAQ is now also emitted as FAQPage JSON-LD through
+ *   the shared SEO component. This keeps answer-engine extraction aligned with
+ *   the exact on-page copy and avoids hidden claims that users cannot inspect.
+ *
  * Modification Reason: v2.2 - Multilingual mobile resilience.
  *   Tightened long-locale wrapping for MemChain proof rails, comparison cards,
  *   mode cards, and the animated memory visual so Japanese, Korean, Russian,
@@ -147,6 +152,7 @@
  *   - Shows the interactive advantage lab, remember/store/recall pipeline,
  *     privacy boundary, benchmark claims, comparison table, and FAQ based on
  *     the approved product material.
+ *   - Exposes the visible FAQ as page-specific structured data for GEO.
  * Dependencies:
  *   - components/layout/SiteHeader and Footer for shared site chrome.
  *   - components/ui/SEO and Container for metadata/layout.
@@ -188,6 +194,7 @@
  * Last Modified: v2.9 - Benchmark and comparison surface polish
  * Last Modified: v3.0 - Privacy boundary and FAQ close polish
  * Last Modified: v3.1 - Mobile evidence hierarchy polish
+ * Last Modified: v3.2 - FAQ structured data for GEO
  * ============================================
  */
 
@@ -213,20 +220,56 @@ const ProtocolBackground = dynamic(
 
 const EASE = [0.16, 1, 0.3, 1];
 
+const buildFaqStructuredData = (faqCopy, canonicalUrl) => {
+  const items = Array.isArray(faqCopy?.items) ? faqCopy.items : [];
+  const mainEntity = items
+    .map((item) => {
+      const question = String(item.q || item.question || '').trim();
+      const answer = String(item.a || item.answer || '').trim();
+
+      if (!question || !answer) {
+        return null;
+      }
+
+      return {
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: answer,
+        },
+      };
+    })
+    .filter(Boolean);
+
+  if (mainEntity.length === 0) {
+    return null;
+  }
+
+  return {
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity,
+  };
+};
+
 export default function MemChainPage() {
   const { locale } = useRouter();
   const activeLocale = locale || DEFAULT_LOCALE;
   const canonicalPath = activeLocale === DEFAULT_LOCALE ? '/memchain' : `/${activeLocale}/memchain`;
+  const canonicalUrl = `https://aeronyx.network${canonicalPath}`;
   const copy = getMessages(activeLocale);
   const pageCopy = copy.memchainPage || getMessages(DEFAULT_LOCALE).memchainPage;
+  const faqStructuredData = buildFaqStructuredData(pageCopy.faq, canonicalUrl);
 
   return (
     <>
       <SEO
         title={pageCopy.seo.title}
         description={pageCopy.seo.description}
-        canonicalUrl={`https://aeronyx.network${canonicalPath}`}
+        canonicalUrl={canonicalUrl}
         keywords={pageCopy.seo.keywords}
+        extraStructuredData={faqStructuredData}
       />
 
       <Suspense fallback={<div className="fixed inset-0" style={{ background: 'var(--surface-0, #08080D)' }} />}>
