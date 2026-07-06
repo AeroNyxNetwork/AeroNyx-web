@@ -12,6 +12,14 @@
  *   proof animation while preserving the existing ciphertext split behavior.
  *
  * Modification Reason:
+ *   v8.11 — First-viewport app launch CTA.
+ *   The primary hero CTA now opens the AeroNyx app/Nodeboard surface instead
+ *   of jumping to the protocol explanation section. This makes the first
+ *   viewport product-actionable while the secondary CTA remains the client
+ *   download path and protocol exploration stays available in navigation and
+ *   downstream sections.
+ *
+ * Modification Reason:
  *   v8.9 — Homepage hero internationalization pass.
  *   Moved first-viewport product narrative, CTA labels, Lens hint, slider
  *   label, and earned proof stamp into lib/i18n so locale switching does not
@@ -535,6 +543,7 @@ const NarrativeHero = ({ activeLocale: providedLocale }) => {
     activeLocale && activeLocale !== DEFAULT_LOCALE
       ? `/${activeLocale}/privacy-network#privacy-access`
       : '/privacy-network#privacy-access';
+  const appLaunchHref = 'https://app.aeronyx.network/';
   const [reduced, setReduced] = useState(false);
   const [split, setSplit] = useState(50);
   const [isCompactLens, setIsCompactLens] = useState(false);
@@ -722,7 +731,9 @@ const NarrativeHero = ({ activeLocale: providedLocale }) => {
                 variants={stageItem}
                 className="mb-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4 lg:items-start lg:justify-start"
               >
-                <a href="#how-it-works"
+                <a href={appLaunchHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex min-h-[48px] w-full max-w-xs items-center justify-center rounded border px-7 py-3.5 text-center text-sm font-semibold leading-snug tracking-wide transition duration-fast hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto"
                   style={{ background: ACCENT, borderColor: 'rgba(151,136,247,0.38)', color: '#fff', boxShadow: `0 18px 50px ${ACCENT}33` }}>
                   {copy.primaryCta}
