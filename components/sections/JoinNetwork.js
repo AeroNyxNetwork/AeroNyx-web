@@ -22,6 +22,11 @@
  *   page because the old developer-documentation overview route is no longer
  *   present in the docs site.
  *
+ * Modification Reason: v3.3 - Product-grade operator journey polish.
+ *   The node operator flow now uses a titled stage selector, a single
+ *   protocol panel, and compact capability chips so the section reads as an
+ *   open network product surface instead of a sparse engineering slideshow.
+ *
  * Modification Reason: v2.8 - Public node summary wording.
  *   Public protocol-health copy now says node summary instead of exposing
  *   implementation-language reporting details in the user-facing stat source.
@@ -52,7 +57,7 @@
  *
  * Main Functionality:
  *   - Four-step node operator journey with live aggregate stats strip,
- *     progress indicator, per-step visual, and prev/next navigation.
+ *     titled stage selector, per-step protocol visual, and prev/next navigation.
  *
  * Dependencies:
  *   - useNetworkStats (public aggregate endpoint — see inline note),
@@ -74,6 +79,7 @@
  * Last Modified: v3.0 - Multilingual metric wrapping polish
  * Last Modified: v3.1 - Nodeboard canonical URL alignment
  * Last Modified: v3.2 - Maintained protocol docs route
+ * Last Modified: v3.3 - Product-grade operator journey polish
  * ============================================
  */
 
@@ -294,41 +300,40 @@ const JoinNetwork = ({ activeLocale: providedLocale }) => {
             ))}
           </motion.div>
 
-          {/* Progress indicator */}
-          <div className="mb-8 flex items-center justify-center md:mb-12">
-            <div className="flex max-w-full items-center overflow-x-auto px-1 scrollbar-hide md:space-x-4">
+          {/* Stage selector */}
+          <div className="mb-6 md:mb-8">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {steps.map((step, index) => (
-                <React.Fragment key={index}>
-                  <button
-                    onClick={() => setActiveStep(index)}
-                    aria-label={formatTemplate(copy.stepAriaLabel || 'Step {number}: {title}', {
-                      number: index + 1,
-                      title: step.title,
-                    })}
-                    className={`flex min-h-[44px] min-w-[44px] flex-shrink-0 items-center justify-center rounded-sm transition-all duration-base ease-out-brand ${
-                      index === activeStep
-                        ? 'scale-110'
-                        : index < activeStep
-                          ? 'opacity-60'
-                          : 'opacity-30'
-                    }`}
-                  >
-                    <div className={`flex h-10 w-10 items-center justify-center rounded border font-mono md:h-12 md:w-12 ${
-                      index === activeStep
-                        ? 'border-brand-light bg-brand-faint text-brand-light'
-                        : index < activeStep
-                          ? 'border-white/40 bg-white/10'
-                          : 'border-white/20'
+                <button
+                  key={step.number}
+                  onClick={() => setActiveStep(index)}
+                  aria-label={formatTemplate(copy.stepAriaLabel || 'Step {number}: {title}', {
+                    number: index + 1,
+                    title: step.title,
+                  })}
+                  className={`group min-h-[5.25rem] rounded border p-3 text-left transition-all duration-base ease-out-brand md:p-4 ${
+                    index === activeStep
+                      ? 'border-brand-line bg-brand-faint shadow-[0_18px_60px_rgba(119,98,243,0.13)]'
+                      : 'border-white/10 bg-white/[0.025] hover:border-white/22 hover:bg-white/[0.045]'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <span className={`font-mono text-[11px] uppercase tracking-eyebrow transition-colors ${
+                      index === activeStep ? 'text-brand-light' : 'text-white/35 group-hover:text-white/55'
                     }`}>
-                      <span className="text-xs md:text-sm">{String(index + 1).padStart(2, '0')}</span>
-                    </div>
-                  </button>
-                  {index < steps.length - 1 && (
-                    <div className={`mx-1 h-px w-8 flex-shrink-0 transition-all duration-base sm:mx-2 sm:w-10 md:mx-0 md:w-24 ${
-                      index < activeStep ? 'bg-brand-light/50' : 'bg-white/15'
+                      {step.number}
+                    </span>
+                    <span className={`mt-1 h-1.5 w-1.5 rounded-pill transition-colors ${
+                      index === activeStep ? 'bg-brand-light' : 'bg-white/20 group-hover:bg-white/35'
                     }`} />
-                  )}
-                </React.Fragment>
+                  </div>
+                  <div className="mt-3 text-sm font-light leading-snug text-white md:text-base">
+                    {step.title}
+                  </div>
+                  <div className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/45">
+                    {step.subtitle}
+                  </div>
+                </button>
               ))}
             </div>
           </div>
@@ -339,30 +344,35 @@ const JoinNetwork = ({ activeLocale: providedLocale }) => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: EASE }}
-            className="grid items-center gap-8 md:grid-cols-2 md:gap-12"
+            className="page-card grid gap-6 rounded border p-4 backdrop-blur-sm md:grid-cols-[minmax(0,0.95fr)_minmax(19rem,1fr)] md:gap-8 md:p-8"
           >
             <div className="order-1">
-              <div className="mb-6">
-                <div className="text-5xl md:text-6xl font-extralight text-white/15 mb-2 font-mono">
+              <div className="mb-5">
+                <div className="mb-3 font-mono text-[clamp(2.75rem,14vw,4.75rem)] font-extralight leading-none text-white/12">
                   {steps[activeStep].number}
                 </div>
-                <h3 className="text-2xl md:text-3xl font-light mb-2">
+                <h3 className="mb-2 text-[clamp(1.65rem,7vw,2.75rem)] font-light leading-[1.04] tracking-normal">
                   {steps[activeStep].title}
                 </h3>
-                <p className="text-base text-white/60 md:text-lg">
+                <p className="text-base leading-relaxed text-white/60 md:text-lg">
                   {steps[activeStep].subtitle}
                 </p>
               </div>
 
-              <p className="mb-6 text-sm leading-relaxed text-white/78 md:text-base">
+              <p className="mb-5 text-sm leading-relaxed text-white/78 md:mb-6 md:text-base">
                 {steps[activeStep].description}
               </p>
 
-              <div className="space-y-2 mb-8">
+              <div className="mb-7 grid gap-2 sm:grid-cols-2 md:mb-8">
                 {steps[activeStep].features.map((feature, i) => (
-                  <div key={i} className="flex items-start">
-                    <div className="w-1 h-1 rounded-pill bg-brand-light/60 mt-2 mr-3 flex-shrink-0" />
-                    <span className="text-sm leading-relaxed text-white/60 md:text-base">{feature}</span>
+                  <div
+                    key={feature}
+                    className="min-h-[4rem] rounded border border-white/10 bg-white/[0.025] p-3 transition-colors duration-fast hover:border-white/18"
+                  >
+                    <div className="mb-2 font-mono text-[10px] uppercase tracking-eyebrow text-brand-light/70">
+                      {String(i + 1).padStart(2, '0')}
+                    </div>
+                    <span className="text-sm leading-relaxed text-white/62">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -389,7 +399,7 @@ const JoinNetwork = ({ activeLocale: providedLocale }) => {
             </div>
 
             <div className="order-2">
-              <div className="page-card aspect-[4/3] rounded border p-5 backdrop-blur-sm sm:aspect-square md:p-8">
+              <div className="min-h-[18rem] rounded border border-white/10 bg-black/20 p-5 backdrop-blur-sm sm:min-h-[22rem] md:min-h-full md:p-8">
                 {steps[activeStep].visual}
               </div>
             </div>
