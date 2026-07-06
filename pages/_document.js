@@ -15,6 +15,12 @@
  *   image/x-icon instead of image/svg+xml. This keeps browser metadata and
  *   crawler asset interpretation consistent without changing the asset URL.
  *
+ * Modification Reason: v1.4 - Complete local website icon metadata.
+ *   The official website now ships local SVG, ICO, PNG, Apple touch, and web
+ *   manifest assets instead of relying only on a remote ICO URL. This keeps
+ *   browser tabs, mobile home-screen bookmarks, Vercel previews, and crawler
+ *   previews aligned with the same AeroNyx brand mark used by docs and app.
+ *
  * Main Functionality:
  *   - Defines the base HTML document shell, favicon links, and mobile PWA
  *     meta tags used by every page.
@@ -29,6 +35,7 @@
  *
  * Last Modified: v1.2 — Locale-aware html lang + font cleanup
  * Last Modified: v1.3 - Favicon metadata type alignment
+ * Last Modified: v1.4 - Complete local website icon metadata
  * ============================================
  */
 
@@ -40,9 +47,13 @@ export default function Document(props) {
   return (
     <Html lang={locale}>
       <Head>
-        {/* Favicon */}
-        <link rel="icon" href="https://binary.aeronyx.network/favicon.ico" type="image/x-icon" />
-        <link rel="apple-touch-icon" href="https://binary.aeronyx.network/favicon.ico" />
+        {/* Favicon / install metadata */}
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+        <link rel="shortcut icon" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+        <link rel="manifest" href="/site.webmanifest" />
 
         {/* Meta tags */}
         <meta name="theme-color" content="#7762F3" />
