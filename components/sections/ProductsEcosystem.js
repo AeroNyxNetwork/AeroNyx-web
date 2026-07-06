@@ -36,6 +36,12 @@
  *   desktop grid while staying single-column on mobile, reducing scroll weight
  *   without removing any product information or existing keyboard semantics.
  *
+ * Modification Reason: v5.5 - Product detail boundary rhythm.
+ *   The active product detail now uses compact boundary rows for problem,
+ *   solution, and protocol value, plus a clearer two-sided architecture
+ *   comparison. This preserves all product copy while making the module feel
+ *   like a finished protocol surface instead of a stacked sales worksheet.
+ *
  * Modification Reason: v5.2 - Maintained protocol docs routes.
  *   Developer-documentation URLs were retired in the docs site. Relay and
  *   foundation product CTAs now resolve to the maintained node discovery and
@@ -177,6 +183,7 @@
  * Last Modified: v5.2 - Maintained protocol docs routes
  * Last Modified: v5.3 - Privacy Network product id alignment
  * Last Modified: v5.4 - Product selector interaction density polish
+ * Last Modified: v5.5 - Product detail boundary rhythm
  * ============================================
  */
 
@@ -600,41 +607,34 @@ const ProductsEcosystem = () => {
                   {activeProduct.tagline}
                 </p>
 
-                {/* USE CASE */}
-                <div className="page-card relative mb-5 min-w-0 overflow-hidden rounded border p-4 md:mb-6 md:p-5">
+                {/* Use case boundary — compact rows keep product reasoning scannable. */}
+                <div className="page-card relative mb-5 min-w-0 overflow-hidden rounded border p-0 md:mb-6">
                   <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-brand-light/45 to-transparent" />
-                  <div className="grid gap-3.5">
-                    <div className="min-w-0">
-                      <div className="mb-1 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">{copy.labels.pain}</div>
-                      <p className="break-words text-sm leading-relaxed text-white/70">{activeProduct.useCase.pain}</p>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="mb-1 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">{copy.labels.solution}</div>
-                      <p className="break-words text-sm leading-relaxed text-white/70">{activeProduct.useCase.solution}</p>
-                    </div>
-                    <div className="min-w-0 border border-brand-line bg-brand-faint px-3 py-2.5">
-                      <div className="mb-1 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">{copy.labels.protocolValue}</div>
-                      <p className="break-words text-sm font-medium leading-relaxed text-brand-light">{activeProduct.useCase.savings}</p>
-                    </div>
-                  </div>
+                  <ProductDetailRow label={copy.labels.pain}>
+                    {activeProduct.useCase.pain}
+                  </ProductDetailRow>
+                  <ProductDetailRow label={copy.labels.solution}>
+                    {activeProduct.useCase.solution}
+                  </ProductDetailRow>
+                  <ProductDetailRow label={copy.labels.protocolValue} accent>
+                    {activeProduct.useCase.savings}
+                  </ProductDetailRow>
                 </div>
 
                 {/* Architecture Comparison */}
                 <div className="page-card mb-6 min-w-0 rounded border p-4 md:mb-8 md:p-5">
                   <div className="mb-3 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">{copy.labels.architectureComparison}</div>
-                  <div className="space-y-2">
-                    <div className="grid gap-1 border border-white/10 bg-black/20 px-3 py-2 text-sm sm:grid-cols-[auto_minmax(0,1fr)] sm:items-start sm:gap-4">
-                      <span className="shrink-0 break-words text-white/60">{copy.labels.traditional}</span>
-                      <span className="break-words text-white/80 sm:text-right">{activeProduct.comparison.traditional}</span>
+                  <div className="grid gap-2 md:grid-cols-2">
+                    <div className="min-w-0 border border-white/10 bg-black/20 px-3 py-3">
+                      <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">{copy.labels.traditional}</div>
+                      <div className="mt-2 break-words text-sm leading-relaxed text-white/72">{activeProduct.comparison.traditional}</div>
                     </div>
-                    <div className="grid gap-1 border border-brand-line bg-brand-faint px-3 py-2 text-sm sm:grid-cols-[auto_minmax(0,1fr)] sm:items-start sm:gap-4">
-                      <span className="shrink-0 text-white/60">AeroNyx</span>
-                      <span className="break-words font-medium text-brand-light sm:text-right">{activeProduct.comparison.aeronyx}</span>
+                    <div className="min-w-0 border border-brand-line bg-brand-faint px-3 py-3">
+                      <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light/70">AeroNyx</div>
+                      <div className="mt-2 break-words text-sm font-medium leading-relaxed text-brand-light">{activeProduct.comparison.aeronyx}</div>
                     </div>
-                    <div className="border-t border-white/10 pt-2">
-                      <div className="break-words text-center font-medium leading-relaxed text-brand-light">
-                        {activeProduct.comparison.savings}
-                      </div>
+                    <div className="border-t border-white/10 pt-3 md:col-span-2">
+                      <div className="break-words text-center text-sm font-medium leading-relaxed text-brand-light md:text-base">{activeProduct.comparison.savings}</div>
                     </div>
                   </div>
                 </div>
@@ -702,6 +702,29 @@ const ProductsEcosystem = () => {
     </section>
   );
 };
+
+const ProductDetailRow = ({ label, children, accent = false }) => (
+  <div
+    className={`grid min-w-0 gap-1.5 px-4 py-3.5 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:gap-4 md:px-5 ${
+      accent ? 'border-t border-brand-line bg-brand-faint' : 'border-t border-white/10 first:border-t-0'
+    }`}
+  >
+    <div
+      className={`break-words text-[10px] uppercase leading-4 tracking-eyebrow ${
+        accent ? 'text-brand-light/70' : 'text-white/40'
+      }`}
+    >
+      {label}
+    </div>
+    <p
+      className={`min-w-0 break-words text-sm leading-relaxed ${
+        accent ? 'font-medium text-brand-light' : 'text-white/70'
+      }`}
+    >
+      {children}
+    </p>
+  </div>
+);
 
 // ============================================
 // Product Visual Components
