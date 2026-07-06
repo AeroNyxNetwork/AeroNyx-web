@@ -167,6 +167,8 @@
  * Last Modified: v4.8 - Localized product visual microcopy
  * Last Modified: v4.9 - Mobile product tab wrapping
  * Last Modified: v5.0 - Homepage ecosystem evidence polish
+ * Last Modified: v5.1 - Service relay CTA link hygiene
+ * Last Modified: v5.2 - Maintained protocol docs routes
  * Last Modified: v5.3 - Privacy Network product id alignment
  * ============================================
  */
