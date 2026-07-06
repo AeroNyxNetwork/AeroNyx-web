@@ -19,6 +19,11 @@
  *   Privacy Network and MemChain pages. Product routes, localized copy, tab
  *   behavior, and Downloads/Docs links are unchanged.
  *
+ * Modification Reason: v5.1 - Service relay CTA link hygiene.
+ *   Replaced the obsolete app waitlist destination with the maintained
+ *   developer documentation path so the homepage never routes users to a 404
+ *   while the encrypted service relay remains a coming-soon protocol surface.
+ *
  * Modification Reason: v4.6 - North Star anchor entry.
  *   Added a stable homepage `#north-star-plan` anchor for the promoted North
  *   Star Plan covenant so the hero can link directly into the infrastructure
@@ -270,7 +275,7 @@ const ProductsEcosystem = () => {
         savings: 'Lower metadata exposure',
       },
       status: 'coming-soon',
-      cta: { text: 'Join Waitlist', link: 'https://app.aeronyx.network/waitlist' },
+      cta: { text: 'Read Protocol Docs', link: 'https://docs.aeronyx.network/developer-documentation/overview' },
       proof: 'Encrypted delivery for services',
     },
     {

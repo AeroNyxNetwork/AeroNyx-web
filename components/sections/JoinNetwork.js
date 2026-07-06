@@ -12,6 +12,11 @@
  *   Long Russian, Spanish, Japanese, and Korean status labels can wrap within
  *   the stat card while desktop keeps the large calm counter rhythm.
  *
+ * Modification Reason: v3.1 - Nodeboard canonical URL alignment.
+ *   The operator journey now points to the same trailing-slash Nodeboard URL
+ *   used by the header, footer, and final CTA. This avoids duplicate external
+ *   destinations for the same operational console.
+ *
  * Modification Reason: v2.8 - Public node summary wording.
  *   Public protocol-health copy now says node summary instead of exposing
  *   implementation-language reporting details in the user-facing stat source.
@@ -62,6 +67,7 @@
  * Last Modified: v2.8 - Public node summary wording
  * Last Modified: v2.9 - Localized protocol visual microcopy
  * Last Modified: v3.0 - Multilingual metric wrapping polish
+ * Last Modified: v3.1 - Nodeboard canonical URL alignment
  * ============================================
  */
 
@@ -165,7 +171,7 @@ const JoinNetwork = ({ activeLocale: providedLocale }) => {
       subtitle: copy.steps[2].subtitle,
       description: copy.steps[2].description,
       features: copy.steps[2].features,
-      cta: { text: copy.steps[2].cta, link: 'https://app.aeronyx.network' },
+      cta: { text: copy.steps[2].cta, link: 'https://app.aeronyx.network/' },
       visual: <ResourceVisual copy={visualCopy.resource} />,
     },
     {
