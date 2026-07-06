@@ -25,6 +25,12 @@
  *   viewport. The download CTA remains client-focused to keep user access and
  *   operator workflows visually separate.
  *
+ * Modification Reason: v2.11 - Protocol-first navigation simplification.
+ *   Removed Nodeboard from the global header navigation because the homepage
+ *   already exposes app/operator entry points in context. The header now stays
+ *   focused on protocol, MemChain, Privacy Network, Docs, GitHub, language, and
+ *   the primary client access CTA.
+ *
  * Historical Notes:
  * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
@@ -65,6 +71,7 @@
  * Last Modified: v2.6 - Download client CTA alignment
  * Last Modified: v2.9 - Mobile multilingual navigation wrapping
  * Last Modified: v2.10 - Nodeboard operator console navigation
+ * Last Modified: v2.11 - Protocol-first navigation simplification
  * ============================================
  */
 
@@ -84,7 +91,6 @@ const SiteHeader = () => {
   const copy = getMessages(locale);
   const currentLocale = SUPPORTED_LOCALES.find((item) => item.code === locale) || SUPPORTED_LOCALES[0];
   const clientAccessHref = '/privacy-network#privacy-access';
-  const operatorConsoleHref = 'https://app.aeronyx.network/';
   const clientAccessLabel = copy.nav.downloadClient || copy.nav.downloads || copy.nav.privacyAccess;
   const isActiveRoute = (href) => !href.startsWith('http') && router.pathname === href;
   const desktopNavClass = (href) => (
@@ -138,7 +144,6 @@ const SiteHeader = () => {
     { href: "/", label: copy.nav.protocol || 'Protocol' },
     { href: "/memchain", label: copy.nav.memchain || 'MemChain' },
     { href: "/privacy-network", label: copy.nav.privacyNetwork || 'Privacy Network' },
-    { href: operatorConsoleHref, label: copy.nav.nodeboard || 'Nodeboard', external: true },
     { href: "https://docs.aeronyx.network/", label: copy.nav.docs, external: true },
     { href: "https://github.com/AeroNyxNetwork", label: copy.nav.github, external: true }
   ];
