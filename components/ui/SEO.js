@@ -19,6 +19,12 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  *   connect the English, Russian, Chinese, Japanese, Korean, and Spanish
  *   versions of the same page without relying on client-side locale switches.
  *
+ * Modification Reason: v1.4 - Entity structured data for GEO.
+ *   Added JSON-LD Organization, WebSite, WebPage, and SoftwareApplication
+ *   graph data plus Open Graph locale/site metadata. This gives AI search and
+ *   traditional crawlers a consistent entity model for AeroNyx, Privacy
+ *   Network, MemChain, docs, app, GitHub, and social surfaces.
+ *
  * Historical Notes:
  * v1.1 - Protocol-first default metadata.
  *   Replaced legacy fallback keywords with AeroNyx's current protocol narrative
@@ -40,6 +46,7 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  * Last Modified: v1.1 - Protocol-first default metadata
  * Last Modified: v1.2 - Decentralized node keyword alignment
  * Last Modified: v1.3 - Multilingual alternate links
+ * Last Modified: v1.4 - Entity structured data for GEO
  * ============================================
  *
  * @param {Object} props - Component props
@@ -49,8 +56,21 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  * @param {string} props.ogImage - Open Graph image URL
  * @param {string} props.ogType - Open Graph type
  * @param {Array} props.keywords - Array of keywords for the page
+ * @param {Object} props.structuredData - Optional JSON-LD override
  */
 const SITE_ORIGIN = 'https://aeronyx.network';
+const ENTITY_ID = `${SITE_ORIGIN}/#organization`;
+const WEBSITE_ID = `${SITE_ORIGIN}/#website`;
+
+const OG_LOCALE_BY_CODE = {
+  en: 'en_US',
+  ru: 'ru_RU',
+  'zh-Hant': 'zh_TW',
+  'zh-Hans': 'zh_CN',
+  ja: 'ja_JP',
+  ko: 'ko_KR',
+  es: 'es_ES',
+};
 
 const getCanonicalUrl = (canonicalUrl) => {
   try {
@@ -82,16 +102,91 @@ const buildLocaleUrl = (canonical, localeCode) => {
   return `${SITE_ORIGIN}${localizedPath}`;
 };
 
+const getLocaleFromCanonical = (canonical) => {
+  const url = new URL(canonical, SITE_ORIGIN);
+  const firstSegment = url.pathname.split('/').filter(Boolean)[0];
+  const localeCodes = new Set(SUPPORTED_LOCALES.map((locale) => locale.code));
+  return localeCodes.has(firstSegment) ? firstSegment : DEFAULT_LOCALE;
+};
+
+const buildStructuredData = ({
+  title,
+  description,
+  canonical,
+  keywordText,
+  ogImage,
+}) => ({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': ENTITY_ID,
+      name: 'AeroNyx',
+      url: SITE_ORIGIN,
+      logo: 'https://binary.aeronyx.network/aeronyx_logo.png',
+      sameAs: [
+        'https://github.com/AeroNyxNetwork',
+        'https://twitter.com/AeroNyxNetwork',
+        'https://t.me/AeroNyxNetwork',
+        'https://docs.aeronyx.network/',
+        'https://app.aeronyx.network/',
+      ],
+      description: 'AeroNyx is a blind open coordination protocol for private routing, encrypted messaging, private memory, and autonomous agent coordination.',
+    },
+    {
+      '@type': 'WebSite',
+      '@id': WEBSITE_ID,
+      url: SITE_ORIGIN,
+      name: 'AeroNyx',
+      publisher: { '@id': ENTITY_ID },
+      inLanguage: SUPPORTED_LOCALES.map((locale) => locale.code),
+    },
+    {
+      '@type': 'WebPage',
+      '@id': `${canonical}#webpage`,
+      url: canonical,
+      name: title,
+      description,
+      keywords: keywordText,
+      image: ogImage,
+      isPartOf: { '@id': WEBSITE_ID },
+      about: { '@id': ENTITY_ID },
+      publisher: { '@id': ENTITY_ID },
+    },
+    {
+      '@type': 'SoftwareApplication',
+      '@id': `${SITE_ORIGIN}/#aeronyx-app`,
+      name: 'AeroNyx',
+      applicationCategory: 'SecurityApplication',
+      operatingSystem: 'iOS, Android, macOS, Windows, Linux',
+      url: 'https://app.aeronyx.network/',
+      downloadUrl: `${SITE_ORIGIN}/privacy-network#privacy-access`,
+      description: 'AeroNyx provides access to the Privacy Network, encrypted messaging, private memory, and blind coordination protocol surfaces.',
+      publisher: { '@id': ENTITY_ID },
+    },
+  ],
+});
+
 const SEO = ({ 
   title = 'AeroNyx | Encrypted coordination layer for autonomous agents',
   description = 'AeroNyx lets humans, apps, and AI agents route traffic, exchange encrypted messages, preserve private memory, and coordinate work through a blind, open protocol.',
   canonicalUrl = 'https://aeronyx.network/',
   ogImage = 'https://binary.aeronyx.network/aeronyx_logo.png',
   ogType = 'website',
-  keywords = ['encrypted coordination layer', 'blind protocol', 'privacy network', 'private AI memory', 'encrypted messaging', 'agent coordination', 'open decentralized nodes']
+  keywords = ['encrypted coordination layer', 'blind protocol', 'privacy network', 'private AI memory', 'encrypted messaging', 'agent coordination', 'open decentralized nodes'],
+  structuredData,
 }) => {
   const canonical = getCanonicalUrl(canonicalUrl);
   const keywordText = Array.isArray(keywords) ? keywords.join(', ') : String(keywords || '');
+  const activeLocale = getLocaleFromCanonical(canonical);
+  const ogLocale = OG_LOCALE_BY_CODE[activeLocale] || OG_LOCALE_BY_CODE[DEFAULT_LOCALE];
+  const jsonLd = structuredData || buildStructuredData({
+    title,
+    description,
+    canonical,
+    keywordText,
+    ogImage,
+  });
   
   return (
     <Head>
@@ -113,6 +208,17 @@ const SEO = ({
       
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={ogType} />
+      <meta property="og:site_name" content="AeroNyx" />
+      <meta property="og:locale" content={ogLocale} />
+      {SUPPORTED_LOCALES
+        .filter((item) => item.code !== activeLocale)
+        .map((item) => (
+          <meta
+            key={item.code}
+            property="og:locale:alternate"
+            content={OG_LOCALE_BY_CODE[item.code] || item.code}
+          />
+        ))}
       <meta property="og:url" content={canonical} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
@@ -124,6 +230,12 @@ const SEO = ({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:site" content="@AeroNyxNetwork" />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     </Head>
   );
 };
