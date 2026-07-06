@@ -9,6 +9,12 @@
  *   grid instead of a horizontal snap rail. This avoids half-visible cards on
  *   iPhone-class screens while preserving the desktop three-column proof layout.
  *
+ * Modification Reason: v2.6 - Status evidence panel polish.
+ *   Hero protection signals and live protocol metrics now read as numbered
+ *   status evidence surfaces with calmer hierarchy, stronger mobile wrapping,
+ *   and restrained product-page depth. Aggregate data logic, privacy boundary
+ *   wording, and public telemetry limits remain unchanged.
+ *
  * Modification Reason: v2.4 - Secondary page internationalization.
  *   Moved the Privacy Network hero, protocol bridge, North Star Plan, live
  *   protocol proof, assurance model, daily dashboard signals, and telemetry
@@ -137,6 +143,7 @@
  * Last Modified: v2.3 - North Star Plan visibility
  * Last Modified: v2.4 - Secondary page internationalization
  * Last Modified: v2.5 - Mobile proof rail stabilization
+ * Last Modified: v2.6 - Status evidence panel polish
  * ============================================
  */
 
@@ -256,10 +263,16 @@ const Hero = ({ copy }) => (
           </div>
 
           <div className="mt-8 grid gap-2.5 min-[480px]:grid-cols-3">
-            {copy.signals.map((item) => (
-              <div key={item.label} className="page-card min-w-0 border p-3 md:p-4">
-                <div className="break-words text-[10px] uppercase tracking-eyebrow text-white/36">{item.label}</div>
-                <div className="mt-2 break-words text-lg font-light text-white md:text-2xl">{item.value}</div>
+            {copy.signals.map((item, index) => (
+              <div key={item.label} className="page-card relative min-w-0 overflow-hidden border p-3 md:p-4">
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/35 to-transparent" />
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/36">{item.label}</div>
+                  <div className="shrink-0 font-mono text-xs leading-none text-brand-light/70">
+                    {String(index + 1).padStart(2, '0')}
+                  </div>
+                </div>
+                <div className="break-words text-lg font-light leading-tight text-white md:text-2xl">{item.value}</div>
               </div>
             ))}
           </div>
@@ -303,14 +316,14 @@ const ProtocolContinuity = ({ copy }) => (
                 className="group min-w-0 border border-white/10 bg-white/[0.025] p-3 transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint md:p-4"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-[10px] uppercase tracking-eyebrow text-white/35">
+                  <span className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/35">
                     {item.label}
                   </span>
                   <span className="h-2 w-2 rounded-pill bg-brand-light/70 transition-transform duration-fast group-hover:scale-125" />
                 </div>
                 <h3 className="mt-4 break-words text-lg font-light text-white md:text-xl">{item.title}</h3>
                 <p className="mt-3 hidden text-sm leading-relaxed text-white/56 sm:block">{item.description}</p>
-                <div className="mt-5 border border-brand-line bg-black/20 px-2.5 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-brand-light md:px-3">
+                <div className="mt-5 min-w-0 break-words border border-brand-line bg-black/20 px-2.5 py-2 font-mono text-[10px] uppercase leading-4 tracking-[0.14em] text-brand-light md:px-3">
                   {item.signal}
                 </div>
               </Link>
@@ -504,18 +517,31 @@ const LiveProtocolStats = ({ stats, isLoading, siteCopy, copy, healthPercent }) 
           </p>
         </div>
         <div className="mb-4 grid gap-2 min-[480px]:grid-cols-3">
-          {copy.visibility.map((item) => (
-            <div key={item.label} className="min-w-0 border border-white/10 bg-black/25 px-3 py-2.5">
-              <div className="break-words text-[9px] uppercase tracking-[0.12em] text-white/34">{item.label}</div>
+          {copy.visibility.map((item, index) => (
+            <div key={item.label} className="relative min-w-0 overflow-hidden border border-white/10 bg-black/25 px-3 py-2.5">
+              <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-brand-light/35 to-transparent" />
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 break-words text-[9px] uppercase leading-4 tracking-[0.12em] text-white/34">{item.label}</div>
+                <div className="shrink-0 font-mono text-[10px] leading-4 text-white/22">
+                  {String(index + 1).padStart(2, '0')}
+                </div>
+              </div>
               <div className="mt-1 text-xs leading-relaxed text-white/62 md:hidden">{item.mobileValue}</div>
               <div className="mt-1 hidden text-sm leading-relaxed text-white/62 md:block">{item.value}</div>
             </div>
           ))}
         </div>
         <div className="grid gap-4 lg:grid-cols-3">
-          {metrics.map((item) => (
-            <article key={item.label} className="page-card min-w-0 border p-4 md:p-5">
-              <div className="min-h-[3rem] font-light text-white">
+          {metrics.map((item, index) => (
+            <article key={item.label} className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5">
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/45 to-transparent" />
+              <div className="mb-5 flex items-start justify-between gap-4">
+                <div className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/42">{item.label}</div>
+                <div className="shrink-0 font-mono text-2xl font-light leading-none text-white/14">
+                  {String(index + 1).padStart(2, '0')}
+                </div>
+              </div>
+              <div className="min-h-[3.35rem] min-w-0 break-words font-light leading-none text-white">
                 {isLoading ? (
                   <span className="block h-8 w-28 animate-pulse bg-white/10" />
                 ) : item.liveValue !== undefined ? (
@@ -529,7 +555,6 @@ const LiveProtocolStats = ({ stats, isLoading, siteCopy, copy, healthPercent }) 
                   <span className="text-3xl md:text-4xl">{item.fallback}</span>
                 )}
               </div>
-              <div className="mt-3 break-words text-[10px] uppercase tracking-eyebrow text-white/42">{item.label}</div>
               <p className="mt-3 hidden text-sm leading-relaxed text-white/48 sm:block">{item.description}</p>
               <div className="mt-5 grid gap-2">
                 <div className="border border-brand-line bg-brand-faint px-3 py-2">
