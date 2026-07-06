@@ -19,6 +19,12 @@
  *   clipped labels on Russian, Spanish, Japanese, Korean, Traditional Chinese,
  *   and Simplified Chinese pages without changing routes or desktop layout.
  *
+ * Modification Reason: v2.10 - Nodeboard operator console entry.
+ *   Added the public Nodeboard link to the shared header navigation so node
+ *   operators can reach the operational console from the homepage first
+ *   viewport. The download CTA remains client-focused to keep user access and
+ *   operator workflows visually separate.
+ *
  * Historical Notes:
  * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
@@ -58,6 +64,7 @@
  * Last Modified: v2.5 - Renamed active header component to SiteHeader
  * Last Modified: v2.6 - Download client CTA alignment
  * Last Modified: v2.9 - Mobile multilingual navigation wrapping
+ * Last Modified: v2.10 - Nodeboard operator console navigation
  * ============================================
  */
 
@@ -77,6 +84,7 @@ const SiteHeader = () => {
   const copy = getMessages(locale);
   const currentLocale = SUPPORTED_LOCALES.find((item) => item.code === locale) || SUPPORTED_LOCALES[0];
   const clientAccessHref = '/privacy-network#privacy-access';
+  const operatorConsoleHref = 'https://app.aeronyx.network/';
   const clientAccessLabel = copy.nav.downloadClient || copy.nav.downloads || copy.nav.privacyAccess;
   const isActiveRoute = (href) => !href.startsWith('http') && router.pathname === href;
   const desktopNavClass = (href) => (
@@ -130,6 +138,7 @@ const SiteHeader = () => {
     { href: "/", label: copy.nav.protocol || 'Protocol' },
     { href: "/memchain", label: copy.nav.memchain || 'MemChain' },
     { href: "/privacy-network", label: copy.nav.privacyNetwork || 'Privacy Network' },
+    { href: operatorConsoleHref, label: copy.nav.nodeboard || 'Nodeboard', external: true },
     { href: "https://docs.aeronyx.network/", label: copy.nav.docs, external: true },
     { href: "https://github.com/AeroNyxNetwork", label: copy.nav.github, external: true }
   ];
@@ -176,8 +185,8 @@ const SiteHeader = () => {
           </div>
           
           {/* Desktop navigation */}
-          <div className="hidden lg:flex items-center gap-6 xl:gap-8">
-            <nav className="flex items-center gap-4 xl:gap-6">
+          <div className="hidden lg:flex items-center gap-5 xl:gap-7">
+            <nav className="flex items-center gap-3 xl:gap-5">
               {navLinks.map((link) => (
                 link.external ? (
                   <a
