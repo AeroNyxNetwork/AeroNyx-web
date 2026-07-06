@@ -25,6 +25,11 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  *   traditional crawlers a consistent entity model for AeroNyx, Privacy
  *   Network, MemChain, docs, app, GitHub, and social surfaces.
  *
+ * Modification Reason: v1.5 - Error-page index control.
+ *   Added an explicit noIndex prop so localized 404/500 pages can keep their
+ *   polished user experience while telling search engines not to index error
+ *   surfaces as product content.
+ *
  * Historical Notes:
  * v1.1 - Protocol-first default metadata.
  *   Replaced legacy fallback keywords with AeroNyx's current protocol narrative
@@ -47,6 +52,7 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  * Last Modified: v1.2 - Decentralized node keyword alignment
  * Last Modified: v1.3 - Multilingual alternate links
  * Last Modified: v1.4 - Entity structured data for GEO
+ * Last Modified: v1.5 - Error-page index control
  * ============================================
  *
  * @param {Object} props - Component props
@@ -57,6 +63,7 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  * @param {string} props.ogType - Open Graph type
  * @param {Array} props.keywords - Array of keywords for the page
  * @param {Object} props.structuredData - Optional JSON-LD override
+ * @param {boolean} props.noIndex - Whether crawlers should avoid indexing page
  */
 const SITE_ORIGIN = 'https://aeronyx.network';
 const ENTITY_ID = `${SITE_ORIGIN}/#organization`;
@@ -175,6 +182,7 @@ const SEO = ({
   ogType = 'website',
   keywords = ['encrypted coordination layer', 'blind protocol', 'privacy network', 'private AI memory', 'encrypted messaging', 'agent coordination', 'open decentralized nodes'],
   structuredData,
+  noIndex = false,
 }) => {
   const canonical = getCanonicalUrl(canonicalUrl);
   const keywordText = Array.isArray(keywords) ? keywords.join(', ') : String(keywords || '');
@@ -193,6 +201,7 @@ const SEO = ({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywordText} />
+      {noIndex && <meta name="robots" content="noindex,nofollow" />}
       
       {/* Canonical URL */}
       <link rel="canonical" href={canonical} />

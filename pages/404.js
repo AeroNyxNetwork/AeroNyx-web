@@ -10,6 +10,10 @@
  * Modification Reason:
  *   v1.0 - Localized custom 404 page.
  *
+ * Modification Reason: v1.1 - Error page noindex control.
+ *   The shared 404/500 shell now passes noIndex into SEO so polished localized
+ *   error pages remain user-friendly without being indexed as product content.
+ *
  * Main Functionality:
  *   - Renders a localized missing-route page for every configured locale.
  *   - Keeps AeroNyx's protocol-first visual language, header, footer, SEO, and
@@ -35,6 +39,7 @@
  *     divergence in behavior is needed.
  *
  * Last Modified: v1.0 - Localized 404 page
+ * Last Modified: v1.1 - Error page noindex control
  * ============================================
  */
 
@@ -62,6 +67,7 @@ export const ErrorPageShell = ({ kind = 'notFound', statusCode = '404' }) => {
         description={pageCopy.description}
         canonicalUrl={`https://aeronyx.network${canonicalPath}/`}
         keywords={messages.seo.keywords}
+        noIndex
       />
 
       <SiteHeader />
