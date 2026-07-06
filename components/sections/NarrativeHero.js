@@ -2,7 +2,7 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.13.0
+ * Version: 8.14.0
  *
  * Modification Reason:
  *   v8.10 — Lens scene microcopy internationalization.
@@ -34,6 +34,13 @@
  *   into place, and each localized scene can carry a quiet scenario label in
  *   the plaintext header. The Lens keeps a stable first paint, but the final
  *   client-selected state feels intentionally animated.
+ *
+ * Modification Reason:
+ *   v8.14 — Staged Lens message motion.
+ *   Conversation and ciphertext bubbles now enter with a tiny stagger when a
+ *   randomized scene is selected, making the Lens feel like a live protocol
+ *   proof instead of a static screenshot. Reduced-motion users still receive
+ *   the static scene.
  *
  * Modification Reason:
  *   v8.9 — Homepage hero internationalization pass.
@@ -138,6 +145,7 @@
  * Last Modified: v8.11.0 — First-viewport app launch CTA
  * Last Modified: v8.12.0 — Randomized Lens conversation scenes
  * Last Modified: v8.13.0 — Lens scene transition polish
+ * Last Modified: v8.14.0 — Staged Lens message motion
  * ============================================================================
  */
 
@@ -481,12 +489,18 @@ function WatcherField({ reduced, splitRef }) {
 // ============================================================================
 // FOREGROUND — scene bubbles (radii aligned to tokens in v8.0)
 // ============================================================================
-function Bubble({ msg, cipher, idx, sceneCopy = DEFAULT_SCENE_COPY }) {
+function Bubble({ msg, cipher, idx, sceneCopy = DEFAULT_SCENE_COPY, reduced = false }) {
   const isYou = msg.from === 'you';
   const cipherPacket = getCipherPacket(msg, idx, sceneCopy.id || sceneCopy.receiptTitle);
+  const bubbleMotion = reduced ? {} : {
+    initial: { opacity: 0, y: 7, scale: 0.985 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    transition: { duration: 0.36, delay: 0.05 + idx * 0.055, ease: EASE },
+  };
+
   if (cipher)
     return (
-      <div className={`flex ${isYou ? 'justify-end' : 'justify-start'} mb-3`}>
+      <motion.div className={`flex ${isYou ? 'justify-end' : 'justify-start'} mb-3`} {...bubbleMotion}>
         <div className="max-w-[86%] rounded-md px-3 py-2.5 sm:max-w-[78%] sm:px-4 sm:py-3"
           style={{ background: 'rgba(95,187,247,0.04)', border: '1px solid rgba(95,187,247,0.14)' }}>
           <div className="text-[9px] break-all leading-relaxed"
@@ -498,11 +512,11 @@ function Bubble({ msg, cipher, idx, sceneCopy = DEFAULT_SCENE_COPY }) {
             TLS 1.3 · {cipherPacket.size} B · {sceneCopy.senderUnknown || DEFAULT_SCENE_COPY.senderUnknown}
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   if (msg.receipt)
     return (
-      <div className="flex justify-start mb-3">
+      <motion.div className="flex justify-start mb-3" {...bubbleMotion}>
         <div className="max-w-[86%] rounded-md px-3 py-2.5 sm:max-w-[78%] sm:px-4 sm:py-3"
           style={{ background: 'rgba(119,98,243,0.08)', border: '1px solid rgba(119,98,243,0.28)' }}>
           <div className="flex items-center gap-2 mb-1.5">
@@ -518,21 +532,21 @@ function Bubble({ msg, cipher, idx, sceneCopy = DEFAULT_SCENE_COPY }) {
             {sceneCopy.routeProof || DEFAULT_SCENE_COPY.routeProof}
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   return (
-    <div className={`flex ${isYou ? 'justify-end' : 'justify-start'} mb-3`}>
+    <motion.div className={`flex ${isYou ? 'justify-end' : 'justify-start'} mb-3`} {...bubbleMotion}>
       <div className="max-w-[86%] rounded-md px-3 py-2.5 text-sm leading-relaxed sm:max-w-[78%] sm:px-4"
         style={isYou
           ? { background: 'rgba(119,98,243,0.12)', border: '1px solid rgba(119,98,243,0.2)', color: 'rgba(255,255,255,0.92)' }
           : { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)' }}>
         {msg.text}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-function SceneContent({ cipher, sceneCopy = DEFAULT_SCENE_COPY }) {
+function SceneContent({ cipher, sceneCopy = DEFAULT_SCENE_COPY, reduced = false }) {
   const messages = sceneCopy.messages || DEFAULT_SCENE_COPY.messages;
   return (
     <div className="absolute inset-0 flex flex-col px-4 pt-4 pb-10 sm:px-8 sm:pt-5 sm:pb-12">
@@ -565,7 +579,16 @@ function SceneContent({ cipher, sceneCopy = DEFAULT_SCENE_COPY }) {
         )}
       </div>
       <div className="flex-1">
-        {messages.map((m, i) => <Bubble key={i} msg={m} cipher={cipher} idx={i} sceneCopy={sceneCopy} />)}
+        {messages.map((m, i) => (
+          <Bubble
+            key={`${sceneCopy.id || 'scene'}-${cipher ? 'cipher' : 'plain'}-${i}`}
+            msg={m}
+            cipher={cipher}
+            idx={i}
+            sceneCopy={sceneCopy}
+            reduced={reduced}
+          />
+        ))}
       </div>
     </div>
   );
@@ -575,7 +598,7 @@ function Scene({ cipher, sceneCopy = DEFAULT_SCENE_COPY, reduced = false }) {
   const sceneKey = `${sceneCopy.id || 'default'}-${cipher ? 'cipher' : 'plain'}`;
 
   if (reduced) {
-    return <SceneContent cipher={cipher} sceneCopy={sceneCopy} />;
+    return <SceneContent cipher={cipher} sceneCopy={sceneCopy} reduced />;
   }
 
   return (
