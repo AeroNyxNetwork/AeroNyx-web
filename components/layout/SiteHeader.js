@@ -36,6 +36,12 @@
  *   so long localized labels plus the language grid remain reachable on small
  *   devices without pushing content below the screen.
  *
+ * Modification Reason: v2.13 - Mobile menu scroll isolation.
+ *   The mobile navigation now locks background page scrolling while open,
+ *   uses dynamic viewport height on iOS/Android browser chrome, and closes on
+ *   route changes. This makes the header feel like a deliberate product
+ *   surface rather than a layer floating over a still-scrollable page.
+ *
  * Historical Notes:
  * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
@@ -78,6 +84,7 @@
  * Last Modified: v2.10 - Nodeboard operator console navigation
  * Last Modified: v2.11 - Protocol-first navigation simplification
  * Last Modified: v2.12 - iPhone-safe mobile menu scrolling
+ * Last Modified: v2.13 - Mobile menu scroll isolation
  * ============================================
  */
 
@@ -144,6 +151,31 @@ const SiteHeader = () => {
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const previousOverscrollBehavior = document.body.style.overscrollBehavior;
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'contain';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.body.style.overscrollBehavior = previousOverscrollBehavior;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const closeTransientNavigation = () => {
+      setIsOpen(false);
+      setIsLanguageOpen(false);
+    };
+
+    router.events?.on('routeChangeStart', closeTransientNavigation);
+    return () => router.events?.off('routeChangeStart', closeTransientNavigation);
+  }, [router.events]);
   
   // v2.1: protocol-first nav. Product detail pages are now secondary routes.
   const navLinks = [
@@ -318,7 +350,7 @@ const SiteHeader = () => {
             <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
             <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
             
-            <nav className="relative z-10 flex max-h-[calc(100vh-4rem)] flex-col space-y-3 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <nav className="relative z-10 flex max-h-[calc(100dvh-4rem)] flex-col space-y-3 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               {navLinks.map((link) => (
                 link.external ? (
                   <a
