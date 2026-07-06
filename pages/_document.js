@@ -10,6 +10,11 @@
  *   The root <html lang> now follows Next.js locale metadata so Safari,
  *   VoiceOver, and search engines receive the correct language signal.
  *
+ * Modification Reason: v1.3 - Favicon metadata type alignment.
+ *   The favicon URL points to an .ico asset, so the declared MIME type now uses
+ *   image/x-icon instead of image/svg+xml. This keeps browser metadata and
+ *   crawler asset interpretation consistent without changing the asset URL.
+ *
  * Main Functionality:
  *   - Defines the base HTML document shell, favicon links, and mobile PWA
  *     meta tags used by every page.
@@ -23,6 +28,7 @@
  *     next/font is deliberately removed from _app.js.
  *
  * Last Modified: v1.2 — Locale-aware html lang + font cleanup
+ * Last Modified: v1.3 - Favicon metadata type alignment
  * ============================================
  */
 
@@ -35,7 +41,7 @@ export default function Document(props) {
     <Html lang={locale}>
       <Head>
         {/* Favicon */}
-        <link rel="icon" href="https://binary.aeronyx.network/favicon.ico" type="image/svg+xml" />
+        <link rel="icon" href="https://binary.aeronyx.network/favicon.ico" type="image/x-icon" />
         <link rel="apple-touch-icon" href="https://binary.aeronyx.network/favicon.ico" />
 
         {/* Meta tags */}
