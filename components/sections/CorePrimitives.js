@@ -59,6 +59,11 @@
  *   captions are hidden on narrow screens to prevent Russian, Spanish, Korean,
  *   Japanese, and CJK copy from colliding with the visual proof.
  *
+ * Modification Reason: v1.9 - Privacy Network fallback wording.
+ *   Updated the default Privacy Network card fallback so even missing-locale
+ *   or partial-copy states describe AeroNyx as a blind open privacy protocol
+ *   instead of using legacy VPN-provider framing.
+ *
  * Historical Notes:
  * v1.3 - Homepage primitive animation handoff.
  *   Polished the two homepage primitive cards so they visually hand off to the
@@ -93,6 +98,7 @@
  * Last Modified: v1.6 - Homepage primitive evidence polish
  * Last Modified: v1.7 - Privacy Network trust-model teaser
  * Last Modified: v1.8 - Primitive bridge mobile polish
+ * Last Modified: v1.9 - Privacy Network fallback wording
  * ============================================
  */
 
@@ -117,7 +123,7 @@ const defaultPrimitiveCards = [
     title: 'Privacy Network',
     label: 'Traffic in motion',
     description:
-      'Not another VPN provider. AeroNyx Privacy Network is a blind, open protocol where decentralized nodes coordinate encrypted traffic without reading user content.',
+      'AeroNyx Privacy Network is a blind, open privacy protocol where decentralized nodes coordinate encrypted traffic without reading user content.',
     cta: 'Explore Privacy Network',
     href: '/privacy-network',
     checks: [
