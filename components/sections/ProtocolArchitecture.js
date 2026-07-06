@@ -15,6 +15,12 @@
  *   lib/i18n. This keeps the protocol architecture section coherent across
  *   all supported locales while preserving the existing visuals and motion.
  *
+ * Modification Reason: v5.1 - Architecture evidence surface polish.
+ *   The visibility boundary and two architecture pillars now use numbered
+ *   evidence surfaces, stronger long-locale wrapping, and the same restrained
+ *   product-page rhythm as the refreshed homepage product sections. Copy,
+ *   docs CTA, visuals, and privacy claims remain unchanged.
+ *
  * Historical Notes:
  * v4.8 - Decentralized node public naming.
  *   The public architecture copy now describes decentralized protocol nodes
@@ -78,6 +84,7 @@
  * Last Modified: v4.8 - Decentralized node public naming
  * Last Modified: v4.9 - Visibility boundary polish
  * Last Modified: v5.0 - Homepage architecture internationalization
+ * Last Modified: v5.1 - Architecture evidence surface polish
  * ============================================
  */
 
@@ -164,7 +171,7 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
   return (
     <section id="how-it-works" className="scroll-mt-20 py-12 md:scroll-mt-24 md:py-20" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
-        <div className="max-w-6xl mx-auto">
+        <div className="mx-auto max-w-6xl">
 
           {/* Header */}
           <motion.div
@@ -174,13 +181,13 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
             transition={{ duration: 0.6, ease: EASE }}
             className="mb-10 max-w-3xl md:mb-14"
           >
-            <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
+            <div className="mb-3 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light md:mb-4">
               {copy.eyebrow}
             </div>
-            <h2 className="text-display-lg font-light mb-4 md:mb-6">
+            <h2 className="mb-4 break-words text-display-lg font-light md:mb-6">
               {copy.titlePrefix} <em className="text-brand-light" style={{ fontStyle: 'italic' }}>{copy.titleEmphasis}</em>
             </h2>
-            <p className="text-base md:text-xl text-white/60 leading-relaxed">
+            <p className="break-words text-base leading-relaxed text-white/60 md:text-xl">
               {copy.description}
             </p>
           </motion.div>
@@ -190,27 +197,33 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: EASE }}
-            className="mb-6 page-surface overflow-hidden rounded border md:mb-8"
+            className="page-surface relative mb-6 overflow-hidden rounded border md:mb-8"
           >
+            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/45 to-transparent" />
             <div className="grid gap-0 lg:grid-cols-[0.72fr_2.28fr]">
-              <div className="border-b border-white/10 p-4 md:p-5 lg:border-b-0 lg:border-r">
-                <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+              <div className="min-w-0 border-b border-white/10 p-4 md:p-5 lg:border-b-0 lg:border-r">
+                <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
                   {copy.visibility?.eyebrow}
                 </div>
-                <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/50">
+                <p className="mt-2 max-w-sm break-words text-sm leading-relaxed text-white/50">
                   {copy.visibility?.description}
                 </p>
               </div>
               <div className="grid gap-0 md:grid-cols-3">
-                {visibilityBoundary.map((item) => (
-                  <div key={item.surface} className="min-w-0 border-t border-white/10 p-4 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0 md:p-5">
-                    <div className="text-[10px] uppercase tracking-eyebrow text-white/38">
-                      {item.surface}
+                {visibilityBoundary.map((item, index) => (
+                  <div key={item.surface} className="relative min-w-0 overflow-hidden border-t border-white/10 p-4 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0 md:p-5">
+                    <div className="mb-4 flex items-start justify-between gap-3">
+                      <div className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/38">
+                        {item.surface}
+                      </div>
+                      <div className="shrink-0 font-mono text-xs leading-none text-white/18">
+                        {String(index + 1).padStart(2, '0')}
+                      </div>
                     </div>
-                    <div className="mt-3 text-sm leading-relaxed text-white/74">
+                    <div className="break-words text-sm leading-relaxed text-white/74">
                       {item.canSee}
                     </div>
-                    <div className="mt-3 border-t border-white/10 pt-3 text-xs leading-relaxed text-brand-light/72">
+                    <div className="mt-3 min-w-0 break-words border-t border-white/10 pt-3 text-xs leading-relaxed text-brand-light/72">
                       {item.cannotSee}
                     </div>
                   </div>
@@ -228,8 +241,12 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.15, ease: EASE }}
-                className="page-card flex min-h-full flex-col overflow-hidden rounded border"
+                className="page-card relative flex min-h-full min-w-0 flex-col overflow-hidden rounded border"
               >
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/35 to-transparent" />
+                <div className="pointer-events-none absolute right-5 top-5 z-10 font-mono text-5xl font-light leading-none text-white/[0.055]">
+                  {String(index + 1).padStart(2, '0')}
+                </div>
                 {/* Visual */}
                 <div
                   className="aspect-[16/10] border-b border-white/10 p-5 md:p-8"
@@ -243,34 +260,34 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
                 </div>
 
                 {/* Content */}
-                <div className="flex flex-1 flex-col p-5 md:p-7">
-                  <div className="text-[10px] uppercase tracking-eyebrow text-brand-light mb-2">
+                <div className="flex min-w-0 flex-1 flex-col p-5 md:p-7">
+                  <div className="mb-2 max-w-[80%] break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
                     {pillar.tag}
                   </div>
-                  <h3 className="text-display-md font-light mb-4">
+                  <h3 className="mb-4 break-words pr-8 text-display-md font-light">
                     {pillar.title}
                   </h3>
-                  <p className="text-sm md:text-base text-white/70 leading-relaxed mb-5">
+                  <p className="mb-5 break-words text-sm leading-relaxed text-white/70 md:text-base">
                     {pillar.description}
                   </p>
 
-                  <div className="mb-6 border-l-2 border-brand/40 bg-white/[0.03] py-3 pl-4 pr-3">
-                    <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">
+                  <div className="mb-6 min-w-0 border border-brand-line bg-brand-faint px-3 py-3 md:px-4">
+                    <div className="mb-1 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
                       {copy.labels?.protocolImpact}
                     </div>
-                    <p className="text-sm text-white/80 leading-relaxed">
+                    <p className="break-words text-sm leading-relaxed text-white/78">
                       {pillar.impact}
                     </p>
                   </div>
 
-                  <div className="space-y-2.5 mt-auto">
-                    <div className="text-[10px] uppercase tracking-eyebrow text-white/40">
+                  <div className="mt-auto space-y-2.5">
+                    <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">
                       {copy.labels?.howItWorks}
                     </div>
                     {pillar.technical.map((item, i) => (
-                      <div key={i} className="flex items-start">
-                        <div className="w-1 h-1 rounded-pill bg-brand-light/60 mt-2 mr-3 flex-shrink-0" />
-                        <span className="text-sm leading-relaxed text-white/60">{item}</span>
+                      <div key={item} className="flex min-w-0 items-start border border-white/10 bg-white/[0.02] px-3 py-2">
+                        <div className="mr-3 mt-2 h-1 w-1 flex-shrink-0 rounded-pill bg-brand-light/60" />
+                        <span className="min-w-0 break-words text-sm leading-relaxed text-white/60">{item}</span>
                       </div>
                     ))}
                   </div>
@@ -291,9 +308,9 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
               href="https://docs.aeronyx.network/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/20 px-8 py-3.5 text-center hover:border-brand-line hover:bg-brand-faint transition-colors duration-fast"
+              className="inline-flex min-h-[44px] w-full max-w-xs min-w-0 items-center justify-center break-words rounded border border-white/20 px-8 py-3.5 text-center transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint sm:w-auto"
             >
-              <span className="text-sm uppercase tracking-eyebrow">
+              <span className="text-sm uppercase leading-snug tracking-eyebrow">
                 {copy.docsCta}
               </span>
             </a>
