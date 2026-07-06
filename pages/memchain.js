@@ -53,6 +53,12 @@
  *   restrained product-page depth while keeping every approved privacy limit
  *   and user-facing answer unchanged.
  *
+ * Modification Reason: v3.1 - Mobile evidence hierarchy polish.
+ *   The hero proof rail and memory visual now keep their supporting evidence
+ *   visible on phone-class screens, and the advantage comparison visual avoids
+ *   three overly narrow columns before enough width is available. This improves
+ *   first-read trust without changing approved MemChain claims or routes.
+ *
  * Modification Reason: v2.2 - Multilingual mobile resilience.
  *   Tightened long-locale wrapping for MemChain proof rails, comparison cards,
  *   mode cards, and the animated memory visual so Japanese, Korean, Russian,
@@ -181,6 +187,7 @@
  * Last Modified: v2.8 - Pipeline and pillar rhythm polish
  * Last Modified: v2.9 - Benchmark and comparison surface polish
  * Last Modified: v3.0 - Privacy boundary and FAQ close polish
+ * Last Modified: v3.1 - Mobile evidence hierarchy polish
  * ============================================
  */
 
@@ -283,16 +290,16 @@ const Hero = ({ copy }) => (
             </a>
           </div>
 
-          <div className="mt-8 grid gap-2.5 min-[480px]:grid-cols-3">
+          <div className="mt-8 grid gap-2.5 min-[520px]:grid-cols-3">
             {copy.proofs.map((item) => (
-              <div key={item.label} className="page-card min-w-0 border p-3 md:p-4">
-                <div className="font-mono text-[1.55rem] font-light leading-none text-white md:text-3xl">
+              <div key={item.label} className="page-card min-w-0 border p-3.5 md:p-4">
+                <div className="font-mono text-[1.45rem] font-light leading-none text-white min-[390px]:text-[1.65rem] md:text-3xl">
                   {item.value}
                 </div>
                 <div className="mt-2 break-words text-[9px] uppercase leading-4 tracking-eyebrow text-brand-light">
                   {item.label}
                 </div>
-                <div className="mt-2 hidden text-xs leading-relaxed text-white/42 sm:block">
+                <div className="mt-2 text-[11px] leading-relaxed text-white/42 sm:text-xs">
                   {item.detail}
                 </div>
               </div>
@@ -454,7 +461,7 @@ const MemoryNodeCard = ({ label, title, detail, tone }) => {
       </div>
       <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/35">{label}</div>
       <h3 className="mt-2 break-words text-sm font-medium leading-snug text-white">{title}</h3>
-      <p className="mt-2 hidden text-xs leading-relaxed text-white/45 sm:block">{detail}</p>
+      <p className="mt-2 text-[11px] leading-relaxed text-white/45 sm:text-xs">{detail}</p>
     </div>
   );
 };
@@ -543,7 +550,7 @@ const MemoryAdvantageLab = ({ copy }) => {
                         : 'border-white/10 bg-white/[0.025]'
                     }`}
                   >
-                    <div className={`text-[9px] uppercase tracking-[0.12em] ${
+                    <div className={`break-words text-[9px] uppercase leading-4 tracking-[0.12em] ${
                       index === 2 ? 'text-brand-light' : 'text-white/34'
                     }`}>{label}</div>
                     <div className="mt-2 break-words text-xs leading-snug text-white/68 md:text-sm md:leading-relaxed">
@@ -574,7 +581,7 @@ const MemoryModeCard = ({ mode, tone }) => {
       isMemChain ? 'bg-brand-faint/60 lg:border-r' : 'bg-black/25 lg:border-l'
     } border-white/10`}>
       <div className="mb-5 flex items-center justify-between gap-3">
-        <span className={`text-[10px] uppercase tracking-eyebrow ${
+        <span className={`min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow ${
           isMemChain ? 'text-brand-light' : 'text-white/36'
         }`}>
           {mode.title}
@@ -608,7 +615,7 @@ const MemoryAxisVisual = ({ axis }) => {
           backgroundSize: '24px 24px',
         }}
       />
-      <div className="relative z-10 w-full max-w-[15rem]">
+      <div className="relative z-10 w-full max-w-[18rem] lg:max-w-[15rem]">
         <div className="mb-4 flex items-start justify-between gap-3 font-mono text-[10px] uppercase leading-4 tracking-[0.14em]">
           <span className="min-w-0 break-words text-white/34">{cloudLabel}</span>
           <span className="min-w-0 break-words text-right text-brand-light">{memchainLabel}</span>
@@ -622,7 +629,7 @@ const MemoryAxisVisual = ({ axis }) => {
             className="h-full rounded-pill bg-brand-light"
           />
         </div>
-        <div className="mt-8 grid grid-cols-3 gap-2">
+        <div className="mt-8 grid grid-cols-1 gap-2 min-[440px]:grid-cols-3">
           {axis.steps.map((step, index) => (
             <motion.div
               key={`${axis.id}-${step}`}
