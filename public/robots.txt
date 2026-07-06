@@ -1,0 +1,27 @@
+# ============================================
+# File Creation/Modification Notes
+# ============================================
+# Creation Reason: Provide crawler directives for AeroNyx's multilingual
+# public website now that homepage, MemChain, and Privacy Network pages have
+# canonical URLs, hreflang alternates, and structured data.
+#
+# Main Functionality:
+# - Allows public crawlers to access the official website.
+# - Keeps localized 404/500 error surfaces out of crawl paths.
+# - Points crawlers to the canonical multilingual sitemap.
+#
+# Important Note for Next Developer:
+# - Do not block docs, MemChain, Privacy Network, or language-prefixed public
+#   routes here unless the corresponding SEO/canonical strategy is updated.
+#
+# Last Modified: v1.0 - Initial public crawler policy
+# ============================================
+
+User-agent: *
+Allow: /
+Disallow: /404
+Disallow: /500
+Disallow: /*/404
+Disallow: /*/500
+
+Sitemap: https://aeronyx.network/sitemap.xml

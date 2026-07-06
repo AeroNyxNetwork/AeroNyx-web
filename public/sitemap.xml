@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+============================================
+File Creation/Modification Notes
+============================================
+Creation Reason: Provide a canonical multilingual sitemap for AeroNyx's
+official website so search engines and AI retrieval systems can discover the
+protocol homepage, MemChain page, and Privacy Network page across all supported
+locales.
+
+Main Functionality:
+- Lists the public product/protocol URLs that should be indexed.
+- Includes xhtml hreflang alternates matching components/ui/SEO.js.
+- Excludes 404/500 error pages, app subdomain, and docs subdomain because they
+  have separate crawl/indexing surfaces.
+
+Important Note for Next Developer:
+- Keep this file aligned with next.config.js i18n locales and SEO.js alternate
+  URL generation. Default English URLs intentionally do not use /en.
+- Add new public product pages here when they are ready for indexing.
+
+Last Modified: v1.0 - Initial multilingual sitemap
+============================================
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://aeronyx.network</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ru</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/zh-Hant</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/zh-Hans</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ja</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ko</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/es</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/memchain</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/memchain" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/memchain" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/memchain" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/memchain" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ru/memchain</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/memchain" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/memchain" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/memchain" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/memchain" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/zh-Hant/memchain</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/memchain" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/memchain" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/memchain" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/memchain" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/zh-Hans/memchain</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/memchain" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/memchain" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/memchain" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/memchain" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ja/memchain</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/memchain" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/memchain" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/memchain" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/memchain" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ko/memchain</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/memchain" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/memchain" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/memchain" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/memchain" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/es/memchain</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/memchain" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/memchain" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/memchain" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/memchain" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/memchain" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/memchain" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/privacy-network</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-network" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ru/privacy-network</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-network" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/zh-Hant/privacy-network</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-network" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/zh-Hans/privacy-network</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-network" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ja/privacy-network</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-network" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ko/privacy-network</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-network" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/es/privacy-network</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-network" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-network" />
+  </url>
+</urlset>
