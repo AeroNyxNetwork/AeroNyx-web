@@ -53,6 +53,12 @@
  *   protocol rather than another centralized VPN provider, with the detailed
  *   comparison living on /privacy-network.
  *
+ * Modification Reason: v1.8 - Primitive bridge mobile polish.
+ *   The center protocol spine now reads as a connective invariant between
+ *   Privacy Network and MemChain instead of a third card on mobile. Long SVG
+ *   captions are hidden on narrow screens to prevent Russian, Spanish, Korean,
+ *   Japanese, and CJK copy from colliding with the visual proof.
+ *
  * Historical Notes:
  * v1.3 - Homepage primitive animation handoff.
  *   Polished the two homepage primitive cards so they visually hand off to the
@@ -86,6 +92,7 @@
  * Last Modified: v1.5 - Homepage primitive internationalization
  * Last Modified: v1.6 - Homepage primitive evidence polish
  * Last Modified: v1.7 - Privacy Network trust-model teaser
+ * Last Modified: v1.8 - Primitive bridge mobile polish
  * ============================================
  */
 
@@ -173,7 +180,7 @@ const CorePrimitives = ({ activeLocale: providedLocale }) => {
   const spineWords = copy.spineWords || ['Route', 'Coordinate', 'Remember'];
 
   return (
-    <section className="relative overflow-hidden border-y border-white/5 py-12 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
+    <section className="relative overflow-hidden border-y border-white/5 py-14 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/30 to-transparent" />
       <Container>
         <div className="mx-auto max-w-6xl">
@@ -195,7 +202,7 @@ const CorePrimitives = ({ activeLocale: providedLocale }) => {
             </p>
           </motion.div>
 
-          <div className="grid gap-4 lg:grid-cols-[1fr_0.24fr_1fr] lg:items-stretch lg:gap-5">
+          <div className="grid gap-3.5 lg:grid-cols-[1fr_0.24fr_1fr] lg:items-stretch lg:gap-5">
             <PrimitiveCard primitive={primitiveCards[0]} reduced={reduced} index={0} />
             <ProtocolSpine words={spineWords} reduced={reduced} />
             <PrimitiveCard primitive={primitiveCards[1]} reduced={reduced} index={1} />
@@ -209,7 +216,7 @@ const CorePrimitives = ({ activeLocale: providedLocale }) => {
             className="mt-4 grid gap-2.5 sm:grid-cols-3 md:mt-5"
           >
             {proofItems.map((item, index) => (
-              <div key={item.label} className="page-card relative min-w-0 overflow-hidden rounded border px-4 py-4 md:min-h-[8.25rem] md:px-5">
+              <div key={item.label} className="page-card relative min-w-0 overflow-hidden rounded border px-4 py-4 sm:min-h-[9.5rem] md:min-h-[8.25rem] md:px-5">
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/35 to-transparent" />
                 <div className="mb-4 flex items-start justify-between gap-3">
                   <div className="h-2 w-2 shrink-0 rounded-pill bg-brand-light/70" />
@@ -293,7 +300,7 @@ const ProtocolSpine = ({ words, reduced }) => (
     whileInView={reduced ? undefined : { opacity: 1, scale: 1 }}
     viewport={{ once: true }}
     transition={{ duration: 0.55, delay: 0.08, ease: EASE }}
-    className="relative flex min-h-[8rem] items-center justify-center overflow-hidden rounded border border-white/10 bg-white/[0.02] px-4 py-5 lg:min-h-full lg:px-2"
+    className="relative flex min-h-[5.75rem] items-center justify-center overflow-hidden border-y border-white/10 bg-white/[0.018] px-2.5 py-4 sm:min-h-[6.5rem] sm:px-4 lg:min-h-full lg:rounded lg:border lg:px-2 lg:py-5"
   >
     <div className="absolute left-1/2 top-4 hidden h-[calc(100%-2rem)] w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-brand-light/30 to-transparent lg:block" />
     <div className="absolute inset-y-1/2 left-4 right-4 h-px bg-gradient-to-r from-transparent via-brand-light/30 to-transparent lg:hidden" />
@@ -303,13 +310,13 @@ const ProtocolSpine = ({ words, reduced }) => (
       animate={reduced ? undefined : { scale: [0.92, 1.08, 0.92], opacity: [0.42, 0.82, 0.42] }}
       transition={reduced ? undefined : { duration: 3.2, repeat: Infinity, ease: EASE }}
     />
-    <div className="relative z-10 grid grid-cols-3 gap-2 text-center sm:gap-3 lg:grid-cols-1">
+    <div className="relative z-10 grid w-full grid-cols-3 gap-1.5 text-center sm:gap-3 lg:grid-cols-1">
       {words.map((word, index) => (
-        <div key={word} className="rounded-sm border border-white/10 bg-black/35 px-1.5 py-2 sm:px-2.5">
+        <div key={word} className="min-w-0 rounded-sm border border-white/10 bg-black/35 px-2 py-2 sm:px-2.5">
           <div className="mb-1 font-mono text-[8px] leading-none text-white/24">
             {String(index + 1).padStart(2, '0')}
           </div>
-          <div className="break-words font-mono text-[9px] uppercase leading-4 tracking-[0.14em] text-brand-light sm:text-xs sm:tracking-eyebrow">
+          <div className="break-words font-mono text-[9px] uppercase leading-4 tracking-[0.08em] text-brand-light sm:text-xs sm:tracking-eyebrow">
             {word}
           </div>
         </div>
@@ -319,7 +326,7 @@ const ProtocolSpine = ({ words, reduced }) => (
 );
 
 const PrimitiveVisual = ({ type, reduced, visualCopy }) => (
-  <div className="relative mb-5 h-48 overflow-hidden rounded border border-white/10 bg-black/25 md:mb-0 lg:mb-6">
+  <div className="relative mb-5 h-40 overflow-hidden rounded border border-white/10 bg-black/25 sm:h-48 md:mb-0 lg:mb-6">
     <div
       className="absolute inset-0 opacity-[0.06]"
       style={{
@@ -367,7 +374,7 @@ const TrafficVisual = ({ reduced, copy = {} }) => (
       animate={reduced ? undefined : { cx: [72, 156, 264, 348], cy: [68, 54, 60, 76], opacity: [0.28, 0.8, 0.8, 0.28] }}
       transition={reduced ? undefined : { duration: 4.2, repeat: Infinity, ease: 'linear', delay: 0.45 }}
     />
-    <text x="210" y="42" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, fill: 'rgba(95,187,247,0.6)' }}>
+    <text className="hidden sm:block" x="210" y="42" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, fill: 'rgba(95,187,247,0.6)' }}>
       {copy.caption || 'encrypted route · aggregate health only'}
     </text>
   </svg>
@@ -375,7 +382,7 @@ const TrafficVisual = ({ reduced, copy = {} }) => (
 
 const MemoryVisual = ({ reduced, copy = {} }) => (
   <svg className="absolute inset-0 h-full w-full" viewBox="0 0 420 190" fill="none">
-    <text x="210" y="38" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, fill: 'rgba(95,187,247,0.6)' }}>
+    <text className="hidden sm:block" x="210" y="38" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 10, fill: 'rgba(95,187,247,0.6)' }}>
       {copy.caption || 'local memory · sealed sync · blind node'}
     </text>
     {[
@@ -407,7 +414,7 @@ const MemoryVisual = ({ reduced, copy = {} }) => (
       animate={reduced ? undefined : { cx: [81, 211, 341], opacity: [0.42, 1, 0.42] }}
       transition={reduced ? undefined : { duration: 3.6, repeat: Infinity, ease: 'linear' }}
     />
-    <text x="210" y="154" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 9, fill: 'rgba(255,255,255,0.34)' }}>
+    <text className="hidden sm:block" x="210" y="154" textAnchor="middle" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 9, fill: 'rgba(255,255,255,0.34)' }}>
       {copy.footer || 'node stores memory it cannot read'}
     </text>
   </svg>
