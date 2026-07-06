@@ -33,6 +33,12 @@
  *   and repeats the side label inside each card. This keeps every stacked
  *   mobile row understandable without changing the protocol/legal boundary copy.
  *
+ * Modification Reason: v3.0 - Trust model docs handoff.
+ *   The trust-model boundary card now links to the dedicated documentation
+ *   article explaining why AeroNyx is a blind open protocol rather than another
+ *   centralized VPN provider. This creates a crawlable product-to-docs handoff
+ *   without changing the page's privacy or legal boundary claims.
+ *
  * Modification Reason: v2.4 - Secondary page internationalization.
  *   Moved the Privacy Network hero, protocol bridge, North Star Plan, live
  *   protocol proof, assurance model, daily dashboard signals, and telemetry
@@ -165,6 +171,7 @@
  * Last Modified: v2.7 - Protection assurance surface polish
  * Last Modified: v2.8 - Traditional VPN trust model contrast
  * Last Modified: v2.9 - Trust model mobile readability
+ * Last Modified: v3.0 - Trust model docs handoff
  * ============================================
  */
 
@@ -192,6 +199,7 @@ const ProtocolBackground = dynamic(
 );
 
 const EASE = [0.16, 1, 0.3, 1];
+const TRUST_MODEL_DOCS_URL = 'https://docs.aeronyx.network/network/aeronyx-privacy-network-vs-traditional-vpn';
 
 export default function PrivacyNetworkPage() {
   const { locale } = useRouter();
@@ -386,6 +394,13 @@ const TrustModelComparison = ({ copy }) => (
               <p className="mt-2 text-sm leading-relaxed text-white/64">
                 {copy.boundary}
               </p>
+              <a
+                href={TRUST_MODEL_DOCS_URL}
+                className="mt-4 inline-flex max-w-full items-center gap-2 border border-brand-line bg-black/20 px-3 py-2 text-[10px] uppercase leading-4 tracking-[0.14em] text-brand-light transition duration-fast hover:border-brand-light hover:bg-black/35 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light"
+              >
+                <span className="min-w-0 break-words">{copy.docsCta}</span>
+                <span aria-hidden="true" className="shrink-0">↗</span>
+              </a>
             </div>
           </motion.div>
 
