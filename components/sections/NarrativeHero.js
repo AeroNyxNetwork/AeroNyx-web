@@ -20,6 +20,15 @@
  *   downstream sections.
  *
  * Modification Reason:
+ *   v8.12 — Randomized Lens conversation scenes.
+ *   The right-side Lens proof now supports multiple localized conversation
+ *   scenes and chooses one after hydration on every page entry. The first
+ *   server-rendered scene remains deterministic to avoid hydration mismatch,
+ *   while the client-side selection makes repeat visits feel alive. Cipher
+ *   packets are derived deterministically from the selected scene so the
+ *   ciphertext layer always matches the visible conversation length.
+ *
+ * Modification Reason:
  *   v8.9 — Homepage hero internationalization pass.
  *   Moved first-viewport product narrative, CTA labels, Lens hint, slider
  *   label, and earned proof stamp into lib/i18n so locale switching does not
@@ -120,6 +129,7 @@
  * Last Modified: v8.9.0 — Homepage hero internationalization pass
  * Last Modified: v8.10.0 — Lens scene microcopy internationalization
  * Last Modified: v8.11.0 — First-viewport app launch CTA
+ * Last Modified: v8.12.0 — Randomized Lens conversation scenes
  * ============================================================================
  */
 
@@ -149,6 +159,37 @@ const HEXC = '0123456789abcdef';
 const rhex = (n) =>
   Array.from({ length: n }, () => HEXC[(Math.random() * 16) | 0]).join('');
 
+const hashString = (value) => {
+  let hash = 2166136261;
+  const input = String(value || '');
+  for (let i = 0; i < input.length; i += 1) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+};
+
+const deterministicHex = (seed, length) => {
+  let state = hashString(seed) || 1;
+  return Array.from({ length }, () => {
+    state = Math.imul(state ^ (state >>> 15), 2246822507) >>> 0;
+    state = Math.imul(state ^ (state >>> 13), 3266489909) >>> 0;
+    return HEXC[state & 15];
+  }).join('');
+};
+
+const getCipherPacket = (msg, idx, sceneKey) => {
+  const seed = `${sceneKey || 'default'}:${idx}:${msg?.text || 'receipt'}`;
+  const hash = hashString(seed);
+  const textLength = msg?.text?.length || 48;
+  const hexLength = msg?.receipt ? 96 : Math.min(Math.max(textLength * 2, 48), 96);
+
+  return {
+    hex: deterministicHex(seed, hexLength),
+    size: msg?.receipt ? 360 + (hash % 128) : 172 + (hash % 180),
+  };
+};
+
 // ---- The warm scene the Lens reveals ----
 const CONVO = [
   { from: 'you', text: 'Find me a flight to Tokyo next Friday. Under $600.' },
@@ -157,6 +198,7 @@ const CONVO = [
   { from: 'ai', receipt: true },
 ];
 const DEFAULT_SCENE_COPY = {
+  id: 'flight',
   messages: CONVO,
   senderUnknown: 'sender unknown',
   receiptTitle: 'Booked & routed',
@@ -166,10 +208,6 @@ const DEFAULT_SCENE_COPY = {
   agentName: 'Aria — your agent',
   secureLine: 'end-to-end encrypted · verified',
 };
-const CIPHER = CONVO.map((m) => ({
-  hex: rhex(m.receipt ? 96 : Math.min((m.text ? m.text.length * 2 : 60), 72)),
-  size: m.receipt ? 412 : 180 + ((Math.random() * 140) | 0),
-}));
 
 // ============================================================================
 // BACKGROUND — WatcherField (PRESERVED VERBATIM from v7.5)
@@ -436,7 +474,7 @@ function WatcherField({ reduced, splitRef }) {
 // ============================================================================
 function Bubble({ msg, cipher, idx, sceneCopy = DEFAULT_SCENE_COPY }) {
   const isYou = msg.from === 'you';
-  const cipherPacket = CIPHER[idx] || CIPHER[0];
+  const cipherPacket = getCipherPacket(msg, idx, sceneCopy.id || sceneCopy.receiptTitle);
   if (cipher)
     return (
       <div className={`flex ${isYou ? 'justify-end' : 'justify-start'} mb-3`}>
@@ -535,10 +573,20 @@ const NarrativeHero = ({ activeLocale: providedLocale }) => {
   const activeLocale = normalizeLocaleCode(providedLocale || locale, asPath);
   const messages = getMessages(activeLocale);
   const copy = messages.homeHero || getMessages(DEFAULT_LOCALE).homeHero;
-  const sceneCopy = {
+  const baseSceneCopy = {
     ...DEFAULT_SCENE_COPY,
     ...(copy.sceneCopy || {}),
     messages: copy.sceneCopy?.messages || DEFAULT_SCENE_COPY.messages,
+  };
+  const sceneOptions = Array.isArray(copy.sceneCopy?.conversations) && copy.sceneCopy.conversations.length > 0
+    ? copy.sceneCopy.conversations
+    : [baseSceneCopy];
+  const [sceneIndex, setSceneIndex] = useState(0);
+  const sceneVariant = sceneOptions[sceneIndex % sceneOptions.length] || sceneOptions[0] || baseSceneCopy;
+  const sceneCopy = {
+    ...baseSceneCopy,
+    ...sceneVariant,
+    messages: sceneVariant.messages || baseSceneCopy.messages,
   };
   const privacyAccessHref =
     activeLocale && activeLocale !== DEFAULT_LOCALE
@@ -563,6 +611,22 @@ const NarrativeHero = ({ activeLocale: providedLocale }) => {
     autoRefresh: true,
     refreshInterval: 30000,
   });
+
+  useEffect(() => {
+    if (sceneOptions.length <= 1) {
+      setSceneIndex(0);
+      return;
+    }
+
+    const randomValue =
+      typeof window !== 'undefined'
+      && window.crypto
+      && typeof window.crypto.getRandomValues === 'function'
+        ? window.crypto.getRandomValues(new Uint32Array(1))[0]
+        : Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+
+    setSceneIndex(randomValue % sceneOptions.length);
+  }, [activeLocale, sceneOptions.length]);
 
   // SSR-safe reduced-motion detection (preserved from v7.5)
   useEffect(() => {
