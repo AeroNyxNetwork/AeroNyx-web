@@ -36,6 +36,11 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  *   shared AeroNyx Organization, WebSite, WebPage, and SoftwareApplication
  *   graph. This improves GEO extraction without duplicating base metadata.
  *
+ * Modification Reason: v1.7 - Protocol social preview metadata.
+ *   Replaced the legacy logo-only Open Graph fallback with the maintained
+ *   1200x630 protocol preview asset and emitted explicit image dimensions,
+ *   type, secure URL, and alt text for cleaner social/AI crawler previews.
+ *
  * Historical Notes:
  * v1.1 - Protocol-first default metadata.
  *   Replaced legacy fallback keywords with AeroNyx's current protocol narrative
@@ -62,6 +67,7 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  * Last Modified: v1.4 - Entity structured data for GEO
  * Last Modified: v1.5 - Error-page index control
  * Last Modified: v1.6 - Page-specific structured data extension
+ * Last Modified: v1.7 - Protocol social preview metadata
  * ============================================
  *
  * @param {Object} props - Component props
@@ -69,6 +75,9 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  * @param {string} props.description - Page description
  * @param {string} props.canonicalUrl - Canonical URL for the page
  * @param {string} props.ogImage - Open Graph image URL
+ * @param {string} props.ogImageAlt - Open Graph image alt text
+ * @param {number} props.ogImageWidth - Open Graph image width in pixels
+ * @param {number} props.ogImageHeight - Open Graph image height in pixels
  * @param {string} props.ogType - Open Graph type
  * @param {Array} props.keywords - Array of keywords for the page
  * @param {Object} props.structuredData - Optional JSON-LD override
@@ -213,7 +222,10 @@ const SEO = ({
   title = 'AeroNyx | Encrypted coordination layer for autonomous agents',
   description = 'AeroNyx lets humans, apps, and AI agents route traffic, exchange encrypted messages, preserve private memory, and coordinate work through a blind, open protocol.',
   canonicalUrl = 'https://aeronyx.network/',
-  ogImage = 'https://binary.aeronyx.network/aeronyx_logo.png',
+  ogImage = 'https://aeronyx.network/og-image.png',
+  ogImageAlt = 'AeroNyx encrypted coordination layer for autonomous agents',
+  ogImageWidth = 1200,
+  ogImageHeight = 630,
   ogType = 'website',
   keywords = ['encrypted coordination layer', 'blind protocol', 'privacy network', 'private AI memory', 'encrypted messaging', 'agent coordination', 'open decentralized nodes'],
   structuredData,
@@ -268,6 +280,11 @@ const SEO = ({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage} />
+      <meta property="og:image:secure_url" content={ogImage} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content={String(ogImageWidth)} />
+      <meta property="og:image:height" content={String(ogImageHeight)} />
+      <meta property="og:image:alt" content={ogImageAlt} />
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -275,6 +292,7 @@ const SEO = ({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:image:alt" content={ogImageAlt} />
       <meta name="twitter:site" content="@AeroNyxNetwork" />
 
       <script

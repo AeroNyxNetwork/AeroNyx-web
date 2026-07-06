@@ -133,7 +133,6 @@ export default function Home({ pageLocale = DEFAULT_LOCALE }) {
         title={copy.seo.title}
         description={copy.seo.description}
         canonicalUrl={`https://aeronyx.network${canonicalPath}/`}
-        ogImage="https://binary.aeronyx.network/aeronyx_logo.png"
         keywords={copy.seo.keywords}
       />
 
