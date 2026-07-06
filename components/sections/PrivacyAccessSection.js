@@ -6,6 +6,12 @@
  *   The in-phone product title now reads from the existing Privacy Network
  *   copy contract so localized pages do not show an English-only app mockup.
  *
+ * Modification Reason: v2.7 - Access conversion surface polish.
+ *   The download/access section now shares the same brand-primary CTA,
+ *   numbered assurance card rhythm, and tighter phone-mock wrapping used by
+ *   the Privacy Network product page. DownloadsModal behavior and the existing
+ *   localization copy contract remain unchanged.
+ *
  * Modification Reason: v2.5 - Mobile conversion polish.
  *   Reordered the mobile section so the product promise and download action
  *   appear before the device mockup and before secondary feature cards,
@@ -47,6 +53,7 @@
  * Last Modified: v2.4 - Product-grade protection mockup
  * Last Modified: v2.5 - Mobile conversion polish
  * Last Modified: v2.6 - Localized phone mock title
+ * Last Modified: v2.7 - Access conversion surface polish
  * ============================================
  */
 
@@ -64,51 +71,52 @@ const PrivacyAccessSection = () => {
   const features = copy.features;
 
   return (
-    <section id="privacy-access" className="py-12 md:py-24" style={{ background: 'var(--surface-1, #0C0C13)' }}>
+    <section id="privacy-access" className="border-t border-white/10 py-12 md:py-24" style={{ background: 'var(--surface-1, #0C0C13)' }}>
       <Container>
-        <div className="max-w-5xl mx-auto">
+        <div className="mx-auto max-w-6xl">
           <div className="grid gap-8 md:gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             {/* Content */}
-            <div className="order-1">
-              <div className="mb-4 inline-flex border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase tracking-eyebrow text-brand-light">
+            <div className="order-1 min-w-0">
+              <div className="mb-4 inline-flex max-w-full border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
                 {copy.privacyNetwork}
               </div>
-              <h2 className="text-display-md font-light mb-4 md:mb-6">
+              <h2 className="mb-4 break-words text-display-md font-light text-white md:mb-6">
                 {copy.title}
-                <span className="block text-lg md:text-xl text-white/40 mt-2">
+                <span className="mt-2 block break-words text-lg text-white/40 md:text-xl">
                   {copy.subtitle}
                 </span>
               </h2>
 
-              <p className="text-sm md:text-lg text-white/60 mb-6 md:mb-8 leading-relaxed">
+              <p className="mb-6 max-w-copy break-words text-sm leading-relaxed text-white/60 md:mb-8 md:text-lg">
                 {copy.description}
               </p>
 
               <button
                 onClick={() => setShowDownloads(true)}
-                className="mb-6 inline-flex min-h-[48px] w-full items-center justify-center rounded bg-white px-6 py-3 text-center text-sm font-medium text-black transition-colors duration-fast hover:bg-white/90 sm:w-auto md:mb-8 md:px-8 md:py-4 md:text-base"
+                className="mb-6 inline-flex min-h-[48px] w-full max-w-xs min-w-0 items-center justify-center break-words rounded border border-brand-line bg-brand px-6 py-3 text-center text-sm font-semibold leading-snug tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.2)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto md:mb-8 md:px-8 md:py-4 md:text-base"
               >
                 {copy.download}
               </button>
 
               <div className="grid gap-2 sm:grid-cols-2 md:gap-3">
                 {features.map((feature, i) => (
-                  <div key={i} className="border border-white/10 bg-white/[0.025] p-3 md:p-4">
-                    <div className="mb-3 flex items-center gap-2">
+                  <div key={feature.title} className="relative min-w-0 overflow-hidden border border-white/10 bg-white/[0.025] p-3 md:p-4">
+                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/30 to-transparent" />
+                    <div className="mb-3 flex items-start justify-between gap-3">
                       <div className="h-1.5 w-1.5 shrink-0 rounded-pill bg-brand-light/70" />
-                      <div className="text-[10px] uppercase tracking-eyebrow text-white/34">
+                      <div className="shrink-0 text-[10px] uppercase leading-4 tracking-eyebrow text-white/34">
                         {String(i + 1).padStart(2, '0')}
                       </div>
                     </div>
-                    <div className="font-medium text-white/80 text-sm md:text-base">{feature.title}</div>
-                    <div className="mt-2 text-xs leading-relaxed text-white/56 md:text-sm">{feature.description}</div>
+                    <div className="break-words text-sm font-medium leading-snug text-white/80 md:text-base">{feature.title}</div>
+                    <div className="mt-2 break-words text-xs leading-relaxed text-white/56 md:text-sm">{feature.description}</div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Visual */}
-            <div className="order-2">
+            <div className="order-2 min-w-0">
               <PrivacyAccessVisual copy={copy} />
             </div>
           </div>
@@ -148,12 +156,13 @@ const PrivacyAccessVisual = ({ copy }) => {
   ];
 
   return (
-    <div className="relative flex items-center justify-center overflow-hidden py-1 md:py-2">
+    <div className="relative flex min-w-0 items-center justify-center overflow-hidden py-1 md:py-2">
       {/* Phone mockup */}
-      <div className="h-[520px] w-64 max-w-full overflow-hidden rounded-[2rem] border-2 border-white/10 p-3 md:h-[600px] md:w-72 md:rounded-[3rem] md:p-4" style={{ background: 'var(--surface-0, #08080D)' }}>
+      <div className="relative h-[520px] w-64 max-w-full overflow-hidden rounded-[2rem] border-2 border-white/10 p-3 shadow-[0_28px_90px_rgba(0,0,0,0.45)] md:h-[600px] md:w-72 md:rounded-[3rem] md:p-4" style={{ background: 'var(--surface-0, #08080D)' }}>
+        <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/50 to-transparent" />
         <div className="flex h-full w-full flex-col overflow-hidden rounded-[1.55rem] p-4 md:rounded-[2.5rem] md:p-6" style={{ background: 'var(--surface-2, #111118)' }}>
           {/* Status bar */}
-          <div className="flex justify-between items-center mb-5 md:mb-8 text-xs text-white/40">
+          <div className="mb-5 flex items-center justify-between gap-3 text-xs text-white/40 md:mb-8">
             <span>9:41 AM</span>
             <div className="flex gap-1">
               <div className="w-4 h-3 border border-white/40 rounded-sm" />
@@ -165,17 +174,17 @@ const PrivacyAccessVisual = ({ copy }) => {
           <div className="flex-1 flex flex-col">
             <div className="mb-4 md:mb-6">
               <div className="break-words text-xl font-light leading-tight md:text-2xl">{copy.title}</div>
-              <div className="mt-2 inline-flex border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">
+              <div className="mt-2 inline-flex max-w-full break-words border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
                 {isConnected ? copy.protected : copy.unprotected}
               </div>
               <div className="mt-3 grid gap-1 text-xs text-white/42">
-                <div className="flex justify-between gap-3">
-                  <span>{copy.location}</span>
-                  <span className="text-white/60">{isConnected ? (copy.activeRoute || 'Asia route') : (copy.standby || 'Standby')}</span>
+                <div className="flex min-w-0 justify-between gap-3">
+                  <span className="min-w-0 break-words">{copy.location}</span>
+                  <span className="min-w-0 break-words text-right text-white/60">{isConnected ? (copy.activeRoute || 'Asia route') : (copy.standby || 'Standby')}</span>
                 </div>
-                <div className="flex justify-between gap-3">
-                  <span>{copy.ipAddress}</span>
-                  <span className="font-mono text-white/60">{isConnected ? '***.***.***' : '192.168.1.1'}</span>
+                <div className="flex min-w-0 justify-between gap-3">
+                  <span className="min-w-0 break-words">{copy.ipAddress}</span>
+                  <span className="min-w-0 break-all text-right font-mono text-white/60">{isConnected ? '***.***.***' : '192.168.1.1'}</span>
                 </div>
               </div>
             </div>
@@ -188,8 +197,8 @@ const PrivacyAccessVisual = ({ copy }) => {
                 aria-label={isConnected ? copy.connected : copy.connect}
                 className={`h-20 w-20 rounded-pill border-2 transition-all duration-slow ease-out-brand md:h-28 md:w-28 ${
                   isConnected
-                    ? 'border-brand-light bg-brand-faint'
-                    : 'border-white/20 hover:border-white/40'
+                    ? 'border-brand-light bg-brand-faint shadow-[0_0_36px_rgba(151,136,247,0.25)]'
+                    : 'border-white/20 bg-white/[0.02] hover:border-white/40'
                 }`}
               >
                 <div className="text-center">
@@ -205,9 +214,10 @@ const PrivacyAccessVisual = ({ copy }) => {
 
             <div className="mb-3 grid gap-2 md:mb-5">
               {protectionMetrics.map((metric) => (
-                <div key={metric.label} className="border border-white/10 bg-white/[0.025] p-3">
-                  <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{metric.label}</div>
-                  <div className="mt-1 font-mono text-lg text-white">{metric.value}</div>
+                <div key={metric.label} className="relative min-w-0 overflow-hidden border border-white/10 bg-white/[0.025] p-3">
+                  <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-brand-light/35 to-transparent" />
+                  <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/34">{metric.label}</div>
+                  <div className="mt-1 break-words font-mono text-lg text-white">{metric.value}</div>
                 </div>
               ))}
             </div>
