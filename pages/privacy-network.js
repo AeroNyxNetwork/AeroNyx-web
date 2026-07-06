@@ -39,6 +39,12 @@
  *   centralized VPN provider. This creates a crawlable product-to-docs handoff
  *   without changing the page's privacy or legal boundary claims.
  *
+ * Modification Reason: v3.1 - Privacy Network FAQ and GEO answers.
+ *   Added a visible FAQ section plus FAQPage structured data so users, search
+ *   engines, and AI answer engines can cite the same trust-boundary answers:
+ *   how AeroNyx differs from traditional VPNs, what nodes cannot read, who can
+ *   run nodes, and where lawful-use responsibility remains.
+ *
  * Modification Reason: v2.4 - Secondary page internationalization.
  *   Moved the Privacy Network hero, protocol bridge, North Star Plan, live
  *   protocol proof, assurance model, daily dashboard signals, and telemetry
@@ -134,6 +140,7 @@
  *     AeroNyx Privacy Protocol.
  *   - Shows user-facing protection signals, aggregate protocol statistics,
  *     and the existing download/app visual section.
+ *   - Publishes visible FAQ answers and matching structured data for GEO.
  * Dependencies:
  *   - components/sections/PrivacyAccessSection keeps the existing download
  *     modal contract while visible copy remains Privacy Network.
@@ -172,6 +179,7 @@
  * Last Modified: v2.8 - Traditional VPN trust model contrast
  * Last Modified: v2.9 - Trust model mobile readability
  * Last Modified: v3.0 - Trust model docs handoff
+ * Last Modified: v3.1 - Privacy Network FAQ and GEO answers
  * ============================================
  */
 
@@ -201,12 +209,47 @@ const ProtocolBackground = dynamic(
 const EASE = [0.16, 1, 0.3, 1];
 const TRUST_MODEL_DOCS_URL = 'https://docs.aeronyx.network/network/aeronyx-privacy-network-vs-traditional-vpn';
 
+const buildFaqStructuredData = (faqCopy, canonicalUrl) => {
+  const items = Array.isArray(faqCopy?.items) ? faqCopy.items : [];
+  const mainEntity = items
+    .map((item) => {
+      const question = String(item.q || item.question || '').trim();
+      const answer = String(item.a || item.answer || '').trim();
+
+      if (!question || !answer) {
+        return null;
+      }
+
+      return {
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: answer,
+        },
+      };
+    })
+    .filter(Boolean);
+
+  if (mainEntity.length === 0) {
+    return null;
+  }
+
+  return {
+    '@type': 'FAQPage',
+    '@id': `${canonicalUrl}#faq`,
+    mainEntity,
+  };
+};
+
 export default function PrivacyNetworkPage() {
   const { locale } = useRouter();
   const activeLocale = locale || DEFAULT_LOCALE;
   const canonicalPath = activeLocale === DEFAULT_LOCALE ? '/privacy-network' : `/${activeLocale}/privacy-network`;
+  const canonicalUrl = `https://aeronyx.network${canonicalPath}`;
   const copy = getMessages(activeLocale);
   const pageCopy = copy.privacyNetworkPage || getMessages(DEFAULT_LOCALE).privacyNetworkPage;
+  const faqStructuredData = buildFaqStructuredData(pageCopy.faq, canonicalUrl);
   const { stats, isLoading } = useNetworkStats({
     period: '30d',
     autoRefresh: true,
@@ -222,8 +265,9 @@ export default function PrivacyNetworkPage() {
       <SEO
         title={pageCopy.seo.title}
         description={pageCopy.seo.description}
-        canonicalUrl={`https://aeronyx.network${canonicalPath}`}
+        canonicalUrl={canonicalUrl}
         keywords={pageCopy.seo.keywords}
+        extraStructuredData={faqStructuredData}
       />
 
       <Suspense fallback={<div className="fixed inset-0" style={{ background: 'var(--surface-0, #08080D)' }} />}>
@@ -247,6 +291,7 @@ export default function PrivacyNetworkPage() {
         <AssuranceModel copy={pageCopy.assurance} />
         <ProtectionSignals copy={pageCopy.protection} />
         <PrivacyBoundary copy={pageCopy.boundary} />
+        <PrivacyNetworkFAQ copy={pageCopy.faq} />
         <PrivacyAccessSection />
       </main>
 
@@ -812,6 +857,35 @@ const PrivacyBoundary = ({ copy }) => (
             </div>
           ))}
         </div>
+      </div>
+    </Container>
+  </section>
+);
+
+const PrivacyNetworkFAQ = ({ copy }) => (
+  <section id="privacy-network-faq" className="py-14 md:py-20">
+    <Container>
+      <div className="mb-10 max-w-3xl">
+        <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{copy.eyebrow}</div>
+        <h2 className="mt-3 max-w-3xl break-words text-display-md font-light text-white">{copy.title}</h2>
+        <p className="mt-4 text-base leading-relaxed text-white/58 md:text-lg">
+          {copy.description}
+        </p>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        {copy.items.map((item, index) => (
+          <article key={item.q} className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/40 to-transparent" />
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div className="min-w-0 break-words font-mono text-xs uppercase leading-4 tracking-[0.14em] text-brand-light/80">
+                {String(index + 1).padStart(2, '0')}
+              </div>
+              <span className="mt-1 h-2 w-2 shrink-0 rounded-pill bg-brand-light/65" />
+            </div>
+            <h2 className="break-words text-lg font-medium leading-snug text-white">{item.q}</h2>
+            <p className="mt-3 break-words text-sm leading-relaxed text-white/58">{item.a}</p>
+          </article>
+        ))}
       </div>
     </Container>
   </section>
