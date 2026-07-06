@@ -28,6 +28,11 @@
  *   reduced infrastructure visibility without claiming that every metadata risk
  *   disappears or that unlawful activity becomes lawful.
  *
+ * Modification Reason: v2.9 - Trust model mobile readability.
+ *   The trust-model comparison now hides the shared column headers on phones
+ *   and repeats the side label inside each card. This keeps every stacked
+ *   mobile row understandable without changing the protocol/legal boundary copy.
+ *
  * Modification Reason: v2.4 - Secondary page internationalization.
  *   Moved the Privacy Network hero, protocol bridge, North Star Plan, live
  *   protocol proof, assurance model, daily dashboard signals, and telemetry
@@ -159,6 +164,7 @@
  * Last Modified: v2.6 - Status evidence panel polish
  * Last Modified: v2.7 - Protection assurance surface polish
  * Last Modified: v2.8 - Traditional VPN trust model contrast
+ * Last Modified: v2.9 - Trust model mobile readability
  * ============================================
  */
 
@@ -384,7 +390,7 @@ const TrustModelComparison = ({ copy }) => (
           </motion.div>
 
           <div className="min-w-0">
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="hidden gap-2 sm:grid sm:grid-cols-2">
               <div className="border border-white/10 bg-white/[0.018] px-3 py-2.5 text-[10px] uppercase tracking-eyebrow text-white/42 md:px-4">
                 {copy.legacyLabel}
               </div>
@@ -401,9 +407,12 @@ const TrustModelComparison = ({ copy }) => (
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.48, delay: index * 0.045, ease: EASE }}
-                  className="grid min-w-0 gap-2 sm:grid-cols-2"
+                  className="grid min-w-0 gap-2 sm:grid-cols-2 sm:items-stretch"
                 >
                   <div className="min-w-0 border border-white/10 bg-black/20 p-3 md:p-4">
+                    <div className="mb-3 inline-flex max-w-full border border-white/10 bg-white/[0.025] px-2.5 py-1 text-[9px] uppercase leading-4 tracking-[0.12em] text-white/38 sm:hidden">
+                      <span className="min-w-0 break-words">{copy.legacyLabel}</span>
+                    </div>
                     <div className="mb-3 flex items-start justify-between gap-3">
                       <div className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/30">
                         {row.axis}
@@ -417,6 +426,9 @@ const TrustModelComparison = ({ copy }) => (
                     </p>
                   </div>
                   <div className="min-w-0 border border-brand-line bg-brand-faint p-3 md:p-4">
+                    <div className="mb-3 inline-flex max-w-full border border-brand-line bg-black/20 px-2.5 py-1 text-[9px] uppercase leading-4 tracking-[0.12em] text-brand-light sm:hidden">
+                      <span className="min-w-0 break-words">{copy.aeronyxLabel}</span>
+                    </div>
                     <div className="mb-3 flex items-start justify-between gap-3">
                       <div className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
                         {row.axis}
