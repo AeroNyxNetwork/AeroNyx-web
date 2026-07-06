@@ -24,6 +24,12 @@
  *   developer documentation path so the homepage never routes users to a 404
  *   while the encrypted service relay remains a coming-soon protocol surface.
  *
+ * Modification Reason: v5.2 - Maintained protocol docs routes.
+ *   Developer-documentation URLs were retired in the docs site. Relay and
+ *   foundation product CTAs now resolve to the maintained node discovery and
+ *   relay foundation page, and the foundation label no longer promises SDK
+ *   docs that are not currently published.
+ *
  * Modification Reason: v4.6 - North Star anchor entry.
  *   Added a stable homepage `#north-star-plan` anchor for the promoted North
  *   Star Plan covenant so the hero can link directly into the infrastructure
@@ -275,7 +281,7 @@ const ProductsEcosystem = () => {
         savings: 'Lower metadata exposure',
       },
       status: 'coming-soon',
-      cta: { text: 'Read Protocol Docs', link: 'https://docs.aeronyx.network/developer-documentation/overview' },
+      cta: { text: 'Read Protocol Docs', link: 'https://docs.aeronyx.network/network/node-discovery-and-relay-foundation' },
       proof: 'Encrypted delivery for services',
     },
     {
@@ -300,7 +306,7 @@ const ProductsEcosystem = () => {
         savings: 'Credible by design',
       },
       status: 'live',
-      cta: { text: 'View SDK Docs', link: 'https://docs.aeronyx.network/developer-documentation/overview' },
+      cta: { text: 'Read Node Docs', link: 'https://docs.aeronyx.network/network/node-discovery-and-relay-foundation' },
       proof: 'Signed node state and public aggregates',
     },
   ];

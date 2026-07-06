@@ -11,6 +11,11 @@
  *   The final "Build on AeroNyx" eyebrow now comes from lib/i18n so localized
  *   homepages do not end with an English-only section label.
  *
+ * Modification Reason: v2.8 - Protocol docs URL alignment.
+ *   The final primary action now points to the maintained Protocol
+ *   Architecture docs page instead of the retired whitepaper slug. Keep this
+ *   destination aligned with the Footer's protocol architecture resource link.
+ *
  * Historical Notes:
  * v2.5 — Product-action closing surface.
  *   Replaced the two-action whitepaper/contact ending with a clearer
@@ -29,20 +34,21 @@
  *   1. FIX: entrance animations used `animate` (fired on page mount) —
  *      this section sits at the very bottom, so the animation always
  *      completed long before the user scrolled to it. Now whileInView.
- *   2. Whitepaper URL aligned with Footer's canonical deep link
- *      (docs.aeronyx.network/aeronyx-whitepaper/technical-white-paper);
- *      the previous /whitepaper path was inconsistent.
+ *   2. The legacy whitepaper URL was aligned with Footer at the time; v2.8
+ *      replaces that retired slug with the maintained protocol architecture
+ *      docs page.
  *   3. Tracking values (0.15em/0.2em) unified to the eyebrow token;
  *      primary CTA hover aligned to brand hover language.
  *
  * ⚠️ Important Notes for Next Developer:
  *   - Keep whileInView here — do not revert to animate.
- *   - Whitepaper URL must match Footer; change both together.
+ *   - Protocol docs URL must match Footer; change both together.
  *
  * Last Modified: v2.4 — Final CTA eyebrow rhythm alignment
  * Last Modified: v2.5 — Product-action closing surface
  * Last Modified: v2.6 — Closing proof strip
  * Last Modified: v2.7 - Closing eyebrow internationalization
+ * Last Modified: v2.8 - Protocol docs URL alignment
  * ============================================
  */
 
@@ -66,7 +72,7 @@ const SophisticatedCTA = () => {
   const actions = [
     {
       label: copy.docs || copy.whitepaper,
-      href: 'https://docs.aeronyx.network/aeronyx-whitepaper/technical-white-paper',
+      href: 'https://docs.aeronyx.network/intro/aeronyx-app-and-protocol-architecture',
       external: true,
       tone: 'primary',
     },

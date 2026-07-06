@@ -17,6 +17,11 @@
  *   used by the header, footer, and final CTA. This avoids duplicate external
  *   destinations for the same operational console.
  *
+ * Modification Reason: v3.2 - Maintained protocol docs route.
+ *   The final build step now points to the published Protocol Architecture
+ *   page because the old developer-documentation overview route is no longer
+ *   present in the docs site.
+ *
  * Modification Reason: v2.8 - Public node summary wording.
  *   Public protocol-health copy now says node summary instead of exposing
  *   implementation-language reporting details in the user-facing stat source.
@@ -68,6 +73,7 @@
  * Last Modified: v2.9 - Localized protocol visual microcopy
  * Last Modified: v3.0 - Multilingual metric wrapping polish
  * Last Modified: v3.1 - Nodeboard canonical URL alignment
+ * Last Modified: v3.2 - Maintained protocol docs route
  * ============================================
  */
 
@@ -180,7 +186,7 @@ const JoinNetwork = ({ activeLocale: providedLocale }) => {
       subtitle: copy.steps[3].subtitle,
       description: copy.steps[3].description,
       features: copy.steps[3].features,
-      cta: { text: copy.steps[3].cta, link: 'https://docs.aeronyx.network/developer-documentation/overview' },
+      cta: { text: copy.steps[3].cta, link: 'https://docs.aeronyx.network/intro/aeronyx-app-and-protocol-architecture' },
       visual: <BuildVisual liveLabel={copy.live} activeNodesLabel={copy.activeNodesWorldwide} />,
     },
   ];

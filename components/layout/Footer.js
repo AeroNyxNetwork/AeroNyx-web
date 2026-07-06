@@ -14,6 +14,12 @@
  *   accordion footer aligned with the selected locale and avoids English
  *   leakage at the bottom of localized pages.
  *
+ * Modification Reason: v2.8 - Maintained docs URL alignment.
+ *   Updated protocol and developer resource links to existing docs routes.
+ *   The docs site no longer serves the old whitepaper or developer overview
+ *   slugs, so Footer now points to Protocol Architecture and node discovery
+ *   documentation pages.
+ *
  * Historical Notes:
  * v2.4 - 2026 social icon and protocol link polish.
  *   Updated the X social icon away from the legacy Twitter bird and tuned the
@@ -63,6 +69,7 @@
  * Last Modified: v2.4 - X icon and protocol link polish
  * Last Modified: v2.5 - Mobile footer navigation polish
  * Last Modified: v2.7 - Mobile footer long-label wrapping
+ * Last Modified: v2.8 - Maintained docs URL alignment
  * ============================================
  */
 
@@ -110,7 +117,7 @@ const Footer = ({ activeLocale: providedLocale }) => {
               links={[
                 { href: '/privacy-network', label: copy.links.privacyNetwork },
                 { href: '/memchain', label: copy.links.memchain },
-                { href: 'https://docs.aeronyx.network/developer-documentation/overview', label: copy.links.developerDocs },
+                { href: 'https://docs.aeronyx.network/network/node-discovery-and-relay-foundation', label: copy.links.developerDocs },
                 { href: 'https://app.aeronyx.network/', label: 'Nodeboard' },
               ]}
             />
@@ -119,7 +126,7 @@ const Footer = ({ activeLocale: providedLocale }) => {
               heading={copy.columns.resources}
               links={[
                 { href: 'https://docs.aeronyx.network/', label: copy.links.documentation },
-                { href: 'https://docs.aeronyx.network/aeronyx-whitepaper/technical-white-paper', label: copy.links.whitepaper },
+                { href: 'https://docs.aeronyx.network/intro/aeronyx-app-and-protocol-architecture', label: copy.links.whitepaper },
                 { href: 'https://github.com/AeroNyxNetwork', label: 'GitHub' },
                 { href: 'https://app.aeronyx.network/', label: copy.links.app },
               ]}
