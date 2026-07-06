@@ -28,7 +28,7 @@
  * Historical Notes:
  * v2.5 — Product-action closing surface.
  *   Replaced the two-action whitepaper/contact ending with a clearer
- *   three-action product surface: protocol docs, MemChain, and Nodeboard.
+ *   three-action product surface: protocol docs, MemChain, and app access.
  *   The partnership email remains as a quiet secondary link below the main
  *   actions so the page resolves into what users can actually do next.
  *
@@ -52,6 +52,8 @@
  * ⚠️ Important Notes for Next Developer:
  *   - Keep whileInView here — do not revert to animate.
  *   - Protocol docs URL must match Footer; change both together.
+ *   - Keep the third action product-level ("Launch App"). Nodeboard belongs in
+ *     node-operator context, not as a global homepage closing action.
  *
  * Last Modified: v2.4 — Final CTA eyebrow rhythm alignment
  * Last Modified: v2.5 — Product-action closing surface
@@ -94,7 +96,7 @@ const SophisticatedCTA = () => {
       tone: 'secondary',
     },
     {
-      label: copy.app || copy.nodeboard || 'Launch App',
+      label: copy.app || 'Launch App',
       href: 'https://app.aeronyx.network/',
       external: true,
       tone: 'secondary',
