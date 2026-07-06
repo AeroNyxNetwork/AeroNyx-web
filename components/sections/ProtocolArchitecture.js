@@ -21,6 +21,12 @@
  *   product-page rhythm as the refreshed homepage product sections. Copy,
  *   docs CTA, visuals, and privacy claims remain unchanged.
  *
+ * Modification Reason: v5.2 - Pillar detail rhythm polish.
+ *   The architecture pillar visuals now use a tighter mobile aspect ratio,
+ *   protocol-impact callouts sit closer to the surrounding copy, and technical
+ *   bullets become an ordered responsive grid. This keeps the homepage
+ *   architecture section scannable without removing any protocol detail.
+ *
  * Historical Notes:
  * v4.8 - Decentralized node public naming.
  *   The public architecture copy now describes decentralized protocol nodes
@@ -85,6 +91,7 @@
  * Last Modified: v4.9 - Visibility boundary polish
  * Last Modified: v5.0 - Homepage architecture internationalization
  * Last Modified: v5.1 - Architecture evidence surface polish
+ * Last Modified: v5.2 - Pillar detail rhythm polish
  * ============================================
  */
 
@@ -249,7 +256,7 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
                 </div>
                 {/* Visual */}
                 <div
-                  className="aspect-[16/10] border-b border-white/10 p-5 md:p-8"
+                  className="aspect-[16/8.5] border-b border-white/10 p-5 md:aspect-[16/10] md:p-8"
                   style={{ background: 'var(--surface-0, #08080D)' }}
                 >
                   {pillar.visual === 'service' ? (
@@ -260,7 +267,7 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
                 </div>
 
                 {/* Content */}
-                <div className="flex min-w-0 flex-1 flex-col p-5 md:p-7">
+                <div className="flex min-w-0 flex-1 flex-col p-5 md:p-6 xl:p-7">
                   <div className="mb-2 max-w-[80%] break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
                     {pillar.tag}
                   </div>
@@ -271,7 +278,7 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
                     {pillar.description}
                   </p>
 
-                  <div className="mb-6 min-w-0 border border-brand-line bg-brand-faint px-3 py-3 md:px-4">
+                  <div className="mb-5 min-w-0 border border-brand-line bg-brand-faint px-3 py-3 md:px-4">
                     <div className="mb-1 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
                       {copy.labels?.protocolImpact}
                     </div>
@@ -280,16 +287,15 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
                     </p>
                   </div>
 
-                  <div className="mt-auto space-y-2.5">
-                    <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">
+                  <div className="mt-auto">
+                    <div className="mb-2.5 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">
                       {copy.labels?.howItWorks}
                     </div>
-                    {pillar.technical.map((item, i) => (
-                      <div key={item} className="flex min-w-0 items-start border border-white/10 bg-white/[0.02] px-3 py-2">
-                        <div className="mr-3 mt-2 h-1 w-1 flex-shrink-0 rounded-pill bg-brand-light/60" />
-                        <span className="min-w-0 break-words text-sm leading-relaxed text-white/60">{item}</span>
-                      </div>
-                    ))}
+                    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                      {pillar.technical.map((item, i) => (
+                        <PillarTechnicalItem key={item} index={i} item={item} />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -321,6 +327,15 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
     </section>
   );
 };
+
+const PillarTechnicalItem = ({ index, item }) => (
+  <div className="flex min-w-0 items-start border border-white/10 bg-white/[0.02] px-3 py-2.5">
+    <div className="mr-3 mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-sm border border-white/10 font-mono text-[10px] leading-none text-brand-light/70">
+      {String(index + 1).padStart(2, '0')}
+    </div>
+    <span className="min-w-0 break-words text-sm leading-relaxed text-white/60">{item}</span>
+  </div>
+);
 
 /* ============================================================
  * PILLAR VISUALS — thin-line geometry, brand palette
