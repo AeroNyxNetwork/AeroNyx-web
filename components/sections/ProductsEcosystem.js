@@ -30,6 +30,12 @@
  *   the existing `/privacy-network` route are still supported so deployed
  *   translations, saved links, and section behavior remain backward compatible.
  *
+ * Modification Reason: v5.4 - Product selector interaction density polish.
+ *   The product selector now behaves more like a restrained segmented control
+ *   than a row of large cards. Detail features collapse into a two-column
+ *   desktop grid while staying single-column on mobile, reducing scroll weight
+ *   without removing any product information or existing keyboard semantics.
+ *
  * Modification Reason: v5.2 - Maintained protocol docs routes.
  *   Developer-documentation URLs were retired in the docs site. Relay and
  *   foundation product CTAs now resolve to the maintained node discovery and
@@ -170,6 +176,7 @@
  * Last Modified: v5.1 - Service relay CTA link hygiene
  * Last Modified: v5.2 - Maintained protocol docs routes
  * Last Modified: v5.3 - Privacy Network product id alignment
+ * Last Modified: v5.4 - Product selector interaction density polish
  * ============================================
  */
 
@@ -525,7 +532,7 @@ const ProductsEcosystem = () => {
           <div
             role="tablist"
             aria-label={copy.tabAriaLabel}
-            className="mb-8 flex snap-x snap-mandatory flex-nowrap gap-3 overflow-x-auto pb-1 scrollbar-hide md:mb-12 md:justify-center md:gap-4"
+            className="mb-8 flex snap-x snap-mandatory flex-nowrap gap-1 overflow-x-auto rounded border border-white/10 bg-black/20 p-1 scrollbar-hide md:mx-auto md:mb-12 md:w-fit md:max-w-full md:justify-center"
           >
             {products.map((product) => {
               const active = selectedProduct === product.id;
@@ -542,14 +549,14 @@ const ProductsEcosystem = () => {
                   tabIndex={active ? 0 : -1}
                   onKeyDown={(event) => handleProductTabKeyDown(event, product.id)}
                   onClick={() => setSelectedProduct(product.id)}
-                  className={`relative min-h-[72px] w-[15rem] flex-shrink-0 snap-start rounded border px-4 py-3 text-left transition-colors duration-fast md:min-h-[64px] md:w-auto md:min-w-[12rem] md:px-5 md:py-3 ${
+                  className={`relative min-h-[64px] w-[13.75rem] flex-shrink-0 snap-start rounded-sm border px-3.5 py-3 text-left transition-colors duration-fast md:min-h-[62px] md:w-auto md:min-w-[11.5rem] md:px-4 md:py-3 ${
                     active
-                      ? 'border-brand-line bg-brand-faint text-white'
-                      : 'border-white/10 text-white/60 hover:border-white/20 hover:text-white'
+                      ? 'border-brand-line bg-white/[0.065] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]'
+                      : 'border-transparent text-white/60 hover:border-white/10 hover:bg-white/[0.025] hover:text-white'
                   }`}
                 >
                   {active && (
-                    <span aria-hidden="true" className="absolute left-0 top-0 h-full w-0.5 bg-brand-light" />
+                    <span aria-hidden="true" className="absolute inset-x-3 bottom-0 h-px bg-brand-light" />
                   )}
                   <div className="flex min-w-0 items-center justify-between gap-3">
                     <div className="min-w-0 break-words text-xs font-medium leading-snug md:text-sm">{product.name}</div>
@@ -559,7 +566,7 @@ const ProductsEcosystem = () => {
                       </span>
                     )}
                   </div>
-                  <div className="mt-1 break-words text-xs leading-snug opacity-60">{product.category}</div>
+                  <div className="mt-1.5 break-words text-[11px] leading-snug opacity-60 md:text-xs">{product.category}</div>
                 </button>
               );
             })}
@@ -575,7 +582,7 @@ const ProductsEcosystem = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.3, ease: EASE }}
-              className="grid items-start gap-8 md:grid-cols-2 md:gap-12"
+              className="grid items-start gap-6 md:grid-cols-[0.92fr_1.08fr] md:gap-10"
             >
               {/* Visual */}
               <div className="order-2 md:order-1 hidden md:block">
@@ -585,11 +592,11 @@ const ProductsEcosystem = () => {
               {/* Content */}
               <div className="order-1 min-w-0 md:order-2">
                 <div className="mb-3 flex flex-wrap items-center gap-3 md:gap-4">
-                  <h3 className="break-words text-display-md font-light">{activeProduct.name}</h3>
+                  <h3 className="break-words text-2xl font-light leading-tight text-white md:text-display-md">{activeProduct.name}</h3>
                   {getStatusBadge(activeProduct.status)}
                 </div>
 
-                <p className="mb-5 break-words text-base leading-relaxed text-white/48 md:mb-6 md:text-lg">
+                <p className="mb-5 break-words text-sm leading-relaxed text-white/60 md:mb-6 md:text-lg">
                   {activeProduct.tagline}
                 </p>
 
@@ -633,12 +640,12 @@ const ProductsEcosystem = () => {
                 </div>
 
                 {/* Features */}
-                <div className="mb-6 space-y-2 md:mb-8 md:space-y-3">
-                  <div className="mb-2 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">{copy.labels.keyFeatures}</div>
+                <div className="mb-6 grid gap-2 md:mb-8 md:grid-cols-2 md:gap-2.5">
+                  <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40 md:col-span-2">{copy.labels.keyFeatures}</div>
                   {activeProduct.features.map((feature, i) => (
-                    <div key={feature} className="flex min-w-0 items-start border border-white/10 bg-white/[0.02] px-3 py-2">
+                    <div key={feature} className="flex min-w-0 items-start border border-white/10 bg-white/[0.02] px-3 py-2.5">
                       <div className="mr-2 mt-1.5 h-1 w-1 flex-shrink-0 rounded-pill bg-brand-light/60 md:mr-3 md:mt-2" />
-                      <span className="min-w-0 break-words text-sm text-white/60 md:text-base">{feature}</span>
+                      <span className="min-w-0 break-words text-sm leading-relaxed text-white/60">{feature}</span>
                     </div>
                   ))}
                 </div>
