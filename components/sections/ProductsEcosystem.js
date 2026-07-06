@@ -13,6 +13,12 @@
  *   while making Russian, Spanish, Japanese, Korean, and CJK labels feel
  *   intentional rather than clipped on iPhone-class screens.
  *
+ * Modification Reason: v5.0 - Homepage ecosystem evidence polish.
+ *   North Star, core product entrances, active product details, and the bottom
+ *   invariant now use the same evidence-surface rhythm as the refreshed
+ *   Privacy Network and MemChain pages. Product routes, localized copy, tab
+ *   behavior, and Downloads/Docs links are unchanged.
+ *
  * Modification Reason: v4.6 - North Star anchor entry.
  *   Added a stable homepage `#north-star-plan` anchor for the promoted North
  *   Star Plan covenant so the hero can link directly into the infrastructure
@@ -143,6 +149,7 @@
  * Last Modified: v4.7 - Homepage ecosystem i18n shell
  * Last Modified: v4.8 - Localized product visual microcopy
  * Last Modified: v4.9 - Mobile product tab wrapping
+ * Last Modified: v5.0 - Homepage ecosystem evidence polish
  * ============================================
  */
 
@@ -368,7 +375,7 @@ const ProductsEcosystem = () => {
     const badge = STATUS_BADGES[status];
     if (!badge) return null;
     return (
-      <span className={`inline-flex rounded-sm border px-2 py-0.5 text-[10px] uppercase tracking-eyebrow ${badge.className}`}>
+      <span className={`inline-flex max-w-full break-words rounded-sm border px-2 py-0.5 text-[10px] uppercase leading-4 tracking-eyebrow ${badge.className}`}>
         {copy.statusLabels?.[status] || badge.label}
       </span>
     );
@@ -407,25 +414,27 @@ const ProductsEcosystem = () => {
             </p>
           </div>
 
-          <div id="north-star-plan" className="mb-8 scroll-mt-24 border-y border-white/10 bg-white/[0.014] px-4 py-5 text-left md:mb-10 md:px-5 md:py-6">
+          <div id="north-star-plan" className="relative mb-8 scroll-mt-24 overflow-hidden border-y border-white/10 bg-white/[0.014] px-4 py-5 text-left md:mb-10 md:px-5 md:py-6">
+            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/45 to-transparent" />
             <div className="grid gap-5 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
-              <div>
-                <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+              <div className="min-w-0">
+                <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
                   {copy.northStar?.eyebrow}
                 </div>
-                <h3 className="mt-3 text-2xl font-light leading-tight text-white md:text-display-md">
+                <h3 className="mt-3 break-words text-2xl font-light leading-tight text-white md:text-display-md">
                   {copy.northStar?.title}
                 </h3>
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58 md:text-base">
+                <p className="mt-3 max-w-2xl break-words text-sm leading-relaxed text-white/58 md:text-base">
                   {copy.northStar?.description}
                 </p>
               </div>
               <div className="grid gap-2.5 sm:grid-cols-3">
                 {northStarSignals.map((item) => (
-                  <div key={item.title} className="border border-white/10 bg-black/20 p-3 md:p-4">
+                  <div key={item.title} className="relative min-w-0 overflow-hidden border border-white/10 bg-black/20 p-3 md:p-4">
+                    <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-brand-light/35 to-transparent" />
                     <div className="font-mono text-xs text-brand-light">{item.label}</div>
-                    <div className="mt-3 text-sm font-medium text-white">{item.title}</div>
-                    <p className="mt-2 text-xs leading-relaxed text-white/52 md:text-sm">
+                    <div className="mt-3 break-words text-sm font-medium leading-snug text-white">{item.title}</div>
+                    <p className="mt-2 break-words text-xs leading-relaxed text-white/52 md:text-sm">
                       {item.detail}
                     </p>
                   </div>
@@ -446,10 +455,10 @@ const ProductsEcosystem = () => {
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/35 to-transparent opacity-70" />
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+                    <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
                       {(copy.coreSystemLabel || 'Core System 0{index}').replace('{index}', index + 1)}
                     </div>
-                    <h3 className="mt-3 text-display-md font-light text-white">
+                    <h3 className="mt-3 break-words text-display-md font-light text-white">
                       {product.name}
                     </h3>
                   </div>
@@ -457,19 +466,19 @@ const ProductsEcosystem = () => {
                     {product.category}
                   </span>
                 </div>
-                <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/60 md:text-base">
+                <p className="mt-4 max-w-xl break-words text-sm leading-relaxed text-white/60 md:text-base">
                   {product.tagline}
                 </p>
                 <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-                  <div className="border border-white/10 bg-black/20 p-3">
-                    <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{copy.protectsLabel}</div>
-                    <div className="mt-2 text-sm leading-relaxed text-white/72">
+                  <div className="min-w-0 border border-white/10 bg-black/20 p-3">
+                    <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/34">{copy.protectsLabel}</div>
+                    <div className="mt-2 break-words text-sm leading-relaxed text-white/72">
                       {product.proof}
                     </div>
                   </div>
-                  <div className="border border-white/10 bg-black/20 p-3">
-                    <div className="text-[10px] uppercase tracking-eyebrow text-white/34">{copy.invariantLabel}</div>
-                    <div className="mt-2 text-sm leading-relaxed text-brand-light/86">
+                  <div className="min-w-0 border border-white/10 bg-black/20 p-3">
+                    <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/34">{copy.invariantLabel}</div>
+                    <div className="mt-2 break-words text-sm leading-relaxed text-brand-light/86">
                       {copy.invariantValue}
                     </div>
                   </div>
@@ -548,48 +557,49 @@ const ProductsEcosystem = () => {
               </div>
 
               {/* Content */}
-              <div className="order-1 md:order-2">
+              <div className="order-1 min-w-0 md:order-2">
                 <div className="mb-3 flex flex-wrap items-center gap-3 md:gap-4">
-                  <h3 className="text-display-md font-light">{activeProduct.name}</h3>
+                  <h3 className="break-words text-display-md font-light">{activeProduct.name}</h3>
                   {getStatusBadge(activeProduct.status)}
                 </div>
 
-                <p className="mb-5 text-base text-white/48 md:mb-6 md:text-lg">
+                <p className="mb-5 break-words text-base leading-relaxed text-white/48 md:mb-6 md:text-lg">
                   {activeProduct.tagline}
                 </p>
 
                 {/* USE CASE */}
-                <div className="page-card mb-5 rounded border border-l-2 border-l-brand/40 p-4 md:mb-6 md:p-5">
-                  <div className="space-y-3.5">
-                    <div>
-                      <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">{copy.labels.pain}</div>
-                      <p className="text-sm leading-relaxed text-white/70">{activeProduct.useCase.pain}</p>
+                <div className="page-card relative mb-5 min-w-0 overflow-hidden rounded border p-4 md:mb-6 md:p-5">
+                  <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-brand-light/45 to-transparent" />
+                  <div className="grid gap-3.5">
+                    <div className="min-w-0">
+                      <div className="mb-1 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">{copy.labels.pain}</div>
+                      <p className="break-words text-sm leading-relaxed text-white/70">{activeProduct.useCase.pain}</p>
                     </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-1">{copy.labels.solution}</div>
-                      <p className="text-sm leading-relaxed text-white/70">{activeProduct.useCase.solution}</p>
+                    <div className="min-w-0">
+                      <div className="mb-1 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">{copy.labels.solution}</div>
+                      <p className="break-words text-sm leading-relaxed text-white/70">{activeProduct.useCase.solution}</p>
                     </div>
-                    <div>
-                      <div className="text-[10px] uppercase tracking-eyebrow text-brand-light mb-1">{copy.labels.protocolValue}</div>
-                      <p className="text-sm font-medium leading-relaxed text-brand-light">{activeProduct.useCase.savings}</p>
+                    <div className="min-w-0 border border-brand-line bg-brand-faint px-3 py-2.5">
+                      <div className="mb-1 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">{copy.labels.protocolValue}</div>
+                      <p className="break-words text-sm font-medium leading-relaxed text-brand-light">{activeProduct.useCase.savings}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Architecture Comparison */}
-                <div className="page-card mb-6 rounded border p-4 md:mb-8 md:p-5">
-                  <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-3">{copy.labels.architectureComparison}</div>
+                <div className="page-card mb-6 min-w-0 rounded border p-4 md:mb-8 md:p-5">
+                  <div className="mb-3 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">{copy.labels.architectureComparison}</div>
                   <div className="space-y-2">
-                    <div className="grid gap-1 text-sm sm:flex sm:items-center sm:justify-between sm:gap-4">
-                      <span className="text-white/60 flex-shrink-0">{copy.labels.traditional}</span>
-                      <span className="text-white/80 sm:text-right">{activeProduct.comparison.traditional}</span>
+                    <div className="grid gap-1 border border-white/10 bg-black/20 px-3 py-2 text-sm sm:grid-cols-[auto_minmax(0,1fr)] sm:items-start sm:gap-4">
+                      <span className="shrink-0 break-words text-white/60">{copy.labels.traditional}</span>
+                      <span className="break-words text-white/80 sm:text-right">{activeProduct.comparison.traditional}</span>
                     </div>
-                    <div className="grid gap-1 text-sm sm:flex sm:items-center sm:justify-between sm:gap-4">
-                      <span className="text-white/60 flex-shrink-0">AeroNyx</span>
-                      <span className="font-medium text-brand-light sm:text-right">{activeProduct.comparison.aeronyx}</span>
+                    <div className="grid gap-1 border border-brand-line bg-brand-faint px-3 py-2 text-sm sm:grid-cols-[auto_minmax(0,1fr)] sm:items-start sm:gap-4">
+                      <span className="shrink-0 text-white/60">AeroNyx</span>
+                      <span className="break-words font-medium text-brand-light sm:text-right">{activeProduct.comparison.aeronyx}</span>
                     </div>
-                    <div className="pt-2 border-t border-white/10">
-                      <div className="text-center text-brand-light font-medium">
+                    <div className="border-t border-white/10 pt-2">
+                      <div className="break-words text-center font-medium leading-relaxed text-brand-light">
                         {activeProduct.comparison.savings}
                       </div>
                     </div>
@@ -597,12 +607,12 @@ const ProductsEcosystem = () => {
                 </div>
 
                 {/* Features */}
-                <div className="space-y-2 md:space-y-3 mb-6 md:mb-8">
-                  <div className="text-[10px] uppercase tracking-eyebrow text-white/40 mb-2">{copy.labels.keyFeatures}</div>
+                <div className="mb-6 space-y-2 md:mb-8 md:space-y-3">
+                  <div className="mb-2 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/40">{copy.labels.keyFeatures}</div>
                   {activeProduct.features.map((feature, i) => (
-                    <div key={i} className="flex items-start">
-                      <div className="w-1 h-1 rounded-pill bg-brand-light/60 mt-1.5 md:mt-2 mr-2 md:mr-3 flex-shrink-0" />
-                      <span className="text-sm md:text-base text-white/60">{feature}</span>
+                    <div key={feature} className="flex min-w-0 items-start border border-white/10 bg-white/[0.02] px-3 py-2">
+                      <div className="mr-2 mt-1.5 h-1 w-1 flex-shrink-0 rounded-pill bg-brand-light/60 md:mr-3 md:mt-2" />
+                      <span className="min-w-0 break-words text-sm text-white/60 md:text-base">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -612,7 +622,7 @@ const ProductsEcosystem = () => {
                   activeProduct.cta.link.startsWith('/') ? (
                     <Link
                       href={activeProduct.cta.link}
-                      className="inline-flex min-h-[44px] w-full items-center justify-center rounded border border-white/20 px-6 py-2.5 text-center transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint sm:w-auto md:px-8 md:py-3"
+                      className="inline-flex min-h-[44px] w-full max-w-xs min-w-0 items-center justify-center break-words rounded border border-white/20 px-6 py-2.5 text-center transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint sm:w-auto md:px-8 md:py-3"
                     >
                       <span className="text-xs uppercase leading-snug tracking-eyebrow md:text-sm">
                         {activeProduct.cta.text}
@@ -624,7 +634,7 @@ const ProductsEcosystem = () => {
                       onClick={(e) => handleCtaClick(e, activeProduct.cta.link)}
                       target={activeProduct.cta.link.startsWith('http') ? '_blank' : undefined}
                       rel={activeProduct.cta.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className="inline-flex min-h-[44px] w-full items-center justify-center rounded border border-white/20 px-6 py-2.5 text-center transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint sm:w-auto md:px-8 md:py-3"
+                      className="inline-flex min-h-[44px] w-full max-w-xs min-w-0 items-center justify-center break-words rounded border border-white/20 px-6 py-2.5 text-center transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint sm:w-auto md:px-8 md:py-3"
                     >
                       <span className="text-xs uppercase leading-snug tracking-eyebrow md:text-sm">
                         {activeProduct.cta.text}
@@ -642,12 +652,14 @@ const ProductsEcosystem = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE }}
-            className="page-surface mt-10 rounded border p-6 text-center md:mt-14 md:p-8"
+            className="page-surface relative mt-10 overflow-hidden rounded border p-6 text-center md:mt-14 md:p-8"
           >
-            <h3 className="text-display-md font-light mb-3">
+            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/45 to-transparent" />
+            <div className="mx-auto mb-5 h-2 w-2 rounded-pill bg-brand-light/70 shadow-[0_0_18px_rgba(151,136,247,0.5)]" />
+            <h3 className="mb-3 break-words text-display-md font-light">
               {copy.bottomTitle}
             </h3>
-            <p className="text-sm md:text-base text-white/60 max-w-copy mx-auto">
+            <p className="mx-auto max-w-copy break-words text-sm leading-relaxed text-white/60 md:text-base">
               {copy.bottomDescription}
             </p>
           </motion.div>
