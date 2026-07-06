@@ -16,6 +16,10 @@
  *   Architecture docs page instead of the retired whitepaper slug. Keep this
  *   destination aligned with the Footer's protocol architecture resource link.
  *
+ * Modification Reason: v2.9 - Partnership inbox alignment.
+ *   The quiet partnership link now uses hi@aeronyx.network, matching the
+ *   official contact inbox used by the site footer.
+ *
  * Historical Notes:
  * v2.5 — Product-action closing surface.
  *   Replaced the two-action whitepaper/contact ending with a clearer
@@ -49,6 +53,7 @@
  * Last Modified: v2.6 — Closing proof strip
  * Last Modified: v2.7 - Closing eyebrow internationalization
  * Last Modified: v2.8 - Protocol docs URL alignment
+ * Last Modified: v2.9 - Partnership inbox alignment
  * ============================================
  */
 
@@ -175,7 +180,7 @@ const SophisticatedCTA = () => {
           </motion.div>
 
           <motion.a
-            href="mailto:partnerships@aeronyx.network"
+            href="mailto:hi@aeronyx.network"
             className="mx-auto mt-6 inline-flex min-h-[44px] items-center justify-center rounded px-4 py-2 text-white/40 transition-colors duration-fast hover:text-white"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
