@@ -21,6 +21,13 @@
  *   page closes with the same mature product rhythm as the hero. No user-level
  *   telemetry, API behavior, or visible narrative copy was changed.
  *
+ * Modification Reason: v2.8 - Traditional VPN trust model contrast.
+ *   Added a concise trust-model comparison after the hero so users understand
+ *   why AeroNyx Privacy Network is an open blind protocol rather than another
+ *   centralized VPN provider. The comparison is explicitly bounded: it explains
+ *   reduced infrastructure visibility without claiming that every metadata risk
+ *   disappears or that unlawful activity becomes lawful.
+ *
  * Modification Reason: v2.4 - Secondary page internationalization.
  *   Moved the Privacy Network hero, protocol bridge, North Star Plan, live
  *   protocol proof, assurance model, daily dashboard signals, and telemetry
@@ -151,6 +158,7 @@
  * Last Modified: v2.5 - Mobile proof rail stabilization
  * Last Modified: v2.6 - Status evidence panel polish
  * Last Modified: v2.7 - Protection assurance surface polish
+ * Last Modified: v2.8 - Traditional VPN trust model contrast
  * ============================================
  */
 
@@ -212,6 +220,7 @@ export default function PrivacyNetworkPage() {
 
       <main className="relative z-10 overflow-x-hidden pt-24 md:pt-32">
         <Hero copy={pageCopy.hero} />
+        <TrustModelComparison copy={pageCopy.trustModel} />
         <ProtocolContinuity copy={pageCopy.protocolContinuity} />
         <NorthStarPlan copy={pageCopy.northStar} />
         <LiveProtocolStats
@@ -335,6 +344,92 @@ const ProtocolContinuity = ({ copy }) => (
                 </div>
               </Link>
             ))}
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+);
+
+const TrustModelComparison = ({ copy }) => (
+  <section className="pb-12 md:pb-20">
+    <Container>
+      <div className="page-surface relative overflow-hidden border p-4 md:p-6">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/55 to-transparent" />
+        <div className="grid gap-7 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.58, ease: EASE }}
+            className="min-w-0 lg:sticky lg:top-28"
+          >
+            <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+              {copy.eyebrow}
+            </div>
+            <h2 className="mt-3 max-w-3xl break-words text-display-md font-light text-white">
+              {copy.title}
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-white/60 md:text-lg">
+              {copy.description}
+            </p>
+            <div className="mt-5 border border-brand-line bg-brand-faint p-3 md:p-4">
+              <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
+                {copy.boundaryLabel}
+              </div>
+              <p className="mt-2 text-sm leading-relaxed text-white/64">
+                {copy.boundary}
+              </p>
+            </div>
+          </motion.div>
+
+          <div className="min-w-0">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div className="border border-white/10 bg-white/[0.018] px-3 py-2.5 text-[10px] uppercase tracking-eyebrow text-white/42 md:px-4">
+                {copy.legacyLabel}
+              </div>
+              <div className="border border-brand-line bg-brand-faint px-3 py-2.5 text-[10px] uppercase tracking-eyebrow text-brand-light md:px-4">
+                {copy.aeronyxLabel}
+              </div>
+            </div>
+
+            <div className="mt-2 grid gap-2">
+              {copy.rows.map((row, index) => (
+                <motion.article
+                  key={row.axis}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.48, delay: index * 0.045, ease: EASE }}
+                  className="grid min-w-0 gap-2 sm:grid-cols-2"
+                >
+                  <div className="min-w-0 border border-white/10 bg-black/20 p-3 md:p-4">
+                    <div className="mb-3 flex items-start justify-between gap-3">
+                      <div className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/30">
+                        {row.axis}
+                      </div>
+                      <div className="shrink-0 font-mono text-xs leading-none text-white/16">
+                        {String(index + 1).padStart(2, '0')}
+                      </div>
+                    </div>
+                    <p className="break-words text-sm leading-relaxed text-white/52 md:text-base">
+                      {row.legacy}
+                    </p>
+                  </div>
+                  <div className="min-w-0 border border-brand-line bg-brand-faint p-3 md:p-4">
+                    <div className="mb-3 flex items-start justify-between gap-3">
+                      <div className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
+                        {row.axis}
+                      </div>
+                      <div className="h-2 w-2 shrink-0 rounded-pill bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.55)]" />
+                    </div>
+                    <p className="break-words text-sm leading-relaxed text-white/74 md:text-base">
+                      {row.aeronyx}
+                    </p>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
           </div>
         </div>
       </div>

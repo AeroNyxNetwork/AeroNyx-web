@@ -48,6 +48,11 @@
  *   rhythm as the secondary pages. Routes, localized copy, and privacy claims
  *   are unchanged.
  *
+ * Modification Reason: v1.7 - Privacy Network trust-model teaser.
+ *   The homepage Privacy Network card now frames AeroNyx as a blind open
+ *   protocol rather than another centralized VPN provider, with the detailed
+ *   comparison living on /privacy-network.
+ *
  * Historical Notes:
  * v1.3 - Homepage primitive animation handoff.
  *   Polished the two homepage primitive cards so they visually hand off to the
@@ -80,6 +85,7 @@
  * Last Modified: v1.4 - Decentralized node public naming
  * Last Modified: v1.5 - Homepage primitive internationalization
  * Last Modified: v1.6 - Homepage primitive evidence polish
+ * Last Modified: v1.7 - Privacy Network trust-model teaser
  * ============================================
  */
 
@@ -104,12 +110,12 @@ const defaultPrimitiveCards = [
     title: 'Privacy Network',
     label: 'Traffic in motion',
     description:
-      'AeroNyx Privacy Network is a more private, open source network for global use. Decentralized nodes coordinate encrypted traffic and relay state without reading user content.',
+      'Not another VPN provider. AeroNyx Privacy Network is a blind, open protocol where decentralized nodes coordinate encrypted traffic without reading user content.',
     cta: 'Explore Privacy Network',
     href: '/privacy-network',
     checks: [
-      'Open decentralized node infrastructure',
-      'Blind relay boundary',
+      'Open protocol, not a closed provider',
+      'Decentralized blind relay boundary',
       'Aggregate health only',
     ],
     visual: 'motion',
