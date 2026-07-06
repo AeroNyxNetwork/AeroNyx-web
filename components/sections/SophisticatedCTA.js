@@ -25,6 +25,12 @@
  *   "Launch App" instead of "Open Nodeboard" so the homepage closes with the
  *   same product-level IA used by the hero, header, and footer.
  *
+ * Modification Reason: v3.1 - Closing protocol promise polish.
+ *   The final proof area now reads as one protocol promise strip instead of
+ *   three separated mini cards. CTA typography and spacing use clamp-based
+ *   sizing so the closing conversion surface feels deliberate on mobile and
+ *   desktop without changing destinations or copy.
+ *
  * Historical Notes:
  * v2.5 — Product-action closing surface.
  *   Replaced the two-action whitepaper/contact ending with a clearer
@@ -62,6 +68,7 @@
  * Last Modified: v2.8 - Protocol docs URL alignment
  * Last Modified: v2.9 - Partnership inbox alignment
  * Last Modified: v3.0 - Closing app action alignment
+ * Last Modified: v3.1 - Closing protocol promise polish
  * ============================================
  */
 
@@ -106,10 +113,10 @@ const SophisticatedCTA = () => {
   return (
     <section className="border-t border-white/10 py-14 md:py-24" style={{ background: 'var(--surface-0, #08080D)' }}>
       <Container>
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="mx-auto max-w-5xl text-center">
           {/* Main message — whileInView (v2.0 fix) */}
           <motion.div
-            className="mb-8 md:mb-12"
+            className="mx-auto mb-8 max-w-4xl md:mb-10"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -118,29 +125,34 @@ const SophisticatedCTA = () => {
             <div className="mb-3 text-[10px] uppercase tracking-eyebrow text-brand-light md:mb-4">
               {copy.eyebrow || 'Build On AeroNyx'}
             </div>
-            <h2 className="text-display-xl font-light mb-4 md:mb-6 px-4">
+            <h2 className="mb-4 text-[clamp(2.55rem,11vw,6.5rem)] font-light leading-[0.94] tracking-normal md:mb-6">
               {copy.line1}
               <span className="block font-medium">{copy.line2}</span>
             </h2>
 
-            <p className="text-base md:text-xl text-white/50 font-light max-w-copy mx-auto px-4 leading-relaxed">
+            <p className="mx-auto max-w-copy text-base font-light leading-relaxed text-white/55 md:text-xl">
               {copy.description}
             </p>
           </motion.div>
 
           <motion.div
-            className="mx-auto mb-8 grid max-w-3xl grid-cols-1 gap-2.5 px-4 sm:grid-cols-3 md:mb-10"
+            className="mx-auto mb-8 grid max-w-4xl grid-cols-1 overflow-hidden rounded border border-white/10 bg-white/[0.025] text-left sm:grid-cols-3 md:mb-10"
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.65, delay: 0.08, ease: EASE }}
           >
-            {proofItems.map((item) => (
-              <div key={item.value} className="page-card min-w-0 border px-4 py-4 text-left sm:text-center">
-                <div className="font-mono text-lg font-light leading-none text-brand-light md:text-xl">
+            {proofItems.map((item, index) => (
+              <div
+                key={item.value}
+                className={`min-w-0 px-4 py-4 md:px-5 md:py-5 ${
+                  index > 0 ? 'border-t border-white/10 sm:border-l sm:border-t-0' : ''
+                }`}
+              >
+                <div className="font-mono text-xl font-light leading-none text-brand-light md:text-2xl">
                   {item.value}
                 </div>
-                <div className="mt-2 text-sm leading-relaxed text-white/58">
+                <div className="mt-2 text-sm leading-relaxed text-white/58 md:min-h-[3.5rem]">
                   {item.label}
                 </div>
               </div>
@@ -149,7 +161,7 @@ const SophisticatedCTA = () => {
 
           {/* Actions */}
           <motion.div
-            className="mx-auto grid max-w-3xl grid-cols-1 gap-3 px-4 sm:grid-cols-3"
+            className="mx-auto grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -162,9 +174,9 @@ const SophisticatedCTA = () => {
                   href={action.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`group flex min-h-[52px] items-center justify-center rounded border px-5 py-3 text-center transition-colors duration-fast ${
+                  className={`group flex min-h-[54px] items-center justify-center rounded border px-5 py-3 text-center transition-colors duration-fast ${
                     action.tone === 'primary'
-                      ? 'border-brand-line bg-brand-faint text-white hover:bg-brand/15'
+                      ? 'border-brand-line bg-brand-faint text-white shadow-[0_18px_70px_rgba(119,98,243,0.12)] hover:bg-brand/15'
                       : 'border-white/15 text-white/68 hover:border-brand-line hover:bg-white/[0.035] hover:text-white'
                   }`}
                 >
@@ -177,7 +189,7 @@ const SophisticatedCTA = () => {
                   key={action.href}
                   href={action.href}
                   locale={locale || DEFAULT_LOCALE}
-                  className="group flex min-h-[52px] items-center justify-center rounded border border-white/15 px-5 py-3 text-center text-white/68 transition-colors duration-fast hover:border-brand-line hover:bg-white/[0.035] hover:text-white"
+                  className="group flex min-h-[54px] items-center justify-center rounded border border-white/15 px-5 py-3 text-center text-white/68 transition-colors duration-fast hover:border-brand-line hover:bg-white/[0.035] hover:text-white"
                 >
                   <span className="text-xs uppercase tracking-eyebrow sm:text-[13px]">
                     {action.label}
