@@ -41,6 +41,11 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  *   1200x630 protocol preview asset and emitted explicit image dimensions,
  *   type, secure URL, and alt text for cleaner social/AI crawler previews.
  *
+ * Modification Reason: v1.8 - Localized entity descriptions.
+ *   Reused the active page description inside shared JSON-LD entity nodes so
+ *   localized pages do not leak English-only Organization or application copy
+ *   into SEO/GEO extraction surfaces.
+ *
  * Historical Notes:
  * v1.1 - Protocol-first default metadata.
  *   Replaced legacy fallback keywords with AeroNyx's current protocol narrative
@@ -68,6 +73,7 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../lib/i18n';
  * Last Modified: v1.5 - Error-page index control
  * Last Modified: v1.6 - Page-specific structured data extension
  * Last Modified: v1.7 - Protocol social preview metadata
+ * Last Modified: v1.8 - Localized shared entity descriptions
  * ============================================
  *
  * @param {Object} props - Component props
@@ -141,7 +147,10 @@ const buildStructuredData = ({
   canonical,
   keywordText,
   ogImage,
-}) => ({
+}) => {
+  const entityDescription = description || 'AeroNyx is a blind open coordination protocol for encrypted routing, encrypted messaging, private memory, and autonomous agent coordination.';
+
+  return ({
   '@context': 'https://schema.org',
   '@graph': [
     {
@@ -157,7 +166,7 @@ const buildStructuredData = ({
         'https://docs.aeronyx.network/',
         'https://app.aeronyx.network/',
       ],
-      description: 'AeroNyx is a blind open coordination protocol for private routing, encrypted messaging, private memory, and autonomous agent coordination.',
+      description: entityDescription,
     },
     {
       '@type': 'WebSite',
@@ -187,11 +196,12 @@ const buildStructuredData = ({
       operatingSystem: 'iOS, Android, macOS, Windows, Linux',
       url: 'https://app.aeronyx.network/',
       downloadUrl: `${SITE_ORIGIN}/privacy-network#privacy-access`,
-      description: 'AeroNyx provides access to the Privacy Network, encrypted messaging, private memory, and blind coordination protocol surfaces.',
+      description: entityDescription,
       publisher: { '@id': ENTITY_ID },
     },
   ],
-});
+  });
+};
 
 const normalizeStructuredDataItems = (items) => {
   if (!items) {
