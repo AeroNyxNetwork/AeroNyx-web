@@ -2,7 +2,7 @@
  * ============================================================================
  * File: components/sections/NarrativeHero.js
  * ============================================================================
- * Version: 8.11.0
+ * Version: 8.13.0
  *
  * Modification Reason:
  *   v8.10 — Lens scene microcopy internationalization.
@@ -27,6 +27,13 @@
  *   while the client-side selection makes repeat visits feel alive. Cipher
  *   packets are derived deterministically from the selected scene so the
  *   ciphertext layer always matches the visible conversation length.
+ *
+ * Modification Reason:
+ *   v8.13 — Lens scene transition polish.
+ *   Randomized conversations now crossfade after hydration instead of snapping
+ *   into place, and each localized scene can carry a quiet scenario label in
+ *   the plaintext header. The Lens keeps a stable first paint, but the final
+ *   client-selected state feels intentionally animated.
  *
  * Modification Reason:
  *   v8.9 — Homepage hero internationalization pass.
@@ -130,6 +137,7 @@
  * Last Modified: v8.10.0 — Lens scene microcopy internationalization
  * Last Modified: v8.11.0 — First-viewport app launch CTA
  * Last Modified: v8.12.0 — Randomized Lens conversation scenes
+ * Last Modified: v8.13.0 — Lens scene transition polish
  * ============================================================================
  */
 
@@ -199,6 +207,7 @@ const CONVO = [
 ];
 const DEFAULT_SCENE_COPY = {
   id: 'flight',
+  sceneLabel: 'Travel coordination',
   messages: CONVO,
   senderUnknown: 'sender unknown',
   receiptTitle: 'Booked & routed',
@@ -523,7 +532,7 @@ function Bubble({ msg, cipher, idx, sceneCopy = DEFAULT_SCENE_COPY }) {
   );
 }
 
-function Scene({ cipher, sceneCopy = DEFAULT_SCENE_COPY }) {
+function SceneContent({ cipher, sceneCopy = DEFAULT_SCENE_COPY }) {
   const messages = sceneCopy.messages || DEFAULT_SCENE_COPY.messages;
   return (
     <div className="absolute inset-0 flex flex-col px-4 pt-4 pb-10 sm:px-8 sm:pt-5 sm:pb-12">
@@ -535,22 +544,53 @@ function Scene({ cipher, sceneCopy = DEFAULT_SCENE_COPY }) {
             {sceneCopy.interceptLabel || DEFAULT_SCENE_COPY.interceptLabel}
           </span>
         ) : (
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold"
+          <div className="flex min-w-0 flex-1 items-center gap-2.5">
+            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold"
               style={{ background: 'rgba(119,98,243,0.18)', color: ACCENT_LT }}>A</div>
-            <div>
-              <div className="text-sm font-medium">{sceneCopy.agentName || DEFAULT_SCENE_COPY.agentName}</div>
+            <div className="min-w-0">
+              <div className="truncate text-sm font-medium">{sceneCopy.agentName || DEFAULT_SCENE_COPY.agentName}</div>
               <div className="text-[9px] tracking-wide" style={{ color: ACCENT_LT, fontFamily: 'var(--font-mono), monospace' }}>
                 {sceneCopy.secureLine || DEFAULT_SCENE_COPY.secureLine}
               </div>
             </div>
           </div>
         )}
+        {!cipher && (
+          <span
+            className="ml-3 hidden max-w-[9rem] flex-shrink-0 truncate rounded-sm border px-2 py-1 text-[9px] uppercase tracking-[0.14em] text-white/42 sm:inline-flex"
+            style={{ borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.025)', fontFamily: 'var(--font-mono), monospace' }}
+          >
+            {sceneCopy.sceneLabel || DEFAULT_SCENE_COPY.sceneLabel}
+          </span>
+        )}
       </div>
       <div className="flex-1">
         {messages.map((m, i) => <Bubble key={i} msg={m} cipher={cipher} idx={i} sceneCopy={sceneCopy} />)}
       </div>
     </div>
+  );
+}
+
+function Scene({ cipher, sceneCopy = DEFAULT_SCENE_COPY, reduced = false }) {
+  const sceneKey = `${sceneCopy.id || 'default'}-${cipher ? 'cipher' : 'plain'}`;
+
+  if (reduced) {
+    return <SceneContent cipher={cipher} sceneCopy={sceneCopy} />;
+  }
+
+  return (
+    <AnimatePresence initial={false} mode="wait">
+      <motion.div
+        key={sceneKey}
+        className="absolute inset-0"
+        initial={{ opacity: 0, y: 6, filter: 'blur(6px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        exit={{ opacity: 0, y: -4, filter: 'blur(4px)' }}
+        transition={{ duration: 0.42, ease: EASE }}
+      >
+        <SceneContent cipher={cipher} sceneCopy={sceneCopy} />
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
@@ -865,10 +905,10 @@ const NarrativeHero = ({ activeLocale: providedLocale }) => {
                   boxShadow: '0 0 80px rgba(0,0,0,0.8)',
                 }}
               >
-                <Scene cipher={false} sceneCopy={sceneCopy} />
+                <Scene cipher={false} sceneCopy={sceneCopy} reduced={reduced} />
                 <div className="absolute inset-0"
                   style={{ clipPath: `inset(0 0 0 ${split}%)`, background: '#070c10' }}>
-                  <Scene cipher sceneCopy={sceneCopy} />
+                  <Scene cipher sceneCopy={sceneCopy} reduced={reduced} />
                 </div>
 
                 {/* divider + handle */}
