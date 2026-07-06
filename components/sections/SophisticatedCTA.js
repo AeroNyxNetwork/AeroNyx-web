@@ -20,6 +20,11 @@
  *   The quiet partnership link now uses hi@aeronyx.network, matching the
  *   official contact inbox used by the site footer.
  *
+ * Modification Reason: v3.0 - Closing app action alignment.
+ *   The final action surface now labels the app/operator destination as
+ *   "Launch App" instead of "Open Nodeboard" so the homepage closes with the
+ *   same product-level IA used by the hero, header, and footer.
+ *
  * Historical Notes:
  * v2.5 — Product-action closing surface.
  *   Replaced the two-action whitepaper/contact ending with a clearer
@@ -54,6 +59,7 @@
  * Last Modified: v2.7 - Closing eyebrow internationalization
  * Last Modified: v2.8 - Protocol docs URL alignment
  * Last Modified: v2.9 - Partnership inbox alignment
+ * Last Modified: v3.0 - Closing app action alignment
  * ============================================
  */
 
@@ -72,7 +78,7 @@ const SophisticatedCTA = () => {
   const proofItems = copy.proofs || [
     { value: 'Blind', label: 'Nodes coordinate without reading payloads.' },
     { value: 'Open', label: 'Protocol docs, public code, aggregate health.' },
-    { value: 'Useful', label: 'Privacy Network, MemChain, and Nodeboard are entry points.' },
+    { value: 'Useful', label: 'Privacy Network, MemChain, and App access are entry points.' },
   ];
   const actions = [
     {
@@ -88,7 +94,7 @@ const SophisticatedCTA = () => {
       tone: 'secondary',
     },
     {
-      label: copy.nodeboard || 'Open Nodeboard',
+      label: copy.app || copy.nodeboard || 'Launch App',
       href: 'https://app.aeronyx.network/',
       external: true,
       tone: 'secondary',
