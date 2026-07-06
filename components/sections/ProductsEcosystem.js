@@ -24,6 +24,12 @@
  *   developer documentation path so the homepage never routes users to a 404
  *   while the encrypted service relay remains a coming-soon protocol surface.
  *
+ * Modification Reason: v5.3 - Privacy Network product id alignment.
+ *   The first product now uses `privacy-network` as its internal product id
+ *   instead of the legacy `vpn` id. Legacy `products.vpn` i18n overrides and
+ *   the existing `/privacy-network` route are still supported so deployed
+ *   translations, saved links, and section behavior remain backward compatible.
+ *
  * Modification Reason: v5.2 - Maintained protocol docs routes.
  *   Developer-documentation URLs were retired in the docs site. Relay and
  *   foundation product CTAs now resolve to the maintained node discovery and
@@ -161,6 +167,7 @@
  * Last Modified: v4.8 - Localized product visual microcopy
  * Last Modified: v4.9 - Mobile product tab wrapping
  * Last Modified: v5.0 - Homepage ecosystem evidence polish
+ * Last Modified: v5.3 - Privacy Network product id alignment
  * ============================================
  */
 
@@ -180,7 +187,9 @@ const STATUS_BADGES = {
   'coming-soon': { label: 'Coming Soon', className: 'text-white/40 border-white/10 bg-white/[0.03]' },
 };
 
-const CORE_PRODUCT_IDS = new Set(['vpn', 'memchain']);
+const PRIVACY_NETWORK_PRODUCT_ID = 'privacy-network';
+const LEGACY_PRIVACY_NETWORK_PRODUCT_ID = 'vpn';
+const CORE_PRODUCT_IDS = new Set([PRIVACY_NETWORK_PRODUCT_ID, 'memchain']);
 
 const NORTH_STAR_SIGNALS = [
   {
@@ -201,7 +210,7 @@ const NORTH_STAR_SIGNALS = [
 ];
 
 const ProductsEcosystem = () => {
-  const [selectedProduct, setSelectedProduct] = useState('vpn');
+  const [selectedProduct, setSelectedProduct] = useState(PRIVACY_NETWORK_PRODUCT_ID);
   const tabRefs = useRef({});
   const { locale } = useRouter();
   const messages = getMessages(locale || DEFAULT_LOCALE);
@@ -210,7 +219,7 @@ const ProductsEcosystem = () => {
 
   const baseProducts = [
     {
-      id: 'vpn',
+      id: PRIVACY_NETWORK_PRODUCT_ID,
       name: 'Privacy Network',
       category: 'Private Routing Layer',
       tagline: 'More private, open source, globally usable',
@@ -312,7 +321,11 @@ const ProductsEcosystem = () => {
   ];
 
   const products = baseProducts.map((product) => {
-    const override = copy.products?.[product.id] || {};
+    const legacyPrivacyOverride =
+      product.id === PRIVACY_NETWORK_PRODUCT_ID
+        ? copy.products?.[LEGACY_PRIVACY_NETWORK_PRODUCT_ID]
+        : undefined;
+    const override = copy.products?.[product.id] || legacyPrivacyOverride || {};
     return {
       ...product,
       ...override,
@@ -688,7 +701,8 @@ const ProductsEcosystem = () => {
 const ProductVisual = ({ productId, visualCopy = {} }) => {
   const visuals = {
     foundation: <FoundationVisual />,
-    vpn: <PrivacyAccessVisual copy={visualCopy.privacyNetwork} />,
+    [PRIVACY_NETWORK_PRODUCT_ID]: <PrivacyAccessVisual copy={visualCopy.privacyNetwork} />,
+    [LEGACY_PRIVACY_NETWORK_PRODUCT_ID]: <PrivacyAccessVisual copy={visualCopy.privacyNetwork} />,
     cdn: <CDNVisual copy={visualCopy.encryptedRelay} />,
     memchain: <MemChainProductVisual copy={visualCopy.memchain} />,
   };
