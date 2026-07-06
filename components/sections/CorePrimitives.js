@@ -42,6 +42,12 @@
  *   proof labels now use safer line-height/word breaking for Russian, Spanish,
  *   Japanese, Korean, and Chinese mobile layouts.
  *
+ * Modification Reason: v1.6 - Homepage primitive evidence polish.
+ *   The paired Privacy Network and MemChain cards now use numbered evidence
+ *   surfaces, stronger mobile wrapping, and the same restrained product-page
+ *   rhythm as the secondary pages. Routes, localized copy, and privacy claims
+ *   are unchanged.
+ *
  * Historical Notes:
  * v1.3 - Homepage primitive animation handoff.
  *   Polished the two homepage primitive cards so they visually hand off to the
@@ -73,6 +79,7 @@
  * Last Modified: v1.3 - Homepage primitive animation handoff
  * Last Modified: v1.4 - Decentralized node public naming
  * Last Modified: v1.5 - Homepage primitive internationalization
+ * Last Modified: v1.6 - Homepage primitive evidence polish
  * ============================================
  */
 
@@ -183,9 +190,9 @@ const CorePrimitives = ({ activeLocale: providedLocale }) => {
           </motion.div>
 
           <div className="grid gap-4 lg:grid-cols-[1fr_0.24fr_1fr] lg:items-stretch lg:gap-5">
-            <PrimitiveCard primitive={primitiveCards[0]} reduced={reduced} />
+            <PrimitiveCard primitive={primitiveCards[0]} reduced={reduced} index={0} />
             <ProtocolSpine words={spineWords} reduced={reduced} />
-            <PrimitiveCard primitive={primitiveCards[1]} reduced={reduced} />
+            <PrimitiveCard primitive={primitiveCards[1]} reduced={reduced} index={1} />
           </div>
 
           <motion.div
@@ -195,12 +202,19 @@ const CorePrimitives = ({ activeLocale: providedLocale }) => {
             transition={{ duration: 0.5, delay: 0.08, ease: EASE }}
             className="mt-4 grid gap-2.5 sm:grid-cols-3 md:mt-5"
           >
-            {proofItems.map((item) => (
-              <div key={item.label} className="page-card min-w-0 rounded border px-4 py-4 md:min-h-[8.25rem] md:px-5">
-                <div className="font-mono text-lg font-light leading-none text-brand-light md:text-xl">
+            {proofItems.map((item, index) => (
+              <div key={item.label} className="page-card relative min-w-0 overflow-hidden rounded border px-4 py-4 md:min-h-[8.25rem] md:px-5">
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/35 to-transparent" />
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div className="h-2 w-2 shrink-0 rounded-pill bg-brand-light/70" />
+                  <div className="shrink-0 font-mono text-xs leading-none text-white/18">
+                    {String(index + 1).padStart(2, '0')}
+                  </div>
+                </div>
+                <div className="break-words font-mono text-lg font-light leading-none text-brand-light md:text-xl">
                   {item.value}
                 </div>
-                <div className="mt-2 text-sm leading-relaxed text-white/70">
+                <div className="mt-2 break-words text-sm leading-relaxed text-white/70">
                   {item.label}
                 </div>
                 <div className="mt-3 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/38">
@@ -215,7 +229,7 @@ const CorePrimitives = ({ activeLocale: providedLocale }) => {
   );
 };
 
-const PrimitiveCard = ({ primitive, reduced }) => (
+const PrimitiveCard = ({ primitive, reduced, index }) => (
   <motion.div
     initial={reduced ? false : { opacity: 0, y: 18 }}
     whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
@@ -225,37 +239,40 @@ const PrimitiveCard = ({ primitive, reduced }) => (
     className="page-surface group relative min-w-0 overflow-hidden rounded border p-5 transition-colors duration-base hover:border-brand-line md:p-6"
   >
     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/35 to-transparent opacity-60" />
+    <div className="pointer-events-none absolute right-5 top-5 font-mono text-5xl font-light leading-none text-white/[0.055]">
+      {String(index + 1).padStart(2, '0')}
+    </div>
     <div className="grid gap-5 md:grid-cols-[0.92fr_1.08fr] md:items-center lg:block">
       <PrimitiveVisual type={primitive.visual} reduced={reduced} visualCopy={primitive.visualCopy} />
 
       <div className="min-w-0">
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          <span className="rounded-sm border border-brand-line bg-brand-faint px-2 py-1 text-[10px] uppercase tracking-eyebrow text-brand-light">
+          <span className="max-w-full break-words rounded-sm border border-brand-line bg-brand-faint px-2 py-1 text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
             {primitive.eyebrow}
           </span>
           <span className="min-w-0 break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/35">
             {primitive.label}
           </span>
         </div>
-        <h3 className="text-display-md font-light text-white">
+        <h3 className="break-words pr-8 text-display-md font-light text-white">
           {primitive.title}
         </h3>
-        <p className="mt-3 text-sm leading-relaxed text-white/62 md:text-base">
+        <p className="mt-3 break-words text-sm leading-relaxed text-white/62 md:text-base">
           {primitive.description}
         </p>
 
         <div className="mt-5 grid gap-2">
           {primitive.checks.map((check) => (
-            <div key={check} className="flex items-start gap-3">
+            <div key={check} className="flex min-w-0 items-start gap-3 border border-white/10 bg-white/[0.02] px-3 py-2">
               <span className="mt-2 h-1 w-1 shrink-0 rounded-pill bg-brand-light/70" />
-              <span className="text-sm leading-relaxed text-white/58">{check}</span>
+              <span className="min-w-0 break-words text-sm leading-relaxed text-white/58">{check}</span>
             </div>
           ))}
         </div>
 
         <Link
           href={primitive.href}
-          className="mt-6 inline-flex min-h-[44px] w-full items-center justify-center rounded border border-white/15 px-5 py-2.5 text-center text-xs uppercase leading-snug tracking-eyebrow text-white/72 transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint hover:text-white sm:w-auto"
+          className="mt-6 inline-flex min-h-[44px] w-full max-w-xs min-w-0 items-center justify-center break-words rounded border border-white/15 px-5 py-2.5 text-center text-xs uppercase leading-snug tracking-eyebrow text-white/72 transition-colors duration-fast hover:border-brand-line hover:bg-brand-faint hover:text-white sm:w-auto"
         >
           {primitive.cta}
         </Link>
@@ -281,8 +298,11 @@ const ProtocolSpine = ({ words, reduced }) => (
       transition={reduced ? undefined : { duration: 3.2, repeat: Infinity, ease: EASE }}
     />
     <div className="relative z-10 grid grid-cols-3 gap-2 text-center sm:gap-3 lg:grid-cols-1">
-      {words.map((word) => (
+      {words.map((word, index) => (
         <div key={word} className="rounded-sm border border-white/10 bg-black/35 px-1.5 py-2 sm:px-2.5">
+          <div className="mb-1 font-mono text-[8px] leading-none text-white/24">
+            {String(index + 1).padStart(2, '0')}
+          </div>
           <div className="break-words font-mono text-[9px] uppercase leading-4 tracking-[0.14em] text-brand-light sm:text-xs sm:tracking-eyebrow">
             {word}
           </div>
