@@ -13,6 +13,12 @@
  *   restoration so the download surface behaves like a production modal across
  *   desktop browsers, iOS Safari, Android Chrome, and assistive technologies.
  *
+ * Modification Reason: v2.2 - Keyboard focus containment.
+ *   The modal now moves keyboard focus into the dialog, traps Tab navigation
+ *   inside the download surface, and restores focus to the previous element on
+ *   close. This keeps the client-download flow accessible without changing
+ *   platform URLs or visible copy.
+ *
  * Main Functionality:
  *   - Detects the user's OS and promotes the matching AeroNyx client first.
  *   - Lists all supported desktop/mobile platforms.
@@ -30,10 +36,11 @@
  *
  * Last Modified: v2.0 - Internationalized client download modal
  * Last Modified: v2.1 - Dialog accessibility and scroll restoration
+ * Last Modified: v2.2 - Keyboard focus containment
  * ============================================
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import useOsDetection from '../../lib/hooks/useOsDetection';
@@ -96,6 +103,8 @@ const CloseIcon = ({ onClick, label }) => (
 );
 
 const DownloadsModal = ({ isOpen, onClose }) => {
+  const modalRef = useRef(null);
+  const previouslyFocusedElement = useRef(null);
   const { locale } = useRouter();
   const messages = getMessages(locale || DEFAULT_LOCALE);
   const copy = messages.downloadsModal || getMessages(DEFAULT_LOCALE).downloadsModal;
@@ -107,23 +116,61 @@ const DownloadsModal = ({ isOpen, onClose }) => {
     if (!isOpen) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    previouslyFocusedElement.current = document.activeElement;
 
     return () => {
       document.body.style.overflow = previousOverflow;
+      if (
+        previouslyFocusedElement.current?.focus
+        && document.contains(previouslyFocusedElement.current)
+      ) {
+        previouslyFocusedElement.current.focus();
+      }
     };
   }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
 
-    const handleEscape = (event) => {
+    window.requestAnimationFrame(() => {
+      modalRef.current?.focus();
+    });
+
+    const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !modalRef.current) {
+        return;
+      }
+
+      const focusableElements = Array.from(
+        modalRef.current.querySelectorAll(
+          'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+        )
+      );
+
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
   
   if (!isOpen) return null;
@@ -224,11 +271,13 @@ const DownloadsModal = ({ isOpen, onClose }) => {
 
           {/* Modal */}
           <motion.div
+            ref={modalRef}
             className="relative w-full max-w-lg"
             role="dialog"
             aria-modal="true"
             aria-labelledby="downloads-modal-title"
             aria-describedby="downloads-modal-description"
+            tabIndex={-1}
             variants={modalVariants}
             initial="hidden"
             animate="visible"
