@@ -193,7 +193,7 @@ const buildStructuredData = ({
       '@id': `${SITE_ORIGIN}/#aeronyx-app`,
       name: 'AeroNyx',
       applicationCategory: 'SecurityApplication',
-      operatingSystem: 'iOS, Android, macOS, Windows, Linux',
+      operatingSystem: 'iOS, Android, macOS, Windows',
       url: 'https://app.aeronyx.network/',
       downloadUrl: `${SITE_ORIGIN}/privacy-network#privacy-access`,
       description: entityDescription,

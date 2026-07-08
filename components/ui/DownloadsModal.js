@@ -25,10 +25,16 @@
  *   recommended device card, platform grid, and final close action remain
  *   reachable on narrow phones without the background page moving.
  *
+ * Modification Reason: v2.4 - Production download channel refresh.
+ *   Windows now uses the latest stable binary channel, Android is pinned to
+ *   the approved 1.0.12-8 APK, iOS and macOS route to the App Store listing,
+ *   and unsupported desktop packages are removed from the public download
+ *   surface until a supported commercial build is available.
+ *
  * Main Functionality:
  *   - Detects the user's OS and promotes the matching AeroNyx client first.
- *   - Lists all supported desktop/mobile platforms.
- *   - Keeps external download URL behavior unchanged.
+ *   - Lists all currently supported desktop/mobile platforms.
+ *   - Keeps external download URL behavior centralized in this file.
  *
  * Dependencies:
  *   - lib/hooks/useOsDetection
@@ -44,6 +50,7 @@
  * Last Modified: v2.1 - Dialog accessibility and scroll restoration
  * Last Modified: v2.2 - Keyboard focus containment
  * Last Modified: v2.3 - Mobile viewport-safe dialog layout
+ * Last Modified: v2.4 - Production download channel refresh
  * ============================================
  */
 
@@ -79,15 +86,6 @@ const AndroidIcon = () => (
   </svg>
 );
 
-const LinuxIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
-    <path d="M9 8.5C9 7.67157 9.67157 7 10.5 7C11.3284 7 12 7.67157 12 8.5" />
-    <path d="M12 8.5C12 7.67157 12.6716 7 13.5 7C14.3284 7 15 7.67157 15 8.5" />
-    <path d="M8 14C11.5 16.5 12.5 16.5 16 14" />
-  </svg>
-);
-
 const IPhoneIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="6" y="3" width="12" height="18" rx="2" />
@@ -117,6 +115,7 @@ const DownloadsModal = ({ isOpen, onClose }) => {
   const copy = messages.downloadsModal || getMessages(DEFAULT_LOCALE).downloadsModal;
   // Detect user's OS
   const userOs = useOsDetection();
+  const appStoreUrl = "https://apps.apple.com/us/app/aeronyx-ai-vpn-chat-wallet/id6736854944";
   
   // Handle body scroll locking while preserving any pre-existing page state.
   useEffect(() => {
@@ -186,38 +185,31 @@ const DownloadsModal = ({ isOpen, onClose }) => {
   const osOptions = [
     {
       name: "macOS",
-      version: `${copy.versionLabel}: 1.0.1`,
+      version: `${copy.versionLabel}: App Store`,
       icon: MacOSIcon,
       available: true,
-      downloadUrl: "https://binary.aeronyx.network/AeroNyx_mac1.0.1.dmg" 
+      downloadUrl: appStoreUrl
     },
     {
       name: "Windows",
-      version: `${copy.versionLabel}: 1.0.1`,
+      version: `${copy.versionLabel}: latest`,
       icon: WindowsIcon,
       available: true,
-      downloadUrl: "https://binary.aeronyx.network/AeroNyx_win1.0.1.exe" 
-    },
-    {
-      name: "Linux",
-      version: `${copy.versionLabel}: 0.27 Beta`,
-      icon: LinuxIcon,
-      available: true,
-      downloadUrl: "https://binary.aeronyx.network/AeroNyx0.2.7.tar.gz" 
+      downloadUrl: "https://binary.aeronyx.network/latest/windows/AeroNyxSetup-windows-x64.exe"
     },
     {
       name: "Android",
-      version: `${copy.versionLabel}: 1.0.1`,
+      version: `${copy.versionLabel}: 1.0.12-8`,
       icon: AndroidIcon,
       available: true,
-      downloadUrl: "https://binary.aeronyx.network/android1.0.1b.apk" 
+      downloadUrl: "https://binary.aeronyx.network/releases/1.0.12-8/android/AeroNyx-1.0.12-8-android-arm64-v8a.apk"
     },
     {
       name: "iOS",
-      version: `${copy.versionLabel}: 1.0.1`,
+      version: `${copy.versionLabel}: App Store`,
       icon: IPhoneIcon,
       available: true,
-      downloadUrl: "https://apps.apple.com/us/app/aeronyx/id6736854944" 
+      downloadUrl: appStoreUrl
     }
   ];
 
