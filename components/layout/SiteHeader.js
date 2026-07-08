@@ -42,6 +42,12 @@
  *   route changes. This makes the header feel like a deliberate product
  *   surface rather than a layer floating over a still-scrollable page.
  *
+ * Modification Reason: v2.14 - Legacy client service notice.
+ *   Added a localized top alert bar for the July 9 legacy-client service
+ *   cutoff and latest-client download path. The notice is part of the shared
+ *   header so every product page communicates the upgrade requirement without
+ *   duplicating page-specific markup.
+ *
  * Historical Notes:
  * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
@@ -85,6 +91,7 @@
  * Last Modified: v2.11 - Protocol-first navigation simplification
  * Last Modified: v2.12 - iPhone-safe mobile menu scrolling
  * Last Modified: v2.13 - Mobile menu scroll isolation
+ * Last Modified: v2.14 - Legacy client service notice
  * ============================================
  */
 
@@ -105,6 +112,7 @@ const SiteHeader = () => {
   const currentLocale = SUPPORTED_LOCALES.find((item) => item.code === locale) || SUPPORTED_LOCALES[0];
   const clientAccessHref = '/privacy-network#privacy-access';
   const clientAccessLabel = copy.nav.downloadClient || copy.nav.downloads || copy.nav.privacyAccess;
+  const alertCopy = copy.siteAlert || getMessages(DEFAULT_LOCALE).siteAlert;
   const isActiveRoute = (href) => !href.startsWith('http') && router.pathname === href;
   const desktopNavClass = (href) => (
     `relative inline-flex min-h-[44px] items-center text-xs uppercase tracking-eyebrow transition-colors xl:text-sm ${
@@ -201,7 +209,7 @@ const SiteHeader = () => {
   return (
     <motion.header
       className="fixed top-0 left-0 right-0 z-50"
-      initial={{ y: -100 }}
+      initial={{ y: -140 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', damping: 20, stiffness: 100 }}
     >
@@ -215,6 +223,31 @@ const SiteHeader = () => {
         <div className="absolute inset-0 bg-black/80" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </motion.div>
+
+      {/* Legacy client service notice */}
+      <div
+        role="status"
+        aria-label={alertCopy.ariaLabel}
+        className="relative z-10 border-b border-amber-300/15 bg-amber-300/[0.075] px-4 text-white shadow-[0_1px_0_rgba(255,255,255,0.04)] sm:px-6 lg:px-8"
+      >
+        <div className="mx-auto flex min-h-[2.75rem] max-w-7xl flex-col justify-center gap-2 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+            <span className="w-fit rounded-sm border border-amber-200/25 bg-amber-200/[0.08] px-2 py-1 text-[0.68rem] font-semibold uppercase leading-none tracking-[0.18em] text-amber-100">
+              {alertCopy.eyebrow}
+            </span>
+            <p className="min-w-0 text-sm leading-snug text-white/76 sm:text-[0.82rem] lg:text-sm">
+              {alertCopy.message}
+            </p>
+          </div>
+          <Link
+            href={clientAccessHref}
+            locale={locale}
+            className="inline-flex min-h-[36px] shrink-0 items-center justify-center rounded-sm border border-amber-100/30 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.12em] text-amber-50 transition-colors hover:border-amber-100/55 hover:bg-amber-100/[0.08]"
+          >
+            {alertCopy.cta}
+          </Link>
+        </div>
+      </div>
       
       {/* Navbar content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -350,7 +383,7 @@ const SiteHeader = () => {
             <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
             <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
             
-            <nav className="relative z-10 flex max-h-[calc(100dvh-4rem)] flex-col space-y-3 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <nav className="relative z-10 flex max-h-[calc(100dvh-7.25rem)] flex-col space-y-3 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               {navLinks.map((link) => (
                 link.external ? (
                   <a
