@@ -26,8 +26,8 @@
  *   reachable on narrow phones without the background page moving.
  *
  * Modification Reason: v2.4 - Production download channel refresh.
- *   Windows now uses the latest stable binary channel, Android is pinned to
- *   the approved 1.0.12-8 APK, iOS and macOS route to the App Store listing,
+ *   Windows and Android now use the latest stable binary channels, iOS and
+ *   macOS route to the App Store listing,
  *   and unsupported desktop packages are removed from the public download
  *   surface until a supported commercial build is available.
  *
@@ -199,10 +199,10 @@ const DownloadsModal = ({ isOpen, onClose }) => {
     },
     {
       name: "Android",
-      version: `${copy.versionLabel}: 1.0.12-8`,
+      version: `${copy.versionLabel}: latest`,
       icon: AndroidIcon,
       available: true,
-      downloadUrl: "https://binary.aeronyx.network/releases/1.0.12-8/android/AeroNyx-1.0.12-8-android-arm64-v8a.apk"
+      downloadUrl: "https://binary.aeronyx.network/latest/android/AeroNyx-android-arm64-v8a.apk"
     },
     {
       name: "iOS",
