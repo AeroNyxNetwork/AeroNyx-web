@@ -54,6 +54,12 @@
  *   alert copy from clipping the navigation panel on iOS/Android and keeps the
  *   desktop language dropdown layered above the notice.
  *
+ * Modification Reason: v2.16 - Notice bar wrapping fix.
+ *   The legacy-client notice no longer forces a single row at tablet widths.
+ *   Badge and CTA are fixed-size, while localized message text can wrap inside
+ *   the available width. This prevents Traditional Chinese and other long
+ *   locale strings from being squeezed or clipped at the left edge.
+ *
  * Historical Notes:
  * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
@@ -99,6 +105,7 @@
  * Last Modified: v2.13 - Mobile menu scroll isolation
  * Last Modified: v2.14 - Legacy client service notice
  * Last Modified: v2.15 - Alert-aware mobile menu geometry
+ * Last Modified: v2.16 - Notice bar wrapping fix
  * ============================================
  */
 
@@ -270,12 +277,12 @@ const SiteHeader = () => {
         aria-label={alertCopy.ariaLabel}
         className="relative z-10 border-b border-amber-300/15 bg-amber-300/[0.075] px-4 text-white shadow-[0_1px_0_rgba(255,255,255,0.04)] sm:px-6 lg:px-8"
       >
-        <div className="mx-auto flex min-h-[2.75rem] max-w-7xl flex-col justify-center gap-2 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
-            <span className="w-fit rounded-sm border border-amber-200/25 bg-amber-200/[0.08] px-2 py-1 text-[0.68rem] font-semibold uppercase leading-none tracking-[0.18em] text-amber-100">
+        <div className="mx-auto flex min-h-[2.75rem] max-w-7xl flex-col justify-center gap-2 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-4">
+          <div className="flex min-w-0 flex-col gap-1 md:flex-row md:items-center md:gap-3">
+            <span className="w-fit shrink-0 rounded-sm border border-amber-200/25 bg-amber-200/[0.08] px-2 py-1 text-[0.68rem] font-semibold uppercase leading-none tracking-[0.18em] text-amber-100">
               {alertCopy.eyebrow}
             </span>
-            <p className="min-w-0 text-sm leading-snug text-white/76 sm:text-[0.82rem] lg:text-sm">
+            <p className="min-w-0 max-w-full text-sm leading-snug text-white/76 sm:text-[0.82rem] lg:text-sm">
               <span className="sm:hidden">{alertCopy.mobileMessage || alertCopy.message}</span>
               <span className="hidden sm:inline">{alertCopy.message}</span>
             </p>
@@ -283,7 +290,7 @@ const SiteHeader = () => {
           <Link
             href={clientAccessHref}
             locale={locale}
-            className="inline-flex min-h-[36px] shrink-0 items-center justify-center rounded-sm border border-amber-100/30 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.12em] text-amber-50 transition-colors hover:border-amber-100/55 hover:bg-amber-100/[0.08]"
+            className="inline-flex min-h-[36px] w-fit shrink-0 items-center justify-center rounded-sm border border-amber-100/30 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.12em] text-amber-50 transition-colors hover:border-amber-100/55 hover:bg-amber-100/[0.08]"
           >
             {alertCopy.cta}
           </Link>
