@@ -48,6 +48,12 @@
  *   header so every product page communicates the upgrade requirement without
  *   duplicating page-specific markup.
  *
+ * Modification Reason: v2.15 - Alert-aware mobile menu geometry.
+ *   The mobile dropdown now measures the actual alert and navbar heights
+ *   before calculating its scrollable max-height. This prevents long localized
+ *   alert copy from clipping the navigation panel on iOS/Android and keeps the
+ *   desktop language dropdown layered above the notice.
+ *
  * Historical Notes:
  * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
@@ -92,10 +98,11 @@
  * Last Modified: v2.12 - iPhone-safe mobile menu scrolling
  * Last Modified: v2.13 - Mobile menu scroll isolation
  * Last Modified: v2.14 - Legacy client service notice
+ * Last Modified: v2.15 - Alert-aware mobile menu geometry
  * ============================================
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -106,6 +113,8 @@ const SiteHeader = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const alertRef = useRef(null);
+  const navRef = useRef(null);
   const router = useRouter();
   const locale = router.locale || DEFAULT_LOCALE;
   const copy = getMessages(locale);
@@ -184,6 +193,36 @@ const SiteHeader = () => {
     router.events?.on('routeChangeStart', closeTransientNavigation);
     return () => router.events?.off('routeChangeStart', closeTransientNavigation);
   }, [router.events]);
+
+  useEffect(() => {
+    const updateHeaderChromeHeight = () => {
+      const alertHeight = alertRef.current?.offsetHeight || 0;
+      const navHeight = navRef.current?.offsetHeight || 0;
+      document.documentElement.style.setProperty(
+        '--site-header-chrome-height',
+        `${alertHeight + navHeight}px`
+      );
+    };
+
+    updateHeaderChromeHeight();
+
+    const observers = [];
+    if (typeof ResizeObserver !== 'undefined') {
+      const observer = new ResizeObserver(updateHeaderChromeHeight);
+      if (alertRef.current) observer.observe(alertRef.current);
+      if (navRef.current) observer.observe(navRef.current);
+      observers.push(observer);
+    }
+
+    window.addEventListener('resize', updateHeaderChromeHeight);
+    window.addEventListener('orientationchange', updateHeaderChromeHeight);
+
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+      window.removeEventListener('resize', updateHeaderChromeHeight);
+      window.removeEventListener('orientationchange', updateHeaderChromeHeight);
+    };
+  }, [locale]);
   
   // v2.1: protocol-first nav. Product detail pages are now secondary routes.
   const navLinks = [
@@ -226,6 +265,7 @@ const SiteHeader = () => {
 
       {/* Legacy client service notice */}
       <div
+        ref={alertRef}
         role="status"
         aria-label={alertCopy.ariaLabel}
         className="relative z-10 border-b border-amber-300/15 bg-amber-300/[0.075] px-4 text-white shadow-[0_1px_0_rgba(255,255,255,0.04)] sm:px-6 lg:px-8"
@@ -236,7 +276,8 @@ const SiteHeader = () => {
               {alertCopy.eyebrow}
             </span>
             <p className="min-w-0 text-sm leading-snug text-white/76 sm:text-[0.82rem] lg:text-sm">
-              {alertCopy.message}
+              <span className="sm:hidden">{alertCopy.mobileMessage || alertCopy.message}</span>
+              <span className="hidden sm:inline">{alertCopy.message}</span>
             </p>
           </div>
           <Link
@@ -250,7 +291,7 @@ const SiteHeader = () => {
       </div>
       
       {/* Navbar content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div ref={navRef} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-[4.5rem]">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
@@ -311,7 +352,7 @@ const SiteHeader = () => {
               >
                 {currentLocale.short}
               </button>
-              <div className={`absolute right-0 top-full w-44 pt-3 transition-all ${
+              <div className={`absolute right-0 top-full z-30 w-44 pt-3 transition-all ${
                 isLanguageOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
               }`}>
                 <div id="language-menu" role="menu" className="border border-white/10 bg-black/95 p-2 shadow-2xl shadow-black/40">
@@ -383,7 +424,10 @@ const SiteHeader = () => {
             <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
             <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
             
-            <nav className="relative z-10 flex max-h-[calc(100dvh-7.25rem)] flex-col space-y-3 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <nav
+              className="relative z-10 flex flex-col space-y-3 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
+              style={{ maxHeight: 'calc(100dvh - var(--site-header-chrome-height, 7.25rem))' }}
+            >
               {navLinks.map((link) => (
                 link.external ? (
                   <a
