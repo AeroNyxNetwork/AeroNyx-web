@@ -60,6 +60,12 @@
  *   the available width. This prevents Traditional Chinese and other long
  *   locale strings from being squeezed or clipped at the left edge.
  *
+ * Modification Reason: v2.17 - Remove completed legacy client notice.
+ *   Removed the temporary service-cutoff notice after the client migration
+ *   completed. Navigation now returns to the standard single header bar while
+ *   preserving the existing mobile menu scroll isolation and language menu
+ *   layering.
+ *
  * Historical Notes:
  * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
@@ -106,10 +112,11 @@
  * Last Modified: v2.14 - Legacy client service notice
  * Last Modified: v2.15 - Alert-aware mobile menu geometry
  * Last Modified: v2.16 - Notice bar wrapping fix
+ * Last Modified: v2.17 - Remove completed legacy client notice
  * ============================================
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -120,15 +127,12 @@ const SiteHeader = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const alertRef = useRef(null);
-  const navRef = useRef(null);
   const router = useRouter();
   const locale = router.locale || DEFAULT_LOCALE;
   const copy = getMessages(locale);
   const currentLocale = SUPPORTED_LOCALES.find((item) => item.code === locale) || SUPPORTED_LOCALES[0];
   const clientAccessHref = '/privacy-network#privacy-access';
   const clientAccessLabel = copy.nav.downloadClient || copy.nav.downloads || copy.nav.privacyAccess;
-  const alertCopy = copy.siteAlert || getMessages(DEFAULT_LOCALE).siteAlert;
   const isActiveRoute = (href) => !href.startsWith('http') && router.pathname === href;
   const desktopNavClass = (href) => (
     `relative inline-flex min-h-[44px] items-center text-xs uppercase tracking-eyebrow transition-colors xl:text-sm ${
@@ -201,36 +205,6 @@ const SiteHeader = () => {
     return () => router.events?.off('routeChangeStart', closeTransientNavigation);
   }, [router.events]);
 
-  useEffect(() => {
-    const updateHeaderChromeHeight = () => {
-      const alertHeight = alertRef.current?.offsetHeight || 0;
-      const navHeight = navRef.current?.offsetHeight || 0;
-      document.documentElement.style.setProperty(
-        '--site-header-chrome-height',
-        `${alertHeight + navHeight}px`
-      );
-    };
-
-    updateHeaderChromeHeight();
-
-    const observers = [];
-    if (typeof ResizeObserver !== 'undefined') {
-      const observer = new ResizeObserver(updateHeaderChromeHeight);
-      if (alertRef.current) observer.observe(alertRef.current);
-      if (navRef.current) observer.observe(navRef.current);
-      observers.push(observer);
-    }
-
-    window.addEventListener('resize', updateHeaderChromeHeight);
-    window.addEventListener('orientationchange', updateHeaderChromeHeight);
-
-    return () => {
-      observers.forEach((observer) => observer.disconnect());
-      window.removeEventListener('resize', updateHeaderChromeHeight);
-      window.removeEventListener('orientationchange', updateHeaderChromeHeight);
-    };
-  }, [locale]);
-  
   // v2.1: protocol-first nav. Product detail pages are now secondary routes.
   const navLinks = [
     { href: "/", label: copy.nav.protocol || 'Protocol' },
@@ -255,7 +229,7 @@ const SiteHeader = () => {
   return (
     <motion.header
       className="fixed top-0 left-0 right-0 z-50"
-      initial={{ y: -140 }}
+      initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', damping: 20, stiffness: 100 }}
     >
@@ -269,36 +243,9 @@ const SiteHeader = () => {
         <div className="absolute inset-0 bg-black/80" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </motion.div>
-
-      {/* Legacy client service notice */}
-      <div
-        ref={alertRef}
-        role="status"
-        aria-label={alertCopy.ariaLabel}
-        className="relative z-10 border-b border-amber-300/15 bg-amber-300/[0.075] px-4 text-white shadow-[0_1px_0_rgba(255,255,255,0.04)] sm:px-6 lg:px-8"
-      >
-        <div className="mx-auto flex min-h-[2.75rem] max-w-7xl flex-col justify-center gap-2 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-4">
-          <div className="flex min-w-0 flex-col gap-1 md:flex-row md:items-center md:gap-3">
-            <span className="w-fit shrink-0 rounded-sm border border-amber-200/25 bg-amber-200/[0.08] px-2 py-1 text-[0.68rem] font-semibold uppercase leading-none tracking-[0.18em] text-amber-100">
-              {alertCopy.eyebrow}
-            </span>
-            <p className="min-w-0 max-w-full text-sm leading-snug text-white/76 sm:text-[0.82rem] lg:text-sm">
-              <span className="sm:hidden">{alertCopy.mobileMessage || alertCopy.message}</span>
-              <span className="hidden sm:inline">{alertCopy.message}</span>
-            </p>
-          </div>
-          <Link
-            href={clientAccessHref}
-            locale={locale}
-            className="inline-flex min-h-[36px] w-fit shrink-0 items-center justify-center rounded-sm border border-amber-100/30 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.12em] text-amber-50 transition-colors hover:border-amber-100/55 hover:bg-amber-100/[0.08]"
-          >
-            {alertCopy.cta}
-          </Link>
-        </div>
-      </div>
       
       {/* Navbar content */}
-      <div ref={navRef} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-[4.5rem]">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
@@ -431,10 +378,7 @@ const SiteHeader = () => {
             <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
             <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
             
-            <nav
-              className="relative z-10 flex flex-col space-y-3 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
-              style={{ maxHeight: 'calc(100dvh - var(--site-header-chrome-height, 7.25rem))' }}
-            >
+            <nav className="relative z-10 flex max-h-[calc(100dvh-4rem)] flex-col space-y-3 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               {navLinks.map((link) => (
                 link.external ? (
                   <a
