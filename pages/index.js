@@ -79,6 +79,10 @@
  * the first-page story stays focused on the blind coordination protocol.
  * Last Modified: v6.0 - Explicit section locale propagation
  * Last Modified: v6.1 - Build-time locale propagation
+ * Last Modified: v6.2 - Replaced the duplicate restart metric with a live,
+ * privacy-safe signed-state proof sourced from the backend MemChain commitment
+ * aggregate. No hashes, signatures, witness identities, endpoints, owners, or
+ * memory contents enter the public website contract.
  * ============================================
  */
 
@@ -265,6 +269,26 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
   const recoverySources = (stats.protocolRecoverySources || [])
     .map((source) => protocolCopy.recoverySources[source] || source.replace(/_/g, ' '))
     .join(' · ');
+  const commitmentStatusLabel = (
+    protocolCopy.commitmentStatusLabels?.[stats.protocolMemoryChainStatus]
+    || protocolCopy.commitmentStatusLabels?.syncing
+    || copy.homeStats.syncing
+  );
+  const commitmentDetail = Number(stats.protocolCommitmentReportedNodes || 0) > 0
+    ? protocolText(
+      protocolCopy,
+      'commitmentDetail',
+      '{blocks} verified blocks · {commitments} commitments · {granted}/{required} lease witnesses'
+    )
+      .replace('{blocks}', formatCompactCount(stats.protocolCommitmentVerifiedBlocks))
+      .replace('{commitments}', formatCompactCount(stats.protocolCommitmentVerifiedCommitments))
+      .replace('{granted}', formatCompactCount(stats.protocolCommitmentLeaseGrantedWitnesses))
+      .replace('{required}', formatCompactCount(stats.protocolCommitmentLeaseRequiredWitnesses))
+    : protocolText(
+      protocolCopy,
+      'commitmentPending',
+      'awaiting signed commitment evidence'
+    );
   const blindRelayFailures = (
     Number(stats.protocolBlindRelayRejected || 0)
     + Number(stats.protocolBlindRelayForwardFailed || 0)
@@ -348,9 +372,9 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
       detail: relayEvidenceDetail,
     },
     {
-      label: protocolCopy.restartRecovery,
-      value: `${formatCompactCount(stats.protocolCacheRecoveredNodes)} / ${formatCompactCount(stats.protocolReportedNodes)}`,
-      detail: recoverySources || protocolCopy.recoveryPending,
+      label: protocolText(protocolCopy, 'commitmentLedger', 'Signed state'),
+      value: commitmentStatusLabel,
+      detail: commitmentDetail,
     },
   ];
   const meshNodeCount = Math.max(2, Math.min(4, Number(stats.protocolNetworkStoryReportedNodes || stats.protocolReportedNodes || 2)));
