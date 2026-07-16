@@ -9,6 +9,12 @@
  *   This prevents localized pages from being generated with default English
  *   section copy before client hydration.
  *
+ * Modification Reason: v6.2 - Witness-certified commitment coverage.
+ *   Signed state now distinguishes an audited block tip from the coordinator
+ *   tip covered by an operator-pinned witness certificate. The public card
+ *   reports certified and pending counts without claiming permissionless
+ *   consensus, public-chain finality, or exposing hashes and witness identity.
+ *
  * Modification Reason: v6.0 - Explicit section locale propagation.
  *   The homepage now passes the resolved activeLocale into locale-aware
  *   sections. This avoids section-level router fallback during static
@@ -270,25 +276,42 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     .map((source) => protocolCopy.recoverySources[source] || source.replace(/_/g, ' '))
     .join(' · ');
   const commitmentStatusLabel = (
-    protocolCopy.commitmentStatusLabels?.[stats.protocolMemoryChainStatus]
+    protocolCopy.blockConfirmationStatusLabels?.[stats.protocolBlockConfirmationState]
+    || protocolCopy.commitmentStatusLabels?.[stats.protocolMemoryChainStatus]
     || protocolCopy.commitmentStatusLabels?.syncing
     || copy.homeStats.syncing
   );
-  const commitmentDetail = Number(stats.protocolCommitmentReportedNodes || 0) > 0
+  const hasBlockConfirmationEvidence = (
+    Number(stats.protocolCommitmentReportedNodes || 0) > 0
+    && stats.protocolBlockConfirmationState !== 'unavailable'
+    && stats.protocolBlockConfirmationState !== 'unknown'
+  );
+  const commitmentDetail = hasBlockConfirmationEvidence
     ? protocolText(
       protocolCopy,
       'commitmentDetail',
-      '{blocks} verified blocks · {commitments} commitments · {granted}/{required} lease witnesses'
+      '{certified}/{tip} witness-certified blocks · {pending} pending · {granted}/{required} lease witnesses'
     )
-      .replace('{blocks}', formatCompactCount(stats.protocolCommitmentVerifiedBlocks))
-      .replace('{commitments}', formatCompactCount(stats.protocolCommitmentVerifiedCommitments))
+      .replace('{certified}', formatCompactCount(stats.protocolCommitmentCertifiedTipHeight))
+      .replace('{tip}', formatCompactCount(stats.protocolCommitmentTipHeight))
+      .replace('{pending}', formatCompactCount(stats.protocolCommitmentUncertifiedBlocks))
       .replace('{granted}', formatCompactCount(stats.protocolCommitmentLeaseGrantedWitnesses))
       .replace('{required}', formatCompactCount(stats.protocolCommitmentLeaseRequiredWitnesses))
-    : protocolText(
-      protocolCopy,
-      'commitmentPending',
-      'awaiting signed commitment evidence'
-    );
+    : Number(stats.protocolCommitmentReportedNodes || 0) > 0
+      ? protocolText(
+        protocolCopy,
+        'commitmentLegacyDetail',
+        '{blocks} verified commitment blocks · {commitments} commitments · {granted}/{required} lease witnesses'
+      )
+        .replace('{blocks}', formatCompactCount(stats.protocolCommitmentVerifiedBlocks))
+        .replace('{commitments}', formatCompactCount(stats.protocolCommitmentVerifiedCommitments))
+        .replace('{granted}', formatCompactCount(stats.protocolCommitmentLeaseGrantedWitnesses))
+        .replace('{required}', formatCompactCount(stats.protocolCommitmentLeaseRequiredWitnesses))
+      : protocolText(
+        protocolCopy,
+        'commitmentPending',
+        'awaiting signed commitment evidence'
+      );
   const blindRelayFailures = (
     Number(stats.protocolBlindRelayRejected || 0)
     + Number(stats.protocolBlindRelayForwardFailed || 0)
