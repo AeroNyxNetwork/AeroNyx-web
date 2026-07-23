@@ -31,6 +31,24 @@
  *   and unsupported desktop packages are removed from the public download
  *   surface until a supported commercial build is available.
  *
+ * Modification Reason: v2.5 - AeroNyx 1.0.14 direct distribution.
+ *   Promotes the signed Apple Silicon DMG as the primary macOS channel,
+ *   updates Windows and Android release metadata, and keeps the App Store
+ *   listing exclusive to iOS. Platform URLs remain centralized and version
+ *   labels stay compact across desktop and mobile layouts.
+ *
+ * Modification Reason: v2.6 - Mobile navigation stacking correction.
+ *   Keeps the download dialog and its backdrop above the fixed site header so
+ *   compact viewports never hide the title or primary close control.
+ *
+ * Modification Reason: v2.7 - Root-level dialog portal.
+ *   Renders the overlay under document.body so page-level stacking contexts
+ *   cannot trap the modal beneath fixed navigation or animated sections.
+ *
+ * Modification Reason: v2.8 - Compact-height internal scrolling.
+ *   Propagates the dynamic viewport limit through the glass shell and content
+ *   pane so short phones scroll inside the dialog instead of below its frame.
+ *
  * Main Functionality:
  *   - Detects the user's OS and promotes the matching AeroNyx client first.
  *   - Lists all currently supported desktop/mobile platforms.
@@ -51,15 +69,31 @@
  * Last Modified: v2.2 - Keyboard focus containment
  * Last Modified: v2.3 - Mobile viewport-safe dialog layout
  * Last Modified: v2.4 - Production download channel refresh
+ * Last Modified: v2.5 - Direct macOS DMG and AeroNyx 1.0.14 channels
+ * Last Modified: v2.6 - Mobile-safe modal stacking above fixed navigation
+ * Last Modified: v2.7 - Root portal for reliable modal layering
+ * Last Modified: v2.8 - Short-viewport dialog scrolling containment
  * ============================================
  */
 
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import useOsDetection from '../../lib/hooks/useOsDetection';
 import AeroNyxLogo from './AeroNyxLogo';
 import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
+
+// [DOWNLOAD-CHANNEL-20260723 by Codex] Keep public release destinations in one
+// immutable table so detected-device and all-platform cards cannot drift.
+const RELEASE_VERSION = '1.0.14';
+const RELEASE_BUILD = '10';
+const RELEASE_URLS = Object.freeze({
+  macOS: 'https://v1.aeronyx.network/downloads/latest/macos/AeroNyx-macos-arm64.dmg',
+  Windows: 'https://v1.aeronyx.network/downloads/latest/windows/AeroNyxSetup-windows-x64.exe',
+  Android: 'https://v1.aeronyx.network/downloads/latest/android/AeroNyx-android-arm64-v8a.apk',
+  iOS: 'https://apps.apple.com/us/app/aeronyx-ai-vpn-chat-wallet/id6736854944'
+});
 
 // OS Icons as React Components
 const MacOSIcon = () => (
@@ -115,7 +149,6 @@ const DownloadsModal = ({ isOpen, onClose }) => {
   const copy = messages.downloadsModal || getMessages(DEFAULT_LOCALE).downloadsModal;
   // Detect user's OS
   const userOs = useOsDetection();
-  const appStoreUrl = "https://apps.apple.com/us/app/aeronyx-ai-vpn-chat-wallet/id6736854944";
   
   // Handle body scroll locking while preserving any pre-existing page state.
   useEffect(() => {
@@ -179,37 +212,37 @@ const DownloadsModal = ({ isOpen, onClose }) => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
   
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === 'undefined') return null;
   
   // Operating systems data with SVG components
   const osOptions = [
     {
       name: "macOS",
-      version: `${copy.versionLabel}: App Store`,
+      version: `${copy.versionLabel}: ${RELEASE_VERSION} (${RELEASE_BUILD}) · Direct DMG · Apple Silicon`,
       icon: MacOSIcon,
       available: true,
-      downloadUrl: appStoreUrl
+      downloadUrl: RELEASE_URLS.macOS
     },
     {
       name: "Windows",
-      version: `${copy.versionLabel}: latest`,
+      version: `${copy.versionLabel}: ${RELEASE_VERSION} · x64`,
       icon: WindowsIcon,
       available: true,
-      downloadUrl: "https://binary.aeronyx.network/latest/windows/AeroNyxSetup-windows-x64.exe"
+      downloadUrl: RELEASE_URLS.Windows
     },
     {
       name: "Android",
-      version: `${copy.versionLabel}: latest`,
+      version: `${copy.versionLabel}: ${RELEASE_VERSION} (${RELEASE_BUILD}) · APK`,
       icon: AndroidIcon,
       available: true,
-      downloadUrl: "https://binary.aeronyx.network/latest/android/AeroNyx-android-arm64-v8a.apk"
+      downloadUrl: RELEASE_URLS.Android
     },
     {
       name: "iOS",
       version: `${copy.versionLabel}: App Store`,
       icon: IPhoneIcon,
       available: true,
-      downloadUrl: appStoreUrl
+      downloadUrl: RELEASE_URLS.iOS
     }
   ];
 
@@ -254,10 +287,13 @@ const DownloadsModal = ({ isOpen, onClose }) => {
     }
   };
 
-  return (
+  // [DOWNLOAD-MOBILE-20260723 by Codex] Escape page stacking contexts so the
+  // modal remains fully visible above the fixed header on every viewport.
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto overscroll-contain px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-[calc(0.75rem+env(safe-area-inset-top))] sm:items-center sm:p-4">
+        <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto overscroll-contain px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-[calc(0.75rem+env(safe-area-inset-top))] sm:items-center sm:p-4">
+          {/* [DOWNLOAD-MOBILE-20260723 by Codex] The site header also uses z-50. */}
           {/* Backdrop with blur effect */}
           <motion.div 
             className="fixed inset-0 bg-black/72 backdrop-blur-md"
@@ -285,7 +321,10 @@ const DownloadsModal = ({ isOpen, onClose }) => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* The glass modal */}
-            <div className="relative max-h-full overflow-hidden rounded border border-white/10">
+            <div
+              className="relative max-h-full overflow-hidden rounded border border-white/10"
+              style={{ maxHeight: 'inherit' }}
+            >
               {/* Glass effect background */}
               <div className="absolute inset-0 bg-[rgba(12,12,19,0.92)] backdrop-blur-xl" />
               
@@ -293,7 +332,10 @@ const DownloadsModal = ({ isOpen, onClose }) => {
               <div className="absolute top-0 left-5 right-5 h-px bg-white/20" />
               
               {/* Content */}
-              <div className="relative z-10 max-h-full overflow-y-auto overscroll-contain p-5 sm:p-6">
+              <div
+                className="relative z-10 max-h-full overflow-y-auto overscroll-contain p-5 sm:p-6"
+                style={{ maxHeight: 'inherit' }}
+              >
                 {/* Header with close button - Fixed for better mobile accessibility */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center">
@@ -416,7 +458,8 @@ const DownloadsModal = ({ isOpen, onClose }) => {
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 
