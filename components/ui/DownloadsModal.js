@@ -54,6 +54,11 @@
  *   SHA-256 digest and filename for each directly distributed installer.
  *   Adds a compact copy interaction without exposing App Store internals.
  *
+ * Modification Reason: v2.10 - Android ARM64-only distribution.
+ *   Replaces the former multi-ABI Android artifact with the smaller signed
+ *   ARM64 package and updates its immutable URL, filename, compatibility
+ *   label, and published SHA-256 digest as one release contract.
+ *
  * Main Functionality:
  *   - Detects the user's OS and promotes the matching AeroNyx client first.
  *   - Lists all currently supported desktop/mobile platforms.
@@ -79,6 +84,7 @@
  * Last Modified: v2.7 - Root portal for reliable modal layering
  * Last Modified: v2.8 - Short-viewport dialog scrolling containment
  * Last Modified: v2.9 - Immutable downloads with public SHA-256 verification
+ * Last Modified: v2.10 - Android ARM64-only package and checksum
  * ============================================
  */
 
@@ -107,9 +113,9 @@ const RELEASE_CHANNELS = Object.freeze({
     sha256: 'a82216628137925e0423ec87592c648bf437eb05f0e108c0d412917a4e643fa6'
   }),
   Android: Object.freeze({
-    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.14-10/android/AeroNyx-1.0.14-10-android-arm.apk',
-    filename: 'AeroNyx-1.0.14-10-android-arm.apk',
-    sha256: 'b1c31d44e6fe3fca1db7fc851ee7dda7892e7ed03ce3467032e2e34bcc5ebcf7'
+    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.14-10/android/AeroNyx-1.0.14-10-android-arm64.apk',
+    filename: 'AeroNyx-1.0.14-10-android-arm64.apk',
+    sha256: 'bb1dd1c6d57c030db3cdb9d69b49845fac9d32374b8241126dce70053716aec5'
   }),
   iOS: Object.freeze({
     downloadUrl: 'https://apps.apple.com/us/app/aeronyx-ai-vpn-chat-wallet/id6736854944'
@@ -261,7 +267,7 @@ const DownloadsModal = ({ isOpen, onClose }) => {
     },
     {
       name: "Android",
-      version: `${copy.versionLabel}: ${RELEASE_VERSION} (${RELEASE_BUILD}) · APK`,
+      version: `${copy.versionLabel}: ${RELEASE_VERSION} (${RELEASE_BUILD}) · ARM64 APK · 65 MB`,
       icon: AndroidIcon,
       available: true,
       ...RELEASE_CHANNELS.Android
