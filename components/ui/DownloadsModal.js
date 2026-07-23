@@ -49,10 +49,15 @@
  *   Propagates the dynamic viewport limit through the glass shell and content
  *   pane so short phones scroll inside the dialog instead of below its frame.
  *
+ * Modification Reason: v2.9 - Public release integrity verification.
+ *   Pins binary downloads to immutable version URLs and publishes the exact
+ *   SHA-256 digest and filename for each directly distributed installer.
+ *   Adds a compact copy interaction without exposing App Store internals.
+ *
  * Main Functionality:
  *   - Detects the user's OS and promotes the matching AeroNyx client first.
  *   - Lists all currently supported desktop/mobile platforms.
- *   - Keeps external download URL behavior centralized in this file.
+ *   - Keeps versioned download URLs and release-integrity metadata centralized.
  *
  * Dependencies:
  *   - lib/hooks/useOsDetection
@@ -73,10 +78,11 @@
  * Last Modified: v2.6 - Mobile-safe modal stacking above fixed navigation
  * Last Modified: v2.7 - Root portal for reliable modal layering
  * Last Modified: v2.8 - Short-viewport dialog scrolling containment
+ * Last Modified: v2.9 - Immutable downloads with public SHA-256 verification
  * ============================================
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -84,15 +90,30 @@ import useOsDetection from '../../lib/hooks/useOsDetection';
 import AeroNyxLogo from './AeroNyxLogo';
 import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 
-// [DOWNLOAD-CHANNEL-20260723 by Codex] Keep public release destinations in one
-// immutable table so detected-device and all-platform cards cannot drift.
+// [DOWNLOAD-INTEGRITY-20260723 by Codex] Website download links are pinned to
+// immutable release objects. Never attach a published digest to a mutable
+// "latest" URL because promotion would silently invalidate verification.
 const RELEASE_VERSION = '1.0.14';
 const RELEASE_BUILD = '10';
-const RELEASE_URLS = Object.freeze({
-  macOS: 'https://v1.aeronyx.network/downloads/latest/macos/AeroNyx-macos-arm64.dmg',
-  Windows: 'https://v1.aeronyx.network/downloads/latest/windows/AeroNyxSetup-windows-x64.exe',
-  Android: 'https://v1.aeronyx.network/downloads/latest/android/AeroNyx-android-arm64-v8a.apk',
-  iOS: 'https://apps.apple.com/us/app/aeronyx-ai-vpn-chat-wallet/id6736854944'
+const RELEASE_CHANNELS = Object.freeze({
+  macOS: Object.freeze({
+    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.14-10/macos/AeroNyx-1.0.14-10-arm64.dmg',
+    filename: 'AeroNyx-1.0.14-10-arm64.dmg',
+    sha256: 'f24a874a05a7d318fafa1850ed8162e414e1e21f671e90e9228e7ee5b67e011a'
+  }),
+  Windows: Object.freeze({
+    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.14-10/windows/AeroNyxSetup-1.0.14-windows-x64.exe',
+    filename: 'AeroNyxSetup-1.0.14-windows-x64.exe',
+    sha256: 'a82216628137925e0423ec87592c648bf437eb05f0e108c0d412917a4e643fa6'
+  }),
+  Android: Object.freeze({
+    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.14-10/android/AeroNyx-1.0.14-10-android-arm.apk',
+    filename: 'AeroNyx-1.0.14-10-android-arm.apk',
+    sha256: 'b1c31d44e6fe3fca1db7fc851ee7dda7892e7ed03ce3467032e2e34bcc5ebcf7'
+  }),
+  iOS: Object.freeze({
+    downloadUrl: 'https://apps.apple.com/us/app/aeronyx-ai-vpn-chat-wallet/id6736854944'
+  })
 });
 
 // OS Icons as React Components
@@ -144,6 +165,8 @@ const CloseIcon = ({ onClick, label }) => (
 const DownloadsModal = ({ isOpen, onClose }) => {
   const modalRef = useRef(null);
   const previouslyFocusedElement = useRef(null);
+  const copyResetTimer = useRef(null);
+  const [copiedHash, setCopiedHash] = useState(null);
   const { locale } = useRouter();
   const messages = getMessages(locale || DEFAULT_LOCALE);
   const copy = messages.downloadsModal || getMessages(DEFAULT_LOCALE).downloadsModal;
@@ -211,6 +234,12 @@ const DownloadsModal = ({ isOpen, onClose }) => {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
+
+  useEffect(() => () => {
+    if (copyResetTimer.current) {
+      window.clearTimeout(copyResetTimer.current);
+    }
+  }, []);
   
   if (!isOpen || typeof document === 'undefined') return null;
   
@@ -221,30 +250,32 @@ const DownloadsModal = ({ isOpen, onClose }) => {
       version: `${copy.versionLabel}: ${RELEASE_VERSION} (${RELEASE_BUILD}) · Direct DMG · Apple Silicon`,
       icon: MacOSIcon,
       available: true,
-      downloadUrl: RELEASE_URLS.macOS
+      ...RELEASE_CHANNELS.macOS
     },
     {
       name: "Windows",
       version: `${copy.versionLabel}: ${RELEASE_VERSION} · x64`,
       icon: WindowsIcon,
       available: true,
-      downloadUrl: RELEASE_URLS.Windows
+      ...RELEASE_CHANNELS.Windows
     },
     {
       name: "Android",
       version: `${copy.versionLabel}: ${RELEASE_VERSION} (${RELEASE_BUILD}) · APK`,
       icon: AndroidIcon,
       available: true,
-      downloadUrl: RELEASE_URLS.Android
+      ...RELEASE_CHANNELS.Android
     },
     {
       name: "iOS",
       version: `${copy.versionLabel}: App Store`,
       icon: IPhoneIcon,
       available: true,
-      downloadUrl: RELEASE_URLS.iOS
+      ...RELEASE_CHANNELS.iOS
     }
   ];
+
+  const integrityOptions = osOptions.filter((os) => os.sha256 && os.filename);
 
   // Sort with user's OS first
   const sortedOptions = [...osOptions].sort((a, b) => {
@@ -265,6 +296,56 @@ const DownloadsModal = ({ isOpen, onClose }) => {
   const handleDownload = (os) => {
     if (!os || !os.available) return;
     window.location.href = os.downloadUrl;
+  };
+
+  // [DOWNLOAD-INTEGRITY-20260723 by Codex] Clipboard writes happen only after
+  // an explicit user gesture. The fallback keeps older Safari/WebView builds
+  // able to copy the exact digest without exposing or transforming the value.
+  const handleCopyHash = async (os) => {
+    if (!os?.sha256) return;
+
+    let copied = false;
+    const copyWithTextArea = () => {
+      const textArea = document.createElement('textarea');
+      textArea.value = os.sha256;
+      textArea.setAttribute('readonly', '');
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+
+      try {
+        document.body.appendChild(textArea);
+        textArea.select();
+        return document.execCommand('copy');
+      } finally {
+        textArea.remove();
+      }
+    };
+
+    try {
+      if (!navigator.clipboard?.writeText) {
+        copied = copyWithTextArea();
+      } else {
+        await navigator.clipboard.writeText(os.sha256);
+        copied = true;
+      }
+    } catch {
+      try {
+        copied = copyWithTextArea();
+      } catch {
+        copied = false;
+      }
+    }
+
+    if (!copied) return;
+
+    setCopiedHash(os.sha256);
+    if (copyResetTimer.current) {
+      window.clearTimeout(copyResetTimer.current);
+    }
+    copyResetTimer.current = window.setTimeout(() => {
+      setCopiedHash(null);
+      copyResetTimer.current = null;
+    }, 2000);
   };
 
   // Animation variants
@@ -442,6 +523,120 @@ const DownloadsModal = ({ isOpen, onClose }) => {
                     })}
                   </div>
                 </div>
+
+                {/* [DOWNLOAD-INTEGRITY-20260723 by Codex] Keep long digests out
+                    of platform cards while making exact verification data
+                    accessible, copyable, and crawlable in the download flow. */}
+                <details className="group mt-5 rounded border border-white/10 bg-white/[0.025]">
+                  <summary className="flex min-h-[56px] cursor-pointer list-none items-center justify-between gap-3 p-3.5 text-left [&::-webkit-details-marker]:hidden">
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-white/82">
+                        {copy.integrityTitle}
+                        <span className="ml-2 font-mono text-[10px] font-normal text-brand-light">
+                          SHA-256
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs leading-relaxed text-white/42">
+                        {copy.integrityDescription}
+                      </p>
+                    </div>
+                    <svg
+                      className="h-4 w-4 flex-shrink-0 text-white/42 transition-transform duration-200 group-open:rotate-180"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      aria-hidden="true"
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  </summary>
+
+                  <div className="space-y-2.5 border-t border-white/10 p-3.5">
+                    <span className="sr-only" aria-live="polite">
+                      {copiedHash ? copy.copiedHashLabel : ''}
+                    </span>
+
+                    {integrityOptions.map((os) => {
+                      const isCopied = copiedHash === os.sha256;
+                      const copyLabel = isCopied ? copy.copiedHashLabel : copy.copyHashLabel;
+
+                      return (
+                        <div
+                          key={os.name}
+                          className="border-b border-white/[0.08] py-3 first:pt-0 last:border-b-0 last:pb-0"
+                        >
+                          <div className="flex min-w-0 items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <div className="text-xs font-medium text-white/72">{os.name}</div>
+                              <div className="mt-1 break-all font-mono text-[10px] leading-4 text-white/40">
+                                {os.filename}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded border transition-colors ${
+                                isCopied
+                                  ? 'border-brand-line bg-brand-faint text-brand-light'
+                                  : 'border-white/10 bg-white/[0.025] text-white/44 hover:border-brand-line hover:bg-brand-faint hover:text-brand-light'
+                              }`}
+                              onClick={() => handleCopyHash(os)}
+                              aria-label={`${copyLabel}: ${os.name}`}
+                              title={`${copyLabel}: ${os.name}`}
+                            >
+                              {isCopied ? (
+                                <svg
+                                  width="17"
+                                  height="17"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  aria-hidden="true"
+                                >
+                                  <path d="m5 12 4 4L19 6" />
+                                </svg>
+                              ) : (
+                                <svg
+                                  width="17"
+                                  height="17"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  aria-hidden="true"
+                                >
+                                  <rect width="14" height="14" x="8" y="8" rx="2" />
+                                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                                </svg>
+                              )}
+                            </button>
+                          </div>
+
+                          <div className="mt-2">
+                            <div className="mb-1 font-mono text-[9px] uppercase text-white/30">
+                              SHA-256
+                            </div>
+                            <code
+                              className="block break-all font-mono text-[9px] leading-4 tracking-normal text-white/58"
+                              aria-label={`SHA-256 ${os.name}`}
+                            >
+                              {os.sha256}
+                            </code>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    <p className="text-[10px] leading-4 text-white/34">
+                      {copy.integrityHint}
+                    </p>
+                  </div>
+                </details>
                 
                 {/* Extra close button at bottom for mobile accessibility */}
                 <div className="mt-6 text-center">
