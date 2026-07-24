@@ -15,6 +15,12 @@
  *   reports certified and pending counts without claiming permissionless
  *   consensus, public-chain finality, or exposing hashes and witness identity.
  *
+ * Modification Reason: v6.3 - Verifiable blind ledger product language.
+ *   [VERIFIABLE-BLIND-LEDGER 2026-07-24 by Codex] The existing commitment
+ *   metric now explains the user-relevant trust boundary: contents stay
+ *   unreadable while signed ordering and witness coverage remain independently
+ *   verifiable. No new telemetry or record-level identifiers were added.
+ *
  * Modification Reason: v6.0 - Explicit section locale propagation.
  *   The homepage now passes the resolved activeLocale into locale-aware
  *   sections. This avoids section-level router fallback during static
@@ -89,6 +95,7 @@
  * privacy-safe signed-state proof sourced from the backend MemChain commitment
  * aggregate. No hashes, signatures, witness identities, endpoints, owners, or
  * memory contents enter the public website contract.
+ * Last Modified: v6.3 - Productized signed state as a verifiable blind ledger.
  * ============================================
  */
 
@@ -290,7 +297,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
     ? protocolText(
       protocolCopy,
       'commitmentDetail',
-      '{certified}/{tip} witness-certified blocks · {pending} pending · {granted}/{required} lease witnesses'
+      '{certified}/{tip} blocks independently certified · {pending} awaiting evidence · witness lease {granted}/{required}'
     )
       .replace('{certified}', formatCompactCount(stats.protocolCommitmentCertifiedTipHeight))
       .replace('{tip}', formatCompactCount(stats.protocolCommitmentTipHeight))
@@ -301,7 +308,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
       ? protocolText(
         protocolCopy,
         'commitmentLegacyDetail',
-        '{blocks} verified commitment blocks · {commitments} commitments · {granted}/{required} lease witnesses'
+        '{blocks} verified blocks · {commitments} opaque commitments · witness lease {granted}/{required}'
       )
         .replace('{blocks}', formatCompactCount(stats.protocolCommitmentVerifiedBlocks))
         .replace('{commitments}', formatCompactCount(stats.protocolCommitmentVerifiedCommitments))
@@ -310,7 +317,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
       : protocolText(
         protocolCopy,
         'commitmentPending',
-        'awaiting signed commitment evidence'
+        'awaiting privacy-safe ledger evidence'
       );
   const blindRelayFailures = (
     Number(stats.protocolBlindRelayRejected || 0)
@@ -395,7 +402,7 @@ const HomeNetworkStats = ({ stats, isLoading, copy }) => {
       detail: relayEvidenceDetail,
     },
     {
-      label: protocolText(protocolCopy, 'commitmentLedger', 'Signed state'),
+      label: protocolText(protocolCopy, 'commitmentLedger', 'Verifiable blind ledger'),
       value: commitmentStatusLabel,
       detail: commitmentDetail,
     },
