@@ -65,6 +65,12 @@
  *   immutable URLs, filenames, sizes, and SHA-256 digests remain one release
  *   contract so the website never mixes files from different builds.
  *
+ * Modification Reason: v2.12 - Updater transition artifact revision.
+ *   Moves all three installers to a new immutable revision after the startup
+ *   and periodic update mechanism changed. Public website checksums remain
+ *   available even while the legacy Android/Windows update feed intentionally
+ *   omits checksum and size metadata for compatibility.
+ *
  * Main Functionality:
  *   - Detects the user's OS and promotes the matching AeroNyx client first.
  *   - Lists all currently supported desktop/mobile platforms.
@@ -92,6 +98,7 @@
  * Last Modified: v2.9 - Immutable downloads with public SHA-256 verification
  * Last Modified: v2.10 - Android ARM64-only package and checksum
  * Last Modified: v2.11 - AeroNyx 1.0.17-13 backend-origin release
+ * Last Modified: v2.12 - AeroNyx 1.0.17-13 updater transition revision
  * ============================================
  */
 
@@ -111,21 +118,24 @@ import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 // integrity metadata is valid only for these immutable versioned objects.
 const RELEASE_VERSION = '1.0.17';
 const RELEASE_BUILD = '13';
+// [UPDATER-TRANSITION-RELEASE 2026-07-26 by Codex] The revision suffix keeps
+// previously cached immutable 1.0.17-13 artifacts distinct from these rebuilt
+// installers while preserving the client-facing marketing/build version.
 const RELEASE_CHANNELS = Object.freeze({
   macOS: Object.freeze({
-    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.17-13/macos/AeroNyx-1.0.17-13-arm64.dmg',
+    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.17-13-rev2/macos/AeroNyx-1.0.17-13-arm64.dmg',
     filename: 'AeroNyx-1.0.17-13-arm64.dmg',
-    sha256: '56c30f87178b2c57ca4d102db8e900d7289ec70c20a1ae5c9ed596d70aa7812d'
+    sha256: '1cf6ddc1cf61e42fc09a79d58512af31505e7b9813890d986281ca7d0f19026e'
   }),
   Windows: Object.freeze({
-    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.17-13/windows/AeroNyxSetup-1.0.17-windows-x64.exe',
+    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.17-13-rev2/windows/AeroNyxSetup-1.0.17-windows-x64.exe',
     filename: 'AeroNyxSetup-1.0.17-windows-x64.exe',
-    sha256: '88b7d3c9f8b7b8a305969f6e3d83c6c62e52e0ea29a4e8403bab862d6ea073e8'
+    sha256: '67f2d261690a9f5d6907dcb37293aa309f80dc05e90c126eb00bb55714154458'
   }),
   Android: Object.freeze({
-    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.17-13/android/AeroNyx-1.0.17-13-android-arm64.apk',
+    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.17-13-rev2/android/AeroNyx-1.0.17-13-android-arm64.apk',
     filename: 'AeroNyx-1.0.17-13-android-arm64.apk',
-    sha256: '3c796c7a3b05d46f0d1e91eae2fc144e5935f4dbd46b3799704801ee34756c0f'
+    sha256: '29d2a20f42b79005816b77a448073e0be94eadad52a5cc9f915ac3f1fd6cc37a'
   }),
   iOS: Object.freeze({
     downloadUrl: 'https://apps.apple.com/us/app/aeronyx-ai-vpn-chat-wallet/id6736854944'
