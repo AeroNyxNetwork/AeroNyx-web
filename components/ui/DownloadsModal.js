@@ -59,6 +59,12 @@
  *   ARM64 package and updates its immutable URL, filename, compatibility
  *   label, and published SHA-256 digest as one release contract.
  *
+ * Modification Reason: v2.11 - AeroNyx 1.0.17 backend-origin release.
+ *   Publishes the signed Android ARM64, notarized Apple Silicon DMG, and
+ *   Windows x64 installers from the AeroNyx backend download origin. Exact
+ *   immutable URLs, filenames, sizes, and SHA-256 digests remain one release
+ *   contract so the website never mixes files from different builds.
+ *
  * Main Functionality:
  *   - Detects the user's OS and promotes the matching AeroNyx client first.
  *   - Lists all currently supported desktop/mobile platforms.
@@ -85,6 +91,7 @@
  * Last Modified: v2.8 - Short-viewport dialog scrolling containment
  * Last Modified: v2.9 - Immutable downloads with public SHA-256 verification
  * Last Modified: v2.10 - Android ARM64-only package and checksum
+ * Last Modified: v2.11 - AeroNyx 1.0.17-13 backend-origin release
  * ============================================
  */
 
@@ -99,23 +106,26 @@ import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 // [DOWNLOAD-INTEGRITY-20260723 by Codex] Website download links are pinned to
 // immutable release objects. Never attach a published digest to a mutable
 // "latest" URL because promotion would silently invalidate verification.
-const RELEASE_VERSION = '1.0.14';
-const RELEASE_BUILD = '10';
+// [DIRECT-DOWNLOAD-RELEASE 2026-07-26 by Codex] Direct installers are served
+// by the AeroNyx backend origin. R2/latest aliases must not be used here:
+// integrity metadata is valid only for these immutable versioned objects.
+const RELEASE_VERSION = '1.0.17';
+const RELEASE_BUILD = '13';
 const RELEASE_CHANNELS = Object.freeze({
   macOS: Object.freeze({
-    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.14-10/macos/AeroNyx-1.0.14-10-arm64.dmg',
-    filename: 'AeroNyx-1.0.14-10-arm64.dmg',
-    sha256: 'f24a874a05a7d318fafa1850ed8162e414e1e21f671e90e9228e7ee5b67e011a'
+    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.17-13/macos/AeroNyx-1.0.17-13-arm64.dmg',
+    filename: 'AeroNyx-1.0.17-13-arm64.dmg',
+    sha256: '56c30f87178b2c57ca4d102db8e900d7289ec70c20a1ae5c9ed596d70aa7812d'
   }),
   Windows: Object.freeze({
-    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.14-10/windows/AeroNyxSetup-1.0.14-windows-x64.exe',
-    filename: 'AeroNyxSetup-1.0.14-windows-x64.exe',
-    sha256: 'a82216628137925e0423ec87592c648bf437eb05f0e108c0d412917a4e643fa6'
+    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.17-13/windows/AeroNyxSetup-1.0.17-windows-x64.exe',
+    filename: 'AeroNyxSetup-1.0.17-windows-x64.exe',
+    sha256: '88b7d3c9f8b7b8a305969f6e3d83c6c62e52e0ea29a4e8403bab862d6ea073e8'
   }),
   Android: Object.freeze({
-    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.14-10/android/AeroNyx-1.0.14-10-android-arm64.apk',
-    filename: 'AeroNyx-1.0.14-10-android-arm64.apk',
-    sha256: 'bb1dd1c6d57c030db3cdb9d69b49845fac9d32374b8241126dce70053716aec5'
+    downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.17-13/android/AeroNyx-1.0.17-13-android-arm64.apk',
+    filename: 'AeroNyx-1.0.17-13-android-arm64.apk',
+    sha256: '3c796c7a3b05d46f0d1e91eae2fc144e5935f4dbd46b3799704801ee34756c0f'
   }),
   iOS: Object.freeze({
     downloadUrl: 'https://apps.apple.com/us/app/aeronyx-ai-vpn-chat-wallet/id6736854944'
@@ -253,14 +263,14 @@ const DownloadsModal = ({ isOpen, onClose }) => {
   const osOptions = [
     {
       name: "macOS",
-      version: `${copy.versionLabel}: ${RELEASE_VERSION} (${RELEASE_BUILD}) · Direct DMG · Apple Silicon`,
+      version: `${copy.versionLabel}: ${RELEASE_VERSION} (${RELEASE_BUILD}) · Direct DMG · Apple Silicon · 47 MB`,
       icon: MacOSIcon,
       available: true,
       ...RELEASE_CHANNELS.macOS
     },
     {
       name: "Windows",
-      version: `${copy.versionLabel}: ${RELEASE_VERSION} · x64`,
+      version: `${copy.versionLabel}: ${RELEASE_VERSION} (${RELEASE_BUILD}) · x64 · 24 MB`,
       icon: WindowsIcon,
       available: true,
       ...RELEASE_CHANNELS.Windows
