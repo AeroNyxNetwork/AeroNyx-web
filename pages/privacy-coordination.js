@@ -38,10 +38,16 @@
  * numbered public/private evidence boundaries, and a continuous blind-relay
  * path. These refinements improve orientation and mobile reading rhythm
  * without changing any protocol claim or adding decorative product noise.
+ * Last Modified: v1.2 - [PRIVACY-COORDINATION-DETAILS 2026-07-27 by Codex]
+ * Made every section destination visible on mobile, added semantic comparison
+ * table roles, clarified delivery status as a four-step protocol track, and
+ * converted the FAQ to native, keyboard-accessible disclosure controls. Direct
+ * section links are realigned after web fonts settle so shared URLs do not
+ * drift below the fixed navigation.
  * ============================================
  */
 
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -110,17 +116,17 @@ function PageIndex({ copy }) {
       aria-label={copy.eyebrow}
       className="mt-14 border-t border-white/10 pt-4 sm:mt-16 sm:pt-5"
     >
-      <div className="-mx-4 flex snap-x snap-mandatory gap-px overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-px overflow-hidden border border-white/10 bg-white/10 lg:grid-cols-4">
         {items.map((item, index) => (
           <a
             key={item.href}
             href={item.href}
-            className="group flex min-h-[52px] min-w-[210px] snap-start items-center gap-3 border-l border-white/10 px-4 py-2 text-left transition-colors hover:bg-white/[0.025] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light sm:min-w-0"
+            className="group flex min-h-[58px] min-w-0 items-center gap-3 bg-[#09090E] px-3 py-3 text-left transition-colors hover:bg-[#101018] focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light sm:min-h-[62px] sm:px-4"
           >
-            <span className="font-mono text-[10px] text-brand-light/72">
+            <span className="shrink-0 font-mono text-[10px] text-brand-light/72">
               {String(index + 1).padStart(2, '0')}
             </span>
-            <span className="min-w-0 break-words text-xs font-semibold uppercase leading-5 tracking-[0.12em] text-white/42 transition-colors group-hover:text-white/72">
+            <span className="min-w-0 break-words text-[11px] font-semibold uppercase leading-4 tracking-[0.1em] text-white/42 transition-colors group-hover:text-white/72 sm:text-xs sm:leading-5 sm:tracking-[0.12em]">
               {item.label}
             </span>
           </a>
@@ -308,35 +314,143 @@ function RelayJourney({ copy, reduceMotion }) {
 
 function ComparisonTable({ copy }) {
   return (
-    <div className="mt-12 overflow-hidden border-y border-white/12">
-      <div className="hidden grid-cols-[0.72fr_1.2fr_1fr] gap-px bg-white/10 text-xs font-semibold uppercase tracking-[0.14em] text-white/40 sm:grid">
-        <div className="bg-[#09090E] px-5 py-4">{copy.dimensionLabel}</div>
-        <div className="bg-brand-faint px-5 py-4 text-brand-light">
+    <div
+      role="table"
+      aria-label={copy.title}
+      className="mt-12 overflow-hidden border-y border-white/12"
+    >
+      <div
+        role="row"
+        className="hidden grid-cols-[0.72fr_1.2fr_1fr] gap-px bg-white/10 text-xs font-semibold uppercase tracking-[0.14em] text-white/40 sm:grid"
+      >
+        <div role="columnheader" className="bg-[#09090E] px-5 py-4">
+          {copy.dimensionLabel}
+        </div>
+        <div role="columnheader" className="bg-brand-faint px-5 py-4 text-brand-light">
           {copy.columns.aeronyx}
         </div>
-        <div className="bg-[#09090E] px-5 py-4">{copy.columns.general}</div>
+        <div role="columnheader" className="bg-[#09090E] px-5 py-4">
+          {copy.columns.general}
+        </div>
       </div>
       {copy.rows.map((row) => (
         <div
           key={row.dimension}
+          role="row"
           className="grid min-w-0 border-b border-white/8 py-6 last:border-b-0 sm:grid-cols-[0.72fr_1.2fr_1fr] sm:gap-px sm:bg-white/8 sm:py-0"
         >
-          <div className="min-w-0 bg-[#09090E] px-5 pb-4 text-xs font-semibold uppercase tracking-[0.14em] text-white/40 sm:py-5">
+          <div
+            role="rowheader"
+            className="min-w-0 bg-[#09090E] px-5 pb-4 text-xs font-semibold uppercase tracking-[0.14em] text-white/40 sm:py-5"
+          >
             {row.dimension}
           </div>
-          <div className="min-w-0 bg-[#09090E] px-5 pb-4 text-sm leading-6 text-white/76 sm:bg-[#10101A] sm:py-5">
+          <div
+            role="cell"
+            className="min-w-0 bg-[#09090E] px-5 pb-4 text-sm leading-6 text-white/76 sm:bg-[#10101A] sm:py-5"
+          >
             <span className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-light sm:hidden">
               {copy.columns.aeronyx}
             </span>
             <span className="break-words">{row.aeronyx}</span>
           </div>
-          <div className="min-w-0 bg-[#09090E] px-5 text-sm leading-6 text-white/48 sm:py-5">
+          <div
+            role="cell"
+            className="min-w-0 bg-[#09090E] px-5 text-sm leading-6 text-white/48 sm:py-5"
+          >
             <span className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.14em] text-white/34 sm:hidden">
               {copy.columns.general}
             </span>
             <span className="break-words">{row.general}</span>
           </div>
         </div>
+      ))}
+    </div>
+  );
+}
+
+function DeliveryProgress({ copy }) {
+  return (
+    <div className="mt-12 border-y border-white/10">
+      <div
+        aria-hidden="true"
+        className="relative hidden grid-cols-4 px-[12.5%] pt-8 sm:grid"
+      >
+        <span className="absolute left-[12.5%] right-[12.5%] top-[35px] h-px bg-white/12" />
+        {copy.items.map((item) => (
+          <span
+            key={item.title}
+            className={`relative z-10 mx-auto h-2 w-2 rounded-full ${
+              item.status === 'live'
+                ? 'bg-brand-light shadow-[0_0_12px_rgba(151,136,247,0.55)]'
+                : 'border border-white/32 bg-[#08080D]'
+            }`}
+          />
+        ))}
+      </div>
+      <div className="grid gap-px bg-white/10 md:grid-cols-2">
+        {copy.items.map((item, index) => (
+          <article
+            key={item.title}
+            className="grid min-w-0 grid-cols-[32px_1fr] gap-3 bg-[#0A0A10] px-5 py-7 sm:grid-cols-[40px_1fr] sm:gap-4 sm:px-8 sm:py-8"
+          >
+            <span className={`font-mono text-xs ${
+              item.status === 'live' ? 'text-brand-light' : 'text-white/28'
+            }`}>
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <div className="min-w-0">
+              <p className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${
+                item.status === 'live' ? 'text-brand-light' : 'text-white/36'
+              }`}>
+                {item.status === 'live'
+                  ? copy.deliveredLabel
+                  : copy.buildingLabel}
+              </p>
+              <h3 className="mt-4 text-lg font-medium text-white break-words">
+                {item.title}
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-white/52 break-words">
+                {item.description}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ProtocolFaq({ copy }) {
+  return (
+    <div className="mt-12 divide-y divide-white/10 border-y border-white/10">
+      {copy.items.map((item, index) => (
+        <details
+          key={item.question}
+          open={index === 0}
+          className="group"
+        >
+          <summary className="grid min-h-[72px] cursor-pointer list-none grid-cols-[32px_minmax(0,1fr)_32px] items-center gap-3 py-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light [&::-webkit-details-marker]:hidden sm:min-h-[82px] sm:grid-cols-[40px_minmax(0,1fr)_40px] sm:gap-5 sm:py-6">
+            <span className="font-mono text-xs text-white/28 transition-colors group-open:text-brand-light">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span className="min-w-0 text-base font-medium leading-7 text-white break-words">
+              {item.question}
+            </span>
+            <span
+              aria-hidden="true"
+              className="relative h-8 w-8 rounded-full border border-white/14 transition-colors group-hover:border-white/28 group-open:border-brand-light/40"
+            >
+              <span className="absolute left-1/2 top-1/2 h-px w-3 -translate-x-1/2 -translate-y-1/2 bg-white/60" />
+              <span className="absolute left-1/2 top-1/2 h-3 w-px -translate-x-1/2 -translate-y-1/2 bg-white/60 transition-transform duration-200 group-open:scale-y-0" />
+            </span>
+          </summary>
+          <div className="grid grid-cols-[32px_minmax(0,1fr)_32px] gap-3 pb-7 sm:grid-cols-[40px_minmax(0,1fr)_40px] sm:gap-5 sm:pb-8">
+            <p className="col-start-2 min-w-0 max-w-3xl text-sm leading-6 text-white/54 break-words">
+              {item.answer}
+            </p>
+          </div>
+        </details>
       ))}
     </div>
   );
@@ -351,6 +465,31 @@ export default function PrivacyCoordination({ pageLocale = DEFAULT_LOCALE }) {
   const canonicalPath = buildLocalizedPath(activeLocale, '/privacy-coordination');
   const docsPath = 'https://docs.aeronyx.network/';
   const appPath = 'https://app.aeronyx.network/';
+
+  useEffect(() => {
+    if (!router.isReady || !window.location.hash) {
+      return undefined;
+    }
+
+    // [PRIVACY-COORDINATION-DETAILS 2026-07-27 by Codex] Web-font
+    // metrics can shift long localized pages after the initial hash jump.
+    const sectionId = decodeURIComponent(window.location.hash.slice(1));
+    let cancelled = false;
+
+    const alignSection = () => {
+      if (!cancelled) {
+        document.getElementById(sectionId)?.scrollIntoView({ block: 'start' });
+      }
+    };
+
+    const frameId = window.requestAnimationFrame(alignSection);
+    document.fonts?.ready.then(alignSection);
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [router.asPath, router.isReady]);
 
   const structuredData = [
     {
@@ -536,28 +675,7 @@ export default function PrivacyCoordination({ pageLocale = DEFAULT_LOCALE }) {
                   description={copy.progress.description}
                 />
               </motion.div>
-              <div className="mt-12 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 md:grid-cols-2">
-                {copy.progress.items.map((item) => (
-                  <article
-                    key={item.title}
-                    className="min-w-0 bg-[#0A0A10] px-6 py-7 sm:px-8"
-                  >
-                    <p className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${
-                      item.status === 'live' ? 'text-brand-light' : 'text-white/36'
-                    }`}>
-                      {item.status === 'live'
-                        ? copy.progress.deliveredLabel
-                        : copy.progress.buildingLabel}
-                    </p>
-                    <h3 className="mt-4 text-lg font-medium text-white break-words">
-                      {item.title}
-                    </h3>
-                    <p className="mt-3 text-sm leading-6 text-white/52 break-words">
-                      {item.description}
-                    </p>
-                  </article>
-                ))}
-              </div>
+              <DeliveryProgress copy={copy.progress} />
             </Container>
           </section>
 
@@ -570,24 +688,7 @@ export default function PrivacyCoordination({ pageLocale = DEFAULT_LOCALE }) {
                   description={copy.faq.description}
                 />
               </motion.div>
-              <div className="mt-12 divide-y divide-white/10 border-y border-white/10">
-                {copy.faq.items.map((item, index) => (
-                  <article
-                    key={item.question}
-                    className="grid min-w-0 gap-4 py-7 sm:grid-cols-[32px_0.78fr_1.22fr] sm:gap-6 sm:py-8"
-                  >
-                    <span className="font-mono text-xs text-white/28">
-                      0{index + 1}
-                    </span>
-                    <h3 className="min-w-0 text-base font-medium leading-7 text-white break-words">
-                      {item.question}
-                    </h3>
-                    <p className="min-w-0 text-sm leading-6 text-white/54 break-words">
-                      {item.answer}
-                    </p>
-                  </article>
-                ))}
-              </div>
+              <ProtocolFaq copy={copy.faq} />
             </Container>
           </section>
 
