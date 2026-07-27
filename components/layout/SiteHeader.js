@@ -66,6 +66,13 @@
  *   preserving the existing mobile menu scroll isolation and language menu
  *   layering.
  *
+ * Modification Reason: v2.18 - Protocol subnavigation.
+ *   [PRIVACY-COORDINATION 2026-07-27 by Codex] Protocol now opens a compact,
+ *   accessible subnavigation for the homepage overview and the dedicated
+ *   Verifiable Coordination Ledger page. Desktop click-away/Escape behavior,
+ *   mobile 44px touch targets, locale-aware routes, and the existing client
+ *   CTA remain intact.
+ *
  * Historical Notes:
  * v2.5 - Source cleanup and protocol naming alignment.
  *   Renamed the shared navigation component so the active codebase matches
@@ -113,6 +120,7 @@
  * Last Modified: v2.15 - Alert-aware mobile menu geometry
  * Last Modified: v2.16 - Notice bar wrapping fix
  * Last Modified: v2.17 - Remove completed legacy client notice
+ * Last Modified: v2.18 - Protocol overview and ledger subnavigation
  * ============================================
  */
 
@@ -127,6 +135,7 @@ const SiteHeader = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const [isProtocolOpen, setIsProtocolOpen] = useState(false);
   const router = useRouter();
   const locale = router.locale || DEFAULT_LOCALE;
   const copy = getMessages(locale);
@@ -163,6 +172,9 @@ const SiteHeader = () => {
       if (!event.target.closest('[data-language-menu]')) {
         setIsLanguageOpen(false);
       }
+      if (!event.target.closest('[data-protocol-menu]')) {
+        setIsProtocolOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickAway);
@@ -173,6 +185,7 @@ const SiteHeader = () => {
     const handleEscape = (event) => {
       if (event.key !== 'Escape') return;
       setIsLanguageOpen(false);
+      setIsProtocolOpen(false);
       setIsOpen(false);
     };
 
@@ -199,20 +212,35 @@ const SiteHeader = () => {
     const closeTransientNavigation = () => {
       setIsOpen(false);
       setIsLanguageOpen(false);
+      setIsProtocolOpen(false);
     };
 
     router.events?.on('routeChangeStart', closeTransientNavigation);
     return () => router.events?.off('routeChangeStart', closeTransientNavigation);
   }, [router.events]);
 
-  // v2.1: protocol-first nav. Product detail pages are now secondary routes.
+  // [PRIVACY-COORDINATION 2026-07-27 by Codex] Keep the primary row compact:
+  // Protocol owns its overview/detail child routes; product pages remain peers.
   const navLinks = [
-    { href: "/", label: copy.nav.protocol || 'Protocol' },
     { href: "/memchain", label: copy.nav.memchain || 'MemChain' },
     { href: "/privacy-network", label: copy.nav.privacyNetwork || 'Privacy Network' },
     { href: "https://docs.aeronyx.network/", label: copy.nav.docs, external: true },
     { href: "https://github.com/AeroNyxNetwork", label: copy.nav.github, external: true }
   ];
+  const protocolCopy = copy.privacyCoordination || {};
+  const protocolSubLinks = [
+    {
+      href: '/',
+      label: protocolCopy.overviewLabel || 'Protocol overview',
+      detail: protocolCopy.overviewDetail || 'The encrypted coordination layer',
+    },
+    {
+      href: '/privacy-coordination',
+      label: protocolCopy.navLabel || 'Verifiable Coordination Ledger',
+      detail: protocolCopy.navDetail || 'Proof for blind decentralized infrastructure',
+    },
+  ];
+  const protocolActive = ['/', '/privacy-coordination'].includes(router.pathname);
   
   // Handle smooth scrolling for internal links
   const handleNavClick = (e, href) => {
@@ -258,6 +286,65 @@ const SiteHeader = () => {
           {/* Desktop navigation */}
           <div className="hidden lg:flex items-center gap-5 xl:gap-7">
             <nav className="flex items-center gap-3 xl:gap-5">
+              <div className="relative" data-protocol-menu>
+                <button
+                  type="button"
+                  className={`relative inline-flex min-h-[44px] items-center gap-1.5 text-xs uppercase tracking-eyebrow transition-colors xl:text-sm ${
+                    protocolActive ? 'text-white' : 'text-white/60 hover:text-white'
+                  }`}
+                  aria-expanded={isProtocolOpen}
+                  aria-haspopup="menu"
+                  aria-controls="protocol-menu"
+                  onClick={() => {
+                    setIsProtocolOpen((value) => !value);
+                    setIsLanguageOpen(false);
+                  }}
+                >
+                  {copy.nav.protocol || 'Protocol'}
+                  <span
+                    aria-hidden="true"
+                    className={`text-[10px] text-white/35 transition-transform duration-fast ${isProtocolOpen ? 'rotate-180' : ''}`}
+                  >
+                    ▾
+                  </span>
+                  {protocolActive && (
+                    <span aria-hidden="true" className="absolute -bottom-px left-0 h-px w-full bg-brand-light/80" />
+                  )}
+                </button>
+                <div
+                  id="protocol-menu"
+                  role="menu"
+                  aria-hidden={!isProtocolOpen}
+                  className={`absolute left-0 top-full z-30 w-72 pt-3 transition-all ${
+                    isProtocolOpen
+                      ? 'visible pointer-events-auto opacity-100'
+                      : 'invisible pointer-events-none opacity-0'
+                  }`}
+                >
+                  <div className="border border-white/10 bg-black/95 p-2 shadow-2xl shadow-black/40">
+                    {protocolSubLinks.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        locale={locale}
+                        role="menuitem"
+                        tabIndex={isProtocolOpen ? 0 : -1}
+                        onClick={() => setIsProtocolOpen(false)}
+                        className={`block min-h-[56px] px-3 py-2.5 transition-colors ${
+                          isActiveRoute(item.href)
+                            ? 'bg-white/[0.05] text-white'
+                            : 'text-white/62 hover:bg-white/[0.03] hover:text-white'
+                        }`}
+                      >
+                        <span className="block break-words text-sm leading-snug">{item.label}</span>
+                        <span className="mt-1 block break-words text-xs leading-relaxed text-white/36">
+                          {item.detail}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
               {navLinks.map((link) => (
                 link.external ? (
                   <a
@@ -302,7 +389,10 @@ const SiteHeader = () => {
                 aria-expanded={isLanguageOpen}
                 aria-haspopup="menu"
                 aria-controls="language-menu"
-                onClick={() => setIsLanguageOpen((value) => !value)}
+                onClick={() => {
+                  setIsLanguageOpen((value) => !value);
+                  setIsProtocolOpen(false);
+                }}
               >
                 {currentLocale.short}
               </button>
@@ -348,7 +438,11 @@ const SiteHeader = () => {
           <div className="lg:hidden">
             <button
               className="p-2 text-white/60 hover:text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => {
+                setIsOpen(!isOpen);
+                setIsLanguageOpen(false);
+                setIsProtocolOpen(false);
+              }}
               aria-label={isOpen ? (copy.nav.closeMenu || 'Close menu') : (copy.nav.openMenu || 'Open menu')}
               aria-expanded={isOpen}
               aria-controls="mobile-navigation"
@@ -379,6 +473,30 @@ const SiteHeader = () => {
             <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
             
             <nav className="relative z-10 flex max-h-[calc(100dvh-4rem)] flex-col space-y-3 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+              <div className="border-b border-white/10 pb-3">
+                <div className="px-3 pb-2 text-[10px] uppercase leading-4 tracking-eyebrow text-white/38">
+                  {copy.nav.protocol || 'Protocol'}
+                </div>
+                <div className="grid gap-1">
+                  {protocolSubLinks.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      locale={locale}
+                      onClick={() => setIsOpen(false)}
+                      aria-current={isActiveRoute(item.href) ? 'page' : undefined}
+                      className={mobileNavClass(item.href)}
+                    >
+                      <span className="min-w-0">
+                        <span className="block break-words">{item.label}</span>
+                        <span className="mt-0.5 block break-words text-xs leading-relaxed text-white/35">
+                          {item.detail}
+                        </span>
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
               {navLinks.map((link) => (
                 link.external ? (
                   <a

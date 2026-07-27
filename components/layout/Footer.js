@@ -26,6 +26,12 @@
  *   link remains in Resources, while homepage sections keep their contextual
  *   operator-console entry points.
  *
+ * Modification Reason: v3.0 - Coordination ledger resource.
+ *   [PRIVACY-COORDINATION 2026-07-27 by Codex] Added the locale-aware
+ *   Verifiable Coordination Ledger page to Resources. It remains separate
+ *   from Privacy Network and MemChain product links so the footer preserves
+ *   the protocol/product distinction.
+ *
  * Historical Notes:
  * v2.4 - 2026 social icon and protocol link polish.
  *   Updated the X social icon away from the legacy Twitter bird and tuned the
@@ -77,6 +83,7 @@
  * Last Modified: v2.7 - Mobile footer long-label wrapping
  * Last Modified: v2.8 - Maintained docs URL alignment
  * Last Modified: v2.9 - Footer product navigation simplification
+ * Last Modified: v3.0 - Verifiable Coordination Ledger resource
  * ============================================
  */
 
@@ -97,6 +104,7 @@ const Footer = ({ activeLocale: providedLocale }) => {
   const activeLocale = normalizeLocaleCode(providedLocale || locale, asPath);
   const messages = getMessages(activeLocale);
   const copy = messages.footer || getMessages(DEFAULT_LOCALE).footer;
+  const coordinationCopy = messages.privacyCoordination || {};
 
   return (
     <footer className="border-t border-white/10 py-10 md:py-16" style={{ background: 'var(--surface-0, #08080D)' }}>
@@ -131,6 +139,10 @@ const Footer = ({ activeLocale: providedLocale }) => {
             <FooterColumn
               heading={copy.columns.resources}
               links={[
+                {
+                  href: '/privacy-coordination',
+                  label: coordinationCopy.navLabel || 'Verifiable Coordination Ledger',
+                },
                 { href: 'https://docs.aeronyx.network/', label: copy.links.documentation },
                 { href: 'https://docs.aeronyx.network/intro/aeronyx-app-and-protocol-architecture', label: copy.links.whitepaper },
                 { href: 'https://github.com/AeroNyxNetwork', label: 'GitHub' },

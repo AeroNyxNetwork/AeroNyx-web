@@ -318,4 +318,104 @@ Last Modified: v1.0 - Initial multilingual sitemap
     <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-network" />
     <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-network" />
   </url>
+  <!-- [PRIVACY-COORDINATION 2026-07-27 by Codex]
+       Dedicated localized protocol evidence surface. -->
+  <url>
+    <loc>https://aeronyx.network/privacy-coordination</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-coordination" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ru/privacy-coordination</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-coordination" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/zh-Hant/privacy-coordination</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-coordination" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/zh-Hans/privacy-coordination</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-coordination" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ja/privacy-coordination</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-coordination" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/ko/privacy-coordination</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-coordination" />
+  </url>
+  <url>
+    <loc>https://aeronyx.network/es/privacy-coordination</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://aeronyx.network/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aeronyx.network/ru/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://aeronyx.network/zh-Hant/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aeronyx.network/zh-Hans/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://aeronyx.network/ja/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://aeronyx.network/ko/privacy-coordination" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://aeronyx.network/es/privacy-coordination" />
+  </url>
 </urlset>

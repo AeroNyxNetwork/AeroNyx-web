@@ -92,10 +92,15 @@
  * Last Modified: v5.0 - Homepage architecture internationalization
  * Last Modified: v5.1 - Architecture evidence surface polish
  * Last Modified: v5.2 - Pillar detail rhythm polish
+ * Last Modified: v5.3 - [PRIVACY-COORDINATION 2026-07-27 by Codex]
+ * Added a localized internal path from the homepage architecture section to
+ * the dedicated Verifiable Coordination Ledger page while retaining protocol
+ * documentation as a secondary action.
  * ============================================
  */
 
 import React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion, useReducedMotion } from 'framer-motion';
 import Container from '../ui/Container';
@@ -165,6 +170,8 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
   const activeLocale = normalizeLocaleCode(providedLocale || locale, asPath);
   const messages = getMessages(activeLocale);
   const copy = messages.protocolArchitecture || getMessages(DEFAULT_LOCALE).protocolArchitecture;
+  const coordinationCopy = messages.privacyCoordination || getMessages(DEFAULT_LOCALE).privacyCoordination;
+  const coordinationPath = '/privacy-coordination';
   const reduced = useReducedMotion();
   const pillars = DEFAULT_PILLARS.map((pillar, index) => ({
     ...pillar,
@@ -308,8 +315,17 @@ const ProtocolArchitecture = ({ activeLocale: providedLocale }) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE }}
-            className="mt-10 text-center md:mt-14"
+            className="mt-10 flex flex-col items-center justify-center gap-3 text-center sm:flex-row md:mt-14"
           >
+            <Link
+              href={coordinationPath}
+              locale={activeLocale}
+              className="inline-flex min-h-[44px] w-full max-w-xs min-w-0 items-center justify-center break-words rounded bg-white px-8 py-3.5 text-center text-black transition-colors duration-fast hover:bg-white/88 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light sm:w-auto"
+            >
+              <span className="text-sm font-semibold uppercase leading-snug tracking-eyebrow">
+                {coordinationCopy.homeCta}
+              </span>
+            </Link>
             <a
               href="https://docs.aeronyx.network/"
               target="_blank"
