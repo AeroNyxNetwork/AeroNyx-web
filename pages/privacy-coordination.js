@@ -33,6 +33,11 @@
  *     must never be represented as coordination-ledger content.
  *
  * Last Modified: v1.0 - Dedicated privacy coordination protocol page
+ * Last Modified: v1.1 - [PRIVACY-COORDINATION-POLISH 2026-07-27 by Codex]
+ * Added a compact long-page index, a restrained three-plane signal rail,
+ * numbered public/private evidence boundaries, and a continuous blind-relay
+ * path. These refinements improve orientation and mobile reading rhythm
+ * without changing any protocol claim or adding decorative product noise.
  * ============================================
  */
 
@@ -92,50 +97,112 @@ function SectionHeading({ eyebrow, title, description, align = 'left' }) {
   );
 }
 
+function PageIndex({ copy }) {
+  const items = [
+    { href: '#architecture', label: copy.planes.eyebrow },
+    { href: '#evidence-boundary', label: copy.boundaries.eyebrow },
+    { href: '#relay-evidence', label: copy.journey.eyebrow },
+    { href: '#protocol-delivery', label: copy.progress.eyebrow },
+  ];
+
+  return (
+    <nav
+      aria-label={copy.eyebrow}
+      className="mt-14 border-t border-white/10 pt-4 sm:mt-16 sm:pt-5"
+    >
+      <div className="-mx-4 flex snap-x snap-mandatory gap-px overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-4">
+        {items.map((item, index) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className="group flex min-h-[52px] min-w-[210px] snap-start items-center gap-3 border-l border-white/10 px-4 py-2 text-left transition-colors hover:bg-white/[0.025] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light sm:min-w-0"
+          >
+            <span className="font-mono text-[10px] text-brand-light/72">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span className="min-w-0 break-words text-xs font-semibold uppercase leading-5 tracking-[0.12em] text-white/42 transition-colors group-hover:text-white/72">
+              {item.label}
+            </span>
+          </a>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
 function PlaneDiagram({ copy, reduceMotion }) {
   return (
-    <div className="mt-12 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 lg:grid-cols-3">
-      {copy.items.map((plane, index) => (
-        <motion.article
-          key={plane.title}
-          className="relative min-w-0 bg-[#0A0A10] px-6 py-7 sm:px-8 sm:py-9"
-          initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.5, delay: reduceMotion ? 0 : index * 0.08 }}
-        >
-          <div className="flex items-center justify-between gap-4">
-            <span className="font-mono text-xs text-white/36">
-              0{index + 1}
-            </span>
-            <span className="h-px flex-1 bg-gradient-to-r from-brand-light/60 to-transparent" />
-          </div>
-          <h3 className="mt-8 text-xl font-medium text-white break-words">
-            {plane.title}
-          </h3>
-          <p className="mt-4 text-sm leading-6 text-white/54 break-words">
-            {plane.description}
-          </p>
-          <dl className="mt-8 space-y-4 border-t border-white/8 pt-5">
-            <div className="grid min-w-0 grid-cols-[auto_1fr] gap-3">
-              <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/34">
-                {copy.visibleLabel}
-              </dt>
-              <dd className="min-w-0 text-right text-xs leading-5 text-white/72 break-words">
-                {plane.visible}
-              </dd>
+    <div className="mt-12 overflow-hidden rounded border border-white/10 bg-white/10">
+      <div
+        aria-hidden="true"
+        className="relative hidden h-16 overflow-hidden bg-[#08080D] lg:block"
+      >
+        <div className="absolute left-[16.66%] right-[16.66%] top-1/2 h-px bg-white/12" />
+        {[16.66, 50, 83.33].map((left, index) => (
+          <span
+            key={left}
+            className="absolute top-1/2 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/16 bg-[#08080D]"
+            style={{ left: `${left}%` }}
+          >
+            <span className={`h-1.5 w-1.5 rounded-full ${
+              index === 1 ? 'bg-brand-light' : 'bg-white/35'
+            }`} />
+          </span>
+        ))}
+        <motion.span
+          className="absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-brand-light shadow-[0_0_14px_rgba(151,136,247,0.8)]"
+          initial={{ left: '16.66%', opacity: 0.2 }}
+          animate={reduceMotion
+            ? { left: '50%', opacity: 0.7 }
+            : { left: ['16.66%', '83.33%'], opacity: [0.2, 1, 0.2] }}
+          transition={reduceMotion
+            ? { duration: 0 }
+            : { duration: 3.8, repeat: Infinity, ease: 'linear' }}
+        />
+      </div>
+      <div className="grid gap-px bg-white/10 lg:grid-cols-3">
+        {copy.items.map((plane, index) => (
+          <motion.article
+            key={plane.title}
+            className="relative min-w-0 bg-[#0A0A10] px-6 py-7 sm:px-8 sm:py-9"
+            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: reduceMotion ? 0 : index * 0.08 }}
+          >
+            <div className="flex items-center justify-between gap-4">
+              <span className="font-mono text-xs text-white/36">
+                0{index + 1}
+              </span>
+              <span className="h-px flex-1 bg-gradient-to-r from-brand-light/60 to-transparent" />
             </div>
-            <div className="grid min-w-0 grid-cols-[auto_1fr] gap-3">
-              <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-light">
-                {copy.privateLabel}
-              </dt>
-              <dd className="min-w-0 text-right text-xs leading-5 text-white/72 break-words">
-                {plane.private}
-              </dd>
-            </div>
-          </dl>
-        </motion.article>
-      ))}
+            <h3 className="mt-8 text-xl font-medium text-white break-words">
+              {plane.title}
+            </h3>
+            <p className="mt-4 text-sm leading-6 text-white/54 break-words">
+              {plane.description}
+            </p>
+            <dl className="mt-8 space-y-4 border-t border-white/8 pt-5">
+              <div className="grid min-w-0 grid-cols-[auto_1fr] gap-3">
+                <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/34">
+                  {copy.visibleLabel}
+                </dt>
+                <dd className="min-w-0 text-right text-xs leading-5 text-white/72 break-words">
+                  {plane.visible}
+                </dd>
+              </div>
+              <div className="grid min-w-0 grid-cols-[auto_1fr] gap-3">
+                <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-light">
+                  {copy.privateLabel}
+                </dt>
+                <dd className="min-w-0 text-right text-xs leading-5 text-white/72 break-words">
+                  {plane.private}
+                </dd>
+              </div>
+            </dl>
+          </motion.article>
+        ))}
+      </div>
     </div>
   );
 }
@@ -144,7 +211,9 @@ function BoundaryList({ title, items, tone }) {
   const protects = tone === 'protects';
 
   return (
-    <article className="min-w-0 border-t border-white/12 py-8 sm:py-10">
+    <article className={`min-w-0 py-8 sm:py-10 ${
+      protects ? 'lg:pr-12' : 'lg:border-l lg:border-white/10 lg:pl-12'
+    }`}>
       <div className="flex items-center gap-3">
         <span
           aria-hidden="true"
@@ -155,17 +224,18 @@ function BoundaryList({ title, items, tone }) {
         <h3 className="text-lg font-medium text-white">{title}</h3>
       </div>
       <ul className="mt-7 space-y-5">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <li
             key={item}
-            className="grid min-w-0 grid-cols-[20px_1fr] gap-3 text-sm leading-6 text-white/58"
+            className="grid min-w-0 grid-cols-[28px_1fr] gap-3 text-sm leading-6 text-white/58"
           >
             <span
-              aria-hidden="true"
-              className={`mt-[11px] h-px ${
-                protects ? 'bg-brand-light/70' : 'bg-white/24'
+              className={`font-mono text-[10px] leading-6 ${
+                protects ? 'text-brand-light/78' : 'text-white/26'
               }`}
-            />
+            >
+              {String(index + 1).padStart(2, '0')}
+            </span>
             <span className="min-w-0 break-words">{item}</span>
           </li>
         ))}
@@ -176,35 +246,62 @@ function BoundaryList({ title, items, tone }) {
 
 function RelayJourney({ copy, reduceMotion }) {
   return (
-    <div className="mt-12 grid gap-4 lg:grid-cols-4">
-      {copy.steps.map((step, index) => (
-        <motion.article
-          key={step.title}
-          className="relative min-w-0 border-t border-white/12 pt-6"
-          initial={reduceMotion ? false : { opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.45, delay: reduceMotion ? 0 : index * 0.07 }}
-        >
-          <div className="flex items-center justify-between gap-4">
-            <span className="font-mono text-xs text-brand-light">
+    <div className="relative mt-12">
+      <div
+        aria-hidden="true"
+        className="absolute bottom-0 left-[23px] top-0 w-px bg-white/10 lg:bottom-auto lg:left-[12.5%] lg:right-[12.5%] lg:top-[23px] lg:h-px lg:w-auto"
+      />
+      <motion.span
+        aria-hidden="true"
+        className="absolute left-[20px] top-0 h-2 w-2 rounded-full bg-brand-light shadow-[0_0_14px_rgba(151,136,247,0.8)] lg:hidden"
+        initial={{ opacity: 0.25 }}
+        whileInView={reduceMotion
+          ? { opacity: 0.7 }
+          : { top: ['0%', '96%'], opacity: [0.2, 1, 0.2] }}
+        viewport={{ once: false, amount: 0.2 }}
+        transition={reduceMotion
+          ? { duration: 0 }
+          : { duration: 4.6, repeat: Infinity, ease: 'linear' }}
+      />
+      <motion.span
+        aria-hidden="true"
+        className="absolute left-[12.5%] top-[20px] hidden h-2 w-2 rounded-full bg-brand-light shadow-[0_0_14px_rgba(151,136,247,0.8)] lg:block"
+        initial={{ opacity: 0.25 }}
+        whileInView={reduceMotion
+          ? { opacity: 0.7 }
+          : { left: ['12.5%', '87.5%'], opacity: [0.2, 1, 0.2] }}
+        viewport={{ once: false, amount: 0.2 }}
+        transition={reduceMotion
+          ? { duration: 0 }
+          : { duration: 4.6, repeat: Infinity, ease: 'linear' }}
+      />
+      <div className="grid gap-8 lg:grid-cols-4 lg:gap-6">
+        {copy.steps.map((step, index) => (
+          <motion.article
+            key={step.title}
+            className="relative min-w-0 pl-16 lg:pl-0"
+            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.45, delay: reduceMotion ? 0 : index * 0.07 }}
+          >
+            <div className="absolute left-0 top-0 flex h-12 w-12 items-center justify-center rounded-full border border-white/16 bg-[#08080D] font-mono text-xs text-brand-light lg:relative lg:mx-auto">
               0{index + 1}
-            </span>
-            {index < copy.steps.length - 1 ? (
-              <span className="hidden h-px flex-1 bg-white/12 lg:block" />
-            ) : null}
-          </div>
-          <h3 className="mt-5 text-lg font-medium text-white break-words">
-            {step.title}
-          </h3>
-          <p className="mt-3 text-sm leading-6 text-white/52 break-words">
-            {step.description}
-          </p>
-          <p className="mt-5 border-l border-brand-light/45 pl-4 text-xs leading-5 text-white/72 break-words">
-            {step.evidence}
-          </p>
-        </motion.article>
-      ))}
+            </div>
+            <div className="lg:mt-6">
+              <h3 className="text-lg font-medium text-white break-words">
+                {step.title}
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-white/52 break-words">
+                {step.description}
+              </p>
+              <p className="mt-5 border-l border-brand-light/45 pl-4 text-xs leading-5 text-white/72 break-words">
+                {step.evidence}
+              </p>
+            </div>
+          </motion.article>
+        ))}
+      </div>
     </div>
   );
 }
@@ -360,10 +457,11 @@ export default function PrivacyCoordination({ pageLocale = DEFAULT_LOCALE }) {
                   </p>
                 </motion.aside>
               </div>
+              <PageIndex copy={copy} />
             </Container>
           </section>
 
-          <section className="border-b border-white/8 py-20 sm:py-24 lg:py-32">
+          <section id="architecture" className="scroll-mt-20 border-b border-white/8 py-20 sm:scroll-mt-24 sm:py-24 lg:py-32">
             <Container>
               <motion.div {...fadeIn}>
                 <SectionHeading
@@ -376,7 +474,7 @@ export default function PrivacyCoordination({ pageLocale = DEFAULT_LOCALE }) {
             </Container>
           </section>
 
-          <section className="border-b border-white/8 py-20 sm:py-24 lg:py-32">
+          <section id="evidence-boundary" className="scroll-mt-20 border-b border-white/8 py-20 sm:scroll-mt-24 sm:py-24 lg:py-32">
             <Container>
               <motion.div {...fadeIn}>
                 <SectionHeading
@@ -385,7 +483,7 @@ export default function PrivacyCoordination({ pageLocale = DEFAULT_LOCALE }) {
                   description={copy.boundaries.description}
                 />
               </motion.div>
-              <div className="mt-12 grid gap-8 border-y border-white/8 lg:grid-cols-2 lg:gap-16">
+              <div className="mt-12 grid gap-0 border-y border-white/8 lg:grid-cols-2">
                 <BoundaryList
                   title={copy.boundaries.recordsTitle}
                   items={copy.boundaries.records}
@@ -403,7 +501,7 @@ export default function PrivacyCoordination({ pageLocale = DEFAULT_LOCALE }) {
             </Container>
           </section>
 
-          <section className="border-b border-white/8 py-20 sm:py-24 lg:py-32">
+          <section id="relay-evidence" className="scroll-mt-20 border-b border-white/8 py-20 sm:scroll-mt-24 sm:py-24 lg:py-32">
             <Container>
               <motion.div {...fadeIn}>
                 <SectionHeading
@@ -416,7 +514,7 @@ export default function PrivacyCoordination({ pageLocale = DEFAULT_LOCALE }) {
             </Container>
           </section>
 
-          <section className="border-b border-white/8 py-20 sm:py-24 lg:py-32">
+          <section id="ledger-difference" className="scroll-mt-20 border-b border-white/8 py-20 sm:scroll-mt-24 sm:py-24 lg:py-32">
             <Container>
               <motion.div {...fadeIn}>
                 <SectionHeading
@@ -429,7 +527,7 @@ export default function PrivacyCoordination({ pageLocale = DEFAULT_LOCALE }) {
             </Container>
           </section>
 
-          <section className="border-b border-white/8 py-20 sm:py-24 lg:py-32">
+          <section id="protocol-delivery" className="scroll-mt-20 border-b border-white/8 py-20 sm:scroll-mt-24 sm:py-24 lg:py-32">
             <Container>
               <motion.div {...fadeIn}>
                 <SectionHeading
