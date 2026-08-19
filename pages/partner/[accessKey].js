@@ -29,6 +29,8 @@
  *     human-readable Markdown decision memo that never includes the access URL.
  *   - Reuses the public immutable release contract to show partner-verifiable
  *     platform artifacts, distribution assurance, and exact SHA-256 digests.
+ *   - Adds a browser-local findings register with severity, ownership, due
+ *     dates, closure state, and blocker-aware handoff readiness.
  *
  * Dependencies:
  *   - Node crypto.timingSafeEqual for server-side key comparison.
@@ -67,8 +69,10 @@
  *     never place window.location, route params, or the access key in them.
  *   - Release evidence must come from DownloadsModal named exports. Never copy
  *     version URLs or digests into this file as a second release authority.
+ *   - Findings are reviewer-authored untrusted input. Keep them local-only,
+ *     bounded, schema-validated, and escaped in every portable artifact.
  *
- * Last Modified: v1.7 - Shared release-integrity evidence for partner review.
+ * Last Modified: v1.8 - Structured local findings and review closure workflow.
  * ============================================
  */
 
@@ -99,13 +103,18 @@ const ProtocolBackground = dynamic(
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '1.7';
+const REVIEW_REVISION = '1.8';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
 const REVIEW_ORGANIZATION_MAX_LENGTH = 120;
+const REVIEW_FINDINGS_MAX = 12;
+const REVIEW_FINDING_TITLE_MAX_LENGTH = 180;
+const REVIEW_FINDING_OWNER_MAX_LENGTH = 80;
 const REVIEW_HANDOFF_MAX_BYTES = 100 * 1024;
-const REVIEW_HANDOFF_SCHEMA = 'aeronyx.partner.review.handoff.v2';
+const REVIEW_HANDOFF_SCHEMA = 'aeronyx.partner.review.handoff.v3';
 const REVIEW_DECISIONS = Object.freeze(['undecided', 'pilot', 'conditional', 'hold', 'no_go']);
+const REVIEW_FINDING_SEVERITIES = Object.freeze(['blocker', 'high', 'medium', 'low']);
+const REVIEW_FINDING_STATUSES = Object.freeze(['open', 'resolved']);
 const EMPTY_REVIEW_CHECKS = Object.freeze({
   scope: false,
   privacy: false,
@@ -133,6 +142,13 @@ const STATUS_TONE = {
     dot: 'border border-white/45 bg-transparent',
     badge: 'border-white/12 bg-white/[0.03] text-white/62',
   },
+};
+
+const FINDING_SEVERITY_TONE = {
+  blocker: 'border-warn/40 bg-warn/8 text-warn',
+  high: 'border-[#ff9d66]/30 bg-[#ff9d66]/[0.06] text-[#ffb185]',
+  medium: 'border-cipher/30 bg-cipher/5 text-cipher-light',
+  low: 'border-white/12 bg-white/[0.03] text-white/52',
 };
 
 const CONTENT = {
@@ -197,12 +213,12 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'Client delivery is now independently verifiable from the brief.',
-    revisionDeltaBody: 'The partner surface now reads the same immutable release contract as the public download flow. Version, filenames, URLs, and digests cannot drift between the two views.',
+    revisionDeltaTitle: 'Diligence findings now have an accountable closure path.',
+    revisionDeltaBody: 'Partners can record concrete issues with severity, ownership, due dates, and resolution state without transmitting review data. Open blockers now prevent a false ready-for-handoff signal.',
     revisionDeltaItems: [
-      'Open the exact immutable installer used by the public release channel.',
-      'Copy the published SHA-256 digest for macOS, Windows, and Android verification.',
-      'Review signing, notarization, architecture, and known distribution limitations by platform.',
+      'Separate structured findings from free-form reviewer notes.',
+      'Carry findings through validated JSON handoff and Markdown decision memo exports.',
+      'Make blocker closure part of the explicit handoff-readiness rule.',
     ],
     artifactEyebrow: 'Release integrity',
     artifactTitle: 'Verify the client before evaluating the protocol.',
@@ -336,6 +352,32 @@ const CONTENT = {
     workspaceNotesLabel: 'Reviewer notes',
     workspaceNotesPlaceholder: 'Capture open questions, evidence requests, owners, or rollout conditions…',
     workspaceNotesHelp: `Stored locally · maximum ${REVIEW_NOTES_MAX_LENGTH} characters`,
+    workspaceFindingsLabel: 'Review findings',
+    workspaceFindingsBody: 'Track concrete diligence issues separately from free-form notes. Open blockers prevent the workspace from being marked ready for handoff.',
+    workspaceFindingTitleLabel: 'Finding',
+    workspaceFindingTitlePlaceholder: 'Describe one verifiable issue or evidence gap',
+    workspaceFindingSeverityLabel: 'Severity',
+    workspaceFindingOwnerLabel: 'Owner',
+    workspaceFindingOwnerPlaceholder: 'Optional owner',
+    workspaceFindingDueLabel: 'Due date',
+    workspaceFindingAdd: 'Add finding',
+    workspaceFindingLimit: `Maximum ${REVIEW_FINDINGS_MAX} findings per local workspace`,
+    workspaceFindingEmpty: 'No structured findings recorded.',
+    workspaceFindingOpen: 'Open',
+    workspaceFindingResolved: 'Resolved',
+    workspaceFindingResolve: 'Mark resolved',
+    workspaceFindingReopen: 'Reopen',
+    workspaceFindingRemove: 'Remove',
+    workspaceFindingCountLabel: 'findings',
+    workspaceFindingOpenLabel: 'open',
+    workspaceFindingBlockerLabel: 'blockers',
+    workspaceFindingSeverities: {
+      blocker: 'Blocker',
+      high: 'High',
+      medium: 'Medium',
+      low: 'Low',
+    },
+    workspaceOpenBlockersPending: 'Open blocker findings must be resolved or explicitly removed before handoff.',
     workspaceExport: 'Export review handoff',
     workspaceExported: 'Handoff downloaded',
     workspaceExportFailed: 'Handoff unavailable',
@@ -360,6 +402,10 @@ const CONTENT = {
       readiness: 'Review readiness',
       progress: 'Checklist progress',
       checklist: 'Diligence checklist',
+      findings: 'Review findings',
+      findingOwner: 'Owner',
+      findingDue: 'Due',
+      findingStatus: 'Status',
       notes: 'Reviewer notes',
       boundaries: 'Current declared boundaries',
       capabilities: 'Capability evidence index',
@@ -687,12 +733,12 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '合作方現在可以直接獨立驗證客戶端交付物。',
-    revisionDeltaBody: '審閱頁與官網下載流程現在讀取同一份不可變發布契約。版本、檔名、網址與雜湊不會在兩個入口之間漂移。',
+    revisionDeltaTitle: '盡調問題現在有可追責的關閉流程。',
+    revisionDeltaBody: '合作方可以在不傳輸審閱資料的情況下，記錄問題嚴重度、負責人、到期日與解決狀態。只要仍有阻塞項，系統就不會顯示虛假的可交接狀態。',
     revisionDeltaItems: [
-      '直接開啟官網正式發布渠道使用的精確不可變安裝包。',
-      '複製 macOS、Windows 與 Android 的公開 SHA-256 進行驗證。',
-      '按平台核對簽名、公證、架構與已知分發限制。',
+      '把結構化審閱問題與自由文字筆記分開管理。',
+      '問題會隨已驗證的 JSON 交接檔與 Markdown 決策備忘一同流轉。',
+      '把阻塞問題關閉納入明確的交接就緒規則。',
     ],
     artifactEyebrow: '發布完整性',
     artifactTitle: '評估協議之前，先驗證客戶端。',
@@ -826,6 +872,32 @@ const CONTENT = {
     workspaceNotesLabel: '審閱者筆記',
     workspaceNotesPlaceholder: '記錄未決問題、證據要求、負責人或發布條件…',
     workspaceNotesHelp: `僅本機保存 · 最多 ${REVIEW_NOTES_MAX_LENGTH} 個字元`,
+    workspaceFindingsLabel: '審閱問題',
+    workspaceFindingsBody: '把具體盡調問題和自由筆記分開管理。仍未關閉的阻塞項會讓工作區保持在「仍需審閱」狀態。',
+    workspaceFindingTitleLabel: '問題',
+    workspaceFindingTitlePlaceholder: '描述一個可驗證的問題或證據缺口',
+    workspaceFindingSeverityLabel: '嚴重度',
+    workspaceFindingOwnerLabel: '負責人',
+    workspaceFindingOwnerPlaceholder: '選填負責人',
+    workspaceFindingDueLabel: '到期日',
+    workspaceFindingAdd: '新增問題',
+    workspaceFindingLimit: `每個本機工作區最多 ${REVIEW_FINDINGS_MAX} 個問題`,
+    workspaceFindingEmpty: '目前沒有結構化審閱問題。',
+    workspaceFindingOpen: '未關閉',
+    workspaceFindingResolved: '已解決',
+    workspaceFindingResolve: '標記已解決',
+    workspaceFindingReopen: '重新開啟',
+    workspaceFindingRemove: '移除',
+    workspaceFindingCountLabel: '個問題',
+    workspaceFindingOpenLabel: '個未關閉',
+    workspaceFindingBlockerLabel: '個阻塞項',
+    workspaceFindingSeverities: {
+      blocker: '阻塞',
+      high: '高',
+      medium: '中',
+      low: '低',
+    },
+    workspaceOpenBlockersPending: '仍未關閉的阻塞問題必須先解決或明確移除，才能形成可交接狀態。',
     workspaceExport: '匯出審閱交接檔',
     workspaceExported: '交接檔已下載',
     workspaceExportFailed: '無法匯出交接檔',
@@ -850,6 +922,10 @@ const CONTENT = {
       readiness: '審閱就緒狀態',
       progress: '核對進度',
       checklist: '盡調核對清單',
+      findings: '審閱問題',
+      findingOwner: '負責人',
+      findingDue: '到期日',
+      findingStatus: '狀態',
       notes: '審閱者筆記',
       boundaries: '目前已聲明邊界',
       capabilities: '能力證據索引',
@@ -1428,11 +1504,15 @@ function ReviewerWorkspace({
   copy,
   checks,
   notes,
+  findings,
   decision,
   organization,
   nextReviewDate,
   onToggle,
   onNotesChange,
+  onAddFinding,
+  onUpdateFinding,
+  onRemoveFinding,
   onDecisionChange,
   onOrganizationChange,
   onNextReviewDateChange,
@@ -1445,11 +1525,40 @@ function ReviewerWorkspace({
   onClear,
   clearArmed,
 }) {
+  const [findingTitle, setFindingTitle] = useState('');
+  const [findingSeverity, setFindingSeverity] = useState('medium');
+  const [findingOwner, setFindingOwner] = useState('');
+  const [findingDueDate, setFindingDueDate] = useState('');
   const completed = copy.reviewChecklist.filter((item) => checks[item.id]).length;
   const total = copy.reviewChecklist.length;
   const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
   const pendingChecks = total - completed;
-  const readyForHandoff = pendingChecks === 0 && decision !== 'undecided';
+  const openFindings = findings.filter((finding) => finding.status === 'open');
+  const openBlockers = openFindings.filter((finding) => finding.severity === 'blocker');
+  const readyForHandoff = pendingChecks === 0 && decision !== 'undecided' && openBlockers.length === 0;
+  const readinessReasons = [
+    pendingChecks > 0 ? `${pendingChecks} ${copy.workspacePendingChecksLabel}` : '',
+    decision === 'undecided' ? copy.workspaceDecisionPending : '',
+    openBlockers.length > 0 ? copy.workspaceOpenBlockersPending : '',
+  ].filter(Boolean).join(' ');
+  const findingLimitReached = findings.length >= REVIEW_FINDINGS_MAX;
+
+  function handleFindingSubmit(event) {
+    event.preventDefault();
+    const title = findingTitle.trim();
+    if (!title || findingLimitReached) return;
+
+    onAddFinding({
+      title: title.slice(0, REVIEW_FINDING_TITLE_MAX_LENGTH),
+      severity: findingSeverity,
+      owner: findingOwner.trim().slice(0, REVIEW_FINDING_OWNER_MAX_LENGTH),
+      due_date: findingDueDate,
+    });
+    setFindingTitle('');
+    setFindingSeverity('medium');
+    setFindingOwner('');
+    setFindingDueDate('');
+  }
 
   return (
     <div className="mt-10 border-y border-white/10">
@@ -1479,10 +1588,127 @@ function ReviewerWorkspace({
             {readyForHandoff ? copy.workspaceReady : copy.workspaceNeedsAttention}
           </p>
           <p className="mt-2 max-w-sm text-xs leading-5 text-white/40">
-            {readyForHandoff
-              ? copy.workspaceReadyBody
-              : `${pendingChecks > 0 ? `${pendingChecks} ${copy.workspacePendingChecksLabel}` : ''}${pendingChecks > 0 && decision === 'undecided' ? ' ' : ''}${decision === 'undecided' ? copy.workspaceDecisionPending : ''}`}
+            {readyForHandoff ? copy.workspaceReadyBody : readinessReasons}
           </p>
+        </div>
+      </div>
+
+      <div className="border-b border-white/10 py-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <h3 className="text-sm font-medium text-white/76">{copy.workspaceFindingsLabel}</h3>
+            <p className="mt-2 text-xs leading-5 text-white/40">{copy.workspaceFindingsBody}</p>
+          </div>
+          <div className="flex flex-wrap gap-2 font-mono text-[10px] text-white/40" aria-live="polite">
+            <span className="rounded border border-white/10 px-2 py-1">{findings.length} {copy.workspaceFindingCountLabel}</span>
+            <span className="rounded border border-white/10 px-2 py-1">{openFindings.length} {copy.workspaceFindingOpenLabel}</span>
+            <span className={`rounded border px-2 py-1 ${openBlockers.length > 0 ? FINDING_SEVERITY_TONE.blocker : 'border-white/10 text-white/40'}`}>
+              {openBlockers.length} {copy.workspaceFindingBlockerLabel}
+            </span>
+          </div>
+        </div>
+
+        <form onSubmit={handleFindingSubmit} className="partner-no-print mt-6 grid gap-4 lg:grid-cols-[minmax(220px,1.5fr)_minmax(120px,0.55fr)_minmax(160px,0.7fr)_minmax(148px,0.65fr)_auto] lg:items-end">
+          <label className="min-w-0" htmlFor="partner-finding-title">
+            <span className="text-xs font-medium text-white/52">{copy.workspaceFindingTitleLabel}</span>
+            <input
+              id="partner-finding-title"
+              type="text"
+              value={findingTitle}
+              maxLength={REVIEW_FINDING_TITLE_MAX_LENGTH}
+              onChange={(event) => setFindingTitle(event.target.value)}
+              placeholder={copy.workspaceFindingTitlePlaceholder}
+              className="mt-2 min-h-[44px] w-full rounded border border-white/12 bg-surface-1 px-3 text-sm text-white outline-none placeholder:text-white/24 focus:border-brand-line focus:ring-2 focus:ring-brand/20"
+            />
+          </label>
+          <label className="min-w-0" htmlFor="partner-finding-severity">
+            <span className="text-xs font-medium text-white/52">{copy.workspaceFindingSeverityLabel}</span>
+            <select
+              id="partner-finding-severity"
+              value={findingSeverity}
+              onChange={(event) => setFindingSeverity(event.target.value)}
+              className="mt-2 min-h-[44px] w-full rounded border border-white/12 bg-surface-1 px-3 text-sm text-white outline-none focus:border-brand-line focus:ring-2 focus:ring-brand/20"
+            >
+              {REVIEW_FINDING_SEVERITIES.map((severity) => (
+                <option key={severity} value={severity}>{copy.workspaceFindingSeverities[severity]}</option>
+              ))}
+            </select>
+          </label>
+          <label className="min-w-0" htmlFor="partner-finding-owner">
+            <span className="text-xs font-medium text-white/52">{copy.workspaceFindingOwnerLabel}</span>
+            <input
+              id="partner-finding-owner"
+              type="text"
+              value={findingOwner}
+              maxLength={REVIEW_FINDING_OWNER_MAX_LENGTH}
+              onChange={(event) => setFindingOwner(event.target.value)}
+              placeholder={copy.workspaceFindingOwnerPlaceholder}
+              autoComplete="off"
+              className="mt-2 min-h-[44px] w-full rounded border border-white/12 bg-surface-1 px-3 text-sm text-white outline-none placeholder:text-white/24 focus:border-brand-line focus:ring-2 focus:ring-brand/20"
+            />
+          </label>
+          <label className="min-w-0" htmlFor="partner-finding-due-date">
+            <span className="text-xs font-medium text-white/52">{copy.workspaceFindingDueLabel}</span>
+            <input
+              id="partner-finding-due-date"
+              type="date"
+              value={findingDueDate}
+              onChange={(event) => setFindingDueDate(event.target.value)}
+              className="mt-2 min-h-[44px] w-full rounded border border-white/12 bg-surface-1 px-3 text-sm text-white outline-none [color-scheme:dark] focus:border-brand-line focus:ring-2 focus:ring-brand/20"
+            />
+          </label>
+          <button
+            type="submit"
+            disabled={!findingTitle.trim() || findingLimitReached}
+            className="inline-flex min-h-[44px] items-center justify-center rounded border border-brand-line bg-brand-faint px-4 text-xs font-semibold text-brand-light transition-colors hover:bg-brand/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light disabled:cursor-not-allowed disabled:border-white/8 disabled:bg-transparent disabled:text-white/24"
+          >
+            {copy.workspaceFindingAdd}
+          </button>
+        </form>
+        <p className="partner-no-print mt-2 text-[10px] leading-4 text-white/30">{copy.workspaceFindingLimit}</p>
+
+        <div className="mt-6 border-t border-white/10">
+          {findings.length === 0 ? (
+            <p className="py-6 text-sm text-white/34">{copy.workspaceFindingEmpty}</p>
+          ) : findings.map((finding) => (
+            <article key={finding.id} className={`border-b border-white/10 py-5 ${finding.status === 'resolved' ? 'opacity-55' : ''}`}>
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`rounded border px-2 py-1 text-[10px] font-semibold uppercase ${FINDING_SEVERITY_TONE[finding.severity]}`}>
+                      {copy.workspaceFindingSeverities[finding.severity]}
+                    </span>
+                    <span className={`rounded border px-2 py-1 text-[10px] font-semibold ${finding.status === 'resolved' ? 'border-brand-line bg-brand-faint text-brand-light' : 'border-white/12 text-white/48'}`}>
+                      {finding.status === 'resolved' ? copy.workspaceFindingResolved : copy.workspaceFindingOpen}
+                    </span>
+                  </div>
+                  <h4 className={`mt-3 break-words text-sm font-medium leading-6 text-white/78 ${finding.status === 'resolved' ? 'line-through' : ''}`}>
+                    {finding.title}
+                  </h4>
+                  <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-[10px] leading-4 text-white/34">
+                    {finding.owner ? <div><dt className="inline font-semibold">{copy.workspaceFindingOwnerLabel}: </dt><dd className="inline">{finding.owner}</dd></div> : null}
+                    {finding.due_date ? <div><dt className="inline font-semibold">{copy.workspaceFindingDueLabel}: </dt><dd className="inline"><time dateTime={finding.due_date}>{finding.due_date}</time></dd></div> : null}
+                  </dl>
+                </div>
+                <div className="partner-no-print flex shrink-0 flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onUpdateFinding(finding.id, { status: finding.status === 'resolved' ? 'open' : 'resolved' })}
+                    className="inline-flex min-h-[40px] items-center rounded border border-white/12 px-3 text-[10px] font-semibold text-white/56 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                  >
+                    {finding.status === 'resolved' ? copy.workspaceFindingReopen : copy.workspaceFindingResolve}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onRemoveFinding(finding.id)}
+                    className="inline-flex min-h-[40px] items-center rounded border border-white/8 px-3 text-[10px] font-semibold text-white/34 transition-colors hover:border-warn/30 hover:text-warn focus:outline-none focus-visible:ring-2 focus-visible:ring-warn"
+                  >
+                    {copy.workspaceFindingRemove}
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
 
@@ -1740,13 +1966,86 @@ function buildReviewSnapshot(copy, language) {
   };
 }
 
-function buildReviewHandoff(copy, language, checks, notes, decision, organization, nextReviewDate) {
+function sanitizeReviewField(value, maxLength) {
+  return String(value ?? '')
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, ' ')
+    .slice(0, maxLength)
+    .trim();
+}
+
+// [PARTNER-FINDINGS-REGISTER 2026-08-19 by Codex] Findings never leave the
+// browser unless the reviewer exports them. IDs are local correlation handles,
+// not security tokens, customer identifiers, or server-side object keys.
+function createReviewFinding(input) {
+  const randomPart = globalThis.crypto?.randomUUID?.()
+    || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  const dueDate = typeof input?.due_date === 'string' && isValidReviewDate(input.due_date)
+    ? input.due_date
+    : '';
+
+  return {
+    id: `finding-${randomPart}`.slice(0, 80),
+    title: sanitizeReviewField(input?.title, REVIEW_FINDING_TITLE_MAX_LENGTH),
+    severity: REVIEW_FINDING_SEVERITIES.includes(input?.severity) ? input.severity : 'medium',
+    status: 'open',
+    owner: sanitizeReviewField(input?.owner, REVIEW_FINDING_OWNER_MAX_LENGTH),
+    due_date: dueDate,
+    created_at: new Date().toISOString(),
+  };
+}
+
+// [PARTNER-FINDINGS-IMPORT 2026-08-19 by Codex] Imported findings are treated
+// as untrusted JSON. Every field is allowlisted and bounded before React state,
+// local storage, JSON handoff, or Markdown rendering can observe it.
+function normalizeReviewFindings(value) {
+  if (value == null) return [];
+  if (!Array.isArray(value) || value.length > REVIEW_FINDINGS_MAX) {
+    throw new Error('invalid findings');
+  }
+
+  return value.map((item) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) {
+      throw new Error('invalid finding');
+    }
+    const id = sanitizeReviewField(item.id, 80);
+    const title = sanitizeReviewField(item.title, REVIEW_FINDING_TITLE_MAX_LENGTH);
+    if (!/^[A-Za-z0-9_-]{1,80}$/.test(id) || !title) {
+      throw new Error('invalid finding identity');
+    }
+    if (!REVIEW_FINDING_SEVERITIES.includes(item.severity) || !REVIEW_FINDING_STATUSES.includes(item.status)) {
+      throw new Error('invalid finding state');
+    }
+    const dueDate = item.due_date == null || item.due_date === ''
+      ? ''
+      : item.due_date;
+    if (dueDate && (typeof dueDate !== 'string' || !isValidReviewDate(dueDate))) {
+      throw new Error('invalid finding due date');
+    }
+    const createdAt = typeof item.created_at === 'string' && !Number.isNaN(Date.parse(item.created_at))
+      ? new Date(item.created_at).toISOString()
+      : null;
+
+    return {
+      id,
+      title,
+      severity: item.severity,
+      status: item.status,
+      owner: sanitizeReviewField(item.owner, REVIEW_FINDING_OWNER_MAX_LENGTH),
+      due_date: dueDate,
+      created_at: createdAt,
+    };
+  });
+}
+
+function buildReviewHandoff(copy, language, checks, notes, findings, decision, organization, nextReviewDate) {
   const checklist = copy.reviewChecklist.map((item) => ({
     id: item.id,
     title: item.title,
     checked: Boolean(checks[item.id]),
   }));
   const completed = checklist.filter((item) => item.checked).length;
+  const openFindings = findings.filter((finding) => finding.status === 'open');
+  const openBlockers = openFindings.filter((finding) => finding.severity === 'blocker');
 
   return {
     schema: REVIEW_HANDOFF_SCHEMA,
@@ -1759,8 +2058,15 @@ function buildReviewHandoff(copy, language, checks, notes, decision, organizatio
     review_progress: {
       completed,
       total: checklist.length,
+      findings_total: findings.length,
+      findings_open: openFindings.length,
+      blockers_open: openBlockers.length,
+      ready_for_handoff: completed === checklist.length
+        && decision !== 'undecided'
+        && openBlockers.length === 0,
     },
     checklist,
+    findings,
     review_outcome: {
       recommendation: decision,
       recommendation_label: copy.workspaceDecisionOptions[decision],
@@ -1779,7 +2085,7 @@ function normalizeReviewHandoff(payload) {
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
     throw new Error('invalid handoff');
   }
-  if (![REVIEW_HANDOFF_SCHEMA, 'aeronyx.partner.review.handoff.v1'].includes(payload.schema)) {
+  if (![REVIEW_HANDOFF_SCHEMA, 'aeronyx.partner.review.handoff.v2', 'aeronyx.partner.review.handoff.v1'].includes(payload.schema)) {
     throw new Error('unsupported handoff');
   }
   if (!Array.isArray(payload.checklist) || payload.checklist.length > 20) {
@@ -1809,8 +2115,9 @@ function normalizeReviewHandoff(payload) {
   const notes = typeof payload.reviewer_notes === 'string'
     ? payload.reviewer_notes.slice(0, REVIEW_NOTES_MAX_LENGTH)
     : '';
+  const findings = normalizeReviewFindings(payload.findings);
 
-  return { checks, decision, organization, nextReviewDate, notes };
+  return { checks, decision, organization, nextReviewDate, notes, findings };
 }
 
 function isValidReviewDate(value) {
@@ -1831,14 +2138,15 @@ function escapeMarkdownText(value) {
 // [PARTNER-DECISION-MEMO 2026-08-19 by Codex] The human-readable memo is a
 // portable review artifact, not a secret-bearing deep link. Reviewer-authored
 // fields are escaped before entering Markdown so imported text stays inert.
-function buildReviewMemo(copy, checks, notes, decision, organization, nextReviewDate) {
+function buildReviewMemo(copy, checks, notes, findings, decision, organization, nextReviewDate) {
   const labels = copy.memoLabels;
   const checklist = copy.reviewChecklist.map((item) => ({
     ...item,
     checked: Boolean(checks[item.id]),
   }));
   const completed = checklist.filter((item) => item.checked).length;
-  const ready = completed === checklist.length && decision !== 'undecided';
+  const openBlockers = findings.filter((finding) => finding.status === 'open' && finding.severity === 'blocker');
+  const ready = completed === checklist.length && decision !== 'undecided' && openBlockers.length === 0;
   const capabilities = [
     [labels.client, withEvidenceReferences(copy.clientItems, 'client')],
     [labels.node, withEvidenceReferences(copy.rustItems, 'node')],
@@ -1865,6 +2173,17 @@ function buildReviewMemo(copy, checks, notes, decision, organization, nextReview
     `## ${labels.checklist}`,
     '',
     ...checklist.map((item) => `- [${item.checked ? 'x' : ' '}] ${clean(item.title)}`),
+    '',
+    `## ${labels.findings}`,
+    '',
+    ...(findings.length > 0
+      ? findings.map((finding) => [
+        `- **${clean(copy.workspaceFindingSeverities[finding.severity])} · ${clean(finding.title)}**`,
+        `  - **${labels.findingStatus}:** ${clean(finding.status === 'resolved' ? copy.workspaceFindingResolved : copy.workspaceFindingOpen)}`,
+        `  - **${labels.findingOwner}:** ${clean(finding.owner)}`,
+        `  - **${labels.findingDue}:** ${clean(finding.due_date)}`,
+      ].join('\n'))
+      : [`- ${clean(copy.workspaceFindingEmpty)}`]),
     '',
     `## ${labels.notes}`,
     '',
@@ -2088,6 +2407,7 @@ function PartnerProgressPage() {
   const [capabilityQuery, setCapabilityQuery] = useState('');
   const [reviewChecks, setReviewChecks] = useState(() => ({ ...EMPTY_REVIEW_CHECKS }));
   const [reviewNotes, setReviewNotes] = useState('');
+  const [reviewFindings, setReviewFindings] = useState([]);
   const [reviewDecision, setReviewDecision] = useState('undecided');
   const [reviewOrganization, setReviewOrganization] = useState('');
   const [reviewNextReviewDate, setReviewNextReviewDate] = useState('');
@@ -2136,6 +2456,7 @@ function PartnerProgressPage() {
         if (typeof parsed?.notes === 'string') {
           setReviewNotes(parsed.notes.slice(0, REVIEW_NOTES_MAX_LENGTH));
         }
+        setReviewFindings(normalizeReviewFindings(parsed?.findings));
         if (REVIEW_DECISIONS.includes(parsed?.decision)) {
           setReviewDecision(parsed.decision);
         }
@@ -2159,6 +2480,7 @@ function PartnerProgressPage() {
       window.localStorage.setItem(REVIEW_WORKSPACE_STORAGE_KEY, JSON.stringify({
         checks: reviewChecks,
         notes: reviewNotes,
+        findings: reviewFindings,
         decision: reviewDecision,
         organization: reviewOrganization,
         next_review_date: reviewNextReviewDate,
@@ -2167,7 +2489,7 @@ function PartnerProgressPage() {
     } catch {
       // The workspace remains session-usable when local storage is unavailable.
     }
-  }, [reviewChecks, reviewNotes, reviewDecision, reviewOrganization, reviewNextReviewDate, workspaceLoaded]);
+  }, [reviewChecks, reviewNotes, reviewFindings, reviewDecision, reviewOrganization, reviewNextReviewDate, workspaceLoaded]);
 
   useEffect(() => {
     if (!clearWorkspaceArmed) return undefined;
@@ -2223,6 +2545,31 @@ function PartnerProgressPage() {
     resetWorkspaceActionState();
   }
 
+  function handleAddReviewFinding(input) {
+    const finding = createReviewFinding(input);
+    if (!finding.title) return;
+    setReviewFindings((current) => current.length >= REVIEW_FINDINGS_MAX
+      ? current
+      : [...current, finding]);
+    resetWorkspaceActionState();
+  }
+
+  function handleUpdateReviewFinding(id, patch) {
+    setReviewFindings((current) => current.map((finding) => {
+      if (finding.id !== id) return finding;
+      const status = REVIEW_FINDING_STATUSES.includes(patch?.status)
+        ? patch.status
+        : finding.status;
+      return { ...finding, status };
+    }));
+    resetWorkspaceActionState();
+  }
+
+  function handleRemoveReviewFinding(id) {
+    setReviewFindings((current) => current.filter((finding) => finding.id !== id));
+    resetWorkspaceActionState();
+  }
+
   function handleReviewDecisionChange(value) {
     if (!REVIEW_DECISIONS.includes(value)) return;
     setReviewDecision(value);
@@ -2248,6 +2595,7 @@ function PartnerProgressPage() {
           language,
           reviewChecks,
           reviewNotes,
+          reviewFindings,
           reviewDecision,
           reviewOrganization,
           reviewNextReviewDate
@@ -2268,6 +2616,7 @@ function PartnerProgressPage() {
           copy,
           reviewChecks,
           reviewNotes,
+          reviewFindings,
           reviewDecision,
           reviewOrganization,
           reviewNextReviewDate
@@ -2294,6 +2643,7 @@ function PartnerProgressPage() {
       const normalized = normalizeReviewHandoff(JSON.parse(await file.text()));
       setReviewChecks(normalized.checks);
       setReviewNotes(normalized.notes);
+      setReviewFindings(normalized.findings);
       setReviewDecision(normalized.decision);
       setReviewOrganization(normalized.organization);
       setReviewNextReviewDate(normalized.nextReviewDate);
@@ -2314,6 +2664,7 @@ function PartnerProgressPage() {
 
     setReviewChecks({ ...EMPTY_REVIEW_CHECKS });
     setReviewNotes('');
+    setReviewFindings([]);
     setReviewDecision('undecided');
     setReviewOrganization('');
     setReviewNextReviewDate('');
@@ -2536,11 +2887,15 @@ function PartnerProgressPage() {
                 copy={copy}
                 checks={reviewChecks}
                 notes={reviewNotes}
+                findings={reviewFindings}
                 decision={reviewDecision}
                 organization={reviewOrganization}
                 nextReviewDate={reviewNextReviewDate}
                 onToggle={handleToggleReviewCheck}
                 onNotesChange={handleReviewNotesChange}
+                onAddFinding={handleAddReviewFinding}
+                onUpdateFinding={handleUpdateReviewFinding}
+                onRemoveFinding={handleRemoveReviewFinding}
                 onDecisionChange={handleReviewDecisionChange}
                 onOrganizationChange={handleReviewOrganizationChange}
                 onNextReviewDateChange={handleReviewNextReviewDateChange}
