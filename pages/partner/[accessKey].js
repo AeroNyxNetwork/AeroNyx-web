@@ -25,6 +25,8 @@
  *     reviewer workspace with an explicit public-safe handoff export.
  *   - Adds a review decision memo, revision delta, and validated local handoff
  *     import so partner teams can continue diligence across browsers safely.
+ *   - Adds stable evidence references, handoff-readiness feedback, and a
+ *     human-readable Markdown decision memo that never includes the access URL.
  *
  * Dependencies:
  *   - Node crypto.timingSafeEqual for server-side key comparison.
@@ -59,8 +61,10 @@
  *     or send notes to analytics, logs, APIs, or AeroNyx infrastructure.
  *   - Imported handoffs are untrusted input. Keep schema, size, enum, and text
  *     bounds strict before updating any browser-local review state.
+ *   - Evidence citations and decision memos must be share-safe by default;
+ *     never place window.location, route params, or the access key in them.
  *
- * Last Modified: v1.5 - Review decision memo and safe handoff continuity.
+ * Last Modified: v1.6 - Portable decision memo and stable evidence references.
  * ============================================
  */
 
@@ -86,7 +90,7 @@ const ProtocolBackground = dynamic(
 const CLIENT_BUILD = '1.0.18+14';
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '1.5';
+const REVIEW_REVISION = '1.6';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
 const REVIEW_ORGANIZATION_MAX_LENGTH = 120;
@@ -183,12 +187,12 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'The review surface is now a reusable diligence workspace.',
-    revisionDeltaBody: 'Product and protocol claims remain anchored to the same verified baseline. This revision improves how partner teams evaluate, record, and hand off a decision.',
+    revisionDeltaTitle: 'Evidence can now travel cleanly into a partner decision.',
+    revisionDeltaBody: 'Product and protocol claims remain anchored to the same verified baseline. This revision makes evidence easier to cite and the completed review easier to carry into an internal meeting.',
     revisionDeltaItems: [
-      'Record a local pilot recommendation, organization label, and next review date.',
-      'Import a validated handoff file to continue the review on another browser.',
-      'Preserve the access boundary: no reviewer workspace data is synchronized to AeroNyx.',
+      'Use stable APP and NODE evidence references in questions, minutes, and acceptance reports.',
+      'Download a human-readable Markdown decision memo without exposing the restricted URL.',
+      'See whether the checklist and recommendation are ready for a clean handoff.',
     ],
     statusLabels: {
       available: 'Available',
@@ -215,6 +219,10 @@ const CONTENT = {
     evidenceLabel: 'Verification note',
     evidenceLevelLabel: 'Evidence level',
     evidenceSourcesLabel: 'Evidence sources',
+    evidenceReferenceLabel: 'Evidence reference',
+    copyEvidenceReference: 'Copy reference',
+    evidenceReferenceCopied: 'Reference copied',
+    evidenceReferenceCopyFailed: 'Copy unavailable',
     nextGateLabel: 'Next validation gate',
     noCapabilitiesFound: 'No capability evidence matches this search and status filter.',
     decisionEyebrow: 'Decision view',
@@ -275,6 +283,12 @@ const CONTENT = {
     workspaceBody: 'Checklist state and notes are stored only in this browser. AeroNyx does not receive them. Export a handoff file only when you choose to share the review.',
     workspaceProgressLabel: 'Review progress',
     workspaceCompleteLabel: 'complete',
+    workspaceReadinessLabel: 'Handoff readiness',
+    workspaceReady: 'Ready to hand off',
+    workspaceReadyBody: 'All diligence checks are complete and a recommendation is recorded.',
+    workspaceNeedsAttention: 'Needs review',
+    workspacePendingChecksLabel: 'checklist items remain before this review is ready to hand off.',
+    workspaceDecisionPending: 'A recommendation still needs to be recorded.',
     workspaceChecklistLabel: 'Diligence checklist',
     workspaceDecisionMemoLabel: 'Decision memo',
     workspaceDecisionLabel: 'Current recommendation',
@@ -294,6 +308,9 @@ const CONTENT = {
     workspaceExport: 'Export review handoff',
     workspaceExported: 'Handoff downloaded',
     workspaceExportFailed: 'Handoff unavailable',
+    workspaceMemoExport: 'Download decision memo',
+    workspaceMemoExported: 'Decision memo downloaded',
+    workspaceMemoExportFailed: 'Decision memo unavailable',
     workspaceImport: 'Import handoff',
     workspaceImported: 'Handoff imported',
     workspaceImportFailed: 'Invalid handoff file',
@@ -301,6 +318,28 @@ const CONTENT = {
     workspaceClear: 'Clear local workspace',
     workspaceConfirmClear: 'Confirm clear',
     workspaceLocalOnly: 'Local-only workspace · no server synchronization',
+    memoLabels: {
+      title: 'AeroNyx Partner Review Decision Memo',
+      generated: 'Generated',
+      baseline: 'Verified baseline',
+      decision: 'Decision',
+      recommendation: 'Recommendation',
+      reviewer: 'Reviewer / organization',
+      nextReview: 'Next review',
+      readiness: 'Review readiness',
+      progress: 'Checklist progress',
+      checklist: 'Diligence checklist',
+      notes: 'Reviewer notes',
+      boundaries: 'Current declared boundaries',
+      capabilities: 'Capability evidence index',
+      client: 'Client product',
+      node: 'Rust protocol infrastructure',
+      evidence: 'Verification',
+      sources: 'Evidence sources',
+      nextGate: 'Next validation gate',
+      links: 'Public review links',
+      privacy: 'Privacy boundary',
+    },
     reviewChecklist: [
       { id: 'scope', title: 'Scope understood', detail: 'Product path, platforms, regions, cohort, and success criteria are explicit.' },
       { id: 'privacy', title: 'Privacy boundary reviewed', detail: 'Encryption ownership, metadata limits, current dependencies, and exclusions are understood.' },
@@ -611,12 +650,12 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '審閱頁已成為可延續使用的盡調工作區。',
-    revisionDeltaBody: '產品與協議宣稱仍錨定在同一個已核對基線。這次更新的是合作方評估、記錄與交接決策的方式。',
+    revisionDeltaTitle: '證據現在可以乾淨地進入合作方決策流程。',
+    revisionDeltaBody: '產品與協議宣稱仍錨定在同一個已核對基線。這次更新讓證據更容易被引用，也讓完成的審閱能直接帶進內部會議。',
     revisionDeltaItems: [
-      '在本機記錄 Pilot 建議、審閱方標籤與下一次審閱日期。',
-      '匯入經驗證的交接檔，在另一個瀏覽器延續審閱。',
-      '保持權限邊界：任何審閱工作區資料都不會同步到 AeroNyx。',
+      '使用穩定的 APP 與 NODE 證據編號撰寫問題、會議記錄與驗收報告。',
+      '下載便於閱讀的 Markdown 決策備忘，同時不暴露受限網址。',
+      '立即看出核對清單與目前建議是否已達到可交接狀態。',
     ],
     statusLabels: {
       available: '已可用',
@@ -643,6 +682,10 @@ const CONTENT = {
     evidenceLabel: '驗證說明',
     evidenceLevelLabel: '證據層級',
     evidenceSourcesLabel: '證據來源',
+    evidenceReferenceLabel: '證據編號',
+    copyEvidenceReference: '複製編號',
+    evidenceReferenceCopied: '編號已複製',
+    evidenceReferenceCopyFailed: '無法複製',
     nextGateLabel: '下一驗收門檻',
     noCapabilitiesFound: '沒有能力證據符合目前的搜尋與狀態篩選。',
     decisionEyebrow: '決策視圖',
@@ -703,6 +746,12 @@ const CONTENT = {
     workspaceBody: '核對進度與筆記只保存在這個瀏覽器，AeroNyx 不會收到。只有審閱者主動匯出交接檔案時，資料才會離開設備。',
     workspaceProgressLabel: '審閱進度',
     workspaceCompleteLabel: '已完成',
+    workspaceReadinessLabel: '交接就緒狀態',
+    workspaceReady: '可以交接',
+    workspaceReadyBody: '盡調核對已完成，並且已記錄目前建議。',
+    workspaceNeedsAttention: '仍需審閱',
+    workspacePendingChecksLabel: '個核對項尚未完成，完成後才能形成完整交接。',
+    workspaceDecisionPending: '仍需記錄目前建議。',
     workspaceChecklistLabel: '盡調核對清單',
     workspaceDecisionMemoLabel: '決策備忘',
     workspaceDecisionLabel: '目前建議',
@@ -722,6 +771,9 @@ const CONTENT = {
     workspaceExport: '匯出審閱交接檔',
     workspaceExported: '交接檔已下載',
     workspaceExportFailed: '無法匯出交接檔',
+    workspaceMemoExport: '下載決策備忘',
+    workspaceMemoExported: '決策備忘已下載',
+    workspaceMemoExportFailed: '無法產生決策備忘',
     workspaceImport: '匯入交接檔',
     workspaceImported: '交接檔已匯入',
     workspaceImportFailed: '交接檔格式不正確',
@@ -729,6 +781,28 @@ const CONTENT = {
     workspaceClear: '清除本機工作區',
     workspaceConfirmClear: '確認清除',
     workspaceLocalOnly: '僅本機工作區 · 不與伺服器同步',
+    memoLabels: {
+      title: 'AeroNyx 合作方審閱決策備忘',
+      generated: '產生時間',
+      baseline: '已核對基線',
+      decision: '決策',
+      recommendation: '目前建議',
+      reviewer: '審閱者 / 組織',
+      nextReview: '下一次審閱',
+      readiness: '審閱就緒狀態',
+      progress: '核對進度',
+      checklist: '盡調核對清單',
+      notes: '審閱者筆記',
+      boundaries: '目前已聲明邊界',
+      capabilities: '能力證據索引',
+      client: '客戶端產品',
+      node: 'Rust 協議基礎設施',
+      evidence: '驗證說明',
+      sources: '證據來源',
+      nextGate: '下一驗收門檻',
+      links: '公開核對入口',
+      privacy: '隱私邊界',
+    },
     reviewChecklist: [
       { id: 'scope', title: '已理解評估範圍', detail: '產品路徑、平台、地區、用戶群與成功條件都已明確。' },
       { id: 'privacy', title: '已審閱隱私邊界', detail: '已理解加密所有權、元資料限制、當前依賴與排除項。' },
@@ -1205,6 +1279,8 @@ function ReviewerWorkspace({
   onNextReviewDateChange,
   onExport,
   exportStatus,
+  onExportMemo,
+  memoExportStatus,
   onImport,
   importStatus,
   onClear,
@@ -1213,6 +1289,8 @@ function ReviewerWorkspace({
   const completed = copy.reviewChecklist.filter((item) => checks[item.id]).length;
   const total = copy.reviewChecklist.length;
   const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const pendingChecks = total - completed;
+  const readyForHandoff = pendingChecks === 0 && decision !== 'undecided';
 
   return (
     <div className="mt-10 border-y border-white/10">
@@ -1234,8 +1312,19 @@ function ReviewerWorkspace({
           >
             <div className="h-full rounded-full bg-brand-light transition-[width] duration-300" style={{ width: `${progress}%` }} />
           </div>
+          <p className="mt-3 text-[10px] leading-4 text-white/30">{copy.workspaceLocalOnly}</p>
         </div>
-        <p className="text-xs leading-5 text-white/34">{copy.workspaceLocalOnly}</p>
+        <div className="border-t border-white/10 pt-5 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0" aria-live="polite">
+          <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.workspaceReadinessLabel}</p>
+          <p className={`mt-2 text-sm font-medium ${readyForHandoff ? 'text-brand-light' : 'text-warn'}`}>
+            {readyForHandoff ? copy.workspaceReady : copy.workspaceNeedsAttention}
+          </p>
+          <p className="mt-2 max-w-sm text-xs leading-5 text-white/40">
+            {readyForHandoff
+              ? copy.workspaceReadyBody
+              : `${pendingChecks > 0 ? `${pendingChecks} ${copy.workspacePendingChecksLabel}` : ''}${pendingChecks > 0 && decision === 'undecided' ? ' ' : ''}${decision === 'undecided' ? copy.workspaceDecisionPending : ''}`}
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-10 py-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(300px,0.9fr)] lg:gap-14">
@@ -1341,7 +1430,7 @@ function ReviewerWorkspace({
             </div>
           </dl>
 
-          <div className="partner-no-print mt-6 grid gap-2 sm:grid-cols-3">
+          <div className="partner-no-print mt-6 grid gap-2 sm:grid-cols-2">
             <button
               type="button"
               onClick={onExport}
@@ -1352,6 +1441,17 @@ function ReviewerWorkspace({
                 : exportStatus === 'failed'
                   ? copy.workspaceExportFailed
                   : copy.workspaceExport}
+            </button>
+            <button
+              type="button"
+              onClick={onExportMemo}
+              className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/12 px-4 text-xs font-semibold text-white/58 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+            >
+              {memoExportStatus === 'exported'
+                ? copy.workspaceMemoExported
+                : memoExportStatus === 'failed'
+                  ? copy.workspaceMemoExportFailed
+                  : copy.workspaceMemoExport}
             </button>
             <label className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded border border-white/12 px-4 text-center text-xs font-semibold text-white/58 transition-colors hover:border-white/24 hover:text-white focus-within:ring-2 focus-within:ring-brand-light">
               <span>{copy.workspaceImport}</span>
@@ -1377,6 +1477,8 @@ function ReviewerWorkspace({
           ) : null}
           <p className="sr-only" aria-live="polite">
             {exportStatus === 'exported' ? copy.workspaceExported : exportStatus === 'failed' ? copy.workspaceExportFailed : ''}
+            {' '}
+            {memoExportStatus === 'exported' ? copy.workspaceMemoExported : memoExportStatus === 'failed' ? copy.workspaceMemoExportFailed : ''}
             {' '}
             {importStatus === 'imported' ? copy.workspaceImported : importStatus === 'failed' ? copy.workspaceImportFailed : ''}
           </p>
@@ -1427,6 +1529,17 @@ function DependencyMatrix({ copy }) {
 
 // [PARTNER-REVIEW-EXPORT 2026-08-19 by Codex] This export intentionally omits
 // the current URL and all access, node, customer, endpoint, and payload data.
+function capabilityReference(group, index) {
+  return `${group === 'client' ? 'APP' : 'NODE'}-${String(index + 1).padStart(2, '0')}`;
+}
+
+function withEvidenceReferences(items, group) {
+  return items.map((item, index) => ({
+    reference: capabilityReference(group, index),
+    ...item,
+  }));
+}
+
 function buildReviewSnapshot(copy, language) {
   return {
     schema: 'aeronyx.partner.review.v3',
@@ -1444,8 +1557,8 @@ function buildReviewSnapshot(copy, language) {
     },
     decision_summary: copy.decisionLanes,
     partner_pilot_path: copy.pilotSteps,
-    client_capabilities: copy.clientItems,
-    rust_capabilities: copy.rustItems,
+    client_capabilities: withEvidenceReferences(copy.clientItems, 'client'),
+    rust_capabilities: withEvidenceReferences(copy.rustItems, 'node'),
     dependency_boundary: copy.dependencies,
     current_boundaries: copy.boundaries,
     recent_milestones: copy.milestones,
@@ -1537,8 +1650,90 @@ function isValidReviewDate(value) {
     && parsed.getUTCDate() === day;
 }
 
-function downloadJsonFile(payload, filename) {
-  const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: 'application/json' });
+function escapeMarkdownText(value) {
+  return String(value ?? '')
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, ' ')
+    .replace(/([\\`*_{}\[\]()#+.!|>~-])/g, '\\$1');
+}
+
+// [PARTNER-DECISION-MEMO 2026-08-19 by Codex] The human-readable memo is a
+// portable review artifact, not a secret-bearing deep link. Reviewer-authored
+// fields are escaped before entering Markdown so imported text stays inert.
+function buildReviewMemo(copy, checks, notes, decision, organization, nextReviewDate) {
+  const labels = copy.memoLabels;
+  const checklist = copy.reviewChecklist.map((item) => ({
+    ...item,
+    checked: Boolean(checks[item.id]),
+  }));
+  const completed = checklist.filter((item) => item.checked).length;
+  const ready = completed === checklist.length && decision !== 'undecided';
+  const capabilities = [
+    [labels.client, withEvidenceReferences(copy.clientItems, 'client')],
+    [labels.node, withEvidenceReferences(copy.rustItems, 'node')],
+  ];
+  const clean = (value) => escapeMarkdownText(value).trim() || '—';
+  const lines = [
+    `# ${labels.title}`,
+    '',
+    `- **${labels.generated}:** ${new Date().toISOString()}`,
+    `- **${labels.baseline}:** ${VERIFIED_DATE} · Client ${CLIENT_BUILD} · Rust ${RUST_NODE_HEAD} · Brief v${REVIEW_REVISION}`,
+    '',
+    `## ${labels.decision}`,
+    '',
+    `- **${labels.recommendation}:** ${clean(copy.workspaceDecisionOptions[decision])}`,
+    `- **${labels.reviewer}:** ${clean(organization)}`,
+    `- **${labels.nextReview}:** ${clean(nextReviewDate)}`,
+    '',
+    `## ${labels.readiness}`,
+    '',
+    `- **${labels.readiness}:** ${ready ? clean(copy.workspaceReady) : clean(copy.workspaceNeedsAttention)}`,
+    `- **${labels.progress}:** ${completed} / ${checklist.length}`,
+    '',
+    `## ${labels.checklist}`,
+    '',
+    ...checklist.map((item) => `- [${item.checked ? 'x' : ' '}] ${clean(item.title)}`),
+    '',
+    `## ${labels.notes}`,
+    '',
+    clean(notes),
+    '',
+    `## ${labels.boundaries}`,
+    '',
+    ...copy.boundaries.map((item) => `- **${clean(item.title)}:** ${clean(item.detail)}`),
+    '',
+    `## ${labels.capabilities}`,
+    '',
+  ];
+
+  capabilities.forEach(([sectionLabel, items]) => {
+    lines.push(`### ${sectionLabel}`, '');
+    items.forEach((item) => {
+      lines.push(
+        `- **${item.reference} · ${clean(item.title)}** · ${clean(copy.statusLabels[item.status])}`,
+        `  - **${labels.evidence}:** ${clean(item.evidence)}`,
+        `  - **${labels.sources}:** ${item.evidenceSources.map(clean).join(' · ')}`,
+        `  - **${labels.nextGate}:** ${clean(item.nextGate)}`
+      );
+    });
+    lines.push('');
+  });
+
+  lines.push(
+    `## ${labels.links}`,
+    '',
+    ...copy.links.map(([label, href]) => `- [${clean(label)}](${href})`),
+    '',
+    `## ${labels.privacy}`,
+    '',
+    '> Public-safe review information only. No access URL, route key, customer traffic, node identity, private endpoint, encryption key, or payload data.',
+    ''
+  );
+
+  return `${lines.join('\n')}\n`;
+}
+
+function downloadTextFile(contents, filename, type) {
+  const blob = new Blob([contents], { type });
   const objectUrl = URL.createObjectURL(blob);
   const download = document.createElement('a');
   download.href = objectUrl;
@@ -1550,10 +1745,15 @@ function downloadJsonFile(payload, filename) {
   window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
 }
 
-function CapabilityReviewList({ items, copy, reduceMotion, query }) {
+function downloadJsonFile(payload, filename) {
+  downloadTextFile(`${JSON.stringify(payload, null, 2)}\n`, filename, 'application/json');
+}
+
+function CapabilityReviewList({ items, copy, reduceMotion, query, group }) {
   const [filter, setFilter] = useState('all');
+  const [referenceCopyState, setReferenceCopyState] = useState({ reference: '', status: 'idle' });
   const normalizedQuery = query.trim().toLocaleLowerCase();
-  const filteredItems = items.filter((item) => {
+  const filteredItems = items.filter((item, itemIndex) => {
     const matchesStatus = filter === 'available'
       ? item.status === 'available'
       : filter === 'active'
@@ -1562,6 +1762,7 @@ function CapabilityReviewList({ items, copy, reduceMotion, query }) {
     if (!matchesStatus || !normalizedQuery) return matchesStatus;
 
     const searchable = [
+      capabilityReference(group, itemIndex),
       item.title,
       item.summary,
       item.evidence,
@@ -1571,6 +1772,29 @@ function CapabilityReviewList({ items, copy, reduceMotion, query }) {
     ].join(' ').toLocaleLowerCase();
     return searchable.includes(normalizedQuery);
   });
+
+  useEffect(() => {
+    if (referenceCopyState.status === 'idle') return undefined;
+    const timeout = window.setTimeout(
+      () => setReferenceCopyState({ reference: '', status: 'idle' }),
+      2500
+    );
+    return () => window.clearTimeout(timeout);
+  }, [referenceCopyState]);
+
+  async function handleCopyEvidenceReference(reference, title) {
+    if (!navigator.clipboard?.writeText) {
+      setReferenceCopyState({ reference, status: 'failed' });
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(`AeroNyx Partner Brief v${REVIEW_REVISION} · ${reference} · ${title}`);
+      setReferenceCopyState({ reference, status: 'copied' });
+    } catch {
+      setReferenceCopyState({ reference, status: 'failed' });
+    }
+  }
 
   return (
     <div className="mt-10">
@@ -1603,21 +1827,42 @@ function CapabilityReviewList({ items, copy, reduceMotion, query }) {
       </div>
 
       <div className="border-b border-white/10">
-        {filteredItems.map((item, index) => (
+        {filteredItems.map((item, index) => {
+          const sourceIndex = items.indexOf(item);
+          const reference = capabilityReference(group, sourceIndex);
+          const evidenceId = `partner-evidence-${group}-${String(sourceIndex + 1).padStart(2, '0')}`;
+          const copyState = referenceCopyState.reference === reference ? referenceCopyState.status : 'idle';
+
+          return (
           <motion.article
             key={item.title}
-            className="grid min-w-0 gap-4 border-t border-white/10 py-6 first:border-t-0 md:grid-cols-[44px_180px_minmax(0,1fr)] md:gap-6 md:py-7 xl:grid-cols-[44px_210px_minmax(0,1.2fr)_minmax(220px,0.8fr)] xl:gap-8"
+            id={evidenceId}
+            className="scroll-mt-32 grid min-w-0 gap-4 border-t border-white/10 py-6 first:border-t-0 md:grid-cols-[64px_180px_minmax(0,1fr)] md:gap-6 md:py-7 xl:grid-cols-[64px_210px_minmax(0,1.2fr)_minmax(220px,0.8fr)] xl:gap-8"
             initial={reduceMotion ? false : { opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.18 }}
             transition={{ duration: 0.4, delay: reduceMotion ? 0 : Math.min(index, 3) * 0.035, ease: EASE }}
           >
-            <span className="font-mono text-[10px] text-white/28 md:pt-2">
-              {String(items.indexOf(item) + 1).padStart(2, '0')}
+            <span
+              className="font-mono text-[10px] text-brand-light/64 md:pt-2"
+              aria-label={`${copy.evidenceReferenceLabel}: ${reference}`}
+            >
+              {reference}
             </span>
             <div className="min-w-0">
               <StatusBadge status={item.status} labels={copy.statusLabels} />
               <h3 className="mt-4 text-lg font-medium text-white sm:text-xl">{item.title}</h3>
+              <button
+                type="button"
+                onClick={() => handleCopyEvidenceReference(reference, item.title)}
+                className="partner-no-print mt-3 min-h-[32px] rounded text-left font-mono text-[10px] text-white/34 transition-colors hover:text-brand-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+              >
+                {copyState === 'copied'
+                  ? copy.evidenceReferenceCopied
+                  : copyState === 'failed'
+                    ? copy.evidenceReferenceCopyFailed
+                    : copy.copyEvidenceReference}
+              </button>
             </div>
             <p className="text-sm leading-6 text-white/56 sm:text-[15px] sm:leading-7 md:pt-1">{item.summary}</p>
             <dl className="grid min-w-0 gap-4 border-l border-white/10 pl-4 md:col-start-3 sm:grid-cols-2 xl:col-start-auto xl:grid-cols-1">
@@ -1639,7 +1884,8 @@ function CapabilityReviewList({ items, copy, reduceMotion, query }) {
               </div>
             </dl>
           </motion.article>
-        ))}
+          );
+        })}
         {filteredItems.length === 0 ? (
           <p className="border-t border-white/10 py-10 text-sm leading-6 text-white/42" role="status">
             {copy.noCapabilitiesFound}
@@ -1665,6 +1911,7 @@ function PartnerProgressPage() {
   const [reviewNextReviewDate, setReviewNextReviewDate] = useState('');
   const [workspaceLoaded, setWorkspaceLoaded] = useState(false);
   const [handoffExportStatus, setHandoffExportStatus] = useState('idle');
+  const [memoExportStatus, setMemoExportStatus] = useState('idle');
   const [handoffImportStatus, setHandoffImportStatus] = useState('idle');
   const [clearWorkspaceArmed, setClearWorkspaceArmed] = useState(false);
   const language = router.locale === 'zh-Hans' || router.locale === 'zh-Hant' ? 'zh' : 'en';
@@ -1784,6 +2031,7 @@ function PartnerProgressPage() {
 
   function resetWorkspaceActionState() {
     setHandoffExportStatus('idle');
+    setMemoExportStatus('idle');
     setHandoffImportStatus('idle');
     setClearWorkspaceArmed(false);
   }
@@ -1831,6 +2079,27 @@ function PartnerProgressPage() {
     }
   }
 
+  function handleExportDecisionMemo() {
+    try {
+      downloadTextFile(
+        buildReviewMemo(
+          copy,
+          reviewChecks,
+          reviewNotes,
+          reviewDecision,
+          reviewOrganization,
+          reviewNextReviewDate
+        ),
+        `aeronyx-partner-decision-memo-${VERIFIED_DATE}.md`,
+        'text/markdown;charset=utf-8'
+      );
+      setMemoExportStatus('exported');
+      setHandoffImportStatus('idle');
+    } catch {
+      setMemoExportStatus('failed');
+    }
+  }
+
   async function handleImportHandoff(event) {
     const file = event.target.files?.[0];
     event.target.value = '';
@@ -1847,6 +2116,7 @@ function PartnerProgressPage() {
       setReviewOrganization(normalized.organization);
       setReviewNextReviewDate(normalized.nextReviewDate);
       setHandoffExportStatus('idle');
+      setMemoExportStatus('idle');
       setHandoffImportStatus('imported');
       setClearWorkspaceArmed(false);
     } catch {
@@ -1866,6 +2136,7 @@ function PartnerProgressPage() {
     setReviewOrganization('');
     setReviewNextReviewDate('');
     setHandoffExportStatus('idle');
+    setMemoExportStatus('idle');
     setHandoffImportStatus('idle');
     setClearWorkspaceArmed(false);
   }
@@ -2086,6 +2357,8 @@ function PartnerProgressPage() {
                 onNextReviewDateChange={handleReviewNextReviewDateChange}
                 onExport={handleExportHandoff}
                 exportStatus={handoffExportStatus}
+                onExportMemo={handleExportDecisionMemo}
+                memoExportStatus={memoExportStatus}
                 onImport={handleImportHandoff}
                 importStatus={handoffImportStatus}
                 onClear={handleClearWorkspace}
@@ -2101,7 +2374,7 @@ function PartnerProgressPage() {
           >
             <Container>
               <SectionHeading eyebrow={copy.clientEyebrow} title={copy.clientTitle} body={copy.clientBody} />
-              <CapabilityReviewList items={copy.clientItems} copy={copy} reduceMotion={reduceMotion} query={capabilityQuery} />
+              <CapabilityReviewList items={copy.clientItems} copy={copy} reduceMotion={reduceMotion} query={capabilityQuery} group="client" />
             </Container>
           </section>
 
@@ -2112,7 +2385,7 @@ function PartnerProgressPage() {
           >
             <Container>
               <SectionHeading eyebrow={copy.rustEyebrow} title={copy.rustTitle} body={copy.rustBody} />
-              <CapabilityReviewList items={copy.rustItems} copy={copy} reduceMotion={reduceMotion} query={capabilityQuery} />
+              <CapabilityReviewList items={copy.rustItems} copy={copy} reduceMotion={reduceMotion} query={capabilityQuery} group="node" />
             </Container>
           </section>
 
