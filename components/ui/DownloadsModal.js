@@ -76,6 +76,11 @@
  *   x64 artifacts together from one immutable backend release. Website
  *   filenames and SHA-256 values now match the public update API exactly.
  *
+ * Modification Reason: v2.14 - Shared partner-verification contract.
+ *   Exposes the immutable release metadata as named exports so restricted
+ *   partner diligence and the public download modal render one authoritative
+ *   version, URL, filename, and digest without duplicating release constants.
+ *
  * Main Functionality:
  *   - Detects the user's OS and promotes the matching AeroNyx client first.
  *   - Lists all currently supported desktop/mobile platforms.
@@ -88,6 +93,8 @@
  *
  * Important Note for Next Developer:
  *   - Do not change download URLs here unless release binaries change.
+ *   - [SHARED-RELEASE-CONTRACT 2026-08-19 by Codex] Keep named release exports
+ *     serializable and UI-independent so evidence surfaces can reuse them.
  *   - Keep the modal node-blind/privacy network wording aligned with
  *     PrivacyAccessSection and lib/i18n.downloadsModal.
  *
@@ -105,6 +112,7 @@
  * Last Modified: v2.11 - AeroNyx 1.0.17-13 backend-origin release
  * Last Modified: v2.12 - AeroNyx 1.0.17-13 updater transition revision
  * Last Modified: v2.13 - AeroNyx 1.0.18-14 unified backend release
+ * Last Modified: v2.14 - Shared immutable release contract exports
  * ============================================
  */
 
@@ -125,9 +133,9 @@ import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 // [DOWNLOAD-RELEASE 2026-07-31 by Codex] Keep all direct platforms on one
 // immutable release generation. The version API and website must publish the
 // same URL, filename, digest, and build number for each artifact.
-const RELEASE_VERSION = '1.0.18';
-const RELEASE_BUILD = '14';
-const RELEASE_CHANNELS = Object.freeze({
+export const RELEASE_VERSION = '1.0.18';
+export const RELEASE_BUILD = '14';
+export const RELEASE_CHANNELS = Object.freeze({
   macOS: Object.freeze({
     downloadUrl: 'https://v1.aeronyx.network/downloads/releases/1.0.18-14/macos/AeroNyx-1.0.18-14-arm64.dmg',
     filename: 'AeroNyx-1.0.18-14-arm64.dmg',
