@@ -19,6 +19,8 @@
  *     print/PDF output, and reviewer contact actions for partner diligence.
  *   - Publishes a decision summary, dependency ownership matrix, sticky review
  *     index, and a public-safe machine-readable JSON snapshot.
+ *   - Provides executive and technical review depths, active-section context,
+ *     explicit evidence levels, next validation gates, and a partner pilot path.
  *
  * Dependencies:
  *   - Node crypto.timingSafeEqual for server-side key comparison.
@@ -30,8 +32,8 @@
  *   1. getServerSideProps rejects missing, malformed, or incorrect keys.
  *   2. The authorized response receives private no-store crawler/referrer
  *      headers before any page content is rendered.
- *   3. Reviewers can scan, filter, export, print, or validate source-reviewed
- *      delivery status before reading dependencies, limits, and milestones.
+ *   3. Reviewers choose executive or technical depth, then scan, filter,
+ *      export, print, or validate evidence before a partner pilot decision.
  *
  * Important Note for Next Developer:
  *   - [PARTNER-BUILD-BRIEF 2026-08-19 by Codex] Never hard-code the access key
@@ -45,13 +47,15 @@
  *     usable; it must never be inferred from a roadmap or design document.
  *   - Exported JSON must remain public-safe and must never contain the access
  *     URL, route key, private endpoints, customer traffic, or node identities.
+ *   - Executive depth only changes presentation. Technical evidence must stay
+ *     in the DOM, JSON export, and print output so no review fact is discarded.
  *
- * Last Modified: v1.2 - Decision view, dependency matrix, and JSON snapshot.
+ * Last Modified: v1.3 - Review depth, evidence gates, and partner pilot path.
  * ============================================
  */
 
 import { timingSafeEqual } from 'crypto';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -72,7 +76,7 @@ const ProtocolBackground = dynamic(
 const CLIENT_BUILD = '1.0.18+14';
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '1.2';
+const REVIEW_REVISION = '1.3';
 const ACCESS_KEY_PATTERN = /^[a-f0-9]{64}$/;
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -117,6 +121,16 @@ const CONTENT = {
     exportFailed: 'Export unavailable',
     printBrief: 'Print / Save PDF',
     contactTeam: 'Contact AeroNyx',
+    reviewDepthTitle: 'Review depth',
+    reviewDepthBody: 'Executive keeps the decision path concise. Technical reveals the complete capability and validation record.',
+    reviewDepthLabels: {
+      executive: 'Executive',
+      technical: 'Technical',
+    },
+    reviewDepthDescriptions: {
+      executive: 'Decision, pilot, dependencies, boundaries, and roadmap',
+      technical: 'Full client and Rust capability evidence',
+    },
     statusOverview: {
       available: 'Available capabilities',
       beta: 'Beta capabilities',
@@ -125,12 +139,13 @@ const CONTENT = {
     },
     jumpLabel: 'Brief sections',
     jumpItems: [
-      ['#overview', 'Overview'],
-      ['#client', 'Client product'],
-      ['#rust', 'Rust infrastructure'],
-      ['#dependencies', 'Dependencies'],
-      ['#boundaries', 'Current boundaries'],
-      ['#roadmap', 'Next milestones'],
+      ['#overview', 'Overview', false],
+      ['#pilot', 'Pilot path', false],
+      ['#client', 'Client product', true],
+      ['#rust', 'Rust infrastructure', true],
+      ['#dependencies', 'Dependencies', false],
+      ['#boundaries', 'Current boundaries', false],
+      ['#roadmap', 'Next milestones', false],
     ],
     snapshotEyebrow: 'Current baseline',
     snapshotTitle: 'Shipping product, hardened protocol core.',
@@ -164,6 +179,8 @@ const CONTENT = {
     showingLabel: 'Showing',
     capabilityLabel: 'capabilities',
     evidenceLabel: 'Verification note',
+    evidenceLevelLabel: 'Evidence level',
+    nextGateLabel: 'Next validation gate',
     decisionEyebrow: 'Decision view',
     decisionTitle: 'What a partner can evaluate now.',
     decisionBody: 'A compact view of the present pilot boundary. This separates usable paths from controlled beta work and capabilities that are intentionally not yet defaults.',
@@ -187,6 +204,36 @@ const CONTENT = {
         items: ['Default multi-hop routing', 'Fully decentralized message continuity', 'Fleet-wide strict custody witness gates'],
       },
     ],
+    pilotEyebrow: 'Partner pilot path',
+    pilotTitle: 'A review can move from interest to evidence in four steps.',
+    pilotBody: 'This is the recommended diligence sequence. It keeps product scope, privacy boundaries, acceptance evidence, and rollback ownership explicit before any broader rollout.',
+    pilotOutputLabel: 'Review output',
+    pilotSteps: [
+      {
+        step: '01',
+        title: 'Define the evaluation scope',
+        detail: 'Choose the product path, platforms, regions, user cohort, and success criteria that are actually under review.',
+        output: 'Named scope with measurable acceptance criteria.',
+      },
+      {
+        step: '02',
+        title: 'Approve the trust boundary',
+        detail: 'Review encryption ownership, current relay or media dependencies, metadata limits, and capabilities that are not defaults.',
+        output: 'Recorded data-handling boundary and explicit exclusions.',
+      },
+      {
+        step: '03',
+        title: 'Exercise the acceptance matrix',
+        detail: 'Test normal, offline, reconnect, failover, recovery, update, and rollback behavior on the agreed path.',
+        output: 'Reproducible evidence, failures, and owners for every open item.',
+      },
+      {
+        step: '04',
+        title: 'Make a reversible rollout decision',
+        detail: 'Agree ownership, monitoring, support escalation, rollback triggers, and the next expansion gate.',
+        output: 'A documented go, controlled beta, or no-go decision.',
+      },
+    ],
     clientEyebrow: 'Client product',
     clientTitle: 'One app for private connection, communication, and memory.',
     clientBody: 'The current app is not a concept shell. It contains working privacy-network, encrypted communication, meeting, memory, identity, wallet, and release-management surfaces across mobile and desktop.',
@@ -196,36 +243,48 @@ const CONTENT = {
         title: 'Privacy Network',
         summary: 'Cross-platform connect flow, region and node selection, reconnect policy, quota gates, session statistics, and native VPN lifecycle integration.',
         evidence: 'Shipping on iOS, Android ARM64, macOS, and Windows.',
+        evidenceLevel: 'Released product path',
+        nextGate: 'Partner acceptance across agreed platforms, regions, reconnect, and failure cases.',
       },
       {
         status: 'available',
         title: 'End-to-end encrypted chat',
         summary: 'One-to-one and group messaging with offline delivery, replies, editing, revoke, reactions, receipts, typing controls, media, files, and voice notes.',
         evidence: 'Relay routes ciphertext; message content remains client-encrypted.',
+        evidenceLevel: 'Implemented product path',
+        nextGate: 'Partner run for offline delivery, media, receipts, duplicate handling, and multi-device recovery.',
       },
       {
         status: 'beta',
         title: 'Calls and meetings',
         summary: 'Voice/video calling, native incoming-call lifecycle, meeting green room, roster, in-meeting chat, and screen or window presentation.',
         evidence: 'LiveKit is the recommended media path today; P2P remains an optional route.',
+        evidenceLevel: 'Controlled beta path',
+        nextGate: 'End-to-end grant, waiting-room, role, reconnect, and media-failure acceptance.',
       },
       {
         status: 'beta',
         title: 'MemChain private memory',
         summary: 'Opt-in consent, local memory formation, local-first recall, encrypted synchronization, and node-blind storage boundaries.',
         evidence: 'Storage nodes receive encrypted records and blind indexes, not memory plaintext.',
+        evidenceLevel: 'Controlled beta path',
+        nextGate: 'Cross-device restore, retention, deletion, and external-model disclosure review.',
       },
       {
         status: 'available',
         title: 'Identity and wallet',
         summary: 'Self-custody identity, biometric/secure-storage protections, Solana and EVM wallet surfaces, switching, portfolio, send, and payment request flows.',
         evidence: 'Private-key ownership stays on the client side.',
+        evidenceLevel: 'Released product path',
+        nextGate: 'Recovery, secure-storage, and transaction-failure acceptance on selected platforms.',
       },
       {
         status: 'available',
         title: 'Release and recovery',
         summary: 'Signed platform installers, staged update checks, foreground refresh, defer windows, platform-specific verification, and desktop/mobile recovery handling.',
         evidence: `Current published baseline: ${CLIENT_BUILD}.`,
+        evidenceLevel: 'Published delivery path',
+        nextGate: 'Installer, update, defer, and rollback verification on partner-managed test devices.',
       },
     ],
     rustEyebrow: 'Rust protocol infrastructure',
@@ -237,42 +296,56 @@ const CONTENT = {
         title: 'Production node lifecycle',
         summary: 'Interactive installation, registration, upgrade, rollback, health checks, capacity controls, admission validation, and systemd supervision.',
         evidence: 'Operational paths are bounded and preserve active-session safety gates.',
+        evidenceLevel: 'Production operator path',
+        nextGate: 'Repeat install, upgrade, rollback, and health acceptance on an independently operated node.',
       },
       {
         status: 'available',
         title: 'Signed peer discovery',
         summary: 'Signed descriptors, persistent peer store, bootstrap and gossip exchange, capability negotiation, endpoint validation, and routeability probes.',
         evidence: 'New reviewed nodes can become discoverable without becoming trusted authority.',
+        evidenceLevel: 'Implemented and node-tested',
+        nextGate: 'Multi-operator discovery, restart recovery, stale-peer, and route-diversity testing.',
       },
       {
         status: 'beta',
         title: 'Blind encrypted message relay',
         summary: 'Authenticated relay frames, offline custody, idempotency, bounded abuse controls, encrypted media transport foundations, and terminal pending storage.',
         evidence: 'Nodes route opaque payloads and cannot interpret message content.',
+        evidenceLevel: 'Controlled beta path',
+        nextGate: 'Client-to-terminal encrypted delivery under offline, duplicate, abuse, and failure cases.',
       },
       {
         status: 'hardening',
         title: 'Multi-hop relay paths',
         summary: 'Onion-middle capability, candidate filtering, reachability probes, TTL boundaries, path proof, terminal delivery, and middle-forward counters.',
         evidence: 'Real node-network tests exist; this is not yet the default route for all client traffic.',
+        evidenceLevel: 'Real-network hardening',
+        nextGate: 'Multi-region route selection, hop failure, path-proof, metadata, and soak evidence.',
       },
       {
         status: 'beta',
         title: 'Node-blind encrypted storage',
         summary: 'Encrypted Memory Chain records, blind indexes, owner-authorized synchronization, backup/restore planning, and bounded retention maintenance.',
         evidence: 'Nodes retain ciphertext and integrity metadata, never memory plaintext.',
+        evidenceLevel: 'Controlled beta path',
+        nextGate: 'Owner-authorized sync, restore, deletion, retention, and quota conformance.',
       },
       {
         status: 'beta',
         title: 'Verifiable coordination ledger',
         summary: 'Signed record-commitment blocks, follower synchronization, full-node mirror mode, external witness evidence, rollback protection, and authority handover proofs.',
         evidence: 'Purpose-built coordination evidence; no smart contracts or global-consensus claim.',
+        evidenceLevel: 'Implemented and node-tested',
+        nextGate: 'Third-party mirror recovery and witness verification while the producer is unavailable.',
       },
       {
         status: 'hardening',
         title: 'Custody witness safety',
         summary: 'Independent signed receipts, durable vault audit, startup/runtime gates, quorum expiry warning, recovery lifecycle, and bounded concurrent witness collection.',
         evidence: `Latest reviewed milestone ${RUST_NODE_HEAD}: up to 16 exact pins in one timeout window.`,
+        evidenceLevel: 'Reviewed Rust milestone',
+        nextGate: 'Deploy to independent nodes and exercise expiry, refresh, restart, and strict-gate rollback.',
       },
     ],
     dependencyEyebrow: 'Dependency boundary',
@@ -412,6 +485,16 @@ const CONTENT = {
     exportFailed: '無法匯出',
     printBrief: '列印 / 儲存 PDF',
     contactTeam: '聯絡 AeroNyx',
+    reviewDepthTitle: '審閱深度',
+    reviewDepthBody: '高層視圖保留決策主線；技術視圖展開完整能力、證據與驗收記錄。',
+    reviewDepthLabels: {
+      executive: '高層視圖',
+      technical: '技術視圖',
+    },
+    reviewDepthDescriptions: {
+      executive: '決策、Pilot、依賴、邊界與路線圖',
+      technical: '完整客戶端與 Rust 能力證據',
+    },
     statusOverview: {
       available: '已可用能力',
       beta: 'Beta 能力',
@@ -420,12 +503,13 @@ const CONTENT = {
     },
     jumpLabel: '簡報目錄',
     jumpItems: [
-      ['#overview', '總覽'],
-      ['#client', '客戶端產品'],
-      ['#rust', 'Rust 基礎設施'],
-      ['#dependencies', '依賴邊界'],
-      ['#boundaries', '目前邊界'],
-      ['#roadmap', '下一里程碑'],
+      ['#overview', '總覽', false],
+      ['#pilot', 'Pilot 路徑', false],
+      ['#client', '客戶端產品', true],
+      ['#rust', 'Rust 基礎設施', true],
+      ['#dependencies', '依賴邊界', false],
+      ['#boundaries', '目前邊界', false],
+      ['#roadmap', '下一里程碑', false],
     ],
     snapshotEyebrow: '目前基線',
     snapshotTitle: '產品已交付，協議核心持續加固。',
@@ -459,6 +543,8 @@ const CONTENT = {
     showingLabel: '目前顯示',
     capabilityLabel: '項能力',
     evidenceLabel: '驗證說明',
+    evidenceLevelLabel: '證據層級',
+    nextGateLabel: '下一驗收門檻',
     decisionEyebrow: '決策視圖',
     decisionTitle: '合作方現在可以評估什麼。',
     decisionBody: '用最短時間看清目前 pilot 邊界，區分已可使用、受控 Beta，以及刻意尚未設為默認的能力。',
@@ -482,6 +568,36 @@ const CONTENT = {
         items: ['默認多跳路由', '完全去中心化訊息連續性', '全節點 strict custody witness gate'],
       },
     ],
+    pilotEyebrow: '合作方 Pilot 路徑',
+    pilotTitle: '四個步驟，把合作興趣轉成可驗證證據。',
+    pilotBody: '這是建議的盡調順序。在擴大發布前，先明確產品範圍、隱私邊界、驗收證據與回滾責任。',
+    pilotOutputLabel: '審閱產出',
+    pilotSteps: [
+      {
+        step: '01',
+        title: '定義評估範圍',
+        detail: '選定真正要評估的產品路徑、平台、地區、用戶群與成功標準。',
+        output: '具名範圍與可量測的驗收條件。',
+      },
+      {
+        step: '02',
+        title: '確認信任邊界',
+        detail: '審閱加密所有權、現有 Relay 或媒體依賴、元資料限制，以及尚未設為默認的能力。',
+        output: '留下資料處理邊界與明確排除項。',
+      },
+      {
+        step: '03',
+        title: '執行驗收矩陣',
+        detail: '在約定路徑上測試正常、離線、重連、故障切換、恢復、更新與回滾行為。',
+        output: '可重現證據、失敗記錄與每個未決項的負責人。',
+      },
+      {
+        step: '04',
+        title: '作出可逆的發布決策',
+        detail: '確認運營責任、監控、支援升級、回滾觸發條件與下一個擴大門檻。',
+        output: '形成 go、受控 Beta 或 no-go 的書面決策。',
+      },
+    ],
     clientEyebrow: '客戶端產品',
     clientTitle: '一個 App，完成私密連接、溝通與記憶。',
     clientBody: '目前客戶端不是概念介面。它已包含移動端與桌面端的隱私網絡、加密通信、會議、記憶、身份、錢包與更新管理。',
@@ -491,36 +607,48 @@ const CONTENT = {
         title: '隱私網絡',
         summary: '跨平台連接、區域與節點選擇、重連策略、配額門控、會話統計及原生 VPN 生命週期整合。',
         evidence: '已發布於 iOS、Android ARM64、macOS 與 Windows。',
+        evidenceLevel: '已發布產品路徑',
+        nextGate: '在約定平台、地區、重連與故障情境完成合作方驗收。',
       },
       {
         status: 'available',
         title: '端到端加密聊天',
         summary: '單聊與群聊、離線投遞、引用、編輯、撤回、表情回應、回執、輸入狀態隱私控制、媒體、文件與語音訊息。',
         evidence: 'Relay 只路由密文，訊息內容保持客戶端加密。',
+        evidenceLevel: '已實現產品路徑',
+        nextGate: '完成離線投遞、媒體、回執、重複處理與多設備恢復驗收。',
       },
       {
         status: 'beta',
         title: '通話與會議',
         summary: '語音與視訊通話、原生來電生命週期、會議等候區、成員狀態、會議聊天，以及螢幕或視窗分享。',
         evidence: '目前建議使用 LiveKit 媒體路徑；P2P 仍是可選路由。',
+        evidenceLevel: '受控 Beta 路徑',
+        nextGate: '完成 grant、等候區、角色、重連與媒體故障的端到端驗收。',
       },
       {
         status: 'beta',
         title: 'MemChain 私有記憶',
         summary: '明確同意、本地記憶形成、本地優先召回、加密同步與節點盲存儲邊界。',
         evidence: '存儲節點拿到的是加密記錄與盲索引，不是記憶明文。',
+        evidenceLevel: '受控 Beta 路徑',
+        nextGate: '完成跨設備恢復、保留、刪除與外部模型披露審閱。',
       },
       {
         status: 'available',
         title: '身份與錢包',
         summary: '自託管身份、生物識別與安全存儲保護、Solana/EVM 錢包、切換、資產組合、發送與支付請求。',
         evidence: '私鑰所有權保留在客戶端。',
+        evidenceLevel: '已發布產品路徑',
+        nextGate: '在選定平台完成恢復、安全存儲與交易失敗驗收。',
       },
       {
         status: 'available',
         title: '發布與恢復',
         summary: '簽名安裝包、分階段更新檢查、回到前台刷新、稍後提醒、平台驗證及桌面/移動端恢復處理。',
         evidence: `目前發布基線：${CLIENT_BUILD}。`,
+        evidenceLevel: '已發布交付路徑',
+        nextGate: '在合作方管理的測試設備驗證安裝、更新、延後與回滾。',
       },
     ],
     rustEyebrow: 'Rust 協議基礎設施',
@@ -532,42 +660,56 @@ const CONTENT = {
         title: '生產節點生命週期',
         summary: '交互式安裝、註冊、升級、回滾、健康檢查、容量控制、准入驗證與 systemd 監督。',
         evidence: '運維流程有明確上限，並保留 active session 安全門控。',
+        evidenceLevel: '正式節點運維路徑',
+        nextGate: '在獨立運營節點重複驗證安裝、升級、回滾與健康狀態。',
       },
       {
         status: 'available',
         title: '簽名節點發現',
         summary: '簽名 descriptor、持久 peer store、bootstrap/gossip、能力協商、端點驗證與可路由探測。',
         evidence: '新節點可以被自動發現，但不會因此自動成為可信權威。',
+        evidenceLevel: '已實現並經節點測試',
+        nextGate: '完成多運營方發現、重啟恢復、過期 peer 與路由多樣性測試。',
       },
       {
         status: 'beta',
         title: '盲加密訊息中繼',
         summary: '認證 relay frame、離線託管、冪等、防濫用上限、加密媒體傳輸基礎及 terminal pending store。',
         evidence: '節點路由不透明 payload，不能理解訊息內容。',
+        evidenceLevel: '受控 Beta 路徑',
+        nextGate: '驗證客戶端到終端在離線、重複、濫用與故障情境下的密文投遞。',
       },
       {
         status: 'hardening',
         title: '多跳加密路徑',
         summary: 'Onion-middle 能力、候選篩選、可達性探測、TTL、path proof、terminal delivery 與 middle-forward 計數。',
         evidence: '已有真節點網絡測試，但尚未成為所有客戶端流量的默認路徑。',
+        evidenceLevel: '真實網絡加固中',
+        nextGate: '取得多地區選路、hop 故障、path proof、元資料與 soak 測試證據。',
       },
       {
         status: 'beta',
         title: '節點盲加密存儲',
         summary: '加密 Memory Chain 記錄、盲索引、owner 授權同步、備份/恢復計劃與有界保留策略。',
         evidence: '節點保留密文與完整性元資料，永遠不保留記憶明文。',
+        evidenceLevel: '受控 Beta 路徑',
+        nextGate: '完成 owner 授權同步、恢復、刪除、保留與配額一致性驗收。',
       },
       {
         status: 'beta',
         title: '可驗證協調帳本',
         summary: '簽名 record-commitment block、follower 同步、full-node mirror、外部 witness 證據、回滾保護與 authority handover proof。',
         evidence: '它只服務協調證據，不宣稱智能合約或全球共識。',
+        evidenceLevel: '已實現並經節點測試',
+        nextGate: '在 producer 離線時完成第三方 mirror 恢復與 witness 驗證。',
       },
       {
         status: 'hardening',
         title: 'Custody witness 安全',
         summary: '獨立簽名 receipt、持久 vault audit、啟動/runtime gate、quorum 到期提醒、恢復生命週期與有界並行收集。',
         evidence: `最新里程碑 ${RUST_NODE_HEAD}：最多 16 個精確 pin，共用一個 timeout window。`,
+        evidenceLevel: '已審核 Rust 里程碑',
+        nextGate: '部署到獨立節點並驗證到期、刷新、重啟與 strict gate 回滾。',
       },
     ],
     dependencyEyebrow: '依賴邊界',
@@ -759,6 +901,49 @@ function StatusDefinitions({ copy }) {
   );
 }
 
+// [PARTNER-REVIEW-DEPTH 2026-08-19 by Codex] Review depth is a presentation
+// choice only. Hidden technical sections remain available to print and export.
+function ReviewDepthControl({ copy, mode, onChange }) {
+  return (
+    <div className="partner-no-print border-t border-white/10 pt-6 sm:flex sm:items-center sm:justify-between sm:gap-8">
+      <div className="min-w-0">
+        <p className="text-sm font-medium text-white/72">{copy.reviewDepthTitle}</p>
+        <p id="partner-review-depth-description" className="mt-2 max-w-2xl text-xs leading-5 text-white/40">
+          {copy.reviewDepthBody}
+        </p>
+      </div>
+      <div className="mt-4 shrink-0 sm:mt-0">
+        <div
+          className="grid grid-cols-2 gap-px overflow-hidden rounded border border-white/10 bg-white/10"
+          role="group"
+          aria-label={copy.reviewDepthTitle}
+          aria-describedby="partner-review-depth-description"
+        >
+          {Object.entries(copy.reviewDepthLabels).map(([key, label]) => {
+            const active = mode === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                aria-pressed={active}
+                onClick={() => onChange(key)}
+                className={`min-h-[44px] min-w-[118px] bg-surface-1 px-4 text-xs font-semibold transition-colors focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light ${
+                  active ? 'bg-brand-faint text-brand-light' : 'text-white/46 hover:bg-surface-2 hover:text-white/72'
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-2 max-w-[280px] text-left text-[10px] leading-4 text-white/32 sm:text-right">
+          {copy.reviewDepthDescriptions[mode]}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function DecisionSummary({ copy }) {
   return (
     <div className="mt-10 grid border-y border-white/10 lg:grid-cols-3">
@@ -784,6 +969,27 @@ function DecisionSummary({ copy }) {
         </article>
       ))}
     </div>
+  );
+}
+
+function PilotReviewPath({ copy }) {
+  return (
+    <ol className="mt-10 border-y border-white/10">
+      {copy.pilotSteps.map((item) => (
+        <li
+          key={item.step}
+          className="grid min-w-0 gap-4 border-b border-white/10 py-7 last:border-b-0 sm:grid-cols-[52px_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[52px_minmax(220px,0.8fr)_minmax(0,1.2fr)_minmax(220px,0.8fr)] lg:gap-8"
+        >
+          <span className="font-mono text-[10px] text-brand-light/70 sm:pt-1">{item.step}</span>
+          <h3 className="text-lg font-medium leading-6 text-white">{item.title}</h3>
+          <p className="text-sm leading-6 text-white/52">{item.detail}</p>
+          <div className="border-l border-brand-line pl-4">
+            <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.pilotOutputLabel}</p>
+            <p className="mt-2 text-xs leading-5 text-white/52">{item.output}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -830,7 +1036,7 @@ function DependencyMatrix({ copy }) {
 // the current URL and all access, node, customer, endpoint, and payload data.
 function buildReviewSnapshot(copy, language) {
   return {
-    schema: 'aeronyx.partner.review.v1',
+    schema: 'aeronyx.partner.review.v2',
     generated_at: new Date().toISOString(),
     verified_date: VERIFIED_DATE,
     review_revision: REVIEW_REVISION,
@@ -839,6 +1045,7 @@ function buildReviewSnapshot(copy, language) {
     rust_node_head: RUST_NODE_HEAD,
     status_definitions: copy.statusDefinitions,
     decision_summary: copy.decisionLanes,
+    partner_pilot_path: copy.pilotSteps,
     client_capabilities: copy.clientItems,
     rust_capabilities: copy.rustItems,
     dependency_boundary: copy.dependencies,
@@ -906,10 +1113,20 @@ function CapabilityReviewList({ items, copy, reduceMotion }) {
               <h3 className="mt-4 text-lg font-medium text-white sm:text-xl">{item.title}</h3>
             </div>
             <p className="text-sm leading-6 text-white/56 sm:text-[15px] sm:leading-7 md:pt-1">{item.summary}</p>
-            <div className="min-w-0 md:col-start-3 xl:col-start-auto">
-              <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.evidenceLabel}</p>
-              <p className="mt-2 text-xs leading-5 text-white/42">{item.evidence}</p>
-            </div>
+            <dl className="grid min-w-0 gap-4 border-l border-white/10 pl-4 md:col-start-3 sm:grid-cols-2 xl:col-start-auto xl:grid-cols-1">
+              <div>
+                <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.evidenceLevelLabel}</dt>
+                <dd className="mt-2 text-xs font-medium leading-5 text-brand-light/82">{item.evidenceLevel}</dd>
+              </div>
+              <div>
+                <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.evidenceLabel}</dt>
+                <dd className="mt-2 text-xs leading-5 text-white/42">{item.evidence}</dd>
+              </div>
+              <div className="sm:col-span-2 xl:col-span-1">
+                <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.nextGateLabel}</dt>
+                <dd className="mt-2 text-xs leading-5 text-white/52">{item.nextGate}</dd>
+              </div>
+            </dl>
           </motion.article>
         ))}
       </div>
@@ -922,10 +1139,33 @@ function PartnerProgressPage() {
   const reduceMotion = useReducedMotion();
   const [copyStatus, setCopyStatus] = useState('idle');
   const [exportStatus, setExportStatus] = useState('idle');
+  const [reviewMode, setReviewMode] = useState('executive');
+  const [activeSection, setActiveSection] = useState('overview');
   const language = router.locale === 'zh-Hans' || router.locale === 'zh-Hant' ? 'zh' : 'en';
   const copy = CONTENT[language];
   const alternateLocale = language === 'zh' ? 'en' : 'zh-Hans';
   const alternateLabel = language === 'zh' ? copy.english : copy.chinese;
+  const visibleJumpItems = copy.jumpItems.filter(([, , technicalOnly]) => !technicalOnly || reviewMode === 'technical');
+
+  useEffect(() => {
+    const sections = Array.from(document.querySelectorAll('[data-partner-section]'))
+      .filter((section) => window.getComputedStyle(section).display !== 'none');
+
+    if (!sections.length || !('IntersectionObserver' in window)) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible?.target?.id) setActiveSection(visible.target.id);
+      },
+      { rootMargin: '-118px 0px -62% 0px', threshold: [0, 0.08, 0.2, 0.5] }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [reviewMode]);
 
   async function handleCopyReviewLink() {
     if (!navigator.clipboard?.writeText) {
@@ -1073,6 +1313,7 @@ function PartnerProgressPage() {
                     {exportStatus === 'exported' ? copy.exportedJson : exportStatus === 'failed' ? copy.exportFailed : ''}
                   </p>
                 </div>
+                <ReviewDepthControl copy={copy} mode={reviewMode} onChange={setReviewMode} />
               </div>
 
             </Container>
@@ -1085,24 +1326,38 @@ function PartnerProgressPage() {
             <Container>
               <div className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 <div className="flex min-w-max items-stretch lg:w-full lg:min-w-0">
-                  {copy.jumpItems.map(([href, label], index) => (
+                  {visibleJumpItems.map(([href, label], index) => {
+                    const sectionId = href.slice(1);
+                    const active = activeSection === sectionId;
+                    return (
                     <a
                       key={href}
                       href={href}
-                      className="group flex min-h-[48px] min-w-[132px] items-center gap-2 border-r border-white/8 px-4 transition-colors first:border-l hover:bg-white/[0.035] focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light lg:min-w-0 lg:flex-1 lg:justify-center"
+                      aria-current={active ? 'location' : undefined}
+                      onClick={() => setActiveSection(sectionId)}
+                      className={`group relative flex min-h-[48px] min-w-[132px] items-center gap-2 border-r border-white/8 px-4 transition-colors first:border-l hover:bg-white/[0.035] focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light lg:min-w-0 lg:flex-1 lg:justify-center ${
+                        active ? 'bg-white/[0.035]' : ''
+                      }`}
                     >
-                      <span className="font-mono text-[9px] text-brand-light/60">{String(index + 1).padStart(2, '0')}</span>
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-white/44 group-hover:text-white/76">
+                      <span className={`font-mono text-[9px] ${active ? 'text-brand-light' : 'text-brand-light/60'}`}>
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span className={`text-[10px] font-semibold uppercase tracking-[0.08em] group-hover:text-white/76 ${active ? 'text-white/82' : 'text-white/44'}`}>
                         {label}
                       </span>
+                      <span
+                        aria-hidden="true"
+                        className={`absolute inset-x-4 bottom-0 h-px bg-brand-light transition-opacity ${active ? 'opacity-100' : 'opacity-0'}`}
+                      />
                     </a>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </Container>
           </nav>
 
-          <section id="overview" className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-20">
+          <section id="overview" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-20">
             <Container>
               <SectionHeading eyebrow={copy.snapshotEyebrow} title={copy.snapshotTitle} body={copy.snapshotBody} />
               <dl className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:grid-cols-2 xl:grid-cols-4">
@@ -1131,28 +1386,43 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section id="client" className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
+          <section id="pilot" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
+            <Container>
+              <SectionHeading eyebrow={copy.pilotEyebrow} title={copy.pilotTitle} body={copy.pilotBody} />
+              <PilotReviewPath copy={copy} />
+            </Container>
+          </section>
+
+          <section
+            id="client"
+            data-partner-section
+            className={`partner-technical-section scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24 ${reviewMode === 'technical' ? '' : 'hidden'}`}
+          >
             <Container>
               <SectionHeading eyebrow={copy.clientEyebrow} title={copy.clientTitle} body={copy.clientBody} />
               <CapabilityReviewList items={copy.clientItems} copy={copy} reduceMotion={reduceMotion} />
             </Container>
           </section>
 
-          <section id="rust" className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+          <section
+            id="rust"
+            data-partner-section
+            className={`partner-technical-section scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24 ${reviewMode === 'technical' ? '' : 'hidden'}`}
+          >
             <Container>
               <SectionHeading eyebrow={copy.rustEyebrow} title={copy.rustTitle} body={copy.rustBody} />
               <CapabilityReviewList items={copy.rustItems} copy={copy} reduceMotion={reduceMotion} />
             </Container>
           </section>
 
-          <section id="dependencies" className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
+          <section id="dependencies" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.dependencyEyebrow} title={copy.dependencyTitle} body={copy.dependencyBody} />
               <DependencyMatrix copy={copy} />
             </Container>
           </section>
 
-          <section className="border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+          <section className="border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.milestoneEyebrow} title={copy.milestoneTitle} />
               <ol className="mt-10 border-t border-white/10">
@@ -1172,7 +1442,7 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section id="boundaries" className="scroll-mt-32 border-b border-white/10 bg-surface-0/82 py-16 sm:py-24">
+          <section id="boundaries" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/82 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.boundaryEyebrow} title={copy.boundaryTitle} body={copy.boundaryBody} />
               <div className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 lg:grid-cols-2">
@@ -1191,7 +1461,7 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section id="roadmap" className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+          <section id="roadmap" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.roadmapEyebrow} title={copy.roadmapTitle} body={copy.roadmapBody} />
               <div className="relative mt-12 grid gap-8 lg:grid-cols-4 lg:gap-0">
@@ -1209,7 +1479,7 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section className="bg-surface-0/86 py-16 sm:py-20">
+          <section className="bg-surface-1/86 py-16 sm:py-20">
             <Container>
               <div className="flex flex-col gap-8 border-y border-white/10 py-9 lg:flex-row lg:items-center lg:justify-between">
                 <div>
@@ -1264,6 +1534,15 @@ function PartnerProgressPage() {
 
           .partner-no-print {
             display: none !important;
+          }
+
+          .partner-technical-section {
+            display: block !important;
+          }
+
+          .partner-technical-section article {
+            opacity: 1 !important;
+            transform: none !important;
           }
 
           .partner-report * {
