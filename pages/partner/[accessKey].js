@@ -31,6 +31,8 @@
  *     platform artifacts, distribution assurance, and exact SHA-256 digests.
  *   - Adds a browser-local findings register with severity, ownership, due
  *     dates, closure state, and blocker-aware handoff readiness.
+ *   - Connects stable APP/NODE evidence references to findings so reviewers
+ *     can flag an item and return to its verification record without copying.
  *
  * Dependencies:
  *   - Node crypto.timingSafeEqual for server-side key comparison.
@@ -44,8 +46,8 @@
  *      headers before any page content is rendered.
  *   3. Reviewers choose executive or technical depth, then scan, filter,
  *      export, print, or validate evidence before a partner pilot decision.
- *   4. Optional checklist progress and notes stay in the reviewer's browser;
- *      nothing is transmitted unless the reviewer exports a handoff file.
+ *   4. Optional checklist progress, findings, and notes stay in the reviewer's
+ *      browser; nothing is transmitted unless a handoff file is exported.
  *
  * Important Note for Next Developer:
  *   - [PARTNER-BUILD-BRIEF 2026-08-19 by Codex] Never hard-code the access key
@@ -71,8 +73,10 @@
  *     version URLs or digests into this file as a second release authority.
  *   - Findings are reviewer-authored untrusted input. Keep them local-only,
  *     bounded, schema-validated, and escaped in every portable artifact.
+ *   - Finding references may contain only public-safe APP-xx or NODE-xx IDs;
+ *     never accept URLs, endpoints, node IDs, or free-form identifiers there.
  *
- * Last Modified: v1.8 - Structured local findings and review closure workflow.
+ * Last Modified: v1.9 - Traceable evidence-to-finding review workflow.
  * ============================================
  */
 
@@ -103,18 +107,20 @@ const ProtocolBackground = dynamic(
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '1.8';
+const REVIEW_REVISION = '1.9';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
 const REVIEW_ORGANIZATION_MAX_LENGTH = 120;
 const REVIEW_FINDINGS_MAX = 12;
 const REVIEW_FINDING_TITLE_MAX_LENGTH = 180;
 const REVIEW_FINDING_OWNER_MAX_LENGTH = 80;
+const REVIEW_FINDING_REFERENCE_MAX_LENGTH = 24;
 const REVIEW_HANDOFF_MAX_BYTES = 100 * 1024;
-const REVIEW_HANDOFF_SCHEMA = 'aeronyx.partner.review.handoff.v3';
+const REVIEW_HANDOFF_SCHEMA = 'aeronyx.partner.review.handoff.v4';
 const REVIEW_DECISIONS = Object.freeze(['undecided', 'pilot', 'conditional', 'hold', 'no_go']);
 const REVIEW_FINDING_SEVERITIES = Object.freeze(['blocker', 'high', 'medium', 'low']);
 const REVIEW_FINDING_STATUSES = Object.freeze(['open', 'resolved']);
+const REVIEW_FINDING_REFERENCE_PATTERN = /^(APP|NODE)-\d{2}$/;
 const EMPTY_REVIEW_CHECKS = Object.freeze({
   scope: false,
   privacy: false,
@@ -213,12 +219,12 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'Diligence findings now have an accountable closure path.',
-    revisionDeltaBody: 'Partners can record concrete issues with severity, ownership, due dates, and resolution state without transmitting review data. Open blockers now prevent a false ready-for-handoff signal.',
+    revisionDeltaTitle: 'Every finding can now trace back to its evidence.',
+    revisionDeltaBody: 'Stable APP and NODE references now connect technical verification records to the local findings register. Reviewers can flag evidence in one action and return to its source without copying private links.',
     revisionDeltaItems: [
-      'Separate structured findings from free-form reviewer notes.',
-      'Carry findings through validated JSON handoff and Markdown decision memo exports.',
-      'Make blocker closure part of the explicit handoff-readiness rule.',
+      'Flag any client or node capability directly from its verification record.',
+      'Carry the public-safe evidence reference through JSON and Markdown handoffs.',
+      'Return from a finding to the exact technical evidence with one action.',
     ],
     artifactEyebrow: 'Release integrity',
     artifactTitle: 'Verify the client before evaluating the protocol.',
@@ -270,6 +276,8 @@ const CONTENT = {
     copyEvidenceReference: 'Copy reference',
     evidenceReferenceCopied: 'Reference copied',
     evidenceReferenceCopyFailed: 'Copy unavailable',
+    addEvidenceFinding: 'Add to findings',
+    evidenceFindingAdded: 'In review findings',
     nextGateLabel: 'Next validation gate',
     noCapabilitiesFound: 'No capability evidence matches this search and status filter.',
     decisionEyebrow: 'Decision view',
@@ -327,7 +335,7 @@ const CONTENT = {
     ],
     workspaceEyebrow: 'Private review workspace',
     workspaceTitle: 'Keep diligence progress without sending us your notes.',
-    workspaceBody: 'Checklist state and notes are stored only in this browser. AeroNyx does not receive them. Export a handoff file only when you choose to share the review.',
+    workspaceBody: 'Checklist state, findings, decisions, and notes are stored only in this browser. AeroNyx does not receive them. Export a handoff file only when you choose to share the review.',
     workspaceProgressLabel: 'Review progress',
     workspaceCompleteLabel: 'complete',
     workspaceReadinessLabel: 'Handoff readiness',
@@ -360,6 +368,9 @@ const CONTENT = {
     workspaceFindingOwnerLabel: 'Owner',
     workspaceFindingOwnerPlaceholder: 'Optional owner',
     workspaceFindingDueLabel: 'Due date',
+    workspaceFindingReferenceLabel: 'Evidence reference',
+    workspaceFindingOpenEvidence: 'Open evidence',
+    workspaceFindingFromEvidence: 'Validate {reference}: {title}',
     workspaceFindingAdd: 'Add finding',
     workspaceFindingLimit: `Maximum ${REVIEW_FINDINGS_MAX} findings per local workspace`,
     workspaceFindingEmpty: 'No structured findings recorded.',
@@ -406,6 +417,7 @@ const CONTENT = {
       findingOwner: 'Owner',
       findingDue: 'Due',
       findingStatus: 'Status',
+      findingReference: 'Evidence reference',
       notes: 'Reviewer notes',
       boundaries: 'Current declared boundaries',
       capabilities: 'Capability evidence index',
@@ -733,12 +745,12 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '盡調問題現在有可追責的關閉流程。',
-    revisionDeltaBody: '合作方可以在不傳輸審閱資料的情況下，記錄問題嚴重度、負責人、到期日與解決狀態。只要仍有阻塞項，系統就不會顯示虛假的可交接狀態。',
+    revisionDeltaTitle: '每個審閱問題現在都能追溯到原始證據。',
+    revisionDeltaBody: '穩定的 APP 與 NODE 引用現在會把技術驗證記錄連接到本機 findings register。審閱者可以一鍵標記證據，之後無需複製私有連結就能返回來源。',
     revisionDeltaItems: [
-      '把結構化審閱問題與自由文字筆記分開管理。',
-      '問題會隨已驗證的 JSON 交接檔與 Markdown 決策備忘一同流轉。',
-      '把阻塞問題關閉納入明確的交接就緒規則。',
+      '從客戶端或節點能力的驗證記錄直接建立審閱問題。',
+      '公開安全的證據引用會進入 JSON 與 Markdown 交接檔。',
+      '從 finding 一鍵返回精確的技術證據。',
     ],
     artifactEyebrow: '發布完整性',
     artifactTitle: '評估協議之前，先驗證客戶端。',
@@ -790,6 +802,8 @@ const CONTENT = {
     copyEvidenceReference: '複製編號',
     evidenceReferenceCopied: '編號已複製',
     evidenceReferenceCopyFailed: '無法複製',
+    addEvidenceFinding: '加入審閱問題',
+    evidenceFindingAdded: '已在審閱問題中',
     nextGateLabel: '下一驗收門檻',
     noCapabilitiesFound: '沒有能力證據符合目前的搜尋與狀態篩選。',
     decisionEyebrow: '決策視圖',
@@ -847,7 +861,7 @@ const CONTENT = {
     ],
     workspaceEyebrow: '私密審閱工作區',
     workspaceTitle: '保存盡調進度，不必把你的筆記傳給我們。',
-    workspaceBody: '核對進度與筆記只保存在這個瀏覽器，AeroNyx 不會收到。只有審閱者主動匯出交接檔案時，資料才會離開設備。',
+    workspaceBody: '核對進度、審閱問題、決策與筆記只保存在這個瀏覽器，AeroNyx 不會收到。只有審閱者主動匯出交接檔案時，資料才會離開設備。',
     workspaceProgressLabel: '審閱進度',
     workspaceCompleteLabel: '已完成',
     workspaceReadinessLabel: '交接就緒狀態',
@@ -880,6 +894,9 @@ const CONTENT = {
     workspaceFindingOwnerLabel: '負責人',
     workspaceFindingOwnerPlaceholder: '選填負責人',
     workspaceFindingDueLabel: '到期日',
+    workspaceFindingReferenceLabel: '證據引用',
+    workspaceFindingOpenEvidence: '查看證據',
+    workspaceFindingFromEvidence: '驗證 {reference}：{title}',
     workspaceFindingAdd: '新增問題',
     workspaceFindingLimit: `每個本機工作區最多 ${REVIEW_FINDINGS_MAX} 個問題`,
     workspaceFindingEmpty: '目前沒有結構化審閱問題。',
@@ -926,6 +943,7 @@ const CONTENT = {
       findingOwner: '負責人',
       findingDue: '到期日',
       findingStatus: '狀態',
+      findingReference: '證據引用',
       notes: '審閱者筆記',
       boundaries: '目前已聲明邊界',
       capabilities: '能力證據索引',
@@ -1513,6 +1531,7 @@ function ReviewerWorkspace({
   onAddFinding,
   onUpdateFinding,
   onRemoveFinding,
+  onOpenEvidence,
   onDecisionChange,
   onOrganizationChange,
   onNextReviewDateChange,
@@ -1686,6 +1705,21 @@ function ReviewerWorkspace({
                     {finding.title}
                   </h4>
                   <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-[10px] leading-4 text-white/34">
+                    {finding.evidence_reference ? (
+                      <div>
+                        <dt className="inline font-semibold">{copy.workspaceFindingReferenceLabel}: </dt>
+                        <dd className="inline">
+                          <span className="font-mono text-brand-light/72">{finding.evidence_reference}</span>
+                          <button
+                            type="button"
+                            onClick={() => onOpenEvidence(finding.evidence_reference)}
+                            className="partner-no-print ml-2 rounded text-white/42 underline decoration-white/20 underline-offset-2 transition-colors hover:text-brand-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                          >
+                            {copy.workspaceFindingOpenEvidence}
+                          </button>
+                        </dd>
+                      </div>
+                    ) : null}
                     {finding.owner ? <div><dt className="inline font-semibold">{copy.workspaceFindingOwnerLabel}: </dt><dd className="inline">{finding.owner}</dd></div> : null}
                     {finding.due_date ? <div><dt className="inline font-semibold">{copy.workspaceFindingDueLabel}: </dt><dd className="inline"><time dateTime={finding.due_date}>{finding.due_date}</time></dd></div> : null}
                   </dl>
@@ -1918,6 +1952,26 @@ function capabilityReference(group, index) {
   return `${group === 'client' ? 'APP' : 'NODE'}-${String(index + 1).padStart(2, '0')}`;
 }
 
+function isKnownEvidenceReference(reference) {
+  if (!REVIEW_FINDING_REFERENCE_PATTERN.test(reference)) return false;
+  const [prefix, itemNumber] = reference.split('-');
+  const itemIndex = Number(itemNumber);
+  const itemCount = prefix === 'APP' ? CONTENT.en.clientItems.length : CONTENT.en.rustItems.length;
+  return itemIndex >= 1 && itemIndex <= itemCount;
+}
+
+function evidenceIdForReference(reference) {
+  if (!isKnownEvidenceReference(reference)) return null;
+  const [prefix, itemNumber] = reference.split('-');
+  return `partner-evidence-${prefix === 'APP' ? 'client' : 'node'}-${itemNumber}`;
+}
+
+function findingTitleForEvidence(copy, reference, title) {
+  return copy.workspaceFindingFromEvidence
+    .replace('{reference}', reference)
+    .replace('{title}', title);
+}
+
 function releaseArtifactsForReview(copy) {
   return Object.entries(RELEASE_CHANNELS).map(([platform, artifact]) => ({
     platform,
@@ -1982,6 +2036,10 @@ function createReviewFinding(input) {
   const dueDate = typeof input?.due_date === 'string' && isValidReviewDate(input.due_date)
     ? input.due_date
     : '';
+  const candidateReference = sanitizeReviewField(
+    input?.evidence_reference,
+    REVIEW_FINDING_REFERENCE_MAX_LENGTH
+  );
 
   return {
     id: `finding-${randomPart}`.slice(0, 80),
@@ -1990,6 +2048,9 @@ function createReviewFinding(input) {
     status: 'open',
     owner: sanitizeReviewField(input?.owner, REVIEW_FINDING_OWNER_MAX_LENGTH),
     due_date: dueDate,
+    evidence_reference: isKnownEvidenceReference(candidateReference)
+      ? candidateReference
+      : '',
     created_at: new Date().toISOString(),
   };
 }
@@ -2021,6 +2082,12 @@ function normalizeReviewFindings(value) {
     if (dueDate && (typeof dueDate !== 'string' || !isValidReviewDate(dueDate))) {
       throw new Error('invalid finding due date');
     }
+    const evidenceReference = item.evidence_reference == null
+      ? ''
+      : sanitizeReviewField(item.evidence_reference, REVIEW_FINDING_REFERENCE_MAX_LENGTH);
+    if (evidenceReference && !isKnownEvidenceReference(evidenceReference)) {
+      throw new Error('invalid finding evidence reference');
+    }
     const createdAt = typeof item.created_at === 'string' && !Number.isNaN(Date.parse(item.created_at))
       ? new Date(item.created_at).toISOString()
       : null;
@@ -2032,6 +2099,7 @@ function normalizeReviewFindings(value) {
       status: item.status,
       owner: sanitizeReviewField(item.owner, REVIEW_FINDING_OWNER_MAX_LENGTH),
       due_date: dueDate,
+      evidence_reference: evidenceReference,
       created_at: createdAt,
     };
   });
@@ -2079,13 +2147,13 @@ function buildReviewHandoff(copy, language, checks, notes, findings, decision, o
 }
 
 // [PARTNER-HANDOFF-IMPORT 2026-08-19 by Codex] Handoff files are untrusted
-// browser input. Support the previous v1 export for continuity, but normalize
-// every accepted field through a fixed allowlist and bounded string lengths.
+// browser input. Support handoff schemas v1-v3 for continuity, but normalize
+// every accepted field through fixed allowlists and bounded string lengths.
 function normalizeReviewHandoff(payload) {
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
     throw new Error('invalid handoff');
   }
-  if (![REVIEW_HANDOFF_SCHEMA, 'aeronyx.partner.review.handoff.v2', 'aeronyx.partner.review.handoff.v1'].includes(payload.schema)) {
+  if (![REVIEW_HANDOFF_SCHEMA, 'aeronyx.partner.review.handoff.v3', 'aeronyx.partner.review.handoff.v2', 'aeronyx.partner.review.handoff.v1'].includes(payload.schema)) {
     throw new Error('unsupported handoff');
   }
   if (!Array.isArray(payload.checklist) || payload.checklist.length > 20) {
@@ -2180,6 +2248,7 @@ function buildReviewMemo(copy, checks, notes, findings, decision, organization, 
       ? findings.map((finding) => [
         `- **${clean(copy.workspaceFindingSeverities[finding.severity])} · ${clean(finding.title)}**`,
         `  - **${labels.findingStatus}:** ${clean(finding.status === 'resolved' ? copy.workspaceFindingResolved : copy.workspaceFindingOpen)}`,
+        `  - **${labels.findingReference}:** ${clean(finding.evidence_reference)}`,
         `  - **${labels.findingOwner}:** ${clean(finding.owner)}`,
         `  - **${labels.findingDue}:** ${clean(finding.due_date)}`,
       ].join('\n'))
@@ -2250,7 +2319,15 @@ function downloadJsonFile(payload, filename) {
   downloadTextFile(`${JSON.stringify(payload, null, 2)}\n`, filename, 'application/json');
 }
 
-function CapabilityReviewList({ items, copy, reduceMotion, query, group }) {
+function CapabilityReviewList({
+  items,
+  copy,
+  reduceMotion,
+  query,
+  group,
+  flaggedReferences,
+  onFlagForReview,
+}) {
   const [filter, setFilter] = useState('all');
   const [referenceCopyState, setReferenceCopyState] = useState({ reference: '', status: 'idle' });
   const normalizedQuery = query.trim().toLocaleLowerCase();
@@ -2333,6 +2410,7 @@ function CapabilityReviewList({ items, copy, reduceMotion, query, group }) {
           const reference = capabilityReference(group, sourceIndex);
           const evidenceId = `partner-evidence-${group}-${String(sourceIndex + 1).padStart(2, '0')}`;
           const copyState = referenceCopyState.reference === reference ? referenceCopyState.status : 'idle';
+          const isFlagged = flaggedReferences.includes(reference);
 
           return (
           <motion.article
@@ -2353,17 +2431,27 @@ function CapabilityReviewList({ items, copy, reduceMotion, query, group }) {
             <div className="min-w-0">
               <StatusBadge status={item.status} labels={copy.statusLabels} />
               <h3 className="mt-4 text-lg font-medium text-white sm:text-xl">{item.title}</h3>
-              <button
-                type="button"
-                onClick={() => handleCopyEvidenceReference(reference, item.title)}
-                className="partner-no-print mt-3 min-h-[32px] rounded text-left font-mono text-[10px] text-white/34 transition-colors hover:text-brand-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
-              >
-                {copyState === 'copied'
-                  ? copy.evidenceReferenceCopied
-                  : copyState === 'failed'
-                    ? copy.evidenceReferenceCopyFailed
-                    : copy.copyEvidenceReference}
-              </button>
+              <div className="partner-no-print mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
+                <button
+                  type="button"
+                  onClick={() => handleCopyEvidenceReference(reference, item.title)}
+                  className="min-h-[32px] rounded text-left font-mono text-[10px] text-white/34 transition-colors hover:text-brand-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                >
+                  {copyState === 'copied'
+                    ? copy.evidenceReferenceCopied
+                    : copyState === 'failed'
+                      ? copy.evidenceReferenceCopyFailed
+                      : copy.copyEvidenceReference}
+                </button>
+                <button
+                  type="button"
+                  disabled={isFlagged}
+                  onClick={() => onFlagForReview(reference, item.title)}
+                  className="min-h-[32px] rounded text-left text-[10px] font-semibold text-white/42 transition-colors hover:text-brand-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light disabled:cursor-default disabled:text-brand-light/72"
+                >
+                  {isFlagged ? copy.evidenceFindingAdded : copy.addEvidenceFinding}
+                </button>
+              </div>
             </div>
             <p className="text-sm leading-6 text-white/56 sm:text-[15px] sm:leading-7 md:pt-1">{item.summary}</p>
             <dl className="grid min-w-0 gap-4 border-l border-white/10 pl-4 md:col-start-3 sm:grid-cols-2 xl:col-start-auto xl:grid-cols-1">
@@ -2421,6 +2509,9 @@ function PartnerProgressPage() {
   const alternateLocale = language === 'zh' ? 'en' : 'zh-Hans';
   const alternateLabel = language === 'zh' ? copy.english : copy.chinese;
   const visibleJumpItems = copy.jumpItems.filter(([, , technicalOnly]) => !technicalOnly || reviewMode === 'technical');
+  const flaggedEvidenceReferences = reviewFindings
+    .map((finding) => finding.evidence_reference)
+    .filter(Boolean);
 
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll('[data-partner-section]'))
@@ -2568,6 +2659,34 @@ function PartnerProgressPage() {
   function handleRemoveReviewFinding(id) {
     setReviewFindings((current) => current.filter((finding) => finding.id !== id));
     resetWorkspaceActionState();
+  }
+
+  function handleFlagEvidenceFinding(reference, title) {
+    if (!isKnownEvidenceReference(reference)) return;
+    setReviewFindings((current) => {
+      if (current.length >= REVIEW_FINDINGS_MAX) return current;
+      if (current.some((finding) => finding.evidence_reference === reference)) return current;
+      return [...current, createReviewFinding({
+        title: findingTitleForEvidence(copy, reference, title),
+        severity: 'medium',
+        evidence_reference: reference,
+      })];
+    });
+    resetWorkspaceActionState();
+  }
+
+  function handleOpenFindingEvidence(reference) {
+    const evidenceId = evidenceIdForReference(reference);
+    if (!evidenceId) return;
+    setReviewMode('technical');
+    setCapabilityQuery(reference);
+    setActiveSection(reference.startsWith('APP-') ? 'client' : 'rust');
+    window.setTimeout(() => {
+      document.getElementById(evidenceId)?.scrollIntoView({
+        behavior: reduceMotion ? 'auto' : 'smooth',
+        block: 'center',
+      });
+    }, 50);
   }
 
   function handleReviewDecisionChange(value) {
@@ -2896,6 +3015,7 @@ function PartnerProgressPage() {
                 onAddFinding={handleAddReviewFinding}
                 onUpdateFinding={handleUpdateReviewFinding}
                 onRemoveFinding={handleRemoveReviewFinding}
+                onOpenEvidence={handleOpenFindingEvidence}
                 onDecisionChange={handleReviewDecisionChange}
                 onOrganizationChange={handleReviewOrganizationChange}
                 onNextReviewDateChange={handleReviewNextReviewDateChange}
@@ -2918,7 +3038,15 @@ function PartnerProgressPage() {
           >
             <Container>
               <SectionHeading eyebrow={copy.clientEyebrow} title={copy.clientTitle} body={copy.clientBody} />
-              <CapabilityReviewList items={copy.clientItems} copy={copy} reduceMotion={reduceMotion} query={capabilityQuery} group="client" />
+              <CapabilityReviewList
+                items={copy.clientItems}
+                copy={copy}
+                reduceMotion={reduceMotion}
+                query={capabilityQuery}
+                group="client"
+                flaggedReferences={flaggedEvidenceReferences}
+                onFlagForReview={handleFlagEvidenceFinding}
+              />
             </Container>
           </section>
 
@@ -2929,7 +3057,15 @@ function PartnerProgressPage() {
           >
             <Container>
               <SectionHeading eyebrow={copy.rustEyebrow} title={copy.rustTitle} body={copy.rustBody} />
-              <CapabilityReviewList items={copy.rustItems} copy={copy} reduceMotion={reduceMotion} query={capabilityQuery} group="node" />
+              <CapabilityReviewList
+                items={copy.rustItems}
+                copy={copy}
+                reduceMotion={reduceMotion}
+                query={capabilityQuery}
+                group="node"
+                flaggedReferences={flaggedEvidenceReferences}
+                onFlagForReview={handleFlagEvidenceFinding}
+              />
             </Container>
           </section>
 
