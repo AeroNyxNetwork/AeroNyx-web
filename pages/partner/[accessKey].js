@@ -15,6 +15,8 @@
  *   - Uses no-store, noindex, noarchive, and no-referrer response boundaries.
  *   - Separates current client delivery, Rust protocol delivery, limitations,
  *     recent evidence, and next milestones without fictional percentages.
+ *   - Adds review filters, status definitions, secure-link copy feedback,
+ *     print/PDF output, and reviewer contact actions for partner diligence.
  *
  * Dependencies:
  *   - Node crypto.timingSafeEqual for server-side key comparison.
@@ -26,8 +28,8 @@
  *   1. getServerSideProps rejects missing, malformed, or incorrect keys.
  *   2. The authorized response receives private no-store crawler/referrer
  *      headers before any page content is rendered.
- *   3. The page presents source-reviewed client and Rust status in independent
- *      tracks, followed by current limits and the next delivery milestones.
+ *   3. Reviewers can scan, filter, print, or validate source-reviewed client
+ *      and Rust status before reading current limits and next milestones.
  *
  * Important Note for Next Developer:
  *   - [PARTNER-BUILD-BRIEF 2026-08-19 by Codex] Never hard-code the access key
@@ -37,13 +39,15 @@
  *   - Update CLIENT_BUILD, RUST_NODE_HEAD, VERIFIED_DATE, and status claims
  *     only after the corresponding release or Rust milestone is verified.
  *   - Do not add this route to sitemap.xml, robots.txt, header, or footer.
+ *   - Keep status definitions evidence-based. "Available" means presently
+ *     usable; it must never be inferred from a roadmap or design document.
  *
- * Last Modified: v1.0 - Restricted partner product and Rust delivery brief.
+ * Last Modified: v1.1 - Partner review workflow, filters, and export details.
  * ============================================
  */
 
 import { timingSafeEqual } from 'crypto';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -64,6 +68,7 @@ const ProtocolBackground = dynamic(
 const CLIENT_BUILD = '1.0.18+14';
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
+const REVIEW_REVISION = '1.1';
 const ACCESS_KEY_PATTERN = /^[a-f0-9]{64}$/;
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -96,7 +101,21 @@ const CONTENT = {
     heroTitle: 'A clear view of what AeroNyx can do today.',
     heroBody: 'A source-reviewed delivery brief for partners: client capabilities, Rust protocol infrastructure, current dependencies, and the milestones that move AeroNyx toward a fully open privacy coordination network.',
     verified: `Verified ${VERIFIED_DATE}`,
+    revision: `Brief v${REVIEW_REVISION}`,
     noTraffic: 'No customer traffic, node identities, private endpoints, keys, or payload data are included.',
+    accessTitle: 'Link-based review access',
+    accessBody: 'Anyone holding this URL can open the brief. Share it only with intended reviewers; it is not an account-authenticated data room.',
+    copyLink: 'Copy review link',
+    copiedLink: 'Link copied',
+    copyFailed: 'Copy unavailable',
+    printBrief: 'Print / Save PDF',
+    contactTeam: 'Contact AeroNyx',
+    statusOverview: {
+      available: 'Available capabilities',
+      beta: 'Beta capabilities',
+      hardening: 'Hardening tracks',
+      boundaries: 'Declared boundaries',
+    },
     jumpLabel: 'Brief sections',
     jumpItems: [
       ['#client', 'Client product'],
@@ -119,6 +138,23 @@ const CONTENT = {
       hardening: 'Hardening',
       progress: 'In progress',
     },
+    statusDefinitionsTitle: 'How delivery status is assigned',
+    statusDefinitionsBody: 'Every status describes the current implementation and validation boundary. It is not a schedule estimate or a marketing percentage.',
+    statusDefinitions: {
+      available: 'Usable in the current product or production node workflow.',
+      beta: 'Implemented and exercised, with staged rollout or remaining product validation.',
+      hardening: 'Core path exists and is undergoing reliability, security, or multi-node verification.',
+      progress: 'Active development; not represented as currently available.',
+    },
+    filterLabel: 'Filter capabilities by delivery status',
+    filters: {
+      all: 'All',
+      available: 'Available',
+      active: 'Active work',
+    },
+    showingLabel: 'Showing',
+    capabilityLabel: 'capabilities',
+    evidenceLabel: 'Verification note',
     clientEyebrow: 'Client product',
     clientTitle: 'One app for private connection, communication, and memory.',
     clientBody: 'The current app is not a concept shell. It contains working privacy-network, encrypted communication, meeting, memory, identity, wallet, and release-management surfaces across mobile and desktop.',
@@ -277,11 +313,12 @@ const CONTENT = {
         detail: 'Run multi-region failure tests for discovery, store-and-forward, multi-hop delivery, mirror recovery, and node replacement without relying on one coordination host.',
       },
     ],
-    linksTitle: 'Review surfaces',
+    linksTitle: 'Review and verification links',
     links: [
       ['Protocol website', 'https://aeronyx.network/'],
       ['Technical documentation', 'https://docs.aeronyx.network/'],
       ['Node operator app', 'https://app.aeronyx.network/'],
+      ['Reviewed Rust commit', `https://github.com/AeroNyxNetwork/AeroNyx/commit/${RUST_NODE_HEAD}`],
       ['Open-source organization', 'https://github.com/AeroNyxNetwork'],
     ],
     footer: 'AeroNyx partner build brief',
@@ -296,7 +333,21 @@ const CONTENT = {
     heroTitle: '清楚了解 AeroNyx 今天真正能做什麼。',
     heroBody: '給合作方的源碼核對版進度：客戶端能力、Rust 協議基礎設施、目前依賴與下一個里程碑。AeroNyx 正在走向完全開放的隱私協調網絡，但不把未完成的能力包裝成已交付。',
     verified: `核對日期 ${VERIFIED_DATE}`,
+    revision: `簡報 v${REVIEW_REVISION}`,
     noTraffic: '本頁不包含客戶流量、節點身份、私有端點、密鑰或任何 payload 資料。',
+    accessTitle: '連結式審閱權限',
+    accessBody: '任何持有此網址的人都能開啟簡報。請只分享給指定審閱者；它不是使用帳號驗證的資料室。',
+    copyLink: '複製審閱連結',
+    copiedLink: '連結已複製',
+    copyFailed: '無法複製',
+    printBrief: '列印 / 儲存 PDF',
+    contactTeam: '聯絡 AeroNyx',
+    statusOverview: {
+      available: '已可用能力',
+      beta: 'Beta 能力',
+      hardening: '加固中項目',
+      boundaries: '已聲明邊界',
+    },
     jumpLabel: '簡報目錄',
     jumpItems: [
       ['#client', '客戶端產品'],
@@ -319,6 +370,23 @@ const CONTENT = {
       hardening: '加固中',
       progress: '開發中',
     },
+    statusDefinitionsTitle: '交付狀態如何判定',
+    statusDefinitionsBody: '每個狀態都描述當前實現與驗證邊界，不是排期估算，也不是行銷百分比。',
+    statusDefinitions: {
+      available: '目前產品或正式節點運維流程中已可使用。',
+      beta: '功能已實現並經過測試，仍採分階段發布或等待產品驗證。',
+      hardening: '核心路徑已存在，正在進行可靠性、安全性或多節點驗證。',
+      progress: '正在開發，不會被描述成當前已可用能力。',
+    },
+    filterLabel: '依交付狀態篩選能力',
+    filters: {
+      all: '全部',
+      available: '已可用',
+      active: '進行中',
+    },
+    showingLabel: '目前顯示',
+    capabilityLabel: '項能力',
+    evidenceLabel: '驗證說明',
     clientEyebrow: '客戶端產品',
     clientTitle: '一個 App，完成私密連接、溝通與記憶。',
     clientBody: '目前客戶端不是概念介面。它已包含移動端與桌面端的隱私網絡、加密通信、會議、記憶、身份、錢包與更新管理。',
@@ -477,11 +545,12 @@ const CONTENT = {
         detail: '進行跨區域故障測試，覆蓋發現、離線投遞、多跳、mirror recovery 與節點替換，不依賴單一協調主機。',
       },
     ],
-    linksTitle: '核對入口',
+    linksTitle: '審閱與核對入口',
     links: [
       ['協議官網', 'https://aeronyx.network/'],
       ['技術文檔', 'https://docs.aeronyx.network/'],
       ['節點運營 App', 'https://app.aeronyx.network/'],
+      ['已審核 Rust commit', `https://github.com/AeroNyxNetwork/AeroNyx/commit/${RUST_NODE_HEAD}`],
       ['開源組織', 'https://github.com/AeroNyxNetwork'],
     ],
     footer: 'AeroNyx 合作方開發簡報',
@@ -512,27 +581,117 @@ function SectionHeading({ eyebrow, title, body }) {
   );
 }
 
-function CapabilityGrid({ items, labels, reduceMotion }) {
+// [PARTNER-REVIEW-SYSTEM 2026-08-19 by Codex] Keep diligence controls and
+// maturity definitions in this route so the public site stays unaware of it.
+function DeliveryOverview({ clientItems, rustItems, boundaries, copy }) {
+  const capabilities = [...clientItems, ...rustItems];
+  const overview = [
+    ['available', capabilities.filter((item) => item.status === 'available').length],
+    ['beta', capabilities.filter((item) => item.status === 'beta').length],
+    ['hardening', capabilities.filter((item) => item.status === 'hardening').length],
+    ['boundaries', boundaries.length],
+  ];
+
   return (
-    <div className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 md:grid-cols-2">
-      {items.map((item, index) => (
-        <motion.article
-          key={item.title}
-          className="min-w-0 bg-surface-1 px-5 py-6 sm:px-7 sm:py-8"
-          initial={reduceMotion ? false : { opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.18 }}
-          transition={{ duration: 0.45, delay: reduceMotion ? 0 : (index % 2) * 0.05, ease: EASE }}
-        >
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="font-mono text-[10px] text-white/28">{String(index + 1).padStart(2, '0')}</span>
-            <StatusBadge status={item.status} labels={labels} />
-          </div>
-          <h3 className="mt-7 text-xl font-medium text-white sm:text-2xl">{item.title}</h3>
-          <p className="mt-4 text-sm leading-6 text-white/58 sm:text-[15px] sm:leading-7">{item.summary}</p>
-          <p className="mt-6 border-t border-white/8 pt-4 text-xs leading-5 text-white/38">{item.evidence}</p>
-        </motion.article>
+    <dl className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:grid-cols-2 xl:grid-cols-4">
+      {overview.map(([key, value]) => (
+        <div key={key} className="min-w-0 bg-surface-1 px-5 py-5 sm:px-6 sm:py-6">
+          <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/36">
+            {copy.statusOverview[key]}
+          </dt>
+          <dd className="mt-3 font-display text-3xl font-medium text-white">{value}</dd>
+        </div>
       ))}
+    </dl>
+  );
+}
+
+function StatusDefinitions({ copy }) {
+  return (
+    <aside className="mt-8 border-y border-white/10 py-7 sm:py-8" aria-labelledby="partner-status-definitions">
+      <div className="grid gap-7 lg:grid-cols-[minmax(220px,0.75fr)_minmax(0,2fr)] lg:gap-12">
+        <div>
+          <h3 id="partner-status-definitions" className="text-base font-medium text-white">
+            {copy.statusDefinitionsTitle}
+          </h3>
+          <p className="mt-3 text-sm leading-6 text-white/46">{copy.statusDefinitionsBody}</p>
+        </div>
+        <dl className="grid gap-5 sm:grid-cols-2">
+          {Object.entries(copy.statusDefinitions).map(([status, description]) => (
+            <div key={status} className="min-w-0">
+              <dt><StatusBadge status={status} labels={copy.statusLabels} /></dt>
+              <dd className="mt-3 text-xs leading-5 text-white/44">{description}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </aside>
+  );
+}
+
+function CapabilityReviewList({ items, copy, reduceMotion }) {
+  const [filter, setFilter] = useState('all');
+  const filteredItems = items.filter((item) => {
+    if (filter === 'available') return item.status === 'available';
+    if (filter === 'active') return item.status !== 'available';
+    return true;
+  });
+
+  return (
+    <div className="mt-10">
+      <div className="partner-no-print flex flex-col gap-4 border-y border-white/10 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div
+          className="inline-grid w-full grid-cols-3 gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:w-auto"
+          role="group"
+          aria-label={copy.filterLabel}
+        >
+          {Object.entries(copy.filters).map(([key, label]) => {
+            const active = filter === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setFilter(key)}
+                className={`min-h-[44px] min-w-0 bg-surface-1 px-4 text-xs font-semibold transition-colors focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light ${
+                  active ? 'bg-brand-faint text-brand-light' : 'text-white/46 hover:bg-surface-2 hover:text-white/72'
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+        <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-white/34" aria-live="polite">
+          {copy.showingLabel} {filteredItems.length} / {items.length} {copy.capabilityLabel}
+        </p>
+      </div>
+
+      <div className="border-b border-white/10">
+        {filteredItems.map((item, index) => (
+          <motion.article
+            key={item.title}
+            className="grid min-w-0 gap-4 border-t border-white/10 py-6 first:border-t-0 md:grid-cols-[44px_180px_minmax(0,1fr)] md:gap-6 md:py-7 xl:grid-cols-[44px_210px_minmax(0,1.2fr)_minmax(220px,0.8fr)] xl:gap-8"
+            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.18 }}
+            transition={{ duration: 0.4, delay: reduceMotion ? 0 : Math.min(index, 3) * 0.035, ease: EASE }}
+          >
+            <span className="font-mono text-[10px] text-white/28 md:pt-2">
+              {String(items.indexOf(item) + 1).padStart(2, '0')}
+            </span>
+            <div className="min-w-0">
+              <StatusBadge status={item.status} labels={copy.statusLabels} />
+              <h3 className="mt-4 text-lg font-medium text-white sm:text-xl">{item.title}</h3>
+            </div>
+            <p className="text-sm leading-6 text-white/56 sm:text-[15px] sm:leading-7 md:pt-1">{item.summary}</p>
+            <div className="min-w-0 md:col-start-3 xl:col-start-auto">
+              <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.evidenceLabel}</p>
+              <p className="mt-2 text-xs leading-5 text-white/42">{item.evidence}</p>
+            </div>
+          </motion.article>
+        ))}
+      </div>
     </div>
   );
 }
@@ -540,10 +699,29 @@ function CapabilityGrid({ items, labels, reduceMotion }) {
 function PartnerProgressPage() {
   const router = useRouter();
   const reduceMotion = useReducedMotion();
+  const [copyStatus, setCopyStatus] = useState('idle');
   const language = router.locale === 'zh-Hans' || router.locale === 'zh-Hant' ? 'zh' : 'en';
   const copy = CONTENT[language];
   const alternateLocale = language === 'zh' ? 'en' : 'zh-Hans';
   const alternateLabel = language === 'zh' ? copy.english : copy.chinese;
+
+  async function handleCopyReviewLink() {
+    if (!navigator.clipboard?.writeText) {
+      setCopyStatus('failed');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopyStatus('copied');
+    } catch {
+      setCopyStatus('failed');
+    }
+  }
+
+  function handlePrintBrief() {
+    window.print();
+  }
 
   return (
     <>
@@ -555,13 +733,13 @@ function PartnerProgressPage() {
         <meta name="referrer" content="no-referrer" />
       </Head>
 
-      <div className="relative min-h-screen overflow-x-hidden bg-surface-0 text-white">
-        <Suspense fallback={<div className="fixed inset-0 bg-surface-0" />}>
+      <div className="partner-report relative min-h-screen overflow-x-hidden bg-surface-0 text-white">
+        <Suspense fallback={<div className="partner-no-print fixed inset-0 bg-surface-0" />}>
           <ProtocolBackground />
         </Suspense>
-        <div className="fixed inset-0 z-[-1] bg-surface-0/72" />
+        <div className="partner-no-print fixed inset-0 z-[-1] bg-surface-0/72" />
 
-        <header className="sticky top-0 z-50 border-b border-white/8 bg-surface-0/90 backdrop-blur-xl">
+        <header className="partner-no-print sticky top-0 z-50 border-b border-white/8 bg-surface-0/90 backdrop-blur-xl">
           <Container>
             <div className="flex min-h-[68px] items-center justify-between gap-4 py-2">
               <Link
@@ -598,6 +776,8 @@ function PartnerProgressPage() {
                     {copy.restricted}
                   </span>
                   <span className="text-xs text-white/34">{copy.verified}</span>
+                  <span aria-hidden="true" className="text-white/16">/</span>
+                  <span className="text-xs text-white/34">{copy.revision}</span>
                 </div>
                 <motion.h1
                   className="mt-7 max-w-4xl font-display text-[2.65rem] font-medium leading-[1.04] text-white sm:text-[4rem] sm:leading-[1.02] lg:text-[4.75rem]"
@@ -614,9 +794,41 @@ function PartnerProgressPage() {
                   <p>{copy.restrictedDetail}</p>
                   <p className="mt-1">{copy.noTraffic}</p>
                 </div>
+
+                <div className="mt-8 grid gap-5 border-y border-white/10 py-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-10">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-white/72">{copy.accessTitle}</p>
+                    <p className="mt-2 max-w-2xl text-xs leading-5 text-white/40">{copy.accessBody}</p>
+                  </div>
+                  <div className="partner-no-print grid gap-2 sm:grid-cols-3 lg:flex" aria-label={copy.accessTitle}>
+                    <button
+                      type="button"
+                      onClick={handleCopyReviewLink}
+                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-brand-line bg-brand-faint px-4 text-xs font-semibold text-brand-light transition-colors hover:bg-brand/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                    >
+                      {copyStatus === 'copied' ? copy.copiedLink : copyStatus === 'failed' ? copy.copyFailed : copy.copyLink}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handlePrintBrief}
+                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/12 px-4 text-xs font-semibold text-white/58 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                    >
+                      {copy.printBrief}
+                    </button>
+                    <a
+                      href="mailto:hi@aeronyx.network?subject=AeroNyx%20partner%20review"
+                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/12 px-4 text-xs font-semibold text-white/58 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                    >
+                      {copy.contactTeam}
+                    </a>
+                  </div>
+                  <p className="sr-only" aria-live="polite">
+                    {copyStatus === 'copied' ? copy.copiedLink : copyStatus === 'failed' ? copy.copyFailed : ''}
+                  </p>
+                </div>
               </div>
 
-              <nav aria-label={copy.jumpLabel} className="mt-14 border-t border-white/10 pt-4 sm:mt-20">
+              <nav aria-label={copy.jumpLabel} className="partner-no-print mt-14 border-t border-white/10 pt-4 sm:mt-20">
                 <div className="grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
                   {copy.jumpItems.map(([href, label], index) => (
                     <a
@@ -647,20 +859,27 @@ function PartnerProgressPage() {
                   </div>
                 ))}
               </dl>
+              <DeliveryOverview
+                clientItems={copy.clientItems}
+                rustItems={copy.rustItems}
+                boundaries={copy.boundaries}
+                copy={copy}
+              />
+              <StatusDefinitions copy={copy} />
             </Container>
           </section>
 
           <section id="client" className="scroll-mt-24 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.clientEyebrow} title={copy.clientTitle} body={copy.clientBody} />
-              <CapabilityGrid items={copy.clientItems} labels={copy.statusLabels} reduceMotion={reduceMotion} />
+              <CapabilityReviewList items={copy.clientItems} copy={copy} reduceMotion={reduceMotion} />
             </Container>
           </section>
 
           <section id="rust" className="scroll-mt-24 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.rustEyebrow} title={copy.rustTitle} body={copy.rustBody} />
-              <CapabilityGrid items={copy.rustItems} labels={copy.statusLabels} reduceMotion={reduceMotion} />
+              <CapabilityReviewList items={copy.rustItems} copy={copy} reduceMotion={reduceMotion} />
             </Container>
           </section>
 
@@ -751,11 +970,55 @@ function PartnerProgressPage() {
           <Container>
             <div className="flex flex-col gap-3 text-xs text-white/30 sm:flex-row sm:items-center sm:justify-between">
               <span>{copy.footer}</span>
-              <span>{copy.verified}</span>
+              <span>{copy.verified} · {copy.revision}</span>
             </div>
           </Container>
         </footer>
       </div>
+
+      <style jsx global>{`
+        @media print {
+          @page {
+            margin: 14mm;
+          }
+
+          html,
+          body,
+          .partner-report,
+          .partner-report section,
+          .partner-report article,
+          .partner-report footer,
+          .partner-report dl > div {
+            background: #ffffff !important;
+            box-shadow: none !important;
+          }
+
+          .partner-no-print {
+            display: none !important;
+          }
+
+          .partner-report * {
+            border-color: rgba(10, 10, 18, 0.16) !important;
+            color: #16161f !important;
+            text-shadow: none !important;
+          }
+
+          .partner-report main > section {
+            padding-bottom: 28px !important;
+            padding-top: 28px !important;
+          }
+
+          .partner-report article,
+          .partner-report dl > div,
+          .partner-report aside {
+            break-inside: avoid;
+          }
+
+          .partner-report a {
+            text-decoration: none !important;
+          }
+        }
+      `}</style>
     </>
   );
 }
