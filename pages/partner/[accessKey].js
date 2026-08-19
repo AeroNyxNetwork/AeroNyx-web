@@ -17,6 +17,8 @@
  *     recent evidence, and next milestones without fictional percentages.
  *   - Adds review filters, status definitions, secure-link copy feedback,
  *     print/PDF output, and reviewer contact actions for partner diligence.
+ *   - Publishes a decision summary, dependency ownership matrix, sticky review
+ *     index, and a public-safe machine-readable JSON snapshot.
  *
  * Dependencies:
  *   - Node crypto.timingSafeEqual for server-side key comparison.
@@ -28,8 +30,8 @@
  *   1. getServerSideProps rejects missing, malformed, or incorrect keys.
  *   2. The authorized response receives private no-store crawler/referrer
  *      headers before any page content is rendered.
- *   3. Reviewers can scan, filter, print, or validate source-reviewed client
- *      and Rust status before reading current limits and next milestones.
+ *   3. Reviewers can scan, filter, export, print, or validate source-reviewed
+ *      delivery status before reading dependencies, limits, and milestones.
  *
  * Important Note for Next Developer:
  *   - [PARTNER-BUILD-BRIEF 2026-08-19 by Codex] Never hard-code the access key
@@ -41,8 +43,10 @@
  *   - Do not add this route to sitemap.xml, robots.txt, header, or footer.
  *   - Keep status definitions evidence-based. "Available" means presently
  *     usable; it must never be inferred from a roadmap or design document.
+ *   - Exported JSON must remain public-safe and must never contain the access
+ *     URL, route key, private endpoints, customer traffic, or node identities.
  *
- * Last Modified: v1.1 - Partner review workflow, filters, and export details.
+ * Last Modified: v1.2 - Decision view, dependency matrix, and JSON snapshot.
  * ============================================
  */
 
@@ -68,7 +72,7 @@ const ProtocolBackground = dynamic(
 const CLIENT_BUILD = '1.0.18+14';
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '1.1';
+const REVIEW_REVISION = '1.2';
 const ACCESS_KEY_PATTERN = /^[a-f0-9]{64}$/;
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -108,6 +112,9 @@ const CONTENT = {
     copyLink: 'Copy review link',
     copiedLink: 'Link copied',
     copyFailed: 'Copy unavailable',
+    exportJson: 'Export JSON',
+    exportedJson: 'JSON downloaded',
+    exportFailed: 'Export unavailable',
     printBrief: 'Print / Save PDF',
     contactTeam: 'Contact AeroNyx',
     statusOverview: {
@@ -118,8 +125,10 @@ const CONTENT = {
     },
     jumpLabel: 'Brief sections',
     jumpItems: [
+      ['#overview', 'Overview'],
       ['#client', 'Client product'],
       ['#rust', 'Rust infrastructure'],
+      ['#dependencies', 'Dependencies'],
       ['#boundaries', 'Current boundaries'],
       ['#roadmap', 'Next milestones'],
     ],
@@ -155,6 +164,29 @@ const CONTENT = {
     showingLabel: 'Showing',
     capabilityLabel: 'capabilities',
     evidenceLabel: 'Verification note',
+    decisionEyebrow: 'Decision view',
+    decisionTitle: 'What a partner can evaluate now.',
+    decisionBody: 'A compact view of the present pilot boundary. This separates usable paths from controlled beta work and capabilities that are intentionally not yet defaults.',
+    decisionLanes: [
+      {
+        status: 'available',
+        label: 'Pilot now',
+        detail: 'Current product and node paths with an operational baseline.',
+        items: ['Privacy Network', 'End-to-end encrypted chat', 'Identity and wallet', 'Signed releases', 'Production node lifecycle', 'Signed peer discovery'],
+      },
+      {
+        status: 'beta',
+        label: 'Controlled beta',
+        detail: 'Implemented paths that should be evaluated with explicit rollout conditions.',
+        items: ['Calls and meetings through LiveKit', 'MemChain private memory', 'Blind relay', 'Node-blind storage', 'Verifiable coordination ledger'],
+      },
+      {
+        status: 'hardening',
+        label: 'Not a default yet',
+        detail: 'Real engineering paths that still require broader multi-node evidence.',
+        items: ['Default multi-hop routing', 'Fully decentralized message continuity', 'Fleet-wide strict custody witness gates'],
+      },
+    ],
     clientEyebrow: 'Client product',
     clientTitle: 'One app for private connection, communication, and memory.',
     clientBody: 'The current app is not a concept shell. It contains working privacy-network, encrypted communication, meeting, memory, identity, wallet, and release-management surfaces across mobile and desktop.',
@@ -241,6 +273,41 @@ const CONTENT = {
         title: 'Custody witness safety',
         summary: 'Independent signed receipts, durable vault audit, startup/runtime gates, quorum expiry warning, recovery lifecycle, and bounded concurrent witness collection.',
         evidence: `Latest reviewed milestone ${RUST_NODE_HEAD}: up to 16 exact pins in one timeout window.`,
+      },
+    ],
+    dependencyEyebrow: 'Dependency boundary',
+    dependencyTitle: 'Who operates each path today, and how it can evolve.',
+    dependencyBody: 'AeroNyx separates protocol ownership from current service dependencies. This table makes temporary infrastructure choices explicit instead of hiding them inside product claims.',
+    dependencyLabels: {
+      component: 'Path',
+      operator: 'Current operator',
+      state: 'Current role',
+      transition: 'Evolution path',
+    },
+    dependencies: [
+      {
+        component: 'Default message relay',
+        operator: 'AeroNyx managed infrastructure',
+        state: 'Stable client default',
+        transition: 'Add reviewed decentralized relay choices without silently changing user behavior.',
+      },
+      {
+        component: 'Meeting media transport',
+        operator: 'LiveKit deployment',
+        state: 'Recommended beta path',
+        transition: 'Keep authorization and product control in AeroNyx behind a replaceable media interface.',
+      },
+      {
+        component: 'Privacy and coordination nodes',
+        operator: 'Independent operators running the open Rust protocol',
+        state: 'Production transport plus staged decentralized services',
+        transition: 'Expand permissionless participation with stronger diversity, reputation, and route evidence.',
+      },
+      {
+        component: 'Client distribution',
+        operator: 'App stores and AeroNyx signed direct releases',
+        state: 'Platform-specific signed delivery',
+        transition: 'Preserve independently verifiable installers and platform-native trust checks.',
       },
     ],
     milestoneEyebrow: 'Recent evidence',
@@ -340,6 +407,9 @@ const CONTENT = {
     copyLink: '複製審閱連結',
     copiedLink: '連結已複製',
     copyFailed: '無法複製',
+    exportJson: '匯出 JSON',
+    exportedJson: 'JSON 已下載',
+    exportFailed: '無法匯出',
     printBrief: '列印 / 儲存 PDF',
     contactTeam: '聯絡 AeroNyx',
     statusOverview: {
@@ -350,8 +420,10 @@ const CONTENT = {
     },
     jumpLabel: '簡報目錄',
     jumpItems: [
+      ['#overview', '總覽'],
       ['#client', '客戶端產品'],
       ['#rust', 'Rust 基礎設施'],
+      ['#dependencies', '依賴邊界'],
       ['#boundaries', '目前邊界'],
       ['#roadmap', '下一里程碑'],
     ],
@@ -387,6 +459,29 @@ const CONTENT = {
     showingLabel: '目前顯示',
     capabilityLabel: '項能力',
     evidenceLabel: '驗證說明',
+    decisionEyebrow: '決策視圖',
+    decisionTitle: '合作方現在可以評估什麼。',
+    decisionBody: '用最短時間看清目前 pilot 邊界，區分已可使用、受控 Beta，以及刻意尚未設為默認的能力。',
+    decisionLanes: [
+      {
+        status: 'available',
+        label: '現在可 Pilot',
+        detail: '已有運維基線的客戶端與節點路徑。',
+        items: ['隱私網絡', '端到端加密聊天', '身份與錢包', '簽名發布', '正式節點生命週期', '簽名節點發現'],
+      },
+      {
+        status: 'beta',
+        label: '受控 Beta',
+        detail: '功能已實現，應在明確發布條件下評估。',
+        items: ['LiveKit 通話與會議', 'MemChain 私有記憶', '盲中繼', '節點盲存儲', '可驗證協調帳本'],
+      },
+      {
+        status: 'hardening',
+        label: '尚未設為默認',
+        detail: '已有真實工程路徑，仍需要更廣泛的多節點證據。',
+        items: ['默認多跳路由', '完全去中心化訊息連續性', '全節點 strict custody witness gate'],
+      },
+    ],
     clientEyebrow: '客戶端產品',
     clientTitle: '一個 App，完成私密連接、溝通與記憶。',
     clientBody: '目前客戶端不是概念介面。它已包含移動端與桌面端的隱私網絡、加密通信、會議、記憶、身份、錢包與更新管理。',
@@ -473,6 +568,41 @@ const CONTENT = {
         title: 'Custody witness 安全',
         summary: '獨立簽名 receipt、持久 vault audit、啟動/runtime gate、quorum 到期提醒、恢復生命週期與有界並行收集。',
         evidence: `最新里程碑 ${RUST_NODE_HEAD}：最多 16 個精確 pin，共用一個 timeout window。`,
+      },
+    ],
+    dependencyEyebrow: '依賴邊界',
+    dependencyTitle: '今天由誰運行，以及未來如何演進。',
+    dependencyBody: 'AeroNyx 把協議所有權與當前服務依賴分開。暫時性的基礎設施選擇會被明確展示，而不是藏在產品宣稱裡。',
+    dependencyLabels: {
+      component: '路徑',
+      operator: '目前運營方',
+      state: '當前角色',
+      transition: '演進方向',
+    },
+    dependencies: [
+      {
+        component: '默認訊息 Relay',
+        operator: 'AeroNyx Managed Infrastructure',
+        state: '穩定的客戶端默認路徑',
+        transition: '增加經審核的去中心化 Relay 選擇，不暗中改變用戶行為。',
+      },
+      {
+        component: '會議媒體傳輸',
+        operator: 'LiveKit Deployment',
+        state: '目前推薦的 Beta 路徑',
+        transition: 'AeroNyx 保留授權與產品控制，媒體接口可以被替換。',
+      },
+      {
+        component: '隱私與協調節點',
+        operator: '運行開放 Rust 協議的獨立節點運營者',
+        state: '正式傳輸與分階段去中心化服務',
+        transition: '透過更多樣的運營方、信譽與路徑證據擴大無許可參與。',
+      },
+      {
+        component: '客戶端分發',
+        operator: 'App Store 與 AeroNyx 簽名直發版本',
+        state: '按平台簽名發布',
+        transition: '保留可獨立驗證的安裝包與平台原生信任檢查。',
       },
     ],
     milestoneEyebrow: '近期證據',
@@ -629,6 +759,97 @@ function StatusDefinitions({ copy }) {
   );
 }
 
+function DecisionSummary({ copy }) {
+  return (
+    <div className="mt-10 grid border-y border-white/10 lg:grid-cols-3">
+      {copy.decisionLanes.map((lane, index) => (
+        <article
+          key={lane.label}
+          className="min-w-0 border-t border-white/10 py-7 first:border-t-0 lg:border-l lg:border-t-0 lg:px-7 lg:first:border-l-0 lg:first:pl-0 lg:last:pr-0"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <StatusBadge status={lane.status} labels={copy.statusLabels} />
+            <span className="font-mono text-[10px] text-white/24">0{index + 1}</span>
+          </div>
+          <h3 className="mt-5 text-xl font-medium text-white">{lane.label}</h3>
+          <p className="mt-3 text-sm leading-6 text-white/46">{lane.detail}</p>
+          <ul className="mt-6 border-t border-white/10 pt-3">
+            {lane.items.map((item) => (
+              <li key={item} className="flex min-w-0 gap-3 border-b border-white/8 py-3 text-sm leading-5 text-white/62 last:border-b-0">
+                <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-brand-light" />
+                <span className="min-w-0">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function DependencyMatrix({ copy }) {
+  const labels = copy.dependencyLabels;
+
+  return (
+    <div className="mt-10 border-y border-white/10" role="table" aria-label={copy.dependencyTitle}>
+      <div className="hidden grid-cols-[0.8fr_1fr_0.9fr_1.35fr] gap-8 border-b border-white/10 py-4 lg:grid" role="row">
+        {[labels.component, labels.operator, labels.state, labels.transition].map((label) => (
+          <span key={label} className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30" role="columnheader">
+            {label}
+          </span>
+        ))}
+      </div>
+      <div role="rowgroup">
+        {copy.dependencies.map((item) => (
+          <div
+            key={item.component}
+            className="grid min-w-0 gap-5 border-b border-white/10 py-7 last:border-b-0 sm:grid-cols-2 sm:gap-6 lg:grid-cols-[0.8fr_1fr_0.9fr_1.35fr] lg:gap-8"
+            role="row"
+          >
+            {[
+              [labels.component, item.component],
+              [labels.operator, item.operator],
+              [labels.state, item.state],
+              [labels.transition, item.transition],
+            ].map(([label, value], index) => (
+              <div key={label} className="min-w-0" role="cell">
+                <span className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/28 lg:hidden">{label}</span>
+                <p className={`mt-2 text-sm leading-6 lg:mt-0 ${index === 0 ? 'font-medium text-white/78' : 'text-white/50'}`}>
+                  {value}
+                </p>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// [PARTNER-REVIEW-EXPORT 2026-08-19 by Codex] This export intentionally omits
+// the current URL and all access, node, customer, endpoint, and payload data.
+function buildReviewSnapshot(copy, language) {
+  return {
+    schema: 'aeronyx.partner.review.v1',
+    generated_at: new Date().toISOString(),
+    verified_date: VERIFIED_DATE,
+    review_revision: REVIEW_REVISION,
+    language,
+    client_build: CLIENT_BUILD,
+    rust_node_head: RUST_NODE_HEAD,
+    status_definitions: copy.statusDefinitions,
+    decision_summary: copy.decisionLanes,
+    client_capabilities: copy.clientItems,
+    rust_capabilities: copy.rustItems,
+    dependency_boundary: copy.dependencies,
+    current_boundaries: copy.boundaries,
+    recent_milestones: copy.milestones,
+    next_milestones: copy.roadmap,
+    public_review_links: copy.links.map(([label, href]) => ({ label, href })),
+    privacy_boundary: 'Public-safe delivery information only. No access URL, route key, customer traffic, node identity, private endpoint, encryption key, or payload data.',
+  };
+}
+
 function CapabilityReviewList({ items, copy, reduceMotion }) {
   const [filter, setFilter] = useState('all');
   const filteredItems = items.filter((item) => {
@@ -700,6 +921,7 @@ function PartnerProgressPage() {
   const router = useRouter();
   const reduceMotion = useReducedMotion();
   const [copyStatus, setCopyStatus] = useState('idle');
+  const [exportStatus, setExportStatus] = useState('idle');
   const language = router.locale === 'zh-Hans' || router.locale === 'zh-Hant' ? 'zh' : 'en';
   const copy = CONTENT[language];
   const alternateLocale = language === 'zh' ? 'en' : 'zh-Hans';
@@ -721,6 +943,22 @@ function PartnerProgressPage() {
 
   function handlePrintBrief() {
     window.print();
+  }
+
+  function handleExportReview() {
+    try {
+      const snapshot = buildReviewSnapshot(copy, language);
+      const blob = new Blob([`${JSON.stringify(snapshot, null, 2)}\n`], { type: 'application/json' });
+      const objectUrl = URL.createObjectURL(blob);
+      const download = document.createElement('a');
+      download.href = objectUrl;
+      download.download = `aeronyx-partner-review-${VERIFIED_DATE}.json`;
+      download.click();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+      setExportStatus('exported');
+    } catch {
+      setExportStatus('failed');
+    }
   }
 
   return (
@@ -800,13 +1038,20 @@ function PartnerProgressPage() {
                     <p className="text-sm font-medium text-white/72">{copy.accessTitle}</p>
                     <p className="mt-2 max-w-2xl text-xs leading-5 text-white/40">{copy.accessBody}</p>
                   </div>
-                  <div className="partner-no-print grid gap-2 sm:grid-cols-3 lg:flex" aria-label={copy.accessTitle}>
+                  <div className="partner-no-print grid gap-2 sm:grid-cols-2 xl:flex" aria-label={copy.accessTitle}>
                     <button
                       type="button"
                       onClick={handleCopyReviewLink}
                       className="inline-flex min-h-[44px] items-center justify-center rounded border border-brand-line bg-brand-faint px-4 text-xs font-semibold text-brand-light transition-colors hover:bg-brand/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
                     >
                       {copyStatus === 'copied' ? copy.copiedLink : copyStatus === 'failed' ? copy.copyFailed : copy.copyLink}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleExportReview}
+                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/12 px-4 text-xs font-semibold text-white/58 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                    >
+                      {exportStatus === 'exported' ? copy.exportedJson : exportStatus === 'failed' ? copy.exportFailed : copy.exportJson}
                     </button>
                     <button
                       type="button"
@@ -824,30 +1069,40 @@ function PartnerProgressPage() {
                   </div>
                   <p className="sr-only" aria-live="polite">
                     {copyStatus === 'copied' ? copy.copiedLink : copyStatus === 'failed' ? copy.copyFailed : ''}
+                    {' '}
+                    {exportStatus === 'exported' ? copy.exportedJson : exportStatus === 'failed' ? copy.exportFailed : ''}
                   </p>
                 </div>
               </div>
 
-              <nav aria-label={copy.jumpLabel} className="partner-no-print mt-14 border-t border-white/10 pt-4 sm:mt-20">
-                <div className="grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+            </Container>
+          </section>
+
+          <nav
+            aria-label={copy.jumpLabel}
+            className="partner-no-print sticky top-[68px] z-40 border-b border-white/10 bg-surface-0/94 backdrop-blur-xl"
+          >
+            <Container>
+              <div className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex min-w-max items-stretch lg:w-full lg:min-w-0">
                   {copy.jumpItems.map(([href, label], index) => (
                     <a
                       key={href}
                       href={href}
-                      className="group flex min-h-[58px] min-w-0 items-center gap-3 bg-surface-1 px-4 py-3 transition-colors hover:bg-surface-2 focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light"
+                      className="group flex min-h-[48px] min-w-[132px] items-center gap-2 border-r border-white/8 px-4 transition-colors first:border-l hover:bg-white/[0.035] focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light lg:min-w-0 lg:flex-1 lg:justify-center"
                     >
-                      <span className="font-mono text-[10px] text-brand-light/70">0{index + 1}</span>
-                      <span className="min-w-0 text-xs font-semibold uppercase tracking-[0.08em] text-white/48 group-hover:text-white/78">
+                      <span className="font-mono text-[9px] text-brand-light/60">{String(index + 1).padStart(2, '0')}</span>
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-white/44 group-hover:text-white/76">
                         {label}
                       </span>
                     </a>
                   ))}
                 </div>
-              </nav>
+              </div>
             </Container>
-          </section>
+          </nav>
 
-          <section className="border-b border-white/10 bg-surface-0/78 py-16 sm:py-20">
+          <section id="overview" className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-20">
             <Container>
               <SectionHeading eyebrow={copy.snapshotEyebrow} title={copy.snapshotTitle} body={copy.snapshotBody} />
               <dl className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:grid-cols-2 xl:grid-cols-4">
@@ -869,17 +1124,31 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section id="client" className="scroll-mt-24 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+          <section className="border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+            <Container>
+              <SectionHeading eyebrow={copy.decisionEyebrow} title={copy.decisionTitle} body={copy.decisionBody} />
+              <DecisionSummary copy={copy} />
+            </Container>
+          </section>
+
+          <section id="client" className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.clientEyebrow} title={copy.clientTitle} body={copy.clientBody} />
               <CapabilityReviewList items={copy.clientItems} copy={copy} reduceMotion={reduceMotion} />
             </Container>
           </section>
 
-          <section id="rust" className="scroll-mt-24 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
+          <section id="rust" className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.rustEyebrow} title={copy.rustTitle} body={copy.rustBody} />
               <CapabilityReviewList items={copy.rustItems} copy={copy} reduceMotion={reduceMotion} />
+            </Container>
+          </section>
+
+          <section id="dependencies" className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
+            <Container>
+              <SectionHeading eyebrow={copy.dependencyEyebrow} title={copy.dependencyTitle} body={copy.dependencyBody} />
+              <DependencyMatrix copy={copy} />
             </Container>
           </section>
 
@@ -903,7 +1172,7 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section id="boundaries" className="scroll-mt-24 border-b border-white/10 bg-surface-0/82 py-16 sm:py-24">
+          <section id="boundaries" className="scroll-mt-32 border-b border-white/10 bg-surface-0/82 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.boundaryEyebrow} title={copy.boundaryTitle} body={copy.boundaryBody} />
               <div className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 lg:grid-cols-2">
@@ -922,7 +1191,7 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section id="roadmap" className="scroll-mt-24 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+          <section id="roadmap" className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.roadmapEyebrow} title={copy.roadmapTitle} body={copy.roadmapBody} />
               <div className="relative mt-12 grid gap-8 lg:grid-cols-4 lg:gap-0">
