@@ -1,0 +1,789 @@
+/**
+ * ============================================
+ * File: pages/partner/[accessKey].js
+ * ============================================
+ * Creation Reason:
+ *   Give reviewed AeroNyx partners a non-enumerable, current delivery brief
+ *   covering real client capabilities, Rust node milestones, and the honest
+ *   boundary between shipped, beta, hardening, and planned work.
+ *
+ * Main Functionality:
+ *   - Validates a 64-hex access key against a server-only Vercel environment
+ *     variable and returns the normal 404 surface for every mismatch.
+ *   - Publishes a bilingual English/Simplified-Chinese delivery brief without
+ *     adding the route to navigation, sitemap, robots.txt, or public SEO data.
+ *   - Uses no-store, noindex, noarchive, and no-referrer response boundaries.
+ *   - Separates current client delivery, Rust protocol delivery, limitations,
+ *     recent evidence, and next milestones without fictional percentages.
+ *
+ * Dependencies:
+ *   - Node crypto.timingSafeEqual for server-side key comparison.
+ *   - next/head, next/link, and next/router for metadata and locale switching.
+ *   - components/ui/AeroNyxLogo and ProtocolBackground for shared identity.
+ *   - components/ui/Container and framer-motion for responsive presentation.
+ *
+ * Main Logical Flow:
+ *   1. getServerSideProps rejects missing, malformed, or incorrect keys.
+ *   2. The authorized response receives private no-store crawler/referrer
+ *      headers before any page content is rendered.
+ *   3. The page presents source-reviewed client and Rust status in independent
+ *      tracks, followed by current limits and the next delivery milestones.
+ *
+ * Important Note for Next Developer:
+ *   - [PARTNER-BUILD-BRIEF 2026-08-19 by Codex] Never hard-code the access key
+ *     in this public repository or expose it through NEXT_PUBLIC_* variables.
+ *   - A hidden URL is not user authentication. Keep this page public-safe and
+ *     add account-based authorization before publishing commercial secrets.
+ *   - Update CLIENT_BUILD, RUST_NODE_HEAD, VERIFIED_DATE, and status claims
+ *     only after the corresponding release or Rust milestone is verified.
+ *   - Do not add this route to sitemap.xml, robots.txt, header, or footer.
+ *
+ * Last Modified: v1.0 - Restricted partner product and Rust delivery brief.
+ * ============================================
+ */
+
+import { timingSafeEqual } from 'crypto';
+import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { motion, useReducedMotion } from 'framer-motion';
+import AeroNyxLogo from '../../components/ui/AeroNyxLogo';
+import Container from '../../components/ui/Container';
+
+const ProtocolBackground = dynamic(
+  () => import('../../components/ui/ProtocolBackground'),
+  {
+    ssr: false,
+    suspense: true,
+    loading: () => <div className="fixed inset-0 bg-surface-0" />,
+  }
+);
+
+const CLIENT_BUILD = '1.0.18+14';
+const RUST_NODE_HEAD = '849bdcd';
+const VERIFIED_DATE = '2026-08-19';
+const ACCESS_KEY_PATTERN = /^[a-f0-9]{64}$/;
+const EASE = [0.16, 1, 0.3, 1];
+
+const STATUS_TONE = {
+  available: {
+    dot: 'bg-ok',
+    badge: 'border-brand-line bg-brand-faint text-brand-light',
+  },
+  beta: {
+    dot: 'bg-cipher-light',
+    badge: 'border-cipher/25 bg-cipher/5 text-cipher-light',
+  },
+  hardening: {
+    dot: 'bg-warn',
+    badge: 'border-warn/25 bg-warn/5 text-warn',
+  },
+  progress: {
+    dot: 'border border-white/45 bg-transparent',
+    badge: 'border-white/12 bg-white/[0.03] text-white/62',
+  },
+};
+
+const CONTENT = {
+  en: {
+    language: 'Language',
+    english: 'EN',
+    chinese: '中文',
+    restricted: 'Partner build brief',
+    restrictedDetail: 'Restricted link · public-safe delivery information',
+    heroTitle: 'A clear view of what AeroNyx can do today.',
+    heroBody: 'A source-reviewed delivery brief for partners: client capabilities, Rust protocol infrastructure, current dependencies, and the milestones that move AeroNyx toward a fully open privacy coordination network.',
+    verified: `Verified ${VERIFIED_DATE}`,
+    noTraffic: 'No customer traffic, node identities, private endpoints, keys, or payload data are included.',
+    jumpLabel: 'Brief sections',
+    jumpItems: [
+      ['#client', 'Client product'],
+      ['#rust', 'Rust infrastructure'],
+      ['#boundaries', 'Current boundaries'],
+      ['#roadmap', 'Next milestones'],
+    ],
+    snapshotEyebrow: 'Current baseline',
+    snapshotTitle: 'Shipping product, hardened protocol core.',
+    snapshotBody: 'These identifiers anchor the brief to a concrete client release and reviewed Rust main commit. Status is based on source and test evidence, not roadmap percentages.',
+    snapshot: [
+      { label: 'Client build', value: CLIENT_BUILD, detail: 'Current cross-platform release baseline' },
+      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · verified witness latency milestone' },
+      { label: 'Distribution', value: '4 platforms', detail: 'iOS · Android ARM64 · macOS · Windows' },
+      { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
+    ],
+    statusLabels: {
+      available: 'Available',
+      beta: 'Beta',
+      hardening: 'Hardening',
+      progress: 'In progress',
+    },
+    clientEyebrow: 'Client product',
+    clientTitle: 'One app for private connection, communication, and memory.',
+    clientBody: 'The current app is not a concept shell. It contains working privacy-network, encrypted communication, meeting, memory, identity, wallet, and release-management surfaces across mobile and desktop.',
+    clientItems: [
+      {
+        status: 'available',
+        title: 'Privacy Network',
+        summary: 'Cross-platform connect flow, region and node selection, reconnect policy, quota gates, session statistics, and native VPN lifecycle integration.',
+        evidence: 'Shipping on iOS, Android ARM64, macOS, and Windows.',
+      },
+      {
+        status: 'available',
+        title: 'End-to-end encrypted chat',
+        summary: 'One-to-one and group messaging with offline delivery, replies, editing, revoke, reactions, receipts, typing controls, media, files, and voice notes.',
+        evidence: 'Relay routes ciphertext; message content remains client-encrypted.',
+      },
+      {
+        status: 'beta',
+        title: 'Calls and meetings',
+        summary: 'Voice/video calling, native incoming-call lifecycle, meeting green room, roster, in-meeting chat, and screen or window presentation.',
+        evidence: 'LiveKit is the recommended media path today; P2P remains an optional route.',
+      },
+      {
+        status: 'beta',
+        title: 'MemChain private memory',
+        summary: 'Opt-in consent, local memory formation, local-first recall, encrypted synchronization, and node-blind storage boundaries.',
+        evidence: 'Storage nodes receive encrypted records and blind indexes, not memory plaintext.',
+      },
+      {
+        status: 'available',
+        title: 'Identity and wallet',
+        summary: 'Self-custody identity, biometric/secure-storage protections, Solana and EVM wallet surfaces, switching, portfolio, send, and payment request flows.',
+        evidence: 'Private-key ownership stays on the client side.',
+      },
+      {
+        status: 'available',
+        title: 'Release and recovery',
+        summary: 'Signed platform installers, staged update checks, foreground refresh, defer windows, platform-specific verification, and desktop/mobile recovery handling.',
+        evidence: `Current published baseline: ${CLIENT_BUILD}.`,
+      },
+    ],
+    rustEyebrow: 'Rust protocol infrastructure',
+    rustTitle: 'Open nodes that coordinate without reading user content.',
+    rustBody: 'The Rust node has progressed beyond a VPN endpoint. It now combines transport, signed discovery, blind relay, encrypted custody, private memory primitives, and a verifiable coordination ledger designed for privacy-network operations.',
+    rustItems: [
+      {
+        status: 'available',
+        title: 'Production node lifecycle',
+        summary: 'Interactive installation, registration, upgrade, rollback, health checks, capacity controls, admission validation, and systemd supervision.',
+        evidence: 'Operational paths are bounded and preserve active-session safety gates.',
+      },
+      {
+        status: 'available',
+        title: 'Signed peer discovery',
+        summary: 'Signed descriptors, persistent peer store, bootstrap and gossip exchange, capability negotiation, endpoint validation, and routeability probes.',
+        evidence: 'New reviewed nodes can become discoverable without becoming trusted authority.',
+      },
+      {
+        status: 'beta',
+        title: 'Blind encrypted message relay',
+        summary: 'Authenticated relay frames, offline custody, idempotency, bounded abuse controls, encrypted media transport foundations, and terminal pending storage.',
+        evidence: 'Nodes route opaque payloads and cannot interpret message content.',
+      },
+      {
+        status: 'hardening',
+        title: 'Multi-hop relay paths',
+        summary: 'Onion-middle capability, candidate filtering, reachability probes, TTL boundaries, path proof, terminal delivery, and middle-forward counters.',
+        evidence: 'Real node-network tests exist; this is not yet the default route for all client traffic.',
+      },
+      {
+        status: 'beta',
+        title: 'Node-blind encrypted storage',
+        summary: 'Encrypted Memory Chain records, blind indexes, owner-authorized synchronization, backup/restore planning, and bounded retention maintenance.',
+        evidence: 'Nodes retain ciphertext and integrity metadata, never memory plaintext.',
+      },
+      {
+        status: 'beta',
+        title: 'Verifiable coordination ledger',
+        summary: 'Signed record-commitment blocks, follower synchronization, full-node mirror mode, external witness evidence, rollback protection, and authority handover proofs.',
+        evidence: 'Purpose-built coordination evidence; no smart contracts or global-consensus claim.',
+      },
+      {
+        status: 'hardening',
+        title: 'Custody witness safety',
+        summary: 'Independent signed receipts, durable vault audit, startup/runtime gates, quorum expiry warning, recovery lifecycle, and bounded concurrent witness collection.',
+        evidence: `Latest reviewed milestone ${RUST_NODE_HEAD}: up to 16 exact pins in one timeout window.`,
+      },
+    ],
+    milestoneEyebrow: 'Recent evidence',
+    milestoneTitle: 'What changed most recently.',
+    milestones: [
+      {
+        date: '2026-08-19',
+        title: 'Witness collection latency bounded',
+        detail: 'Rust custody witness requests now run concurrently under the existing 16-pin ceiling while preserving durable-before-counting and adverse-evidence fail-closed behavior.',
+      },
+      {
+        date: '2026-08',
+        title: 'Meetings became a real product surface',
+        detail: 'Green room, participant state, meeting chat, call lifecycle, and screen/window presentation are represented in the client implementation.',
+      },
+      {
+        date: '2026-07',
+        title: `Client ${CLIENT_BUILD} released`,
+        detail: 'Current Android ARM64, macOS, and Windows artifacts were published alongside the maintained iOS distribution path.',
+      },
+      {
+        date: '2026-07',
+        title: 'Coordination ledger moved beyond local blocks',
+        detail: 'Mirror synchronization, independently signed witness evidence, carrier recovery, and policy-safe authority handover were added to the Rust node.',
+      },
+    ],
+    boundaryEyebrow: 'Current boundaries',
+    boundaryTitle: 'What AeroNyx does not overclaim.',
+    boundaryBody: 'Partners should evaluate the product against the system that exists, not a future whitepaper. These constraints are deliberate and visible.',
+    boundaries: [
+      {
+        title: 'Managed relay remains the default',
+        detail: 'The client keeps the stable managed relay path by default. Decentralized routing is being exposed as an explicit user choice rather than silently changing behavior.',
+      },
+      {
+        title: 'LiveKit carries recommended calls today',
+        detail: 'Meeting authorization and UI are AeroNyx-controlled, while the short-term media plane uses LiveKit. The interface remains replaceable by a future Rust media path.',
+      },
+      {
+        title: 'The ledger is purpose-built, not a general blockchain',
+        detail: 'It records signed, aggregate coordination evidence. It does not publish user messages, social relationships, browsing activity, smart contracts, or token execution.',
+      },
+      {
+        title: 'Protocol nodes are blind to payloads, not invisible to all metadata',
+        detail: 'Nodes need bounded routing and timing metadata to deliver traffic. AeroNyx minimizes and separates that metadata; it does not claim traffic-analysis immunity is finished.',
+      },
+    ],
+    roadmapEyebrow: 'Next milestones',
+    roadmapTitle: 'The shortest path to partner-grade deployment.',
+    roadmapBody: 'The roadmap prioritizes end-to-end proof and operational repeatability before adding another visible feature surface.',
+    roadmap: [
+      {
+        step: '01',
+        title: 'Close the meeting authorization loop',
+        detail: 'Finish grant, waiting-room, role, and failure-state validation across mobile and desktop while preserving the replaceable media boundary.',
+      },
+      {
+        step: '02',
+        title: 'Deploy custody witness hardening',
+        detail: 'Roll the latest Rust witness lifecycle to reviewed nodes, exercise real expiry/refresh behavior, and collect operator evidence before enabling strict gates fleet-wide.',
+      },
+      {
+        step: '03',
+        title: 'Expose transport choice safely',
+        detail: 'Keep managed relay as default while giving advanced users a comprehensible, reversible choice of reviewed decentralized relay paths.',
+      },
+      {
+        step: '04',
+        title: 'Prove decentralized message continuity',
+        detail: 'Run multi-region failure tests for discovery, store-and-forward, multi-hop delivery, mirror recovery, and node replacement without relying on one coordination host.',
+      },
+    ],
+    linksTitle: 'Review surfaces',
+    links: [
+      ['Protocol website', 'https://aeronyx.network/'],
+      ['Technical documentation', 'https://docs.aeronyx.network/'],
+      ['Node operator app', 'https://app.aeronyx.network/'],
+      ['Open-source organization', 'https://github.com/AeroNyxNetwork'],
+    ],
+    footer: 'AeroNyx partner build brief',
+    footerNote: `Source-reviewed on ${VERIFIED_DATE}. Product status changes only after implementation and verification.`,
+  },
+  zh: {
+    language: '語言',
+    english: 'EN',
+    chinese: '中文',
+    restricted: '合作方開發簡報',
+    restrictedDetail: '受限連結 · 僅含可公開的交付資訊',
+    heroTitle: '清楚了解 AeroNyx 今天真正能做什麼。',
+    heroBody: '給合作方的源碼核對版進度：客戶端能力、Rust 協議基礎設施、目前依賴與下一個里程碑。AeroNyx 正在走向完全開放的隱私協調網絡，但不把未完成的能力包裝成已交付。',
+    verified: `核對日期 ${VERIFIED_DATE}`,
+    noTraffic: '本頁不包含客戶流量、節點身份、私有端點、密鑰或任何 payload 資料。',
+    jumpLabel: '簡報目錄',
+    jumpItems: [
+      ['#client', '客戶端產品'],
+      ['#rust', 'Rust 基礎設施'],
+      ['#boundaries', '目前邊界'],
+      ['#roadmap', '下一里程碑'],
+    ],
+    snapshotEyebrow: '目前基線',
+    snapshotTitle: '產品已交付，協議核心持續加固。',
+    snapshotBody: '以下版本把頁面錨定到真實客戶端發布與已審核的 Rust main commit。狀態來自源碼與測試證據，不使用虛假的完成百分比。',
+    snapshot: [
+      { label: '客戶端版本', value: CLIENT_BUILD, detail: '目前跨平台正式發布基線' },
+      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · witness 延遲加固里程碑' },
+      { label: '發布平台', value: '4 個平台', detail: 'iOS · Android ARM64 · macOS · Windows' },
+      { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
+    ],
+    statusLabels: {
+      available: '已可用',
+      beta: 'Beta',
+      hardening: '加固中',
+      progress: '開發中',
+    },
+    clientEyebrow: '客戶端產品',
+    clientTitle: '一個 App，完成私密連接、溝通與記憶。',
+    clientBody: '目前客戶端不是概念介面。它已包含移動端與桌面端的隱私網絡、加密通信、會議、記憶、身份、錢包與更新管理。',
+    clientItems: [
+      {
+        status: 'available',
+        title: '隱私網絡',
+        summary: '跨平台連接、區域與節點選擇、重連策略、配額門控、會話統計及原生 VPN 生命週期整合。',
+        evidence: '已發布於 iOS、Android ARM64、macOS 與 Windows。',
+      },
+      {
+        status: 'available',
+        title: '端到端加密聊天',
+        summary: '單聊與群聊、離線投遞、引用、編輯、撤回、表情回應、回執、輸入狀態隱私控制、媒體、文件與語音訊息。',
+        evidence: 'Relay 只路由密文，訊息內容保持客戶端加密。',
+      },
+      {
+        status: 'beta',
+        title: '通話與會議',
+        summary: '語音與視訊通話、原生來電生命週期、會議等候區、成員狀態、會議聊天，以及螢幕或視窗分享。',
+        evidence: '目前建議使用 LiveKit 媒體路徑；P2P 仍是可選路由。',
+      },
+      {
+        status: 'beta',
+        title: 'MemChain 私有記憶',
+        summary: '明確同意、本地記憶形成、本地優先召回、加密同步與節點盲存儲邊界。',
+        evidence: '存儲節點拿到的是加密記錄與盲索引，不是記憶明文。',
+      },
+      {
+        status: 'available',
+        title: '身份與錢包',
+        summary: '自託管身份、生物識別與安全存儲保護、Solana/EVM 錢包、切換、資產組合、發送與支付請求。',
+        evidence: '私鑰所有權保留在客戶端。',
+      },
+      {
+        status: 'available',
+        title: '發布與恢復',
+        summary: '簽名安裝包、分階段更新檢查、回到前台刷新、稍後提醒、平台驗證及桌面/移動端恢復處理。',
+        evidence: `目前發布基線：${CLIENT_BUILD}。`,
+      },
+    ],
+    rustEyebrow: 'Rust 協議基礎設施',
+    rustTitle: '開放節點負責協調，但不能讀取用戶內容。',
+    rustBody: 'Rust 節點早已不只是 VPN endpoint。它整合傳輸、簽名發現、盲中繼、加密託管、私有記憶原語與專門為隱私網絡設計的可驗證協調帳本。',
+    rustItems: [
+      {
+        status: 'available',
+        title: '生產節點生命週期',
+        summary: '交互式安裝、註冊、升級、回滾、健康檢查、容量控制、准入驗證與 systemd 監督。',
+        evidence: '運維流程有明確上限，並保留 active session 安全門控。',
+      },
+      {
+        status: 'available',
+        title: '簽名節點發現',
+        summary: '簽名 descriptor、持久 peer store、bootstrap/gossip、能力協商、端點驗證與可路由探測。',
+        evidence: '新節點可以被自動發現，但不會因此自動成為可信權威。',
+      },
+      {
+        status: 'beta',
+        title: '盲加密訊息中繼',
+        summary: '認證 relay frame、離線託管、冪等、防濫用上限、加密媒體傳輸基礎及 terminal pending store。',
+        evidence: '節點路由不透明 payload，不能理解訊息內容。',
+      },
+      {
+        status: 'hardening',
+        title: '多跳加密路徑',
+        summary: 'Onion-middle 能力、候選篩選、可達性探測、TTL、path proof、terminal delivery 與 middle-forward 計數。',
+        evidence: '已有真節點網絡測試，但尚未成為所有客戶端流量的默認路徑。',
+      },
+      {
+        status: 'beta',
+        title: '節點盲加密存儲',
+        summary: '加密 Memory Chain 記錄、盲索引、owner 授權同步、備份/恢復計劃與有界保留策略。',
+        evidence: '節點保留密文與完整性元資料，永遠不保留記憶明文。',
+      },
+      {
+        status: 'beta',
+        title: '可驗證協調帳本',
+        summary: '簽名 record-commitment block、follower 同步、full-node mirror、外部 witness 證據、回滾保護與 authority handover proof。',
+        evidence: '它只服務協調證據，不宣稱智能合約或全球共識。',
+      },
+      {
+        status: 'hardening',
+        title: 'Custody witness 安全',
+        summary: '獨立簽名 receipt、持久 vault audit、啟動/runtime gate、quorum 到期提醒、恢復生命週期與有界並行收集。',
+        evidence: `最新里程碑 ${RUST_NODE_HEAD}：最多 16 個精確 pin，共用一個 timeout window。`,
+      },
+    ],
+    milestoneEyebrow: '近期證據',
+    milestoneTitle: '最近真正完成了什麼。',
+    milestones: [
+      {
+        date: '2026-08-19',
+        title: 'Witness 收集延遲有界化',
+        detail: 'Rust custody witness 在既有 16-pin 上限內並行請求，同時保持落盤後才計數，以及 adverse evidence fail-closed。',
+      },
+      {
+        date: '2026-08',
+        title: '會議成為真實產品模塊',
+        detail: '客戶端已存在等候區、成員狀態、會議聊天、通話生命週期與螢幕/視窗分享實現。',
+      },
+      {
+        date: '2026-07',
+        title: `客戶端 ${CLIENT_BUILD} 發布`,
+        detail: '目前 Android ARM64、macOS 與 Windows 安裝包已發布，並保留 iOS 正式分發路徑。',
+      },
+      {
+        date: '2026-07',
+        title: '協調帳本走出本地 block',
+        detail: 'Rust 節點增加 mirror 同步、獨立簽名 witness、carrier recovery 與 policy-safe authority handover。',
+      },
+    ],
+    boundaryEyebrow: '目前邊界',
+    boundaryTitle: 'AeroNyx 不誇大什麼。',
+    boundaryBody: '合作方應該評估今天存在的系統，而不是未來白皮書。以下限制是刻意且透明的。',
+    boundaries: [
+      {
+        title: 'Managed relay 仍是默認路徑',
+        detail: '客戶端默認保留穩定的 managed relay。去中心化路由將以清楚、可逆的用戶選擇呈現，而不是偷偷改變行為。',
+      },
+      {
+        title: '目前推薦通話由 LiveKit 承載',
+        detail: '會議授權與交互由 AeroNyx 控制，短期媒體層使用 LiveKit；接口保留未來替換成 Rust 媒體路徑的能力。',
+      },
+      {
+        title: '帳本是專用協議，不是通用公鏈',
+        detail: '它記錄簽名後的聚合協調證據，不公開用戶訊息、社交關係、瀏覽活動、智能合約或代幣執行。',
+      },
+      {
+        title: '節點看不到 payload，但不是所有元資料都不存在',
+        detail: '節點投遞流量仍需要有限的路由與時間元資料。AeroNyx 會最小化、隔離這些資料，但不宣稱已完全解決流量分析。',
+      },
+    ],
+    roadmapEyebrow: '下一里程碑',
+    roadmapTitle: '走向合作方級交付的最短路徑。',
+    roadmapBody: '下一階段先證明端到端閉環與可重複運維，再增加新的可見功能。',
+    roadmap: [
+      {
+        step: '01',
+        title: '完成會議授權閉環',
+        detail: '完成 grant、waiting room、角色與錯誤狀態在移動端/桌面端的驗證，同時保留可替換媒體層。',
+      },
+      {
+        step: '02',
+        title: '部署 custody witness 加固',
+        detail: '把最新 Rust witness 生命週期部署到已審核節點，驗證真實到期/刷新，再逐步開啟全網 strict gate。',
+      },
+      {
+        step: '03',
+        title: '安全展示傳輸選擇',
+        detail: '保持 managed relay 為默認，同時讓進階用戶能理解並可逆地選擇已審核去中心化 relay 路徑。',
+      },
+      {
+        step: '04',
+        title: '證明去中心化訊息連續性',
+        detail: '進行跨區域故障測試，覆蓋發現、離線投遞、多跳、mirror recovery 與節點替換，不依賴單一協調主機。',
+      },
+    ],
+    linksTitle: '核對入口',
+    links: [
+      ['協議官網', 'https://aeronyx.network/'],
+      ['技術文檔', 'https://docs.aeronyx.network/'],
+      ['節點運營 App', 'https://app.aeronyx.network/'],
+      ['開源組織', 'https://github.com/AeroNyxNetwork'],
+    ],
+    footer: 'AeroNyx 合作方開發簡報',
+    footerNote: `源碼核對日期 ${VERIFIED_DATE}。只有完成實現與驗證後，產品狀態才會更新。`,
+  },
+};
+
+function StatusBadge({ status, labels }) {
+  const tone = STATUS_TONE[status] || STATUS_TONE.progress;
+
+  return (
+    <span className={`inline-flex min-h-[28px] items-center gap-2 rounded-pill border px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] ${tone.badge}`}>
+      <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${tone.dot}`} />
+      {labels[status] || status}
+    </span>
+  );
+}
+
+function SectionHeading({ eyebrow, title, body }) {
+  return (
+    <div className="max-w-3xl">
+      <p className="text-xs font-semibold uppercase tracking-eyebrow text-brand-light">{eyebrow}</p>
+      <h2 className="mt-4 max-w-2xl font-display text-display-md font-medium text-white sm:text-display-lg">
+        {title}
+      </h2>
+      {body ? <p className="mt-5 text-base leading-7 text-white/58 sm:text-lg sm:leading-8">{body}</p> : null}
+    </div>
+  );
+}
+
+function CapabilityGrid({ items, labels, reduceMotion }) {
+  return (
+    <div className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 md:grid-cols-2">
+      {items.map((item, index) => (
+        <motion.article
+          key={item.title}
+          className="min-w-0 bg-surface-1 px-5 py-6 sm:px-7 sm:py-8"
+          initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.18 }}
+          transition={{ duration: 0.45, delay: reduceMotion ? 0 : (index % 2) * 0.05, ease: EASE }}
+        >
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span className="font-mono text-[10px] text-white/28">{String(index + 1).padStart(2, '0')}</span>
+            <StatusBadge status={item.status} labels={labels} />
+          </div>
+          <h3 className="mt-7 text-xl font-medium text-white sm:text-2xl">{item.title}</h3>
+          <p className="mt-4 text-sm leading-6 text-white/58 sm:text-[15px] sm:leading-7">{item.summary}</p>
+          <p className="mt-6 border-t border-white/8 pt-4 text-xs leading-5 text-white/38">{item.evidence}</p>
+        </motion.article>
+      ))}
+    </div>
+  );
+}
+
+function PartnerProgressPage() {
+  const router = useRouter();
+  const reduceMotion = useReducedMotion();
+  const language = router.locale === 'zh-Hans' || router.locale === 'zh-Hant' ? 'zh' : 'en';
+  const copy = CONTENT[language];
+  const alternateLocale = language === 'zh' ? 'en' : 'zh-Hans';
+  const alternateLabel = language === 'zh' ? copy.english : copy.chinese;
+
+  return (
+    <>
+      <Head>
+        <title>AeroNyx Partner Build Brief</title>
+        <meta name="description" content="Restricted AeroNyx partner delivery brief." />
+        <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex" />
+        <meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet,noimageindex" />
+        <meta name="referrer" content="no-referrer" />
+      </Head>
+
+      <div className="relative min-h-screen overflow-x-hidden bg-surface-0 text-white">
+        <Suspense fallback={<div className="fixed inset-0 bg-surface-0" />}>
+          <ProtocolBackground />
+        </Suspense>
+        <div className="fixed inset-0 z-[-1] bg-surface-0/72" />
+
+        <header className="sticky top-0 z-50 border-b border-white/8 bg-surface-0/90 backdrop-blur-xl">
+          <Container>
+            <div className="flex min-h-[68px] items-center justify-between gap-4 py-2">
+              <Link
+                href="/"
+                aria-label="AeroNyx"
+                className="inline-flex min-h-[44px] min-w-0 items-center gap-3 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+              >
+                <AeroNyxLogo width={32} height={32} className="shrink-0" />
+                <span className="truncate font-display text-lg font-semibold text-white">AeroNyx</span>
+              </Link>
+              <div className="flex min-w-0 items-center gap-2 sm:gap-4">
+                <span className="hidden text-right text-[10px] uppercase tracking-eyebrow text-white/32 sm:block">
+                  {copy.restricted}
+                </span>
+                <Link
+                  href={router.asPath}
+                  locale={alternateLocale}
+                  className="inline-flex min-h-[44px] items-center rounded border border-white/12 px-3 text-xs font-semibold text-white/64 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                  aria-label={`${copy.language}: ${alternateLabel}`}
+                >
+                  {alternateLabel}
+                </Link>
+              </div>
+            </div>
+          </Container>
+        </header>
+
+        <main>
+          <section className="relative border-b border-white/10 pb-16 pt-16 sm:pb-20 sm:pt-24 lg:pb-24 lg:pt-28">
+            <Container>
+              <div className="max-w-5xl">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="inline-flex min-h-[30px] items-center rounded-pill border border-brand-line bg-brand-faint px-3 text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light">
+                    {copy.restricted}
+                  </span>
+                  <span className="text-xs text-white/34">{copy.verified}</span>
+                </div>
+                <motion.h1
+                  className="mt-7 max-w-4xl font-display text-[2.65rem] font-medium leading-[1.04] text-white sm:text-[4rem] sm:leading-[1.02] lg:text-[4.75rem]"
+                  initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.65, ease: EASE }}
+                >
+                  {copy.heroTitle}
+                </motion.h1>
+                <p className="mt-7 max-w-3xl text-base leading-7 text-white/62 sm:text-xl sm:leading-8">
+                  {copy.heroBody}
+                </p>
+                <div className="mt-10 border-l-2 border-brand-light/60 pl-4 text-sm leading-6 text-white/42">
+                  <p>{copy.restrictedDetail}</p>
+                  <p className="mt-1">{copy.noTraffic}</p>
+                </div>
+              </div>
+
+              <nav aria-label={copy.jumpLabel} className="mt-14 border-t border-white/10 pt-4 sm:mt-20">
+                <div className="grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+                  {copy.jumpItems.map(([href, label], index) => (
+                    <a
+                      key={href}
+                      href={href}
+                      className="group flex min-h-[58px] min-w-0 items-center gap-3 bg-surface-1 px-4 py-3 transition-colors hover:bg-surface-2 focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light"
+                    >
+                      <span className="font-mono text-[10px] text-brand-light/70">0{index + 1}</span>
+                      <span className="min-w-0 text-xs font-semibold uppercase tracking-[0.08em] text-white/48 group-hover:text-white/78">
+                        {label}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </nav>
+            </Container>
+          </section>
+
+          <section className="border-b border-white/10 bg-surface-0/78 py-16 sm:py-20">
+            <Container>
+              <SectionHeading eyebrow={copy.snapshotEyebrow} title={copy.snapshotTitle} body={copy.snapshotBody} />
+              <dl className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:grid-cols-2 xl:grid-cols-4">
+                {copy.snapshot.map((item) => (
+                  <div key={item.label} className="min-w-0 bg-surface-1 px-5 py-6 sm:px-6">
+                    <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/34">{item.label}</dt>
+                    <dd className="mt-4 break-words font-display text-2xl font-medium text-white">{item.value}</dd>
+                    <p className="mt-3 text-xs leading-5 text-white/40">{item.detail}</p>
+                  </div>
+                ))}
+              </dl>
+            </Container>
+          </section>
+
+          <section id="client" className="scroll-mt-24 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+            <Container>
+              <SectionHeading eyebrow={copy.clientEyebrow} title={copy.clientTitle} body={copy.clientBody} />
+              <CapabilityGrid items={copy.clientItems} labels={copy.statusLabels} reduceMotion={reduceMotion} />
+            </Container>
+          </section>
+
+          <section id="rust" className="scroll-mt-24 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
+            <Container>
+              <SectionHeading eyebrow={copy.rustEyebrow} title={copy.rustTitle} body={copy.rustBody} />
+              <CapabilityGrid items={copy.rustItems} labels={copy.statusLabels} reduceMotion={reduceMotion} />
+            </Container>
+          </section>
+
+          <section className="border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+            <Container>
+              <SectionHeading eyebrow={copy.milestoneEyebrow} title={copy.milestoneTitle} />
+              <ol className="mt-10 border-t border-white/10">
+                {copy.milestones.map((item, index) => (
+                  <li key={`${item.date}-${item.title}`} className="grid min-w-0 gap-4 border-b border-white/10 py-7 sm:grid-cols-[120px_1fr] sm:gap-8 sm:py-9">
+                    <div className="flex items-center gap-3 sm:block">
+                      <span className="font-mono text-[10px] text-brand-light/70">{String(index + 1).padStart(2, '0')}</span>
+                      <time className="font-mono text-xs text-white/34 sm:mt-3 sm:block">{item.date}</time>
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-lg font-medium text-white sm:text-xl">{item.title}</h3>
+                      <p className="mt-3 max-w-3xl text-sm leading-6 text-white/52 sm:text-[15px] sm:leading-7">{item.detail}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </Container>
+          </section>
+
+          <section id="boundaries" className="scroll-mt-24 border-b border-white/10 bg-surface-0/82 py-16 sm:py-24">
+            <Container>
+              <SectionHeading eyebrow={copy.boundaryEyebrow} title={copy.boundaryTitle} body={copy.boundaryBody} />
+              <div className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 lg:grid-cols-2">
+                {copy.boundaries.map((item, index) => (
+                  <article key={item.title} className="min-w-0 bg-surface-1 px-5 py-7 sm:px-7 sm:py-9">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-warn/30 font-mono text-[10px] text-warn">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <h3 className="min-w-0 text-lg font-medium text-white">{item.title}</h3>
+                    </div>
+                    <p className="mt-5 text-sm leading-6 text-white/54 sm:text-[15px] sm:leading-7">{item.detail}</p>
+                  </article>
+                ))}
+              </div>
+            </Container>
+          </section>
+
+          <section id="roadmap" className="scroll-mt-24 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+            <Container>
+              <SectionHeading eyebrow={copy.roadmapEyebrow} title={copy.roadmapTitle} body={copy.roadmapBody} />
+              <div className="relative mt-12 grid gap-8 lg:grid-cols-4 lg:gap-0">
+                <div aria-hidden="true" className="absolute left-[12.5%] right-[12.5%] top-4 hidden h-px bg-white/12 lg:block" />
+                {copy.roadmap.map((item) => (
+                  <article key={item.step} className="relative min-w-0 lg:px-5 first:lg:pl-0 last:lg:pr-0">
+                    <span className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full border border-brand-line bg-surface-1 font-mono text-[10px] text-brand-light">
+                      {item.step}
+                    </span>
+                    <h3 className="mt-6 text-lg font-medium text-white">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-white/50">{item.detail}</p>
+                  </article>
+                ))}
+              </div>
+            </Container>
+          </section>
+
+          <section className="bg-surface-0/86 py-16 sm:py-20">
+            <Container>
+              <div className="flex flex-col gap-8 border-y border-white/10 py-9 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <h2 className="font-display text-2xl font-medium text-white">{copy.linksTitle}</h2>
+                  <p className="mt-3 max-w-xl text-sm leading-6 text-white/42">{copy.footerNote}</p>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {copy.links.map(([label, href]) => (
+                    <a
+                      key={href}
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex min-h-[44px] items-center justify-between gap-4 rounded border border-white/10 px-4 text-sm text-white/58 transition-colors hover:border-white/22 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                    >
+                      {label}
+                      <span aria-hidden="true" className="text-white/28">↗</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </Container>
+          </section>
+        </main>
+
+        <footer className="border-t border-white/8 bg-surface-0 py-8">
+          <Container>
+            <div className="flex flex-col gap-3 text-xs text-white/30 sm:flex-row sm:items-center sm:justify-between">
+              <span>{copy.footer}</span>
+              <span>{copy.verified}</span>
+            </div>
+          </Container>
+        </footer>
+      </div>
+    </>
+  );
+}
+
+export async function getServerSideProps(context) {
+  context.res.setHeader('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
+  context.res.setHeader('Pragma', 'no-cache');
+  context.res.setHeader('Expires', '0');
+  context.res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
+  context.res.setHeader('Referrer-Policy', 'no-referrer');
+
+  const expectedKey = String(process.env.AERONYX_PARTNER_PROGRESS_ACCESS_KEY || '').trim();
+  const providedKey = String(context.params?.accessKey || '').trim();
+  const keysAreWellFormed = ACCESS_KEY_PATTERN.test(expectedKey) && ACCESS_KEY_PATTERN.test(providedKey);
+
+  let authorized = false;
+  if (keysAreWellFormed) {
+    const expectedBuffer = Buffer.from(expectedKey, 'utf8');
+    const providedBuffer = Buffer.from(providedKey, 'utf8');
+    authorized = expectedBuffer.length === providedBuffer.length
+      && timingSafeEqual(expectedBuffer, providedBuffer);
+  }
+
+  if (!authorized) {
+    return { notFound: true };
+  }
+
+  return { props: {} };
+}
+
+export default PartnerProgressPage;
