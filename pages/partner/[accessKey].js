@@ -21,6 +21,8 @@
  *     index, and a public-safe machine-readable JSON snapshot.
  *   - Provides executive and technical review depths, active-section context,
  *     explicit evidence levels, next validation gates, and a partner pilot path.
+ *   - Adds capability search, evidence-source provenance, and a browser-local
+ *     reviewer workspace with an explicit public-safe handoff export.
  *
  * Dependencies:
  *   - Node crypto.timingSafeEqual for server-side key comparison.
@@ -34,6 +36,8 @@
  *      headers before any page content is rendered.
  *   3. Reviewers choose executive or technical depth, then scan, filter,
  *      export, print, or validate evidence before a partner pilot decision.
+ *   4. Optional checklist progress and notes stay in the reviewer's browser;
+ *      nothing is transmitted unless the reviewer exports a handoff file.
  *
  * Important Note for Next Developer:
  *   - [PARTNER-BUILD-BRIEF 2026-08-19 by Codex] Never hard-code the access key
@@ -49,8 +53,10 @@
  *     URL, route key, private endpoints, customer traffic, or node identities.
  *   - Executive depth only changes presentation. Technical evidence must stay
  *     in the DOM, JSON export, and print output so no review fact is discarded.
+ *   - Reviewer workspace storage must never use the route key as an identifier
+ *     or send notes to analytics, logs, APIs, or AeroNyx infrastructure.
  *
- * Last Modified: v1.3 - Review depth, evidence gates, and partner pilot path.
+ * Last Modified: v1.4 - Evidence search and browser-local reviewer workspace.
  * ============================================
  */
 
@@ -76,7 +82,16 @@ const ProtocolBackground = dynamic(
 const CLIENT_BUILD = '1.0.18+14';
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '1.3';
+const REVIEW_REVISION = '1.4';
+const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
+const REVIEW_NOTES_MAX_LENGTH = 2000;
+const EMPTY_REVIEW_CHECKS = Object.freeze({
+  scope: false,
+  privacy: false,
+  evidence: false,
+  operations: false,
+  decision: false,
+});
 const ACCESS_KEY_PATTERN = /^[a-f0-9]{64}$/;
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -131,6 +146,8 @@ const CONTENT = {
       executive: 'Decision, pilot, dependencies, boundaries, and roadmap',
       technical: 'Full client and Rust capability evidence',
     },
+    capabilitySearchLabel: 'Search capability evidence',
+    capabilitySearchPlaceholder: 'Search relay, memory, recovery, witness…',
     statusOverview: {
       available: 'Available capabilities',
       beta: 'Beta capabilities',
@@ -141,6 +158,7 @@ const CONTENT = {
     jumpItems: [
       ['#overview', 'Overview', false],
       ['#pilot', 'Pilot path', false],
+      ['#workspace', 'Review workspace', false],
       ['#client', 'Client product', true],
       ['#rust', 'Rust infrastructure', true],
       ['#dependencies', 'Dependencies', false],
@@ -180,7 +198,9 @@ const CONTENT = {
     capabilityLabel: 'capabilities',
     evidenceLabel: 'Verification note',
     evidenceLevelLabel: 'Evidence level',
+    evidenceSourcesLabel: 'Evidence sources',
     nextGateLabel: 'Next validation gate',
+    noCapabilitiesFound: 'No capability evidence matches this search and status filter.',
     decisionEyebrow: 'Decision view',
     decisionTitle: 'What a partner can evaluate now.',
     decisionBody: 'A compact view of the present pilot boundary. This separates usable paths from controlled beta work and capabilities that are intentionally not yet defaults.',
@@ -234,6 +254,28 @@ const CONTENT = {
         output: 'A documented go, controlled beta, or no-go decision.',
       },
     ],
+    workspaceEyebrow: 'Private review workspace',
+    workspaceTitle: 'Keep diligence progress without sending us your notes.',
+    workspaceBody: 'Checklist state and notes are stored only in this browser. AeroNyx does not receive them. Export a handoff file only when you choose to share the review.',
+    workspaceProgressLabel: 'Review progress',
+    workspaceCompleteLabel: 'complete',
+    workspaceChecklistLabel: 'Diligence checklist',
+    workspaceNotesLabel: 'Reviewer notes',
+    workspaceNotesPlaceholder: 'Capture open questions, evidence requests, owners, or rollout conditions…',
+    workspaceNotesHelp: `Stored locally · maximum ${REVIEW_NOTES_MAX_LENGTH} characters`,
+    workspaceExport: 'Export review handoff',
+    workspaceExported: 'Handoff downloaded',
+    workspaceExportFailed: 'Handoff unavailable',
+    workspaceClear: 'Clear local workspace',
+    workspaceConfirmClear: 'Confirm clear',
+    workspaceLocalOnly: 'Local-only workspace · no server synchronization',
+    reviewChecklist: [
+      { id: 'scope', title: 'Scope understood', detail: 'Product path, platforms, regions, cohort, and success criteria are explicit.' },
+      { id: 'privacy', title: 'Privacy boundary reviewed', detail: 'Encryption ownership, metadata limits, current dependencies, and exclusions are understood.' },
+      { id: 'evidence', title: 'Evidence and gates reviewed', detail: 'Current status, evidence source, verification note, and next validation gate have been checked.' },
+      { id: 'operations', title: 'Operational path reviewed', detail: 'Monitoring, support escalation, failure handling, recovery, and rollback ownership are defined.' },
+      { id: 'decision', title: 'Decision recorded', detail: 'The outcome is documented as go, controlled beta, or no-go with the next review trigger.' },
+    ],
     clientEyebrow: 'Client product',
     clientTitle: 'One app for private connection, communication, and memory.',
     clientBody: 'The current app is not a concept shell. It contains working privacy-network, encrypted communication, meeting, memory, identity, wallet, and release-management surfaces across mobile and desktop.',
@@ -244,6 +286,7 @@ const CONTENT = {
         summary: 'Cross-platform connect flow, region and node selection, reconnect policy, quota gates, session statistics, and native VPN lifecycle integration.',
         evidence: 'Shipping on iOS, Android ARM64, macOS, and Windows.',
         evidenceLevel: 'Released product path',
+        evidenceSources: ['Release artifact', 'Client source'],
         nextGate: 'Partner acceptance across agreed platforms, regions, reconnect, and failure cases.',
       },
       {
@@ -252,6 +295,7 @@ const CONTENT = {
         summary: 'One-to-one and group messaging with offline delivery, replies, editing, revoke, reactions, receipts, typing controls, media, files, and voice notes.',
         evidence: 'Relay routes ciphertext; message content remains client-encrypted.',
         evidenceLevel: 'Implemented product path',
+        evidenceSources: ['Client source', 'Protocol contract'],
         nextGate: 'Partner run for offline delivery, media, receipts, duplicate handling, and multi-device recovery.',
       },
       {
@@ -260,6 +304,7 @@ const CONTENT = {
         summary: 'Voice/video calling, native incoming-call lifecycle, meeting green room, roster, in-meeting chat, and screen or window presentation.',
         evidence: 'LiveKit is the recommended media path today; P2P remains an optional route.',
         evidenceLevel: 'Controlled beta path',
+        evidenceSources: ['Client source', 'Integration path'],
         nextGate: 'End-to-end grant, waiting-room, role, reconnect, and media-failure acceptance.',
       },
       {
@@ -268,6 +313,7 @@ const CONTENT = {
         summary: 'Opt-in consent, local memory formation, local-first recall, encrypted synchronization, and node-blind storage boundaries.',
         evidence: 'Storage nodes receive encrypted records and blind indexes, not memory plaintext.',
         evidenceLevel: 'Controlled beta path',
+        evidenceSources: ['Client source', 'Node contract'],
         nextGate: 'Cross-device restore, retention, deletion, and external-model disclosure review.',
       },
       {
@@ -276,6 +322,7 @@ const CONTENT = {
         summary: 'Self-custody identity, biometric/secure-storage protections, Solana and EVM wallet surfaces, switching, portfolio, send, and payment request flows.',
         evidence: 'Private-key ownership stays on the client side.',
         evidenceLevel: 'Released product path',
+        evidenceSources: ['Client source', 'Platform security'],
         nextGate: 'Recovery, secure-storage, and transaction-failure acceptance on selected platforms.',
       },
       {
@@ -284,6 +331,7 @@ const CONTENT = {
         summary: 'Signed platform installers, staged update checks, foreground refresh, defer windows, platform-specific verification, and desktop/mobile recovery handling.',
         evidence: `Current published baseline: ${CLIENT_BUILD}.`,
         evidenceLevel: 'Published delivery path',
+        evidenceSources: ['Release artifact', 'Update contract'],
         nextGate: 'Installer, update, defer, and rollback verification on partner-managed test devices.',
       },
     ],
@@ -297,6 +345,7 @@ const CONTENT = {
         summary: 'Interactive installation, registration, upgrade, rollback, health checks, capacity controls, admission validation, and systemd supervision.',
         evidence: 'Operational paths are bounded and preserve active-session safety gates.',
         evidenceLevel: 'Production operator path',
+        evidenceSources: ['Rust source', 'Operator workflow'],
         nextGate: 'Repeat install, upgrade, rollback, and health acceptance on an independently operated node.',
       },
       {
@@ -305,6 +354,7 @@ const CONTENT = {
         summary: 'Signed descriptors, persistent peer store, bootstrap and gossip exchange, capability negotiation, endpoint validation, and routeability probes.',
         evidence: 'New reviewed nodes can become discoverable without becoming trusted authority.',
         evidenceLevel: 'Implemented and node-tested',
+        evidenceSources: ['Rust source', 'Node tests'],
         nextGate: 'Multi-operator discovery, restart recovery, stale-peer, and route-diversity testing.',
       },
       {
@@ -313,6 +363,7 @@ const CONTENT = {
         summary: 'Authenticated relay frames, offline custody, idempotency, bounded abuse controls, encrypted media transport foundations, and terminal pending storage.',
         evidence: 'Nodes route opaque payloads and cannot interpret message content.',
         evidenceLevel: 'Controlled beta path',
+        evidenceSources: ['Rust source', 'Protocol tests'],
         nextGate: 'Client-to-terminal encrypted delivery under offline, duplicate, abuse, and failure cases.',
       },
       {
@@ -321,6 +372,7 @@ const CONTENT = {
         summary: 'Onion-middle capability, candidate filtering, reachability probes, TTL boundaries, path proof, terminal delivery, and middle-forward counters.',
         evidence: 'Real node-network tests exist; this is not yet the default route for all client traffic.',
         evidenceLevel: 'Real-network hardening',
+        evidenceSources: ['Rust source', 'Live node test'],
         nextGate: 'Multi-region route selection, hop failure, path-proof, metadata, and soak evidence.',
       },
       {
@@ -329,6 +381,7 @@ const CONTENT = {
         summary: 'Encrypted Memory Chain records, blind indexes, owner-authorized synchronization, backup/restore planning, and bounded retention maintenance.',
         evidence: 'Nodes retain ciphertext and integrity metadata, never memory plaintext.',
         evidenceLevel: 'Controlled beta path',
+        evidenceSources: ['Rust source', 'Protocol tests'],
         nextGate: 'Owner-authorized sync, restore, deletion, retention, and quota conformance.',
       },
       {
@@ -337,6 +390,7 @@ const CONTENT = {
         summary: 'Signed record-commitment blocks, follower synchronization, full-node mirror mode, external witness evidence, rollback protection, and authority handover proofs.',
         evidence: 'Purpose-built coordination evidence; no smart contracts or global-consensus claim.',
         evidenceLevel: 'Implemented and node-tested',
+        evidenceSources: ['Rust source', 'Multi-node tests'],
         nextGate: 'Third-party mirror recovery and witness verification while the producer is unavailable.',
       },
       {
@@ -345,6 +399,7 @@ const CONTENT = {
         summary: 'Independent signed receipts, durable vault audit, startup/runtime gates, quorum expiry warning, recovery lifecycle, and bounded concurrent witness collection.',
         evidence: `Latest reviewed milestone ${RUST_NODE_HEAD}: up to 16 exact pins in one timeout window.`,
         evidenceLevel: 'Reviewed Rust milestone',
+        evidenceSources: ['Rust source', 'Adverse-path tests'],
         nextGate: 'Deploy to independent nodes and exercise expiry, refresh, restart, and strict-gate rollback.',
       },
     ],
@@ -495,6 +550,8 @@ const CONTENT = {
       executive: '決策、Pilot、依賴、邊界與路線圖',
       technical: '完整客戶端與 Rust 能力證據',
     },
+    capabilitySearchLabel: '搜尋能力證據',
+    capabilitySearchPlaceholder: '搜尋 Relay、記憶、恢復、witness…',
     statusOverview: {
       available: '已可用能力',
       beta: 'Beta 能力',
@@ -505,6 +562,7 @@ const CONTENT = {
     jumpItems: [
       ['#overview', '總覽', false],
       ['#pilot', 'Pilot 路徑', false],
+      ['#workspace', '審閱工作區', false],
       ['#client', '客戶端產品', true],
       ['#rust', 'Rust 基礎設施', true],
       ['#dependencies', '依賴邊界', false],
@@ -544,7 +602,9 @@ const CONTENT = {
     capabilityLabel: '項能力',
     evidenceLabel: '驗證說明',
     evidenceLevelLabel: '證據層級',
+    evidenceSourcesLabel: '證據來源',
     nextGateLabel: '下一驗收門檻',
+    noCapabilitiesFound: '沒有能力證據符合目前的搜尋與狀態篩選。',
     decisionEyebrow: '決策視圖',
     decisionTitle: '合作方現在可以評估什麼。',
     decisionBody: '用最短時間看清目前 pilot 邊界，區分已可使用、受控 Beta，以及刻意尚未設為默認的能力。',
@@ -598,6 +658,28 @@ const CONTENT = {
         output: '形成 go、受控 Beta 或 no-go 的書面決策。',
       },
     ],
+    workspaceEyebrow: '私密審閱工作區',
+    workspaceTitle: '保存盡調進度，不必把你的筆記傳給我們。',
+    workspaceBody: '核對進度與筆記只保存在這個瀏覽器，AeroNyx 不會收到。只有審閱者主動匯出交接檔案時，資料才會離開設備。',
+    workspaceProgressLabel: '審閱進度',
+    workspaceCompleteLabel: '已完成',
+    workspaceChecklistLabel: '盡調核對清單',
+    workspaceNotesLabel: '審閱者筆記',
+    workspaceNotesPlaceholder: '記錄未決問題、證據要求、負責人或發布條件…',
+    workspaceNotesHelp: `僅本機保存 · 最多 ${REVIEW_NOTES_MAX_LENGTH} 個字元`,
+    workspaceExport: '匯出審閱交接檔',
+    workspaceExported: '交接檔已下載',
+    workspaceExportFailed: '無法匯出交接檔',
+    workspaceClear: '清除本機工作區',
+    workspaceConfirmClear: '確認清除',
+    workspaceLocalOnly: '僅本機工作區 · 不與伺服器同步',
+    reviewChecklist: [
+      { id: 'scope', title: '已理解評估範圍', detail: '產品路徑、平台、地區、用戶群與成功條件都已明確。' },
+      { id: 'privacy', title: '已審閱隱私邊界', detail: '已理解加密所有權、元資料限制、當前依賴與排除項。' },
+      { id: 'evidence', title: '已審閱證據與門檻', detail: '已核對當前狀態、證據來源、驗證說明與下一驗收門檻。' },
+      { id: 'operations', title: '已審閱運營路徑', detail: '監控、支援升級、故障處理、恢復與回滾責任已明確。' },
+      { id: 'decision', title: '已記錄決策', detail: '已形成 go、受控 Beta 或 no-go 結論，並記錄下一次審閱觸發條件。' },
+    ],
     clientEyebrow: '客戶端產品',
     clientTitle: '一個 App，完成私密連接、溝通與記憶。',
     clientBody: '目前客戶端不是概念介面。它已包含移動端與桌面端的隱私網絡、加密通信、會議、記憶、身份、錢包與更新管理。',
@@ -608,6 +690,7 @@ const CONTENT = {
         summary: '跨平台連接、區域與節點選擇、重連策略、配額門控、會話統計及原生 VPN 生命週期整合。',
         evidence: '已發布於 iOS、Android ARM64、macOS 與 Windows。',
         evidenceLevel: '已發布產品路徑',
+        evidenceSources: ['發布成品', '客戶端源碼'],
         nextGate: '在約定平台、地區、重連與故障情境完成合作方驗收。',
       },
       {
@@ -616,6 +699,7 @@ const CONTENT = {
         summary: '單聊與群聊、離線投遞、引用、編輯、撤回、表情回應、回執、輸入狀態隱私控制、媒體、文件與語音訊息。',
         evidence: 'Relay 只路由密文，訊息內容保持客戶端加密。',
         evidenceLevel: '已實現產品路徑',
+        evidenceSources: ['客戶端源碼', '協議契約'],
         nextGate: '完成離線投遞、媒體、回執、重複處理與多設備恢復驗收。',
       },
       {
@@ -624,6 +708,7 @@ const CONTENT = {
         summary: '語音與視訊通話、原生來電生命週期、會議等候區、成員狀態、會議聊天，以及螢幕或視窗分享。',
         evidence: '目前建議使用 LiveKit 媒體路徑；P2P 仍是可選路由。',
         evidenceLevel: '受控 Beta 路徑',
+        evidenceSources: ['客戶端源碼', '整合路徑'],
         nextGate: '完成 grant、等候區、角色、重連與媒體故障的端到端驗收。',
       },
       {
@@ -632,6 +717,7 @@ const CONTENT = {
         summary: '明確同意、本地記憶形成、本地優先召回、加密同步與節點盲存儲邊界。',
         evidence: '存儲節點拿到的是加密記錄與盲索引，不是記憶明文。',
         evidenceLevel: '受控 Beta 路徑',
+        evidenceSources: ['客戶端源碼', '節點契約'],
         nextGate: '完成跨設備恢復、保留、刪除與外部模型披露審閱。',
       },
       {
@@ -640,6 +726,7 @@ const CONTENT = {
         summary: '自託管身份、生物識別與安全存儲保護、Solana/EVM 錢包、切換、資產組合、發送與支付請求。',
         evidence: '私鑰所有權保留在客戶端。',
         evidenceLevel: '已發布產品路徑',
+        evidenceSources: ['客戶端源碼', '平台安全'],
         nextGate: '在選定平台完成恢復、安全存儲與交易失敗驗收。',
       },
       {
@@ -648,6 +735,7 @@ const CONTENT = {
         summary: '簽名安裝包、分階段更新檢查、回到前台刷新、稍後提醒、平台驗證及桌面/移動端恢復處理。',
         evidence: `目前發布基線：${CLIENT_BUILD}。`,
         evidenceLevel: '已發布交付路徑',
+        evidenceSources: ['發布成品', '更新契約'],
         nextGate: '在合作方管理的測試設備驗證安裝、更新、延後與回滾。',
       },
     ],
@@ -661,6 +749,7 @@ const CONTENT = {
         summary: '交互式安裝、註冊、升級、回滾、健康檢查、容量控制、准入驗證與 systemd 監督。',
         evidence: '運維流程有明確上限，並保留 active session 安全門控。',
         evidenceLevel: '正式節點運維路徑',
+        evidenceSources: ['Rust 源碼', '運營流程'],
         nextGate: '在獨立運營節點重複驗證安裝、升級、回滾與健康狀態。',
       },
       {
@@ -669,6 +758,7 @@ const CONTENT = {
         summary: '簽名 descriptor、持久 peer store、bootstrap/gossip、能力協商、端點驗證與可路由探測。',
         evidence: '新節點可以被自動發現，但不會因此自動成為可信權威。',
         evidenceLevel: '已實現並經節點測試',
+        evidenceSources: ['Rust 源碼', '節點測試'],
         nextGate: '完成多運營方發現、重啟恢復、過期 peer 與路由多樣性測試。',
       },
       {
@@ -677,6 +767,7 @@ const CONTENT = {
         summary: '認證 relay frame、離線託管、冪等、防濫用上限、加密媒體傳輸基礎及 terminal pending store。',
         evidence: '節點路由不透明 payload，不能理解訊息內容。',
         evidenceLevel: '受控 Beta 路徑',
+        evidenceSources: ['Rust 源碼', '協議測試'],
         nextGate: '驗證客戶端到終端在離線、重複、濫用與故障情境下的密文投遞。',
       },
       {
@@ -685,6 +776,7 @@ const CONTENT = {
         summary: 'Onion-middle 能力、候選篩選、可達性探測、TTL、path proof、terminal delivery 與 middle-forward 計數。',
         evidence: '已有真節點網絡測試，但尚未成為所有客戶端流量的默認路徑。',
         evidenceLevel: '真實網絡加固中',
+        evidenceSources: ['Rust 源碼', '線上節點測試'],
         nextGate: '取得多地區選路、hop 故障、path proof、元資料與 soak 測試證據。',
       },
       {
@@ -693,6 +785,7 @@ const CONTENT = {
         summary: '加密 Memory Chain 記錄、盲索引、owner 授權同步、備份/恢復計劃與有界保留策略。',
         evidence: '節點保留密文與完整性元資料，永遠不保留記憶明文。',
         evidenceLevel: '受控 Beta 路徑',
+        evidenceSources: ['Rust 源碼', '協議測試'],
         nextGate: '完成 owner 授權同步、恢復、刪除、保留與配額一致性驗收。',
       },
       {
@@ -701,6 +794,7 @@ const CONTENT = {
         summary: '簽名 record-commitment block、follower 同步、full-node mirror、外部 witness 證據、回滾保護與 authority handover proof。',
         evidence: '它只服務協調證據，不宣稱智能合約或全球共識。',
         evidenceLevel: '已實現並經節點測試',
+        evidenceSources: ['Rust 源碼', '多節點測試'],
         nextGate: '在 producer 離線時完成第三方 mirror 恢復與 witness 驗證。',
       },
       {
@@ -709,6 +803,7 @@ const CONTENT = {
         summary: '獨立簽名 receipt、持久 vault audit、啟動/runtime gate、quorum 到期提醒、恢復生命週期與有界並行收集。',
         evidence: `最新里程碑 ${RUST_NODE_HEAD}：最多 16 個精確 pin，共用一個 timeout window。`,
         evidenceLevel: '已審核 Rust 里程碑',
+        evidenceSources: ['Rust 源碼', '逆向情境測試'],
         nextGate: '部署到獨立節點並驗證到期、刷新、重啟與 strict gate 回滾。',
       },
     ],
@@ -903,43 +998,59 @@ function StatusDefinitions({ copy }) {
 
 // [PARTNER-REVIEW-DEPTH 2026-08-19 by Codex] Review depth is a presentation
 // choice only. Hidden technical sections remain available to print and export.
-function ReviewDepthControl({ copy, mode, onChange }) {
+function ReviewDepthControl({ copy, mode, onChange, query, onQueryChange }) {
   return (
-    <div className="partner-no-print border-t border-white/10 pt-6 sm:flex sm:items-center sm:justify-between sm:gap-8">
-      <div className="min-w-0">
-        <p className="text-sm font-medium text-white/72">{copy.reviewDepthTitle}</p>
-        <p id="partner-review-depth-description" className="mt-2 max-w-2xl text-xs leading-5 text-white/40">
-          {copy.reviewDepthBody}
-        </p>
-      </div>
-      <div className="mt-4 shrink-0 sm:mt-0">
-        <div
-          className="grid grid-cols-2 gap-px overflow-hidden rounded border border-white/10 bg-white/10"
-          role="group"
-          aria-label={copy.reviewDepthTitle}
-          aria-describedby="partner-review-depth-description"
-        >
-          {Object.entries(copy.reviewDepthLabels).map(([key, label]) => {
-            const active = mode === key;
-            return (
-              <button
-                key={key}
-                type="button"
-                aria-pressed={active}
-                onClick={() => onChange(key)}
-                className={`min-h-[44px] min-w-[118px] bg-surface-1 px-4 text-xs font-semibold transition-colors focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light ${
-                  active ? 'bg-brand-faint text-brand-light' : 'text-white/46 hover:bg-surface-2 hover:text-white/72'
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
+    <div className="partner-no-print border-t border-white/10 pt-6">
+      <div className="sm:flex sm:items-center sm:justify-between sm:gap-8">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-white/72">{copy.reviewDepthTitle}</p>
+          <p id="partner-review-depth-description" className="mt-2 max-w-2xl text-xs leading-5 text-white/40">
+            {copy.reviewDepthBody}
+          </p>
         </div>
-        <p className="mt-2 max-w-[280px] text-left text-[10px] leading-4 text-white/32 sm:text-right">
-          {copy.reviewDepthDescriptions[mode]}
-        </p>
+        <div className="mt-4 shrink-0 sm:mt-0">
+          <div
+            className="grid grid-cols-2 gap-px overflow-hidden rounded border border-white/10 bg-white/10"
+            role="group"
+            aria-label={copy.reviewDepthTitle}
+            aria-describedby="partner-review-depth-description"
+          >
+            {Object.entries(copy.reviewDepthLabels).map(([key, label]) => {
+              const active = mode === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => onChange(key)}
+                  className={`min-h-[44px] min-w-[118px] bg-surface-1 px-4 text-xs font-semibold transition-colors focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light ${
+                    active ? 'bg-brand-faint text-brand-light' : 'text-white/46 hover:bg-surface-2 hover:text-white/72'
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-2 max-w-[280px] text-left text-[10px] leading-4 text-white/32 sm:text-right">
+            {copy.reviewDepthDescriptions[mode]}
+          </p>
+        </div>
       </div>
+      {mode === 'technical' ? (
+        <label className="mt-5 block max-w-xl" htmlFor="partner-capability-search">
+          <span className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/34">{copy.capabilitySearchLabel}</span>
+          <input
+            id="partner-capability-search"
+            type="search"
+            value={query}
+            onChange={(event) => onQueryChange(event.target.value)}
+            placeholder={copy.capabilitySearchPlaceholder}
+            autoComplete="off"
+            className="mt-2 min-h-[44px] w-full rounded border border-white/12 bg-surface-1 px-4 text-sm text-white outline-none placeholder:text-white/26 focus:border-brand-line focus:ring-2 focus:ring-brand/20"
+          />
+        </label>
+      ) : null}
     </div>
   );
 }
@@ -993,6 +1104,121 @@ function PilotReviewPath({ copy }) {
   );
 }
 
+// [PARTNER-LOCAL-WORKSPACE 2026-08-19 by Codex] This workspace is deliberately
+// browser-local. It has no API call, analytics hook, route-key storage, or sync.
+function ReviewerWorkspace({
+  copy,
+  checks,
+  notes,
+  onToggle,
+  onNotesChange,
+  onExport,
+  exportStatus,
+  onClear,
+  clearArmed,
+}) {
+  const completed = copy.reviewChecklist.filter((item) => checks[item.id]).length;
+  const total = copy.reviewChecklist.length;
+  const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+  return (
+    <div className="mt-10 border-y border-white/10">
+      <div className="grid gap-6 border-b border-white/10 py-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <p className="text-sm font-medium text-white/72">{copy.workspaceProgressLabel}</p>
+            <p className="font-mono text-xs text-brand-light" aria-live="polite">
+              {completed} / {total} · {progress}% {copy.workspaceCompleteLabel}
+            </p>
+          </div>
+          <div
+            className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/8"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow={progress}
+            aria-label={copy.workspaceProgressLabel}
+          >
+            <div className="h-full rounded-full bg-brand-light transition-[width] duration-300" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+        <p className="text-xs leading-5 text-white/34">{copy.workspaceLocalOnly}</p>
+      </div>
+
+      <div className="grid gap-10 py-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(300px,0.9fr)] lg:gap-14">
+        <fieldset className="min-w-0">
+          <legend className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/34">
+            {copy.workspaceChecklistLabel}
+          </legend>
+          <div className="mt-4 border-t border-white/10">
+            {copy.reviewChecklist.map((item) => (
+              <label key={item.id} className="flex cursor-pointer gap-4 border-b border-white/10 py-5">
+                <input
+                  type="checkbox"
+                  checked={Boolean(checks[item.id])}
+                  onChange={() => onToggle(item.id)}
+                  className="mt-0.5 h-5 w-5 shrink-0 accent-[#8b7cff]"
+                />
+                <span className="min-w-0">
+                  <span className="block text-sm font-medium text-white/76">{item.title}</span>
+                  <span className="mt-2 block text-xs leading-5 text-white/40">{item.detail}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div className="min-w-0">
+          <label htmlFor="partner-reviewer-notes" className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/34">
+            {copy.workspaceNotesLabel}
+          </label>
+          <textarea
+            id="partner-reviewer-notes"
+            value={notes}
+            maxLength={REVIEW_NOTES_MAX_LENGTH}
+            onChange={(event) => onNotesChange(event.target.value)}
+            placeholder={copy.workspaceNotesPlaceholder}
+            rows={9}
+            className="partner-no-print mt-4 w-full resize-y rounded border border-white/12 bg-surface-1 px-4 py-3 text-sm leading-6 text-white outline-none placeholder:text-white/24 focus:border-brand-line focus:ring-2 focus:ring-brand/20"
+          />
+          <p className="mt-4 hidden whitespace-pre-wrap text-sm leading-6 text-white/62 print:block">{notes || '—'}</p>
+          <div className="partner-no-print mt-2 flex items-center justify-between gap-4 text-[10px] leading-4 text-white/30">
+            <span>{copy.workspaceNotesHelp}</span>
+            <span className="shrink-0 font-mono">{notes.length} / {REVIEW_NOTES_MAX_LENGTH}</span>
+          </div>
+          <div className="partner-no-print mt-6 grid gap-2 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={onExport}
+              className="inline-flex min-h-[44px] items-center justify-center rounded border border-brand-line bg-brand-faint px-4 text-xs font-semibold text-brand-light transition-colors hover:bg-brand/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+            >
+              {exportStatus === 'exported'
+                ? copy.workspaceExported
+                : exportStatus === 'failed'
+                  ? copy.workspaceExportFailed
+                  : copy.workspaceExport}
+            </button>
+            <button
+              type="button"
+              onClick={onClear}
+              className={`inline-flex min-h-[44px] items-center justify-center rounded border px-4 text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light ${
+                clearArmed
+                  ? 'border-warn/35 bg-warn/5 text-warn'
+                  : 'border-white/12 text-white/48 hover:border-white/24 hover:text-white/72'
+              }`}
+            >
+              {clearArmed ? copy.workspaceConfirmClear : copy.workspaceClear}
+            </button>
+          </div>
+          <p className="sr-only" aria-live="polite">
+            {exportStatus === 'exported' ? copy.workspaceExported : exportStatus === 'failed' ? copy.workspaceExportFailed : ''}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DependencyMatrix({ copy }) {
   const labels = copy.dependencyLabels;
 
@@ -1036,7 +1262,7 @@ function DependencyMatrix({ copy }) {
 // the current URL and all access, node, customer, endpoint, and payload data.
 function buildReviewSnapshot(copy, language) {
   return {
-    schema: 'aeronyx.partner.review.v2',
+    schema: 'aeronyx.partner.review.v3',
     generated_at: new Date().toISOString(),
     verified_date: VERIFIED_DATE,
     review_revision: REVIEW_REVISION,
@@ -1057,12 +1283,65 @@ function buildReviewSnapshot(copy, language) {
   };
 }
 
-function CapabilityReviewList({ items, copy, reduceMotion }) {
+function buildReviewHandoff(copy, language, checks, notes) {
+  const checklist = copy.reviewChecklist.map((item) => ({
+    id: item.id,
+    title: item.title,
+    checked: Boolean(checks[item.id]),
+  }));
+  const completed = checklist.filter((item) => item.checked).length;
+
+  return {
+    schema: 'aeronyx.partner.review.handoff.v1',
+    generated_at: new Date().toISOString(),
+    verified_date: VERIFIED_DATE,
+    review_revision: REVIEW_REVISION,
+    language,
+    client_build: CLIENT_BUILD,
+    rust_node_head: RUST_NODE_HEAD,
+    review_progress: {
+      completed,
+      total: checklist.length,
+    },
+    checklist,
+    reviewer_notes: notes,
+    privacy_boundary: 'Reviewer-authored local handoff. No access URL, route key, customer traffic, node identity, private endpoint, encryption key, or payload data.',
+  };
+}
+
+function downloadJsonFile(payload, filename) {
+  const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: 'application/json' });
+  const objectUrl = URL.createObjectURL(blob);
+  const download = document.createElement('a');
+  download.href = objectUrl;
+  download.download = filename;
+  download.style.display = 'none';
+  document.body.appendChild(download);
+  download.click();
+  download.remove();
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+}
+
+function CapabilityReviewList({ items, copy, reduceMotion, query }) {
   const [filter, setFilter] = useState('all');
+  const normalizedQuery = query.trim().toLocaleLowerCase();
   const filteredItems = items.filter((item) => {
-    if (filter === 'available') return item.status === 'available';
-    if (filter === 'active') return item.status !== 'available';
-    return true;
+    const matchesStatus = filter === 'available'
+      ? item.status === 'available'
+      : filter === 'active'
+        ? item.status !== 'available'
+        : true;
+    if (!matchesStatus || !normalizedQuery) return matchesStatus;
+
+    const searchable = [
+      item.title,
+      item.summary,
+      item.evidence,
+      item.evidenceLevel,
+      item.nextGate,
+      ...item.evidenceSources,
+    ].join(' ').toLocaleLowerCase();
+    return searchable.includes(normalizedQuery);
   });
 
   return (
@@ -1119,6 +1398,10 @@ function CapabilityReviewList({ items, copy, reduceMotion }) {
                 <dd className="mt-2 text-xs font-medium leading-5 text-brand-light/82">{item.evidenceLevel}</dd>
               </div>
               <div>
+                <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.evidenceSourcesLabel}</dt>
+                <dd className="mt-2 text-xs leading-5 text-white/48">{item.evidenceSources.join(' · ')}</dd>
+              </div>
+              <div>
                 <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.evidenceLabel}</dt>
                 <dd className="mt-2 text-xs leading-5 text-white/42">{item.evidence}</dd>
               </div>
@@ -1129,6 +1412,11 @@ function CapabilityReviewList({ items, copy, reduceMotion }) {
             </dl>
           </motion.article>
         ))}
+        {filteredItems.length === 0 ? (
+          <p className="border-t border-white/10 py-10 text-sm leading-6 text-white/42" role="status">
+            {copy.noCapabilitiesFound}
+          </p>
+        ) : null}
       </div>
     </div>
   );
@@ -1141,6 +1429,12 @@ function PartnerProgressPage() {
   const [exportStatus, setExportStatus] = useState('idle');
   const [reviewMode, setReviewMode] = useState('executive');
   const [activeSection, setActiveSection] = useState('overview');
+  const [capabilityQuery, setCapabilityQuery] = useState('');
+  const [reviewChecks, setReviewChecks] = useState(() => ({ ...EMPTY_REVIEW_CHECKS }));
+  const [reviewNotes, setReviewNotes] = useState('');
+  const [workspaceLoaded, setWorkspaceLoaded] = useState(false);
+  const [handoffExportStatus, setHandoffExportStatus] = useState('idle');
+  const [clearWorkspaceArmed, setClearWorkspaceArmed] = useState(false);
   const language = router.locale === 'zh-Hans' || router.locale === 'zh-Hant' ? 'zh' : 'en';
   const copy = CONTENT[language];
   const alternateLocale = language === 'zh' ? 'en' : 'zh-Hans';
@@ -1167,6 +1461,41 @@ function PartnerProgressPage() {
     return () => observer.disconnect();
   }, [reviewMode]);
 
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(REVIEW_WORKSPACE_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const storedChecks = parsed?.checks && typeof parsed.checks === 'object' ? parsed.checks : {};
+        const normalizedChecks = Object.keys(EMPTY_REVIEW_CHECKS).reduce((result, key) => ({
+          ...result,
+          [key]: storedChecks[key] === true,
+        }), {});
+        setReviewChecks(normalizedChecks);
+        if (typeof parsed?.notes === 'string') {
+          setReviewNotes(parsed.notes.slice(0, REVIEW_NOTES_MAX_LENGTH));
+        }
+      }
+    } catch {
+      // Browser privacy settings or malformed local data must not block access.
+    } finally {
+      setWorkspaceLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!workspaceLoaded) return;
+    try {
+      window.localStorage.setItem(REVIEW_WORKSPACE_STORAGE_KEY, JSON.stringify({
+        checks: reviewChecks,
+        notes: reviewNotes,
+        updated_at: new Date().toISOString(),
+      }));
+    } catch {
+      // The workspace remains session-usable when local storage is unavailable.
+    }
+  }, [reviewChecks, reviewNotes, workspaceLoaded]);
+
   async function handleCopyReviewLink() {
     if (!navigator.clipboard?.writeText) {
       setCopyStatus('failed');
@@ -1187,18 +1516,51 @@ function PartnerProgressPage() {
 
   function handleExportReview() {
     try {
-      const snapshot = buildReviewSnapshot(copy, language);
-      const blob = new Blob([`${JSON.stringify(snapshot, null, 2)}\n`], { type: 'application/json' });
-      const objectUrl = URL.createObjectURL(blob);
-      const download = document.createElement('a');
-      download.href = objectUrl;
-      download.download = `aeronyx-partner-review-${VERIFIED_DATE}.json`;
-      download.click();
-      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+      downloadJsonFile(
+        buildReviewSnapshot(copy, language),
+        `aeronyx-partner-review-${VERIFIED_DATE}.json`
+      );
       setExportStatus('exported');
     } catch {
       setExportStatus('failed');
     }
+  }
+
+  function handleToggleReviewCheck(id) {
+    if (!Object.prototype.hasOwnProperty.call(EMPTY_REVIEW_CHECKS, id)) return;
+    setReviewChecks((current) => ({ ...current, [id]: !current[id] }));
+    setHandoffExportStatus('idle');
+    setClearWorkspaceArmed(false);
+  }
+
+  function handleReviewNotesChange(value) {
+    setReviewNotes(value.slice(0, REVIEW_NOTES_MAX_LENGTH));
+    setHandoffExportStatus('idle');
+    setClearWorkspaceArmed(false);
+  }
+
+  function handleExportHandoff() {
+    try {
+      downloadJsonFile(
+        buildReviewHandoff(copy, language, reviewChecks, reviewNotes),
+        `aeronyx-partner-review-handoff-${VERIFIED_DATE}.json`
+      );
+      setHandoffExportStatus('exported');
+    } catch {
+      setHandoffExportStatus('failed');
+    }
+  }
+
+  function handleClearWorkspace() {
+    if (!clearWorkspaceArmed) {
+      setClearWorkspaceArmed(true);
+      return;
+    }
+
+    setReviewChecks({ ...EMPTY_REVIEW_CHECKS });
+    setReviewNotes('');
+    setHandoffExportStatus('idle');
+    setClearWorkspaceArmed(false);
   }
 
   return (
@@ -1313,7 +1675,13 @@ function PartnerProgressPage() {
                     {exportStatus === 'exported' ? copy.exportedJson : exportStatus === 'failed' ? copy.exportFailed : ''}
                   </p>
                 </div>
-                <ReviewDepthControl copy={copy} mode={reviewMode} onChange={setReviewMode} />
+                <ReviewDepthControl
+                  copy={copy}
+                  mode={reviewMode}
+                  onChange={setReviewMode}
+                  query={capabilityQuery}
+                  onQueryChange={setCapabilityQuery}
+                />
               </div>
 
             </Container>
@@ -1393,36 +1761,53 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
+          <section id="workspace" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+            <Container>
+              <SectionHeading eyebrow={copy.workspaceEyebrow} title={copy.workspaceTitle} body={copy.workspaceBody} />
+              <ReviewerWorkspace
+                copy={copy}
+                checks={reviewChecks}
+                notes={reviewNotes}
+                onToggle={handleToggleReviewCheck}
+                onNotesChange={handleReviewNotesChange}
+                onExport={handleExportHandoff}
+                exportStatus={handoffExportStatus}
+                onClear={handleClearWorkspace}
+                clearArmed={clearWorkspaceArmed}
+              />
+            </Container>
+          </section>
+
           <section
             id="client"
             data-partner-section
-            className={`partner-technical-section scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24 ${reviewMode === 'technical' ? '' : 'hidden'}`}
+            className={`partner-technical-section scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24 ${reviewMode === 'technical' ? '' : 'hidden'}`}
           >
             <Container>
               <SectionHeading eyebrow={copy.clientEyebrow} title={copy.clientTitle} body={copy.clientBody} />
-              <CapabilityReviewList items={copy.clientItems} copy={copy} reduceMotion={reduceMotion} />
+              <CapabilityReviewList items={copy.clientItems} copy={copy} reduceMotion={reduceMotion} query={capabilityQuery} />
             </Container>
           </section>
 
           <section
             id="rust"
             data-partner-section
-            className={`partner-technical-section scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24 ${reviewMode === 'technical' ? '' : 'hidden'}`}
+            className={`partner-technical-section scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24 ${reviewMode === 'technical' ? '' : 'hidden'}`}
           >
             <Container>
               <SectionHeading eyebrow={copy.rustEyebrow} title={copy.rustTitle} body={copy.rustBody} />
-              <CapabilityReviewList items={copy.rustItems} copy={copy} reduceMotion={reduceMotion} />
+              <CapabilityReviewList items={copy.rustItems} copy={copy} reduceMotion={reduceMotion} query={capabilityQuery} />
             </Container>
           </section>
 
-          <section id="dependencies" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+          <section id="dependencies" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.dependencyEyebrow} title={copy.dependencyTitle} body={copy.dependencyBody} />
               <DependencyMatrix copy={copy} />
             </Container>
           </section>
 
-          <section className="border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
+          <section className="border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.milestoneEyebrow} title={copy.milestoneTitle} />
               <ol className="mt-10 border-t border-white/10">
@@ -1442,7 +1827,7 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section id="boundaries" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/82 py-16 sm:py-24">
+          <section id="boundaries" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/82 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.boundaryEyebrow} title={copy.boundaryTitle} body={copy.boundaryBody} />
               <div className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 lg:grid-cols-2">
@@ -1461,7 +1846,7 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section id="roadmap" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
+          <section id="roadmap" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.roadmapEyebrow} title={copy.roadmapTitle} body={copy.roadmapBody} />
               <div className="relative mt-12 grid gap-8 lg:grid-cols-4 lg:gap-0">
@@ -1479,7 +1864,7 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section className="bg-surface-1/86 py-16 sm:py-20">
+          <section className="bg-surface-0/86 py-16 sm:py-20">
             <Container>
               <div className="flex flex-col gap-8 border-y border-white/10 py-9 lg:flex-row lg:items-center lg:justify-between">
                 <div>
