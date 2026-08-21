@@ -36,8 +36,8 @@
  *
  * Dependencies:
  *   - next/head, next/link, and next/router for metadata and locale switching.
- *   - components/ui/AeroNyxLogo and ProtocolBackground for shared identity.
- *   - components/ui/Container and framer-motion for responsive presentation.
+ *   - components/ui/AeroNyxLogo and Container for shared identity and layout.
+ *   - components/ui/DownloadsModal for the canonical release contract.
  *
  * Main Logical Flow:
  *   1. getServerSideProps rejects missing, malformed, or incorrect keys.
@@ -74,17 +74,19 @@
  *     bounded, schema-validated, and escaped in every portable artifact.
  *   - Finding references may contain only public-safe APP-xx or NODE-xx IDs;
  *     never accept URLs, endpoints, node IDs, or free-form identifiers there.
+ *   - [PARTNER-EXECUTIVE-SUMMARY 2026-08-21 by Codex] Keep the first-screen
+ *     decision links synchronized with their target sections. The report uses
+ *     a deliberately static visual surface; do not reintroduce decorative
+ *     animation that competes with evidence review or print output.
  *
- * Last Modified: v2.0 - Fixed unlisted route without Vercel configuration.
+ * Last Modified: v2.1 - Static diligence surface and first-screen decision links.
  * ============================================
  */
 
-import { Suspense, useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { motion, useReducedMotion } from 'framer-motion';
 import AeroNyxLogo from '../../components/ui/AeroNyxLogo';
 import Container from '../../components/ui/Container';
 import {
@@ -93,19 +95,10 @@ import {
   RELEASE_VERSION,
 } from '../../components/ui/DownloadsModal';
 
-const ProtocolBackground = dynamic(
-  () => import('../../components/ui/ProtocolBackground'),
-  {
-    ssr: false,
-    suspense: true,
-    loading: () => <div className="fixed inset-0 bg-surface-0" />,
-  }
-);
-
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '2.0';
+const REVIEW_REVISION = '2.1';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -128,8 +121,6 @@ const EMPTY_REVIEW_CHECKS = Object.freeze({
   decision: false,
 });
 const ACCESS_KEY_PATTERN = /^[a-f0-9]{64}$/;
-const EASE = [0.16, 1, 0.3, 1];
-
 const STATUS_TONE = {
   available: {
     dot: 'bg-ok',
@@ -188,6 +179,35 @@ const CONTENT = {
       executive: 'Decision, pilot, dependencies, boundaries, and roadmap',
       technical: 'Full client and Rust capability evidence',
     },
+    quickLinksEyebrow: 'Start with the decision-critical facts',
+    quickLinksTitle: 'Open the evidence that matters first.',
+    quickLinksAction: 'View section',
+    quickLinks: [
+      {
+        href: '#decision',
+        label: 'Pilot position',
+        value: 'Ready for scoped evaluation',
+        detail: 'See what can be piloted now, what remains controlled beta, and what is not a default.',
+      },
+      {
+        href: '#artifacts',
+        label: 'Release integrity',
+        value: `Client ${CLIENT_BUILD}`,
+        detail: 'Verify immutable installers, platform assurance, and published SHA-256 evidence.',
+      },
+      {
+        href: '#boundaries',
+        label: 'Trust boundary',
+        value: 'Declared, not hidden',
+        detail: 'Review present dependencies, metadata limits, and capabilities that still need hardening.',
+      },
+      {
+        href: '#pilot',
+        label: 'Recommended next step',
+        value: 'Four-step partner pilot',
+        detail: 'Move from scope and trust review to acceptance evidence and a reversible rollout decision.',
+      },
+    ],
     capabilitySearchLabel: 'Search capability evidence',
     capabilitySearchPlaceholder: 'Search relay, memory, recovery, witness…',
     statusOverview: {
@@ -218,12 +238,12 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'The partner brief no longer depends on deployment configuration.',
-    revisionDeltaBody: 'The existing unlisted route now uses a fixed, source-visible token. Vercel environment setup is no longer required, while wrong paths still fail closed and the page remains noindex and public-safe.',
+    revisionDeltaTitle: 'Decision-critical evidence now leads the review.',
+    revisionDeltaBody: 'The first screen is now a static diligence surface with direct paths to pilot readiness, release integrity, trust boundaries, and the recommended review sequence. The unlisted route remains fixed, noindex, and public-safe.',
     revisionDeltaItems: [
-      'Keep the current partner URL stable across deployments and environments.',
-      'Remove the production environment-variable failure mode.',
-      'Preserve 404 handling, no-store responses, noindex, and no-referrer headers.',
+      'Remove decorative protocol animation from the evidence-review experience.',
+      'Move decision-critical status and section links into the first screen.',
+      'Preserve the complete technical record, local workspace, exports, and response security headers.',
     ],
     artifactEyebrow: 'Release integrity',
     artifactTitle: 'Verify the client before evaluating the protocol.',
@@ -714,6 +734,35 @@ const CONTENT = {
       executive: '決策、Pilot、依賴、邊界與路線圖',
       technical: '完整客戶端與 Rust 能力證據',
     },
+    quickLinksEyebrow: '先看影響決策的關鍵資訊',
+    quickLinksTitle: '重要狀態與證據，一次直達。',
+    quickLinksAction: '查看章節',
+    quickLinks: [
+      {
+        href: '#decision',
+        label: 'Pilot 定位',
+        value: '可開始範圍化評估',
+        detail: '快速區分現在可 Pilot、受控 Beta，以及尚未設為默認的能力。',
+      },
+      {
+        href: '#artifacts',
+        label: '發布完整性',
+        value: `客戶端 ${CLIENT_BUILD}`,
+        detail: '核對不可變安裝包、平台分發保證與已發布的 SHA-256 證據。',
+      },
+      {
+        href: '#boundaries',
+        label: '信任邊界',
+        value: '明確聲明，不隱藏',
+        detail: '查看現有依賴、元資料限制，以及仍需加固的能力。',
+      },
+      {
+        href: '#pilot',
+        label: '建議下一步',
+        value: '四步合作方 Pilot',
+        detail: '從範圍與信任審閱，走到驗收證據及可回滾的發布決策。',
+      },
+    ],
     capabilitySearchLabel: '搜尋能力證據',
     capabilitySearchPlaceholder: '搜尋 Relay、記憶、恢復、witness…',
     statusOverview: {
@@ -744,12 +793,12 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '合作方簡報不再依賴部署環境配置。',
-    revisionDeltaBody: '現有未列出路由改為固定且源碼可見的 token，不再需要 Vercel 環境變數；錯誤路徑仍然返回 404，頁面繼續保持 noindex 與 public-safe。',
+    revisionDeltaTitle: '影響決策的證據，現在優先呈現。',
+    revisionDeltaBody: '首屏改為靜態的專業盡調介面，可直接進入 Pilot 準備度、發布完整性、信任邊界與建議審閱流程。未列出路由仍保持固定、noindex 與 public-safe。',
     revisionDeltaItems: [
-      '讓現有合作方網址跨部署與環境保持穩定。',
-      '移除 production 環境變數造成的失效點。',
-      '保留 404、no-store、noindex 與 no-referrer 安全邊界。',
+      '移除證據審閱頁中的裝飾性協議背景動畫。',
+      '把關鍵狀態與章節入口移到首屏。',
+      '保留完整技術記錄、本地工作區、匯出能力與回應安全標頭。',
     ],
     artifactEyebrow: '發布完整性',
     artifactTitle: '評估協議之前，先驗證客戶端。',
@@ -1231,6 +1280,56 @@ function SectionHeading({ eyebrow, title, body }) {
       </h2>
       {body ? <p className="mt-5 text-base leading-7 text-white/58 sm:text-lg sm:leading-8">{body}</p> : null}
     </div>
+  );
+}
+
+// [PARTNER-EXECUTIVE-SUMMARY 2026-08-21 by Codex] These are navigation-first
+// decision cards, not duplicate status claims. Each card points to the section
+// that contains the complete context, evidence, and current limitations.
+function ExecutiveQuickLinks({ copy }) {
+  return (
+    <section className="partner-no-print mt-8 border-y border-white/12 py-6" aria-labelledby="partner-quick-links">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light/82">
+            {copy.quickLinksEyebrow}
+          </p>
+          <h2 id="partner-quick-links" className="mt-3 text-xl font-medium leading-7 text-white sm:text-2xl">
+            {copy.quickLinksTitle}
+          </h2>
+        </div>
+        <p className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.08em] text-white/28 sm:block">
+          04 / {copy.jumpLabel}
+        </p>
+      </div>
+      <div className="mt-6 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:overflow-visible lg:pb-0">
+        <div className="flex w-max snap-x snap-mandatory border-l border-t border-white/10 lg:grid lg:w-auto lg:grid-cols-4">
+          {copy.quickLinks.map((item, index) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="group flex min-h-[176px] w-[82vw] max-w-[310px] shrink-0 snap-start flex-col border-b border-r border-white/10 bg-white/[0.012] p-5 transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light sm:w-[320px] sm:p-6 lg:w-auto lg:max-w-none"
+              aria-label={`${item.label}: ${item.value}`}
+            >
+              <div className="flex items-center justify-between gap-4">
+                <span className="font-mono text-[10px] text-brand-light/68">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span aria-hidden="true" className="text-sm text-white/26 transition-colors group-hover:text-brand-light">
+                  →
+                </span>
+              </div>
+              <p className="mt-7 text-[10px] font-semibold uppercase tracking-eyebrow text-white/34">{item.label}</p>
+              <p className="mt-2 text-lg font-medium leading-6 text-white sm:text-xl">{item.value}</p>
+              <p className="mt-3 text-xs leading-5 text-white/44">{item.detail}</p>
+              <span className="mt-auto pt-5 text-[10px] font-semibold uppercase tracking-[0.08em] text-white/38 transition-colors group-hover:text-white/72">
+                {copy.quickLinksAction}
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -2321,7 +2420,6 @@ function downloadJsonFile(payload, filename) {
 function CapabilityReviewList({
   items,
   copy,
-  reduceMotion,
   query,
   group,
   flaggedReferences,
@@ -2404,7 +2502,7 @@ function CapabilityReviewList({
       </div>
 
       <div className="border-b border-white/10">
-        {filteredItems.map((item, index) => {
+        {filteredItems.map((item) => {
           const sourceIndex = items.indexOf(item);
           const reference = capabilityReference(group, sourceIndex);
           const evidenceId = `partner-evidence-${group}-${String(sourceIndex + 1).padStart(2, '0')}`;
@@ -2412,14 +2510,10 @@ function CapabilityReviewList({
           const isFlagged = flaggedReferences.includes(reference);
 
           return (
-          <motion.article
+          <article
             key={item.title}
             id={evidenceId}
             className="scroll-mt-32 grid min-w-0 gap-4 border-t border-white/10 py-6 first:border-t-0 md:grid-cols-[64px_180px_minmax(0,1fr)] md:gap-6 md:py-7 xl:grid-cols-[64px_210px_minmax(0,1.2fr)_minmax(220px,0.8fr)] xl:gap-8"
-            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.18 }}
-            transition={{ duration: 0.4, delay: reduceMotion ? 0 : Math.min(index, 3) * 0.035, ease: EASE }}
           >
             <span
               className="font-mono text-[10px] text-brand-light/64 md:pt-2"
@@ -2471,7 +2565,7 @@ function CapabilityReviewList({
                 <dd className="mt-2 text-xs leading-5 text-white/52">{item.nextGate}</dd>
               </div>
             </dl>
-          </motion.article>
+          </article>
           );
         })}
         {filteredItems.length === 0 ? (
@@ -2486,7 +2580,6 @@ function CapabilityReviewList({
 
 function PartnerProgressPage() {
   const router = useRouter();
-  const reduceMotion = useReducedMotion();
   const [copyStatus, setCopyStatus] = useState('idle');
   const [exportStatus, setExportStatus] = useState('idle');
   const [reviewMode, setReviewMode] = useState('executive');
@@ -2681,6 +2774,7 @@ function PartnerProgressPage() {
     setCapabilityQuery(reference);
     setActiveSection(reference.startsWith('APP-') ? 'client' : 'rust');
     window.setTimeout(() => {
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
       document.getElementById(evidenceId)?.scrollIntoView({
         behavior: reduceMotion ? 'auto' : 'smooth',
         block: 'center',
@@ -2802,12 +2896,7 @@ function PartnerProgressPage() {
         <meta name="referrer" content="no-referrer" />
       </Head>
 
-      <div className="partner-report relative min-h-screen overflow-x-hidden bg-surface-0 text-white">
-        <Suspense fallback={<div className="partner-no-print fixed inset-0 bg-surface-0" />}>
-          <ProtocolBackground />
-        </Suspense>
-        <div className="partner-no-print fixed inset-0 z-[-1] bg-surface-0/72" />
-
+      <div className="partner-report relative min-h-screen overflow-x-hidden bg-[#08090c] text-white">
         <header className="partner-no-print sticky top-0 z-50 border-b border-white/8 bg-surface-0/90 backdrop-blur-xl">
           <Container>
             <div className="flex min-h-[68px] items-center justify-between gap-4 py-2">
@@ -2837,29 +2926,25 @@ function PartnerProgressPage() {
         </header>
 
         <main>
-          <section className="relative border-b border-white/10 pb-16 pt-16 sm:pb-20 sm:pt-24 lg:pb-24 lg:pt-28">
+          <section className="relative border-b border-white/10 pb-14 pt-12 sm:pb-16 sm:pt-16 lg:pb-20 lg:pt-16">
             <Container>
               <div className="max-w-5xl">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="inline-flex min-h-[30px] items-center rounded-pill border border-brand-line bg-brand-faint px-3 text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light">
                     {copy.restricted}
                   </span>
-                  <span className="text-xs text-white/34">{copy.verified}</span>
-                  <span aria-hidden="true" className="text-white/16">/</span>
-                  <span className="text-xs text-white/34">{copy.revision}</span>
+                  <span className="text-xs text-white/34">{copy.verified} · {copy.revision}</span>
                 </div>
-                <motion.h1
-                  className="mt-7 max-w-4xl font-display text-[2.65rem] font-medium leading-[1.04] text-white sm:text-[4rem] sm:leading-[1.02] lg:text-[4.75rem]"
-                  initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.65, ease: EASE }}
+                <h1
+                  className="mt-6 max-w-4xl font-display text-[2.35rem] font-medium leading-[1.06] text-white sm:text-[3.35rem] sm:leading-[1.03] lg:text-[4rem]"
                 >
                   {copy.heroTitle}
-                </motion.h1>
-                <p className="mt-7 max-w-3xl text-base leading-7 text-white/62 sm:text-xl sm:leading-8">
+                </h1>
+                <ExecutiveQuickLinks copy={copy} />
+                <p className="mt-8 max-w-3xl text-base leading-7 text-white/62 sm:text-lg sm:leading-8">
                   {copy.heroBody}
                 </p>
-                <div className="mt-10 border-l-2 border-brand-light/60 pl-4 text-sm leading-6 text-white/42">
+                <div className="mt-8 border-l-2 border-brand-light/60 pl-4 text-sm leading-6 text-white/42">
                   <p>{copy.restrictedDetail}</p>
                   <p className="mt-1">{copy.noTraffic}</p>
                 </div>
@@ -2984,7 +3069,7 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section className="border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
+          <section id="decision" className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.decisionEyebrow} title={copy.decisionTitle} body={copy.decisionBody} />
               <DecisionSummary copy={copy} />
@@ -3040,7 +3125,6 @@ function PartnerProgressPage() {
               <CapabilityReviewList
                 items={copy.clientItems}
                 copy={copy}
-                reduceMotion={reduceMotion}
                 query={capabilityQuery}
                 group="client"
                 flaggedReferences={flaggedEvidenceReferences}
@@ -3059,7 +3143,6 @@ function PartnerProgressPage() {
               <CapabilityReviewList
                 items={copy.rustItems}
                 copy={copy}
-                reduceMotion={reduceMotion}
                 query={capabilityQuery}
                 group="node"
                 flaggedReferences={flaggedEvidenceReferences}
