@@ -85,7 +85,7 @@
  *     a Todoist-style workstream/task/detail hierarchy. Print and portable
  *     exports still contain the complete public-safe review record.
  *
- * Last Modified: v3.2 - Mobile task density and complete print hierarchy.
+ * Last Modified: v3.3 - Reverified release and Rust node evidence baseline.
  * ============================================
  */
 
@@ -103,8 +103,8 @@ import {
 
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '849bdcd';
-const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '3.2';
+const VERIFIED_DATE = '2026-08-21';
+const REVIEW_REVISION = '3.3';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -200,12 +200,12 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'The long report is now a focused review workbench.',
-    revisionDeltaBody: 'A task-based delivery board separates completed, active, and next work. Evidence remains attached to each item while reviewer notes stay in a separate local workspace.',
+    revisionDeltaTitle: 'The delivery baseline was reverified on August 21.',
+    revisionDeltaBody: `Client ${CLIENT_BUILD}, Rust main ${RUST_NODE_HEAD}, immutable release routes, and public-safe review boundaries were checked again. No delivery status was promoted without new implementation evidence.`,
     revisionDeltaItems: [
-      'Group work into client, protocol node, and next-milestone workstreams.',
-      'Filter completed, in-progress, and next tasks without losing evidence.',
-      'Open implementation proof and acceptance gates only when requested.',
+      'Reconfirmed the current cross-platform client release contract and immutable download routes.',
+      `Reconfirmed Rust main ${RUST_NODE_HEAD} and its bounded custody-witness latency milestone.`,
+      'Revalidated the unlisted-link, noindex, no-store, and invalid-token 404 boundaries.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -588,9 +588,9 @@ const CONTENT = {
         detail: 'Mirror synchronization, independently signed witness evidence, carrier recovery, and policy-safe authority handover were added to the Rust node.',
       },
     ],
-    boundaryEyebrow: 'Current boundaries',
-    boundaryTitle: 'What AeroNyx does not overclaim.',
-    boundaryBody: 'Partners should evaluate the product against the system that exists, not a future whitepaper. These constraints are deliberate and visible.',
+    boundaryEyebrow: 'Deployment readiness',
+    boundaryTitle: 'Current boundaries and acceptance conditions.',
+    boundaryBody: 'Each capability is assessed against verified implementation, operational dependencies, and its next acceptance gate. These boundaries help partners define a pilot scope and make deployment decisions.',
     boundaries: [
       {
         title: 'Managed relay remains the default',
@@ -708,12 +708,12 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '長報告已收斂為聚焦的審閱工作台。',
-    revisionDeltaBody: '任務式交付清單把已完成、進行中與下一步分開；證據附著在每個任務中，審閱筆記則留在獨立的本地工作區。',
+    revisionDeltaTitle: '交付基線已於 8 月 21 日重新核對。',
+    revisionDeltaBody: `客戶端 ${CLIENT_BUILD}、Rust main ${RUST_NODE_HEAD}、不可變下載路徑與公開安全審閱邊界均已重新檢查；沒有新增實現證據的能力不會被提升交付狀態。`,
     revisionDeltaItems: [
-      '按客戶端、協議節點與下一里程碑建立工作大項。',
-      '可篩選已完成、進行中與下一步，同時保留完整證據。',
-      '只有需要時才展開實現證明與下一驗收門檻。',
+      '重新確認目前跨平台客戶端發布契約與不可變下載路徑。',
+      `重新確認 Rust main ${RUST_NODE_HEAD} 及其受限 custody witness 延遲里程碑。`,
+      '重新驗證未列出連結、noindex、no-store 與錯誤 token 404 邊界。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',
@@ -1096,9 +1096,9 @@ const CONTENT = {
         detail: 'Rust 節點增加 mirror 同步、獨立簽名 witness、carrier recovery 與 policy-safe authority handover。',
       },
     ],
-    boundaryEyebrow: '目前邊界',
-    boundaryTitle: 'AeroNyx 不誇大什麼。',
-    boundaryBody: '合作方應該評估今天存在的系統，而不是未來白皮書。以下限制是刻意且透明的。',
+    boundaryEyebrow: '部署準備度',
+    boundaryTitle: '當前邊界與驗收條件。',
+    boundaryBody: '每項能力都以已驗證的實現、運行依賴與下一驗收門檻為準。以下邊界協助合作方界定 Pilot 範圍並作出部署決策。',
     boundaries: [
       {
         title: 'Managed relay 仍是默認路徑',
