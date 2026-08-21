@@ -33,11 +33,14 @@
  *     dates, closure state, and blocker-aware handoff readiness.
  *   - Connects stable APP/NODE evidence references to findings so reviewers
  *     can flag an item and return to its verification record without copying.
+ *   - Adds a bilingual development calendar backed by one public-safe daily
+ *     data source and includes the complete log in print and JSON exports.
  *
  * Dependencies:
  *   - next/head, next/link, and next/router for metadata and locale switching.
  *   - components/ui/AeroNyxLogo and Container for shared identity and layout.
  *   - components/ui/DownloadsModal for the canonical release contract.
+ *   - data/partnerDevelopmentCalendar for verified daily development records.
  *
  * Main Logical Flow:
  *   1. getServerSideProps rejects missing, malformed, or incorrect keys.
@@ -84,8 +87,11 @@
  *   - [PARTNER-DELIVERY-BOARD 2026-08-21 by Codex] The browser experience uses
  *     a Todoist-style workstream/task/detail hierarchy. Print and portable
  *     exports still contain the complete public-safe review record.
+ *   - [PARTNER-DEVELOPMENT-CALENDAR 2026-08-21 by Codex] Daily records come
+ *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
+ *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v3.4 - Plain-language status and system boundaries.
+ * Last Modified: v4.0 - Bilingual daily development calendar.
  * ============================================
  */
 
@@ -100,11 +106,12 @@ import {
   RELEASE_CHANNELS,
   RELEASE_VERSION,
 } from '../../components/ui/DownloadsModal';
+import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar';
 
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-21';
-const REVIEW_REVISION = '3.4';
+const REVIEW_REVISION = '4.0';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -119,8 +126,9 @@ const REVIEW_DECISIONS = Object.freeze(['undecided', 'pilot', 'conditional', 'ho
 const REVIEW_FINDING_SEVERITIES = Object.freeze(['blocker', 'high', 'medium', 'low']);
 const REVIEW_FINDING_STATUSES = Object.freeze(['open', 'resolved']);
 const REVIEW_FINDING_REFERENCE_PATTERN = /^(APP|NODE)-\d{2}$/;
-const REVIEW_VIEWS = Object.freeze(['delivery', 'workspace']);
+const REVIEW_VIEWS = Object.freeze(['delivery', 'calendar', 'workspace']);
 const DELIVERY_FILTERS = Object.freeze(['all', 'complete', 'active', 'next']);
+const DEVELOPMENT_REPORT_STATUSES = Object.freeze(['complete', 'active', 'next']);
 const EMPTY_REVIEW_CHECKS = Object.freeze({
   scope: false,
   privacy: false,
@@ -161,6 +169,7 @@ const CONTENT = {
     viewLabel: 'Partner review mode',
     viewTabs: [
       { id: 'delivery', label: 'Delivery board', detail: 'Completed, active, and next work' },
+      { id: 'calendar', label: 'Daily reports', detail: 'Calendar and verified work by day' },
       { id: 'workspace', label: 'Review workspace', detail: 'Findings, decision, and handoff' },
     ],
     deliveryEyebrow: 'Delivery board',
@@ -185,6 +194,28 @@ const CONTENT = {
     },
     deliveryItemsLabel: 'items',
     deliveryEmpty: 'No tasks match this view.',
+    calendarEyebrow: 'Development calendar',
+    calendarTitle: 'Daily development reports.',
+    calendarBody: 'Choose a date to see completed work, work in progress, and what comes next.',
+    calendarLatestLabel: 'Latest update',
+    calendarDaysLabel: 'recorded days',
+    calendarUpdatesLabel: 'updates',
+    calendarPreviousMonth: 'Previous month',
+    calendarNextMonth: 'Next month',
+    calendarSelectedDate: 'Development report',
+    calendarNoUpdates: 'No development record for this date.',
+    calendarWeekdays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    calendarAreaLabels: {
+      client: 'Client',
+      node: 'Rust node',
+      web: 'Website',
+      docs: 'Docs',
+    },
+    calendarStatusLabels: {
+      complete: 'Completed',
+      active: 'In progress',
+      next: 'Next',
+    },
     deliveryPlannedLevel: 'Planned validation milestone',
     deliveryPlannedSources: ['Reviewed roadmap', 'Current system boundary'],
     deliveryPlannedEvidence: 'Scheduled after the current implementation and verification gates close.',
@@ -200,12 +231,12 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'The delivery baseline was reverified on August 21.',
-    revisionDeltaBody: `Client ${CLIENT_BUILD}, Rust main ${RUST_NODE_HEAD}, immutable release routes, and public-safe review boundaries were checked again. No delivery status was promoted without new implementation evidence.`,
+    revisionDeltaTitle: 'Daily development reports are now part of the brief.',
+    revisionDeltaBody: `The calendar records verified work by date while keeping client ${CLIENT_BUILD} and Rust main ${RUST_NODE_HEAD} as the current evidence baseline.`,
     revisionDeltaItems: [
-      'Reconfirmed the current cross-platform client release contract and immutable download routes.',
-      `Reconfirmed Rust main ${RUST_NODE_HEAD} and its bounded custody-witness latency milestone.`,
-      'Revalidated the unlisted-link, noindex, no-store, and invalid-token 404 boundaries.',
+      'Open a marked date to read that day’s development report.',
+      'Separate completed work, work in progress, and next steps.',
+      'Include the complete public-safe log in print and JSON exports.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -669,6 +700,7 @@ const CONTENT = {
     viewLabel: '合作方審閱模式',
     viewTabs: [
       { id: 'delivery', label: '交付清單', detail: '已完成、進行中與下一步' },
+      { id: 'calendar', label: '開發日報', detail: '按日期查看已驗證工作' },
       { id: 'workspace', label: '審閱工作區', detail: '問題、決策與交接' },
     ],
     deliveryEyebrow: '交付清單',
@@ -693,6 +725,28 @@ const CONTENT = {
     },
     deliveryItemsLabel: '項',
     deliveryEmpty: '此視圖沒有符合條件的任務。',
+    calendarEyebrow: '開發日曆',
+    calendarTitle: '每天的開發進度。',
+    calendarBody: '選擇日期，查看當天已完成、進行中與下一步。',
+    calendarLatestLabel: '最新更新',
+    calendarDaysLabel: '個記錄日',
+    calendarUpdatesLabel: '項更新',
+    calendarPreviousMonth: '上一個月',
+    calendarNextMonth: '下一個月',
+    calendarSelectedDate: '開發日報',
+    calendarNoUpdates: '此日期沒有開發記錄。',
+    calendarWeekdays: ['日', '一', '二', '三', '四', '五', '六'],
+    calendarAreaLabels: {
+      client: '客戶端',
+      node: 'Rust 節點',
+      web: '官網',
+      docs: '文檔',
+    },
+    calendarStatusLabels: {
+      complete: '已完成',
+      active: '進行中',
+      next: '下一步',
+    },
     deliveryPlannedLevel: '計劃中的驗證里程碑',
     deliveryPlannedSources: ['已審閱路線圖', '當前系統邊界'],
     deliveryPlannedEvidence: '在目前實現與驗證門檻完成後排期執行。',
@@ -708,12 +762,12 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '交付基線已於 8 月 21 日重新核對。',
-    revisionDeltaBody: `客戶端 ${CLIENT_BUILD}、Rust main ${RUST_NODE_HEAD}、不可變下載路徑與公開安全審閱邊界均已重新檢查；沒有新增實現證據的能力不會被提升交付狀態。`,
+    revisionDeltaTitle: '簡報已加入每日開發日報。',
+    revisionDeltaBody: `日曆按日期記錄已驗證工作，並繼續以客戶端 ${CLIENT_BUILD} 與 Rust main ${RUST_NODE_HEAD} 作為目前證據基線。`,
     revisionDeltaItems: [
-      '重新確認目前跨平台客戶端發布契約與不可變下載路徑。',
-      `重新確認 Rust main ${RUST_NODE_HEAD} 及其受限 custody witness 延遲里程碑。`,
-      '重新驗證未列出連結、noindex、no-store 與錯誤 token 404 邊界。',
+      '點擊有標記的日期，查看當天開發日報。',
+      '分開展示已完成、進行中與下一步。',
+      '列印與 JSON 匯出保留完整公開安全日誌。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',
@@ -1174,7 +1228,7 @@ function ReviewViewTabs({ copy, activeView, onChange }) {
   return (
     <nav className="partner-no-print sticky top-16 z-40 border-b border-white/10 bg-surface-0/96 backdrop-blur-xl sm:top-20" aria-label={copy.viewLabel}>
       <Container>
-        <div className="grid grid-cols-2" role="tablist" aria-label={copy.viewLabel}>
+        <div className="grid grid-cols-3" role="tablist" aria-label={copy.viewLabel}>
           {copy.viewTabs.map((item, index) => {
             const active = activeView === item.id;
             return (
@@ -1410,6 +1464,203 @@ function DeliveryBoard({
       </div>
 
       {counts[filter] === 0 ? <p className="py-12 text-sm text-white/42">{copy.deliveryEmpty}</p> : null}
+    </div>
+  );
+}
+
+function localizedDevelopmentDays(language) {
+  const locale = language === 'zh' ? 'zh' : 'en';
+  return PARTNER_DEVELOPMENT_DAYS.map((day) => ({
+    date: day.date,
+    entries: day.entries.map((entry) => ({
+      id: entry.id,
+      area: entry.area,
+      status: entry.status,
+      title: entry.title[locale],
+      summary: entry.summary[locale],
+    })),
+  }));
+}
+
+function monthCells(monthKey) {
+  const [year, month] = monthKey.split('-').map(Number);
+  const firstWeekday = new Date(Date.UTC(year, month - 1, 1)).getUTCDay();
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const cellCount = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+
+  return Array.from({ length: cellCount }, (_, index) => {
+    const day = index - firstWeekday + 1;
+    if (day < 1 || day > daysInMonth) return null;
+    return {
+      day,
+      date: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+    };
+  });
+}
+
+// [PARTNER-DEVELOPMENT-CALENDAR 2026-08-21 by Codex] The month grid is a
+// compact index; the selected-day list carries the readable update record.
+// Print and JSON exports always include every day rather than only selection.
+function DevelopmentCalendar({ copy, language }) {
+  const developmentDays = localizedDevelopmentDays(language);
+  const latestDay = developmentDays[developmentDays.length - 1];
+  const availableMonths = [...new Set(developmentDays.map((day) => day.date.slice(0, 7)))];
+  const [monthKey, setMonthKey] = useState(latestDay?.date.slice(0, 7) || VERIFIED_DATE.slice(0, 7));
+  const [selectedDate, setSelectedDate] = useState(latestDay?.date || VERIFIED_DATE);
+  const selectedDay = developmentDays.find((day) => day.date === selectedDate);
+  const selectedGroups = DEVELOPMENT_REPORT_STATUSES.map((status) => ({
+    status,
+    entries: selectedDay?.entries.filter((entry) => entry.status === status) || [],
+  })).filter((group) => group.entries.length > 0);
+  const monthIndex = Math.max(0, availableMonths.indexOf(monthKey));
+  const totalUpdates = developmentDays.reduce((total, day) => total + day.entries.length, 0);
+  const [year, month] = monthKey.split('-').map(Number);
+  const monthLabel = new Intl.DateTimeFormat(language === 'zh' ? 'zh-Hans' : 'en-US', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(year, month - 1, 1)));
+
+  function changeMonth(offset) {
+    const nextMonth = availableMonths[monthIndex + offset];
+    if (!nextMonth) return;
+    const days = developmentDays.filter((day) => day.date.startsWith(nextMonth));
+    setMonthKey(nextMonth);
+    setSelectedDate(days[days.length - 1]?.date || `${nextMonth}-01`);
+  }
+
+  function statusTone(status) {
+    if (status === 'complete') return 'border-ok/30 bg-ok/8 text-ok';
+    if (status === 'active') return 'border-brand-line bg-brand-faint text-brand-light';
+    return 'border-white/12 bg-white/[0.025] text-white/46';
+  }
+
+  return (
+    <div className="mt-8">
+      <dl className="flex flex-wrap gap-x-7 gap-y-3 border-y border-white/10 py-4">
+        <div className="flex items-baseline gap-2">
+          <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.calendarLatestLabel}</dt>
+          <dd className="font-mono text-xs text-white/66">{latestDay?.date || VERIFIED_DATE}</dd>
+        </div>
+        <div className="flex items-baseline gap-2">
+          <dt className="font-mono text-xs text-white/66">{developmentDays.length}</dt>
+          <dd className="text-[10px] uppercase tracking-eyebrow text-white/30">{copy.calendarDaysLabel}</dd>
+        </div>
+        <div className="flex items-baseline gap-2">
+          <dt className="font-mono text-xs text-white/66">{totalUpdates}</dt>
+          <dd className="text-[10px] uppercase tracking-eyebrow text-white/30">{copy.calendarUpdatesLabel}</dd>
+        </div>
+      </dl>
+
+      <div className="partner-no-print mt-8 grid overflow-hidden rounded border border-white/10 lg:grid-cols-[minmax(0,1fr)_minmax(300px,0.72fr)]">
+        <div className="min-w-0 border-b border-white/10 p-4 sm:p-6 lg:border-b-0 lg:border-r">
+          <div className="flex min-h-[44px] items-center justify-between gap-4">
+            <button
+              type="button"
+              disabled={monthIndex <= 0}
+              onClick={() => changeMonth(-1)}
+              title={copy.calendarPreviousMonth}
+              aria-label={copy.calendarPreviousMonth}
+              className="inline-flex h-10 w-10 items-center justify-center rounded border border-white/10 font-mono text-sm text-white/48 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light disabled:cursor-default disabled:opacity-20"
+            >
+              ←
+            </button>
+            <h3 className="text-center text-sm font-semibold text-white sm:text-base">{monthLabel}</h3>
+            <button
+              type="button"
+              disabled={monthIndex >= availableMonths.length - 1}
+              onClick={() => changeMonth(1)}
+              title={copy.calendarNextMonth}
+              aria-label={copy.calendarNextMonth}
+              className="inline-flex h-10 w-10 items-center justify-center rounded border border-white/10 font-mono text-sm text-white/48 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light disabled:cursor-default disabled:opacity-20"
+            >
+              →
+            </button>
+          </div>
+
+          <div className="mt-5 grid grid-cols-7 gap-px overflow-hidden rounded border border-white/10 bg-white/10">
+            {copy.calendarWeekdays.map((weekday) => (
+              <span key={weekday} className="flex h-8 items-center justify-center bg-surface-1 font-mono text-[9px] uppercase text-white/28 sm:h-9 sm:text-[10px]">
+                {weekday}
+              </span>
+            ))}
+            {monthCells(monthKey).map((cell, index) => {
+              if (!cell) return <span key={`empty-${index}`} aria-hidden="true" className="h-12 bg-surface-1/74 sm:h-16" />;
+              const record = developmentDays.find((day) => day.date === cell.date);
+              const selected = selectedDate === cell.date;
+              if (!record) {
+                return (
+                  <span key={cell.date} className="flex h-12 items-start justify-end bg-surface-1/74 p-2 font-mono text-[10px] text-white/20 sm:h-16">
+                    {cell.day}
+                  </span>
+                );
+              }
+              return (
+                <button
+                  key={cell.date}
+                  type="button"
+                  onClick={() => setSelectedDate(cell.date)}
+                  aria-pressed={selected}
+                  aria-label={`${cell.date}: ${record.entries.length} ${copy.calendarUpdatesLabel}`}
+                  className={`relative flex h-12 min-w-0 items-start justify-end p-2 font-mono text-[10px] transition-colors focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light sm:h-16 ${selected ? 'bg-brand-faint text-brand-light' : 'bg-surface-1 text-white/66 hover:bg-surface-2'}`}
+                >
+                  {cell.day}
+                  <span aria-hidden="true" className={`absolute bottom-2 left-2 h-1.5 w-1.5 rounded-full ${selected ? 'bg-brand-light' : 'bg-ok'}`} />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="min-w-0 bg-surface-1/60 p-5 sm:p-6">
+          <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light/70">{copy.calendarSelectedDate}</p>
+          <h3 className="mt-2 font-mono text-base text-white">{selectedDate}</h3>
+          <div className="mt-5 border-t border-white/10">
+            {selectedGroups.length ? selectedGroups.map((group) => (
+              <section key={group.status} className="border-b border-white/10 py-5 last:border-b-0">
+                <div className="flex items-center justify-between gap-3">
+                  <h4 className={`rounded border px-2 py-1 text-[9px] font-semibold ${statusTone(group.status)}`}>{copy.calendarStatusLabels[group.status]}</h4>
+                  <span className="font-mono text-[9px] text-white/24">{group.entries.length}</span>
+                </div>
+                <div className="mt-1">
+                  {group.entries.map((entry) => (
+                    <article key={entry.id} className="border-b border-white/8 py-4 last:border-b-0 last:pb-0">
+                      <span className="text-[9px] font-semibold uppercase tracking-[0.08em] text-white/30">{copy.calendarAreaLabels[entry.area]}</span>
+                      <h5 className="mt-2 text-sm font-medium leading-5 text-white">{entry.title}</h5>
+                      <p className="mt-2 text-xs leading-5 text-white/46">{entry.summary}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            )) : <p className="py-5 text-sm text-white/42">{copy.calendarNoUpdates}</p>}
+          </div>
+        </div>
+      </div>
+
+      <div className="partner-print-only hidden">
+        {developmentDays.slice().reverse().map((day) => (
+          <section key={day.date} className="border-b border-white/10 py-6">
+            <h3 className="font-mono text-sm text-white">{day.date}</h3>
+            {DEVELOPMENT_REPORT_STATUSES.map((status) => {
+              const entries = day.entries.filter((entry) => entry.status === status);
+              if (!entries.length) return null;
+              return (
+                <div key={status} className="mt-4">
+                  <h4 className="text-[10px] font-semibold uppercase text-white/48">{copy.calendarStatusLabels[status]}</h4>
+                  <div className="mt-2 space-y-3">
+                    {entries.map((entry) => (
+                      <article key={entry.id}>
+                        <p className="text-xs font-semibold text-white">{entry.title}</p>
+                        <p className="mt-1 text-xs leading-5 text-white/52">{entry.summary}</p>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </section>
+        ))}
+      </div>
     </div>
   );
 }
@@ -1891,7 +2142,7 @@ function withEvidenceReferences(items, group) {
 
 function buildReviewSnapshot(copy, language) {
   return {
-    schema: 'aeronyx.partner.review.v3',
+    schema: 'aeronyx.partner.review.v4',
     generated_at: new Date().toISOString(),
     verified_date: VERIFIED_DATE,
     review_revision: REVIEW_REVISION,
@@ -1907,6 +2158,7 @@ function buildReviewSnapshot(copy, language) {
     decision_summary: copy.decisionLanes,
     partner_pilot_path: copy.pilotSteps,
     release_artifacts: releaseArtifactsForReview(copy),
+    development_calendar: localizedDevelopmentDays(language),
     client_capabilities: withEvidenceReferences(copy.clientItems, 'client'),
     rust_capabilities: withEvidenceReferences(copy.rustItems, 'node'),
     dependency_boundary: copy.dependencies,
@@ -2653,6 +2905,18 @@ function PartnerProgressPage() {
           </section>
 
           <section
+            id="partner-view-calendar"
+            role="tabpanel"
+            aria-labelledby="partner-tab-calendar"
+            className={`partner-view-panel scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-12 sm:py-16 ${activeView === 'calendar' ? '' : 'hidden'}`}
+          >
+            <Container>
+              <SectionHeading eyebrow={copy.calendarEyebrow} title={copy.calendarTitle} body={copy.calendarBody} />
+              <DevelopmentCalendar copy={copy} language={language} />
+            </Container>
+          </section>
+
+          <section
             id="partner-view-workspace"
             role="tabpanel"
             aria-labelledby="partner-tab-workspace"
@@ -2763,6 +3027,10 @@ function PartnerProgressPage() {
 
           .partner-no-print {
             display: none !important;
+          }
+
+          .partner-print-only {
+            display: block !important;
           }
 
           .partner-view-panel,
