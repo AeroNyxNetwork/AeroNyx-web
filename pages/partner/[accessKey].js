@@ -17,18 +17,18 @@
  *     recent evidence, and next milestones without fictional percentages.
  *   - Adds review filters, status definitions, secure-link copy feedback,
  *     print/PDF output, and reviewer contact actions for partner diligence.
- *   - Publishes a decision summary, dependency ownership matrix, sticky review
- *     index, and a public-safe machine-readable JSON snapshot.
- *   - Provides executive and technical review depths, active-section context,
- *     explicit evidence levels, next validation gates, and a partner pilot path.
+ *   - Publishes a hierarchical delivery board, dependency ownership matrix,
+ *     reviewer workspace, and public-safe machine-readable JSON snapshot.
+ *   - Provides scoped client/protocol evidence, explicit evidence levels, next
+ *     validation gates, and a focused partner pilot path.
  *   - Adds capability search, evidence-source provenance, and a browser-local
  *     reviewer workspace with an explicit public-safe handoff export.
  *   - Adds a review decision memo, revision delta, and validated local handoff
  *     import so partner teams can continue diligence across browsers safely.
  *   - Adds stable evidence references, handoff-readiness feedback, and a
  *     human-readable Markdown decision memo that never includes the access URL.
- *   - Reuses the public immutable release contract to show partner-verifiable
- *     platform artifacts, distribution assurance, and exact SHA-256 digests.
+ *   - Reuses the public immutable release contract in portable review exports
+ *     while keeping installer controls off the focused browser surface.
  *   - Adds a browser-local findings register with severity, ownership, due
  *     dates, closure state, and blocker-aware handoff readiness.
  *   - Connects stable APP/NODE evidence references to findings so reviewers
@@ -43,8 +43,8 @@
  *   1. getServerSideProps rejects missing, malformed, or incorrect keys.
  *   2. The authorized response receives private no-store crawler/referrer
  *      headers before any page content is rendered.
- *   3. Reviewers choose executive or technical depth, then scan, filter,
- *      export, print, or validate evidence before a partner pilot decision.
+ *   3. Reviewers filter Completed, In progress, and Next tasks, then open one
+ *      item at a time for evidence or switch to the local Review workspace.
  *   4. Optional checklist progress, findings, and notes stay in the reviewer's
  *      browser; nothing is transmitted unless a handoff file is exported.
  *
@@ -60,8 +60,8 @@
  *     usable; it must never be inferred from a roadmap or design document.
  *   - Exported JSON must remain public-safe and must never contain the access
  *     URL, route key, private endpoints, customer traffic, or node identities.
- *   - Executive depth only changes presentation. Technical evidence must stay
- *     in the DOM, JSON export, and print output so no review fact is discarded.
+ *   - Task filters only change presentation. Technical evidence must stay in
+ *     the DOM, JSON export, and print output so no review fact is discarded.
  *   - Reviewer workspace storage must never use the route key as an identifier
  *     or send notes to analytics, logs, APIs, or AeroNyx infrastructure.
  *   - Imported handoffs are untrusted input. Keep schema, size, enum, and text
@@ -81,8 +81,11 @@
  *   - [PARTNER-INFORMATION-HIERARCHY 2026-08-21 by Codex] Keep client binary
  *     downloads on the public download surface. This route should foreground
  *     decisions, delivery evidence, dependencies, boundaries, and pilot work.
+ *   - [PARTNER-DELIVERY-BOARD 2026-08-21 by Codex] The browser experience uses
+ *     a Todoist-style workstream/task/detail hierarchy. Print and portable
+ *     exports still contain the complete public-safe review record.
  *
- * Last Modified: v2.2 - Decision-first hierarchy without binary download UI.
+ * Last Modified: v3.1 - Hierarchical delivery board with task-level evidence.
  * ============================================
  */
 
@@ -101,7 +104,7 @@ import {
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '2.2';
+const REVIEW_REVISION = '3.1';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -116,6 +119,8 @@ const REVIEW_DECISIONS = Object.freeze(['undecided', 'pilot', 'conditional', 'ho
 const REVIEW_FINDING_SEVERITIES = Object.freeze(['blocker', 'high', 'medium', 'low']);
 const REVIEW_FINDING_STATUSES = Object.freeze(['open', 'resolved']);
 const REVIEW_FINDING_REFERENCE_PATTERN = /^(APP|NODE)-\d{2}$/;
+const REVIEW_VIEWS = Object.freeze(['delivery', 'workspace']);
+const DELIVERY_FILTERS = Object.freeze(['all', 'complete', 'active', 'next']);
 const EMPTY_REVIEW_CHECKS = Object.freeze({
   scope: false,
   privacy: false,
@@ -124,25 +129,6 @@ const EMPTY_REVIEW_CHECKS = Object.freeze({
   decision: false,
 });
 const ACCESS_KEY_PATTERN = /^[a-f0-9]{64}$/;
-const STATUS_TONE = {
-  available: {
-    dot: 'bg-ok',
-    badge: 'border-brand-line bg-brand-faint text-brand-light',
-  },
-  beta: {
-    dot: 'bg-cipher-light',
-    badge: 'border-cipher/25 bg-cipher/5 text-cipher-light',
-  },
-  hardening: {
-    dot: 'bg-warn',
-    badge: 'border-warn/25 bg-warn/5 text-warn',
-  },
-  progress: {
-    dot: 'border border-white/45 bg-transparent',
-    badge: 'border-white/12 bg-white/[0.03] text-white/62',
-  },
-};
-
 const FINDING_SEVERITY_TONE = {
   blocker: 'border-warn/40 bg-warn/8 text-warn',
   high: 'border-[#ff9d66]/30 bg-[#ff9d66]/[0.06] text-[#ffb185]',
@@ -171,47 +157,46 @@ const CONTENT = {
     exportedJson: 'JSON downloaded',
     exportFailed: 'Export unavailable',
     printBrief: 'Print / Save PDF',
+    reviewActionsLabel: 'Portable review record',
+    reviewActionsBody: 'Export the public-safe evidence snapshot or print the complete brief. Neither action includes the route key or browser-local review notes.',
     contactTeam: 'Contact AeroNyx',
-    reviewDepthTitle: 'Review depth',
-    reviewDepthBody: 'Executive keeps the decision path concise. Technical reveals the complete capability and validation record.',
-    reviewDepthLabels: {
-      executive: 'Executive',
-      technical: 'Technical',
+    viewLabel: 'Partner review mode',
+    viewTabs: [
+      { id: 'delivery', label: 'Delivery board', detail: 'Completed, active, and next work' },
+      { id: 'workspace', label: 'Review workspace', detail: 'Findings, decision, and handoff' },
+    ],
+    deliveryEyebrow: 'Delivery board',
+    deliveryTitle: 'One clear list of what is done, moving, and next.',
+    deliveryBody: 'Work is grouped by product area. Open any item only when you need its implementation evidence, dependency boundary, or next acceptance gate.',
+    deliveryFilterLabel: 'Filter delivery tasks',
+    deliveryFilters: {
+      all: 'All',
+      complete: 'Completed',
+      active: 'In progress',
+      next: 'Next',
     },
-    reviewDepthDescriptions: {
-      executive: 'Decision, pilot, dependencies, boundaries, and roadmap',
-      technical: 'Full client and Rust capability evidence',
+    deliveryStageLabels: {
+      complete: 'Completed',
+      active: 'In progress',
+      next: 'Next',
+    },
+    deliveryGroups: {
+      client: { label: 'Client product', detail: 'User-facing privacy, communication, memory, identity, and release paths.' },
+      node: { label: 'Open protocol nodes', detail: 'Transport, discovery, blind relay, encrypted custody, and coordination evidence.' },
+      next: { label: 'Next milestones', detail: 'The shortest validated path to broader partner deployment.' },
+    },
+    deliveryItemsLabel: 'items',
+    deliveryEmpty: 'No tasks match this view.',
+    deliveryOpenDetail: 'Open task detail',
+    deliveryPlannedLevel: 'Planned validation milestone',
+    deliveryPlannedSources: ['Reviewed roadmap', 'Current system boundary'],
+    deliveryPlannedEvidence: 'Scheduled after the current implementation and verification gates close.',
+    evidenceScopeLabel: 'Evidence scope',
+    evidenceScopeLabels: {
+      client: 'Client product',
+      node: 'Protocol nodes',
     },
     methodologyEyebrow: 'Review methodology',
-    quickLinksEyebrow: 'Start with the decision-critical facts',
-    quickLinksTitle: 'Open the evidence that matters first.',
-    quickLinksAction: 'View section',
-    quickLinks: [
-      {
-        href: '#decision',
-        label: 'Pilot position',
-        value: 'Ready for scoped evaluation',
-        detail: 'See what can be piloted now, what remains controlled beta, and what is not a default.',
-      },
-      {
-        href: '#overview',
-        label: 'Delivery baseline',
-        value: `Client ${CLIENT_BUILD}`,
-        detail: 'Review the current client, protocol commit, platform coverage, and delivery maturity.',
-      },
-      {
-        href: '#boundaries',
-        label: 'Trust boundary',
-        value: 'Declared, not hidden',
-        detail: 'Review present dependencies, metadata limits, and capabilities that still need hardening.',
-      },
-      {
-        href: '#pilot',
-        label: 'Recommended next step',
-        value: 'Four-step partner pilot',
-        detail: 'Move from scope and trust review to acceptance evidence and a reversible rollout decision.',
-      },
-    ],
     capabilitySearchLabel: 'Search capability evidence',
     capabilitySearchPlaceholder: 'Search relay, memory, recovery, witness…',
     statusOverview: {
@@ -220,18 +205,6 @@ const CONTENT = {
       hardening: 'Hardening tracks',
       boundaries: 'Declared boundaries',
     },
-    jumpLabel: 'Brief sections',
-    jumpItems: [
-      ['#decision', 'Decision', false],
-      ['#overview', 'Delivery baseline', false],
-      ['#pilot', 'Pilot path', false],
-      ['#dependencies', 'Dependencies', false],
-      ['#boundaries', 'Current boundaries', false],
-      ['#roadmap', 'Next milestones', false],
-      ['#client', 'Client product', true],
-      ['#rust', 'Rust infrastructure', true],
-      ['#workspace', 'Review workspace', false],
-    ],
     snapshotEyebrow: 'Current baseline',
     snapshotTitle: 'Shipping product, hardened protocol core.',
     snapshotBody: 'These identifiers anchor the brief to a concrete client release and reviewed Rust main commit. Status is based on source and test evidence, not roadmap percentages.',
@@ -242,12 +215,12 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'The review now follows the partner decision path.',
-    revisionDeltaBody: 'Decision scope, delivery baseline, pilot, dependencies, boundaries, and milestones now form one clear reading sequence. Binary downloads no longer compete with the evidence review.',
+    revisionDeltaTitle: 'The long report is now a focused review workbench.',
+    revisionDeltaBody: 'A task-based delivery board separates completed, active, and next work. Evidence remains attached to each item while reviewer notes stay in a separate local workspace.',
     revisionDeltaItems: [
-      'Remove client installer download controls from the partner review surface.',
-      'Move the decision view before supporting baseline and technical evidence.',
-      'Keep detailed methodology available on demand instead of always expanded.',
+      'Group work into client, protocol node, and next-milestone workstreams.',
+      'Filter completed, in-progress, and next tasks without losing evidence.',
+      'Open implementation proof and acceptance gates only when requested.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -716,47 +689,46 @@ const CONTENT = {
     exportedJson: 'JSON 已下載',
     exportFailed: '無法匯出',
     printBrief: '列印 / 儲存 PDF',
+    reviewActionsLabel: '可攜式審閱記錄',
+    reviewActionsBody: '可匯出公開安全的證據快照，或列印完整簡報；兩者均不包含路由金鑰或瀏覽器本地審閱筆記。',
     contactTeam: '聯絡 AeroNyx',
-    reviewDepthTitle: '審閱深度',
-    reviewDepthBody: '高層視圖保留決策主線；技術視圖展開完整能力、證據與驗收記錄。',
-    reviewDepthLabels: {
-      executive: '高層視圖',
-      technical: '技術視圖',
+    viewLabel: '合作方審閱模式',
+    viewTabs: [
+      { id: 'delivery', label: '交付清單', detail: '已完成、進行中與下一步' },
+      { id: 'workspace', label: '審閱工作區', detail: '問題、決策與交接' },
+    ],
+    deliveryEyebrow: '交付清單',
+    deliveryTitle: '一張清單，看清已完成、進行中與下一步。',
+    deliveryBody: '工作按產品大項分組；只有需要查看實現證據、依賴邊界或下一驗收門檻時，才展開單項細節。',
+    deliveryFilterLabel: '篩選交付任務',
+    deliveryFilters: {
+      all: '全部',
+      complete: '已完成',
+      active: '進行中',
+      next: '下一步',
     },
-    reviewDepthDescriptions: {
-      executive: '決策、Pilot、依賴、邊界與路線圖',
-      technical: '完整客戶端與 Rust 能力證據',
+    deliveryStageLabels: {
+      complete: '已完成',
+      active: '進行中',
+      next: '下一步',
+    },
+    deliveryGroups: {
+      client: { label: '客戶端產品', detail: '面向用戶的隱私、通信、記憶、身份與發布路徑。' },
+      node: { label: '開放協議節點', detail: '傳輸、發現、盲中繼、加密託管與協調證據。' },
+      next: { label: '下一里程碑', detail: '走向更廣泛合作方部署的最短驗證路徑。' },
+    },
+    deliveryItemsLabel: '項',
+    deliveryEmpty: '此視圖沒有符合條件的任務。',
+    deliveryOpenDetail: '展開任務細節',
+    deliveryPlannedLevel: '計劃中的驗證里程碑',
+    deliveryPlannedSources: ['已審閱路線圖', '當前系統邊界'],
+    deliveryPlannedEvidence: '在目前實現與驗證門檻完成後排期執行。',
+    evidenceScopeLabel: '證據範圍',
+    evidenceScopeLabels: {
+      client: '客戶端產品',
+      node: '協議節點',
     },
     methodologyEyebrow: '審閱方法',
-    quickLinksEyebrow: '先看影響決策的關鍵資訊',
-    quickLinksTitle: '重要狀態與證據，一次直達。',
-    quickLinksAction: '查看章節',
-    quickLinks: [
-      {
-        href: '#decision',
-        label: 'Pilot 定位',
-        value: '可開始範圍化評估',
-        detail: '快速區分現在可 Pilot、受控 Beta，以及尚未設為默認的能力。',
-      },
-      {
-        href: '#overview',
-        label: '交付基線',
-        value: `客戶端 ${CLIENT_BUILD}`,
-        detail: '查看目前客戶端、協議 commit、平台覆蓋與交付成熟度。',
-      },
-      {
-        href: '#boundaries',
-        label: '信任邊界',
-        value: '明確聲明，不隱藏',
-        detail: '查看現有依賴、元資料限制，以及仍需加固的能力。',
-      },
-      {
-        href: '#pilot',
-        label: '建議下一步',
-        value: '四步合作方 Pilot',
-        detail: '從範圍與信任審閱，走到驗收證據及可回滾的發布決策。',
-      },
-    ],
     capabilitySearchLabel: '搜尋能力證據',
     capabilitySearchPlaceholder: '搜尋 Relay、記憶、恢復、witness…',
     statusOverview: {
@@ -765,18 +737,6 @@ const CONTENT = {
       hardening: '加固中項目',
       boundaries: '已聲明邊界',
     },
-    jumpLabel: '簡報目錄',
-    jumpItems: [
-      ['#decision', '決策', false],
-      ['#overview', '交付基線', false],
-      ['#pilot', 'Pilot 路徑', false],
-      ['#dependencies', '依賴邊界', false],
-      ['#boundaries', '目前邊界', false],
-      ['#roadmap', '下一里程碑', false],
-      ['#client', '客戶端產品', true],
-      ['#rust', 'Rust 基礎設施', true],
-      ['#workspace', '審閱工作區', false],
-    ],
     snapshotEyebrow: '目前基線',
     snapshotTitle: '產品已交付，協議核心持續加固。',
     snapshotBody: '以下版本把頁面錨定到真實客戶端發布與已審核的 Rust main commit。狀態來自源碼與測試證據，不使用虛假的完成百分比。',
@@ -787,12 +747,12 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '審閱順序現在對齊合作方決策流程。',
-    revisionDeltaBody: '決策範圍、交付基線、Pilot、依賴、邊界與里程碑形成清楚主線；客戶端安裝包下載不再干擾證據審閱。',
+    revisionDeltaTitle: '長報告已收斂為聚焦的審閱工作台。',
+    revisionDeltaBody: '任務式交付清單把已完成、進行中與下一步分開；證據附著在每個任務中，審閱筆記則留在獨立的本地工作區。',
     revisionDeltaItems: [
-      '從合作方審閱介面移除客戶端安裝包下載控制。',
-      '把決策視圖移到交付基線與技術證據之前。',
-      '詳細審閱方法改為按需展開，不再預設佔據版面。',
+      '按客戶端、協議節點與下一里程碑建立工作大項。',
+      '可篩選已完成、進行中與下一步，同時保留完整證據。',
+      '只有需要時才展開實現證明與下一驗收門檻。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',
@@ -1243,17 +1203,6 @@ const CONTENT = {
   },
 };
 
-function StatusBadge({ status, labels }) {
-  const tone = STATUS_TONE[status] || STATUS_TONE.progress;
-
-  return (
-    <span className={`inline-flex min-h-[28px] items-center gap-2 rounded-pill border px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] ${tone.badge}`}>
-      <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${tone.dot}`} />
-      {labels[status] || status}
-    </span>
-  );
-}
-
 function SectionHeading({ eyebrow, title, body }) {
   return (
     <div className="max-w-3xl">
@@ -1266,250 +1215,250 @@ function SectionHeading({ eyebrow, title, body }) {
   );
 }
 
-// [PARTNER-EXECUTIVE-SUMMARY 2026-08-21 by Codex] These are navigation-first
-// decision cards, not duplicate status claims. Each card points to the section
-// that contains the complete context, evidence, and current limitations.
-function ExecutiveQuickLinks({ copy }) {
+// [PARTNER-REVIEW-WORKBENCH 2026-08-21 by Codex] One navigation model replaces
+// the former quick links, depth switch, and long section index. Each tab owns a
+// focused review task while print continues to expose the complete brief.
+function ReviewViewTabs({ copy, activeView, onChange }) {
   return (
-    <section className="partner-no-print mt-8 border-y border-white/12 py-6" aria-labelledby="partner-quick-links">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light/82">
-            {copy.quickLinksEyebrow}
-          </p>
-          <h2 id="partner-quick-links" className="mt-3 text-xl font-medium leading-7 text-white sm:text-2xl">
-            {copy.quickLinksTitle}
-          </h2>
-        </div>
-        <p className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.08em] text-white/28 sm:block">
-          04 / {copy.jumpLabel}
-        </p>
-      </div>
-      <div className="mt-6 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:overflow-visible lg:pb-0">
-        <div className="flex w-max snap-x snap-mandatory border-l border-t border-white/10 lg:grid lg:w-auto lg:grid-cols-4">
-          {copy.quickLinks.map((item, index) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="group flex min-h-[176px] w-[82vw] max-w-[310px] shrink-0 snap-start flex-col border-b border-r border-white/10 bg-white/[0.012] p-5 transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light sm:w-[320px] sm:p-6 lg:w-auto lg:max-w-none"
-              aria-label={`${item.label}: ${item.value}`}
-            >
-              <div className="flex items-center justify-between gap-4">
-                <span className="font-mono text-[10px] text-brand-light/68">
+    <nav className="partner-no-print sticky top-16 z-40 border-b border-white/10 bg-surface-0/96 backdrop-blur-xl sm:top-20" aria-label={copy.viewLabel}>
+      <Container>
+        <div className="grid grid-cols-2" role="tablist" aria-label={copy.viewLabel}>
+          {copy.viewTabs.map((item, index) => {
+            const active = activeView === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                id={`partner-tab-${item.id}`}
+                aria-selected={active}
+                aria-controls={`partner-view-${item.id}`}
+                onClick={() => onChange(item.id)}
+                className={`relative min-h-[58px] min-w-0 border-x border-white/8 px-2 py-3 text-left transition-colors first:border-r-0 last:border-l-0 hover:bg-white/[0.035] focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light sm:px-4 lg:min-h-[66px] ${active ? 'bg-white/[0.035]' : ''}`}
+              >
+                <span className={`block font-mono text-[9px] ${active ? 'text-brand-light' : 'text-brand-light/48'}`}>
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <span aria-hidden="true" className="text-sm text-white/26 transition-colors group-hover:text-brand-light">
-                  →
+                <span className={`mt-1 block truncate text-[11px] font-semibold sm:text-xs ${active ? 'text-white' : 'text-white/52'}`}>
+                  {item.label}
                 </span>
-              </div>
-              <p className="mt-7 text-[10px] font-semibold uppercase tracking-eyebrow text-white/34">{item.label}</p>
-              <p className="mt-2 text-lg font-medium leading-6 text-white sm:text-xl">{item.value}</p>
-              <p className="mt-3 text-xs leading-5 text-white/44">{item.detail}</p>
-              <span className="mt-auto pt-5 text-[10px] font-semibold uppercase tracking-[0.08em] text-white/38 transition-colors group-hover:text-white/72">
-                {copy.quickLinksAction}
-              </span>
-            </a>
-          ))}
+                <span className="mt-1 hidden truncate text-[10px] text-white/30 lg:block">{item.detail}</span>
+                <span aria-hidden="true" className={`absolute inset-x-2 bottom-0 h-px bg-brand-light sm:inset-x-4 ${active ? 'opacity-100' : 'opacity-0'}`} />
+              </button>
+            );
+          })}
         </div>
-      </div>
-    </section>
+      </Container>
+    </nav>
   );
 }
 
-// [PARTNER-REVIEW-SYSTEM 2026-08-19 by Codex] Keep diligence controls and
-// maturity definitions in this route so the public site stays unaware of it.
-function DeliveryOverview({ clientItems, rustItems, boundaries, copy }) {
-  const capabilities = [...clientItems, ...rustItems];
-  const overview = [
-    ['available', capabilities.filter((item) => item.status === 'available').length],
-    ['beta', capabilities.filter((item) => item.status === 'beta').length],
-    ['hardening', capabilities.filter((item) => item.status === 'hardening').length],
-    ['boundaries', boundaries.length],
-  ];
-
-  return (
-    <dl className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:grid-cols-2 xl:grid-cols-4">
-      {overview.map(([key, value]) => (
-        <div key={key} className="min-w-0 bg-surface-1 px-5 py-5 sm:px-6 sm:py-6">
-          <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/36">
-            {copy.statusOverview[key]}
-          </dt>
-          <dd className="mt-3 font-display text-3xl font-medium text-white">{value}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
-function StatusDefinitions({ copy }) {
-  return (
-    <details className="group mt-8 border-t border-white/10">
-      <summary className="partner-no-print flex min-h-[56px] cursor-pointer list-none items-center justify-between gap-6 border-b border-white/10 py-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light [&::-webkit-details-marker]:hidden">
-        <span>
-          <span className="block text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light/70">{copy.methodologyEyebrow}</span>
-          <span id="partner-status-definitions" className="mt-1 block text-sm font-medium text-white/72">
-            {copy.statusDefinitionsTitle}
-          </span>
-        </span>
-        <span aria-hidden="true" className="font-mono text-sm text-white/34 group-open:hidden">+</span>
-        <span aria-hidden="true" className="hidden font-mono text-sm text-brand-light group-open:inline">−</span>
-      </summary>
-      <div className="grid gap-7 border-b border-white/10 py-7 lg:grid-cols-[minmax(220px,0.75fr)_minmax(0,2fr)] lg:gap-12">
-        <div>
-          <p className="mt-3 text-sm leading-6 text-white/46">{copy.statusDefinitionsBody}</p>
-        </div>
-        <dl className="grid gap-5 sm:grid-cols-2">
-          {Object.entries(copy.statusDefinitions).map(([status, description]) => (
-            <div key={status} className="min-w-0">
-              <dt><StatusBadge status={status} labels={copy.statusLabels} /></dt>
-              <dd className="mt-3 text-xs leading-5 text-white/44">{description}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-    </details>
-  );
-}
-
-// [PARTNER-REVISION-DELTA 2026-08-19 by Codex] Keep review-system changes
-// separate from product delivery claims so presentation work cannot be
-// mistaken for a newly shipped client or Rust capability.
-function RevisionDelta({ copy }) {
+function PlanDisclosure({ eyebrow, title, body, children }) {
   return (
     <details className="group border-b border-white/10">
-      <summary className="partner-no-print flex min-h-[56px] cursor-pointer list-none items-center justify-between gap-6 py-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light [&::-webkit-details-marker]:hidden">
-        <span>
-          <span className="block text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light/70">{copy.revisionDeltaEyebrow}</span>
-          <span className="mt-1 block text-sm font-medium text-white/72">{copy.revisionDeltaTitle}</span>
+      <summary className="partner-no-print flex min-h-[72px] cursor-pointer list-none items-center justify-between gap-6 py-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light [&::-webkit-details-marker]:hidden">
+        <span className="min-w-0">
+          <span className="block text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light/70">{eyebrow}</span>
+          <span className="mt-2 block text-lg font-medium leading-6 text-white sm:text-xl">{title}</span>
+          {body ? <span className="mt-2 hidden max-w-3xl text-xs leading-5 text-white/38 sm:block">{body}</span> : null}
         </span>
         <span aria-hidden="true" className="font-mono text-sm text-white/34 group-open:hidden">+</span>
         <span aria-hidden="true" className="hidden font-mono text-sm text-brand-light group-open:inline">−</span>
       </summary>
-      <div className="grid gap-7 border-t border-white/10 py-7 lg:grid-cols-[minmax(220px,0.8fr)_minmax(0,1.6fr)] lg:gap-12">
-        <div>
-          <h3 id="partner-revision-delta" className="mt-3 text-lg font-medium leading-6 text-white">
-            {copy.revisionDeltaTitle}
-          </h3>
-          <p className="mt-3 text-sm leading-6 text-white/46">{copy.revisionDeltaBody}</p>
-        </div>
-        <ol className="border-t border-white/10 lg:border-t-0">
-          {copy.revisionDeltaItems.map((item, index) => (
-            <li key={item} className="grid grid-cols-[32px_minmax(0,1fr)] gap-4 border-b border-white/10 py-4 last:border-b-0 lg:first:pt-0">
-              <span className="font-mono text-[10px] text-brand-light/58">{String(index + 1).padStart(2, '0')}</span>
-              <span className="text-sm leading-6 text-white/58">{item}</span>
-            </li>
-          ))}
-        </ol>
-      </div>
+      <div className="border-t border-white/10 pb-10 pt-2">{children}</div>
     </details>
   );
 }
 
-// [PARTNER-REVIEW-DEPTH 2026-08-19 by Codex] Review depth is a presentation
-// choice only. Hidden technical sections remain available to print and export.
-function ReviewDepthControl({ copy, mode, onChange, query, onQueryChange }) {
+function deliveryStageForStatus(status) {
+  if (status === 'available') return 'complete';
+  if (status === 'progress') return 'next';
+  return 'active';
+}
+
+// [PARTNER-DELIVERY-BOARD 2026-08-21 by Codex] The partner surface follows a
+// task hierarchy: workstream, task, then on-demand evidence. This keeps the
+// implementation record complete without turning the default view into a report.
+function DeliveryBoard({
+  copy,
+  filter,
+  onFilterChange,
+  flaggedReferences,
+  highlightedReference,
+  onFlagForReview,
+}) {
+  const [referenceCopyState, setReferenceCopyState] = useState({ reference: '', status: 'idle' });
+  const roadmapItems = copy.roadmap.map((item) => ({
+    status: 'progress',
+    title: item.title,
+    summary: item.detail,
+    evidence: copy.deliveryPlannedEvidence,
+    evidenceLevel: copy.deliveryPlannedLevel,
+    evidenceSources: copy.deliveryPlannedSources,
+    nextGate: item.detail,
+  }));
+  const groups = [
+    { id: 'client', items: copy.clientItems, referencePrefix: 'APP' },
+    { id: 'node', items: copy.rustItems, referencePrefix: 'NODE' },
+    { id: 'next', items: roadmapItems, referencePrefix: 'NEXT' },
+  ];
+  const allTasks = groups.flatMap((group) => group.items.map((item) => ({
+    ...item,
+    stage: deliveryStageForStatus(item.status),
+  })));
+  const counts = DELIVERY_FILTERS.reduce((result, key) => ({
+    ...result,
+    [key]: key === 'all' ? allTasks.length : allTasks.filter((item) => item.stage === key).length,
+  }), {});
+
+  useEffect(() => {
+    if (referenceCopyState.status === 'idle') return undefined;
+    const timeout = window.setTimeout(
+      () => setReferenceCopyState({ reference: '', status: 'idle' }),
+      2500
+    );
+    return () => window.clearTimeout(timeout);
+  }, [referenceCopyState]);
+
+  async function handleCopyReference(reference, title) {
+    if (!navigator.clipboard?.writeText) {
+      setReferenceCopyState({ reference, status: 'failed' });
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(`AeroNyx Partner Brief v${REVIEW_REVISION} · ${reference} · ${title}`);
+      setReferenceCopyState({ reference, status: 'copied' });
+    } catch {
+      setReferenceCopyState({ reference, status: 'failed' });
+    }
+  }
+
   return (
-    <div className="partner-no-print border-t border-white/10 pt-6">
-      <div className="sm:flex sm:items-center sm:justify-between sm:gap-8">
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-white/72">{copy.reviewDepthTitle}</p>
-          <p id="partner-review-depth-description" className="mt-2 max-w-2xl text-xs leading-5 text-white/40">
-            {copy.reviewDepthBody}
-          </p>
-        </div>
-        <div className="mt-4 shrink-0 sm:mt-0">
-          <div
-            className="grid grid-cols-2 gap-px overflow-hidden rounded border border-white/10 bg-white/10"
-            role="group"
-            aria-label={copy.reviewDepthTitle}
-            aria-describedby="partner-review-depth-description"
-          >
-            {Object.entries(copy.reviewDepthLabels).map(([key, label]) => {
-              const active = mode === key;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  aria-pressed={active}
-                  onClick={() => onChange(key)}
-                  className={`min-h-[44px] min-w-[118px] bg-surface-1 px-4 text-xs font-semibold transition-colors focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light ${
-                    active ? 'bg-brand-faint text-brand-light' : 'text-white/46 hover:bg-surface-2 hover:text-white/72'
-                  }`}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-          <p className="mt-2 max-w-[280px] text-left text-[10px] leading-4 text-white/32 sm:text-right">
-            {copy.reviewDepthDescriptions[mode]}
-          </p>
-        </div>
+    <div className="mt-10">
+      <div className="partner-no-print grid grid-cols-2 gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:grid-cols-4" role="group" aria-label={copy.deliveryFilterLabel}>
+        {DELIVERY_FILTERS.map((key) => {
+          const active = filter === key;
+          return (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={active}
+              onClick={() => onFilterChange(key)}
+              className={`min-h-[56px] min-w-0 bg-surface-1 px-4 py-2 text-left transition-colors focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light ${active ? 'bg-brand-faint' : 'hover:bg-surface-2'}`}
+            >
+              <span className={`block text-xs font-semibold ${active ? 'text-brand-light' : 'text-white/52'}`}>{copy.deliveryFilters[key]}</span>
+              <span className="mt-1 block font-mono text-[10px] text-white/28">{counts[key]}</span>
+            </button>
+          );
+        })}
       </div>
-      {mode === 'technical' ? (
-        <label className="mt-5 block max-w-xl" htmlFor="partner-capability-search">
-          <span className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/34">{copy.capabilitySearchLabel}</span>
-          <input
-            id="partner-capability-search"
-            type="search"
-            value={query}
-            onChange={(event) => onQueryChange(event.target.value)}
-            placeholder={copy.capabilitySearchPlaceholder}
-            autoComplete="off"
-            className="mt-2 min-h-[44px] w-full rounded border border-white/12 bg-surface-1 px-4 text-sm text-white outline-none placeholder:text-white/26 focus:border-brand-line focus:ring-2 focus:ring-brand/20"
-          />
-        </label>
-      ) : null}
-    </div>
-  );
-}
 
-function DecisionSummary({ copy }) {
-  return (
-    <div className="mt-10 grid border-y border-white/10 lg:grid-cols-3">
-      {copy.decisionLanes.map((lane, index) => (
-        <article
-          key={lane.label}
-          className="min-w-0 border-t border-white/10 py-7 first:border-t-0 lg:border-l lg:border-t-0 lg:px-7 lg:first:border-l-0 lg:first:pl-0 lg:last:pr-0"
-        >
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <StatusBadge status={lane.status} labels={copy.statusLabels} />
-            <span className="font-mono text-[10px] text-white/24">0{index + 1}</span>
-          </div>
-          <h3 className="mt-5 text-xl font-medium text-white">{lane.label}</h3>
-          <p className="mt-3 text-sm leading-6 text-white/46">{lane.detail}</p>
-          <ul className="mt-6 border-t border-white/10 pt-3">
-            {lane.items.map((item) => (
-              <li key={item} className="flex min-w-0 gap-3 border-b border-white/8 py-3 text-sm leading-5 text-white/62 last:border-b-0">
-                <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-brand-light" />
-                <span className="min-w-0">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </article>
-      ))}
-    </div>
-  );
-}
+      <div className="mt-8 space-y-8">
+        {groups.map((group) => {
+          const tasks = group.items.map((item, index) => ({
+            ...item,
+            sourceIndex: index,
+            stage: deliveryStageForStatus(item.status),
+            reference: `${group.referencePrefix}-${String(index + 1).padStart(2, '0')}`,
+          }));
+          const visibleTasks = tasks.filter((item) => filter === 'all' || item.stage === filter);
+          const groupCopy = copy.deliveryGroups[group.id];
 
-function PilotReviewPath({ copy }) {
-  return (
-    <ol className="mt-10 border-y border-white/10">
-      {copy.pilotSteps.map((item) => (
-        <li
-          key={item.step}
-          className="grid min-w-0 gap-4 border-b border-white/10 py-7 last:border-b-0 sm:grid-cols-[52px_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[52px_minmax(220px,0.8fr)_minmax(0,1.2fr)_minmax(220px,0.8fr)] lg:gap-8"
-        >
-          <span className="font-mono text-[10px] text-brand-light/70 sm:pt-1">{item.step}</span>
-          <h3 className="text-lg font-medium leading-6 text-white">{item.title}</h3>
-          <p className="text-sm leading-6 text-white/52">{item.detail}</p>
-          <div className="border-l border-brand-line pl-4">
-            <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.pilotOutputLabel}</p>
-            <p className="mt-2 text-xs leading-5 text-white/52">{item.output}</p>
-          </div>
-        </li>
-      ))}
-    </ol>
+          return (
+            <div key={group.id} className={`partner-delivery-group overflow-hidden rounded border border-white/10 bg-surface-1/58 ${visibleTasks.length === 0 ? 'hidden' : ''}`}>
+              <div className="flex flex-col gap-3 border-b border-white/10 px-5 py-5 sm:flex-row sm:items-end sm:justify-between sm:px-6">
+                <div className="min-w-0">
+                  <h3 className="text-lg font-medium text-white sm:text-xl">{groupCopy.label}</h3>
+                  <p className="mt-1 max-w-3xl text-xs leading-5 text-white/38">{groupCopy.detail}</p>
+                </div>
+                <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.08em] text-white/30">
+                  {visibleTasks.length} {copy.deliveryItemsLabel}
+                </span>
+              </div>
+
+              <div>
+                {tasks.map((item) => {
+                  const evidenceId = item.reference.startsWith('NEXT-')
+                    ? `partner-next-${String(item.sourceIndex + 1).padStart(2, '0')}`
+                    : evidenceIdForReference(item.reference);
+                  const isFlagged = flaggedReferences.includes(item.reference);
+                  const copyState = referenceCopyState.reference === item.reference ? referenceCopyState.status : 'idle';
+                  const highlighted = highlightedReference === item.reference;
+                  const visible = filter === 'all' || item.stage === filter;
+
+                  return (
+                    <details
+                      key={item.reference}
+                      id={evidenceId}
+                      open={highlighted || undefined}
+                      className={`partner-delivery-task group/task scroll-mt-28 border-b border-white/10 last:border-b-0 ${visible ? '' : 'hidden'} ${highlighted ? 'bg-brand/[0.045]' : ''}`}
+                    >
+                      <summary className="flex min-h-[72px] cursor-pointer list-none items-start gap-4 px-5 py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light sm:items-center sm:px-6 [&::-webkit-details-marker]:hidden">
+                        <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border sm:mt-0 ${item.stage === 'complete' ? 'border-ok/35 bg-ok/10 text-ok' : item.stage === 'active' ? 'border-brand-line bg-brand-faint text-brand-light' : 'border-white/16 text-white/42'}`}>
+                          {item.stage === 'complete' ? <span className="text-xs">✓</span> : item.stage === 'active' ? <span className="h-1.5 w-1.5 rounded-full bg-brand-light" /> : <span className="text-xs">→</span>}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                            <span className="text-sm font-medium text-white sm:text-[15px]">{item.title}</span>
+                            <span className="font-mono text-[9px] text-white/26">{item.reference}</span>
+                          </span>
+                          <span className="mt-1.5 block text-xs leading-5 text-white/40 sm:line-clamp-1">{item.summary}</span>
+                        </span>
+                        <span className="hidden shrink-0 text-[10px] font-semibold uppercase tracking-[0.08em] text-white/34 sm:block">{copy.deliveryStageLabels[item.stage]}</span>
+                        <span aria-hidden="true" className="mt-1 shrink-0 font-mono text-sm text-white/28 group-open/task:hidden sm:mt-0">+</span>
+                        <span aria-hidden="true" className="mt-1 hidden shrink-0 font-mono text-sm text-brand-light group-open/task:inline sm:mt-0">−</span>
+                      </summary>
+
+                      <div className="border-t border-white/10 px-5 pb-6 pt-5 sm:px-6">
+                        <dl className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                          <div>
+                            <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/28">{copy.evidenceLevelLabel}</dt>
+                            <dd className="mt-2 text-xs font-medium leading-5 text-brand-light/82">{item.evidenceLevel}</dd>
+                          </div>
+                          <div>
+                            <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/28">{copy.evidenceSourcesLabel}</dt>
+                            <dd className="mt-2 text-xs leading-5 text-white/46">{item.evidenceSources.join(' · ')}</dd>
+                          </div>
+                          <div>
+                            <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/28">{copy.evidenceLabel}</dt>
+                            <dd className="mt-2 text-xs leading-5 text-white/46">{item.evidence}</dd>
+                          </div>
+                          <div>
+                            <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/28">{copy.nextGateLabel}</dt>
+                            <dd className="mt-2 text-xs leading-5 text-white/54">{item.nextGate}</dd>
+                          </div>
+                        </dl>
+                        <div className="partner-no-print mt-5 flex flex-wrap gap-4 border-t border-white/8 pt-4">
+                          <button
+                            type="button"
+                            onClick={() => handleCopyReference(item.reference, item.title)}
+                            className="min-h-[32px] rounded font-mono text-[10px] text-white/34 transition-colors hover:text-brand-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                          >
+                            {copyState === 'copied' ? copy.evidenceReferenceCopied : copyState === 'failed' ? copy.evidenceReferenceCopyFailed : copy.copyEvidenceReference}
+                          </button>
+                          {!item.reference.startsWith('NEXT-') ? (
+                            <button
+                              type="button"
+                              disabled={isFlagged}
+                              onClick={() => onFlagForReview(item.reference, item.title)}
+                              className="min-h-[32px] rounded text-[10px] font-semibold text-white/42 transition-colors hover:text-brand-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light disabled:cursor-default disabled:text-brand-light/72"
+                            >
+                              {isFlagged ? copy.evidenceFindingAdded : copy.addEvidenceFinding}
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                    </details>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {counts[filter] === 0 ? <p className="py-12 text-sm text-white/42">{copy.deliveryEmpty}</p> : null}
+    </div>
   );
 }
 
@@ -2316,174 +2265,13 @@ function downloadJsonFile(payload, filename) {
   downloadTextFile(`${JSON.stringify(payload, null, 2)}\n`, filename, 'application/json');
 }
 
-function CapabilityReviewList({
-  items,
-  copy,
-  query,
-  group,
-  flaggedReferences,
-  onFlagForReview,
-}) {
-  const [filter, setFilter] = useState('all');
-  const [referenceCopyState, setReferenceCopyState] = useState({ reference: '', status: 'idle' });
-  const normalizedQuery = query.trim().toLocaleLowerCase();
-  const filteredItems = items.filter((item, itemIndex) => {
-    const matchesStatus = filter === 'available'
-      ? item.status === 'available'
-      : filter === 'active'
-        ? item.status !== 'available'
-        : true;
-    if (!matchesStatus || !normalizedQuery) return matchesStatus;
-
-    const searchable = [
-      capabilityReference(group, itemIndex),
-      item.title,
-      item.summary,
-      item.evidence,
-      item.evidenceLevel,
-      item.nextGate,
-      ...item.evidenceSources,
-    ].join(' ').toLocaleLowerCase();
-    return searchable.includes(normalizedQuery);
-  });
-
-  useEffect(() => {
-    if (referenceCopyState.status === 'idle') return undefined;
-    const timeout = window.setTimeout(
-      () => setReferenceCopyState({ reference: '', status: 'idle' }),
-      2500
-    );
-    return () => window.clearTimeout(timeout);
-  }, [referenceCopyState]);
-
-  async function handleCopyEvidenceReference(reference, title) {
-    if (!navigator.clipboard?.writeText) {
-      setReferenceCopyState({ reference, status: 'failed' });
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(`AeroNyx Partner Brief v${REVIEW_REVISION} · ${reference} · ${title}`);
-      setReferenceCopyState({ reference, status: 'copied' });
-    } catch {
-      setReferenceCopyState({ reference, status: 'failed' });
-    }
-  }
-
-  return (
-    <div className="mt-10">
-      <div className="partner-no-print flex flex-col gap-4 border-y border-white/10 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div
-          className="inline-grid w-full grid-cols-3 gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:w-auto"
-          role="group"
-          aria-label={copy.filterLabel}
-        >
-          {Object.entries(copy.filters).map(([key, label]) => {
-            const active = filter === key;
-            return (
-              <button
-                key={key}
-                type="button"
-                aria-pressed={active}
-                onClick={() => setFilter(key)}
-                className={`min-h-[44px] min-w-0 bg-surface-1 px-4 text-xs font-semibold transition-colors focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light ${
-                  active ? 'bg-brand-faint text-brand-light' : 'text-white/46 hover:bg-surface-2 hover:text-white/72'
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-white/34" aria-live="polite">
-          {copy.showingLabel} {filteredItems.length} / {items.length} {copy.capabilityLabel}
-        </p>
-      </div>
-
-      <div className="border-b border-white/10">
-        {filteredItems.map((item) => {
-          const sourceIndex = items.indexOf(item);
-          const reference = capabilityReference(group, sourceIndex);
-          const evidenceId = `partner-evidence-${group}-${String(sourceIndex + 1).padStart(2, '0')}`;
-          const copyState = referenceCopyState.reference === reference ? referenceCopyState.status : 'idle';
-          const isFlagged = flaggedReferences.includes(reference);
-
-          return (
-          <article
-            key={item.title}
-            id={evidenceId}
-            className="scroll-mt-32 grid min-w-0 gap-4 border-t border-white/10 py-6 first:border-t-0 md:grid-cols-[64px_180px_minmax(0,1fr)] md:gap-6 md:py-7 xl:grid-cols-[64px_210px_minmax(0,1.2fr)_minmax(220px,0.8fr)] xl:gap-8"
-          >
-            <span
-              className="font-mono text-[10px] text-brand-light/64 md:pt-2"
-              aria-label={`${copy.evidenceReferenceLabel}: ${reference}`}
-            >
-              {reference}
-            </span>
-            <div className="min-w-0">
-              <StatusBadge status={item.status} labels={copy.statusLabels} />
-              <h3 className="mt-4 text-lg font-medium text-white sm:text-xl">{item.title}</h3>
-              <div className="partner-no-print mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
-                <button
-                  type="button"
-                  onClick={() => handleCopyEvidenceReference(reference, item.title)}
-                  className="min-h-[32px] rounded text-left font-mono text-[10px] text-white/34 transition-colors hover:text-brand-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
-                >
-                  {copyState === 'copied'
-                    ? copy.evidenceReferenceCopied
-                    : copyState === 'failed'
-                      ? copy.evidenceReferenceCopyFailed
-                      : copy.copyEvidenceReference}
-                </button>
-                <button
-                  type="button"
-                  disabled={isFlagged}
-                  onClick={() => onFlagForReview(reference, item.title)}
-                  className="min-h-[32px] rounded text-left text-[10px] font-semibold text-white/42 transition-colors hover:text-brand-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light disabled:cursor-default disabled:text-brand-light/72"
-                >
-                  {isFlagged ? copy.evidenceFindingAdded : copy.addEvidenceFinding}
-                </button>
-              </div>
-            </div>
-            <p className="text-sm leading-6 text-white/56 sm:text-[15px] sm:leading-7 md:pt-1">{item.summary}</p>
-            <dl className="grid min-w-0 gap-4 border-l border-white/10 pl-4 md:col-start-3 sm:grid-cols-2 xl:col-start-auto xl:grid-cols-1">
-              <div>
-                <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.evidenceLevelLabel}</dt>
-                <dd className="mt-2 text-xs font-medium leading-5 text-brand-light/82">{item.evidenceLevel}</dd>
-              </div>
-              <div>
-                <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.evidenceSourcesLabel}</dt>
-                <dd className="mt-2 text-xs leading-5 text-white/48">{item.evidenceSources.join(' · ')}</dd>
-              </div>
-              <div>
-                <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.evidenceLabel}</dt>
-                <dd className="mt-2 text-xs leading-5 text-white/42">{item.evidence}</dd>
-              </div>
-              <div className="sm:col-span-2 xl:col-span-1">
-                <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.nextGateLabel}</dt>
-                <dd className="mt-2 text-xs leading-5 text-white/52">{item.nextGate}</dd>
-              </div>
-            </dl>
-          </article>
-          );
-        })}
-        {filteredItems.length === 0 ? (
-          <p className="border-t border-white/10 py-10 text-sm leading-6 text-white/42" role="status">
-            {copy.noCapabilitiesFound}
-          </p>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
 function PartnerProgressPage() {
   const router = useRouter();
   const [copyStatus, setCopyStatus] = useState('idle');
   const [exportStatus, setExportStatus] = useState('idle');
-  const [reviewMode, setReviewMode] = useState('executive');
-  const [activeSection, setActiveSection] = useState('overview');
-  const [capabilityQuery, setCapabilityQuery] = useState('');
+  const [activeView, setActiveView] = useState('delivery');
+  const [deliveryFilter, setDeliveryFilter] = useState('active');
+  const [highlightedReference, setHighlightedReference] = useState('');
   const [reviewChecks, setReviewChecks] = useState(() => ({ ...EMPTY_REVIEW_CHECKS }));
   const [reviewNotes, setReviewNotes] = useState('');
   const [reviewFindings, setReviewFindings] = useState([]);
@@ -2499,30 +2287,9 @@ function PartnerProgressPage() {
   const copy = CONTENT[language];
   const alternateLocale = language === 'zh' ? 'en' : 'zh-Hans';
   const alternateLabel = language === 'zh' ? copy.english : copy.chinese;
-  const visibleJumpItems = copy.jumpItems.filter(([, , technicalOnly]) => !technicalOnly || reviewMode === 'technical');
   const flaggedEvidenceReferences = reviewFindings
     .map((finding) => finding.evidence_reference)
     .filter(Boolean);
-
-  useEffect(() => {
-    const sections = Array.from(document.querySelectorAll('[data-partner-section]'))
-      .filter((section) => window.getComputedStyle(section).display !== 'none');
-
-    if (!sections.length || !('IntersectionObserver' in window)) return undefined;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible?.target?.id) setActiveSection(visible.target.id);
-      },
-      { rootMargin: '-118px 0px -62% 0px', threshold: [0, 0.08, 0.2, 0.5] }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, [reviewMode]);
 
   useEffect(() => {
     try {
@@ -2669,9 +2436,9 @@ function PartnerProgressPage() {
   function handleOpenFindingEvidence(reference) {
     const evidenceId = evidenceIdForReference(reference);
     if (!evidenceId) return;
-    setReviewMode('technical');
-    setCapabilityQuery(reference);
-    setActiveSection(reference.startsWith('APP-') ? 'client' : 'rust');
+    setActiveView('delivery');
+    setDeliveryFilter('all');
+    setHighlightedReference(reference);
     window.setTimeout(() => {
       const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
       document.getElementById(evidenceId)?.scrollIntoView({
@@ -2679,6 +2446,18 @@ function PartnerProgressPage() {
         block: 'center',
       });
     }, 50);
+  }
+
+  function handleViewChange(view) {
+    if (!REVIEW_VIEWS.includes(view)) return;
+    setActiveView(view);
+    window.setTimeout(() => {
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+      document.getElementById(`partner-view-${view}`)?.scrollIntoView({
+        behavior: reduceMotion ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    }, 0);
   }
 
   function handleReviewDecisionChange(value) {
@@ -2795,10 +2574,10 @@ function PartnerProgressPage() {
         <meta name="referrer" content="no-referrer" />
       </Head>
 
-      <div className="partner-report relative min-h-screen overflow-x-hidden bg-[#08090c] text-white">
+      <div className="partner-report relative min-h-screen overflow-x-clip bg-[#08090c] text-white">
         <header className="partner-no-print sticky top-0 z-50 border-b border-white/8 bg-surface-0/90 backdrop-blur-xl">
           <Container>
-            <div className="flex min-h-[68px] items-center justify-between gap-4 py-2">
+            <div className="flex min-h-[68px] items-center justify-between gap-4">
               <Link
                 href="/"
                 aria-label="AeroNyx"
@@ -2825,9 +2604,9 @@ function PartnerProgressPage() {
         </header>
 
         <main>
-          <section className="relative border-b border-white/10 pb-14 pt-12 sm:pb-16 sm:pt-16 lg:pb-20 lg:pt-16">
+          <section className="relative border-b border-white/10 py-10 sm:py-14 lg:py-16">
             <Container>
-              <div className="max-w-5xl">
+              <div className="max-w-4xl">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="inline-flex min-h-[30px] items-center rounded-pill border border-brand-line bg-brand-faint px-3 text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light">
                     {copy.restricted}
@@ -2835,249 +2614,122 @@ function PartnerProgressPage() {
                   <span className="text-xs text-white/34">{copy.verified} · {copy.revision}</span>
                 </div>
                 <h1
-                  className="mt-6 max-w-4xl font-display text-[2.35rem] font-medium leading-[1.06] text-white sm:text-[3.35rem] sm:leading-[1.03] lg:text-[4rem]"
+                  className="mt-5 max-w-3xl font-display text-[2.25rem] font-medium leading-[1.07] text-white sm:text-[3.15rem] sm:leading-[1.04] lg:text-[3.7rem]"
                 >
                   {copy.heroTitle}
                 </h1>
-                <ExecutiveQuickLinks copy={copy} />
-                <p className="mt-8 max-w-3xl text-base leading-7 text-white/62 sm:text-lg sm:leading-8">
+                <p className="mt-6 max-w-3xl text-base leading-7 text-white/58 sm:text-lg sm:leading-8">
                   {copy.heroBody}
                 </p>
-                <div className="mt-8 border-l-2 border-brand-light/60 pl-4 text-sm leading-6 text-white/42">
-                  <p>{copy.restrictedDetail}</p>
-                  <p className="mt-1">{copy.noTraffic}</p>
-                </div>
-
-                <div className="mt-8 grid gap-5 border-y border-white/10 py-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-10">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-white/72">{copy.accessTitle}</p>
-                    <p className="mt-2 max-w-2xl text-xs leading-5 text-white/40">{copy.accessBody}</p>
-                  </div>
-                  <div className="partner-no-print grid gap-2 sm:grid-cols-2 xl:flex" aria-label={copy.accessTitle}>
+                <div className="mt-7 flex flex-col gap-5 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="max-w-2xl text-xs leading-5 text-white/36">{copy.noTraffic}</p>
+                  <div className="partner-no-print flex shrink-0 gap-2" aria-label={copy.accessTitle}>
                     <button
                       type="button"
                       onClick={handleCopyReviewLink}
-                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-brand-line bg-brand-faint px-4 text-xs font-semibold text-brand-light transition-colors hover:bg-brand/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/12 px-4 text-xs font-semibold text-white/58 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
                     >
                       {copyStatus === 'copied' ? copy.copiedLink : copyStatus === 'failed' ? copy.copyFailed : copy.copyLink}
                     </button>
-                    <button
-                      type="button"
-                      onClick={handleExportReview}
-                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/12 px-4 text-xs font-semibold text-white/58 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
-                    >
-                      {exportStatus === 'exported' ? copy.exportedJson : exportStatus === 'failed' ? copy.exportFailed : copy.exportJson}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handlePrintBrief}
-                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/12 px-4 text-xs font-semibold text-white/58 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
-                    >
-                      {copy.printBrief}
-                    </button>
                     <a
                       href="mailto:hi@aeronyx.network?subject=AeroNyx%20partner%20review"
-                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/12 px-4 text-xs font-semibold text-white/58 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                      className="inline-flex min-h-[44px] items-center justify-center rounded border border-brand-line bg-brand-faint px-4 text-xs font-semibold text-brand-light transition-colors hover:bg-brand/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
                     >
                       {copy.contactTeam}
                     </a>
                   </div>
                   <p className="sr-only" aria-live="polite">
                     {copyStatus === 'copied' ? copy.copiedLink : copyStatus === 'failed' ? copy.copyFailed : ''}
-                    {' '}
-                    {exportStatus === 'exported' ? copy.exportedJson : exportStatus === 'failed' ? copy.exportFailed : ''}
                   </p>
                 </div>
-                <ReviewDepthControl
-                  copy={copy}
-                  mode={reviewMode}
-                  onChange={setReviewMode}
-                  query={capabilityQuery}
-                  onQueryChange={setCapabilityQuery}
-                />
               </div>
 
             </Container>
           </section>
 
-          <nav
-            aria-label={copy.jumpLabel}
-            className="partner-no-print sticky top-[68px] z-40 border-b border-white/10 bg-surface-0/94 backdrop-blur-xl"
+          <ReviewViewTabs copy={copy} activeView={activeView} onChange={handleViewChange} />
+
+          <section
+            id="partner-view-delivery"
+            role="tabpanel"
+            aria-labelledby="partner-tab-delivery"
+            className={`partner-view-panel scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-12 sm:py-16 ${activeView === 'delivery' ? '' : 'hidden'}`}
           >
             <Container>
-              <div className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                <div className="flex min-w-max items-stretch lg:w-full lg:min-w-0">
-                  {visibleJumpItems.map(([href, label], index) => {
-                    const sectionId = href.slice(1);
-                    const active = activeSection === sectionId;
-                    return (
-                    <a
-                      key={href}
-                      href={href}
-                      aria-current={active ? 'location' : undefined}
-                      onClick={() => setActiveSection(sectionId)}
-                      className={`group relative flex min-h-[48px] min-w-[132px] items-center gap-2 border-r border-white/8 px-4 transition-colors first:border-l hover:bg-white/[0.035] focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light lg:min-w-0 lg:flex-1 lg:justify-center ${
-                        active ? 'bg-white/[0.035]' : ''
-                      }`}
-                    >
-                      <span className={`font-mono text-[9px] ${active ? 'text-brand-light' : 'text-brand-light/60'}`}>
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                      <span className={`text-[10px] font-semibold uppercase tracking-[0.08em] group-hover:text-white/76 ${active ? 'text-white/82' : 'text-white/44'}`}>
-                        {label}
-                      </span>
-                      <span
-                        aria-hidden="true"
-                        className={`absolute inset-x-4 bottom-0 h-px bg-brand-light transition-opacity ${active ? 'opacity-100' : 'opacity-0'}`}
-                      />
-                    </a>
-                    );
-                  })}
-                </div>
-              </div>
-            </Container>
-          </nav>
-
-          <section id="decision" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-20">
-            <Container>
-              <SectionHeading eyebrow={copy.decisionEyebrow} title={copy.decisionTitle} body={copy.decisionBody} />
-              <DecisionSummary copy={copy} />
-            </Container>
-          </section>
-
-          <section id="overview" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-20">
-            <Container>
-              <SectionHeading eyebrow={copy.snapshotEyebrow} title={copy.snapshotTitle} body={copy.snapshotBody} />
-              <dl className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:grid-cols-2 xl:grid-cols-4">
-                {copy.snapshot.map((item) => (
-                  <div key={item.label} className="min-w-0 bg-surface-1 px-5 py-6 sm:px-6">
-                    <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/34">{item.label}</dt>
-                    <dd className="mt-4 break-words font-display text-2xl font-medium text-white">{item.value}</dd>
-                    <p className="mt-3 text-xs leading-5 text-white/40">{item.detail}</p>
+              <SectionHeading eyebrow={copy.deliveryEyebrow} title={copy.deliveryTitle} body={copy.deliveryBody} />
+              <dl className="mt-7 flex flex-wrap gap-x-7 gap-y-3 border-y border-white/10 py-4">
+                {copy.snapshot.slice(0, 2).map((item) => (
+                  <div key={item.label} className="flex min-w-0 items-baseline gap-2">
+                    <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{item.label}</dt>
+                    <dd className="font-mono text-xs text-white/66">{item.value}</dd>
                   </div>
                 ))}
+                <div className="flex min-w-0 items-baseline gap-2">
+                  <dt className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.snapshot[3].label}</dt>
+                  <dd className="font-mono text-xs text-white/66">{copy.snapshot[3].value}</dd>
+                </div>
               </dl>
-              <DeliveryOverview
-                clientItems={copy.clientItems}
-                rustItems={copy.rustItems}
-                boundaries={copy.boundaries}
+              <DeliveryBoard
                 copy={copy}
-              />
-              <StatusDefinitions copy={copy} />
-              <RevisionDelta copy={copy} />
-            </Container>
-          </section>
-
-          <section id="pilot" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
-            <Container>
-              <SectionHeading eyebrow={copy.pilotEyebrow} title={copy.pilotTitle} body={copy.pilotBody} />
-              <PilotReviewPath copy={copy} />
-            </Container>
-          </section>
-
-          <section
-            id="client"
-            data-partner-section
-            className={`partner-technical-section scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24 ${reviewMode === 'technical' ? '' : 'hidden'}`}
-          >
-            <Container>
-              <SectionHeading eyebrow={copy.clientEyebrow} title={copy.clientTitle} body={copy.clientBody} />
-              <CapabilityReviewList
-                items={copy.clientItems}
-                copy={copy}
-                query={capabilityQuery}
-                group="client"
+                filter={deliveryFilter}
+                onFilterChange={setDeliveryFilter}
                 flaggedReferences={flaggedEvidenceReferences}
+                highlightedReference={highlightedReference}
                 onFlagForReview={handleFlagEvidenceFinding}
               />
-            </Container>
-          </section>
-
-          <section
-            id="rust"
-            data-partner-section
-            className={`partner-technical-section scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24 ${reviewMode === 'technical' ? '' : 'hidden'}`}
-          >
-            <Container>
-              <SectionHeading eyebrow={copy.rustEyebrow} title={copy.rustTitle} body={copy.rustBody} />
-              <CapabilityReviewList
-                items={copy.rustItems}
-                copy={copy}
-                query={capabilityQuery}
-                group="node"
-                flaggedReferences={flaggedEvidenceReferences}
-                onFlagForReview={handleFlagEvidenceFinding}
-              />
-            </Container>
-          </section>
-
-          <section id="dependencies" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
-            <Container>
-              <SectionHeading eyebrow={copy.dependencyEyebrow} title={copy.dependencyTitle} body={copy.dependencyBody} />
-              <DependencyMatrix copy={copy} />
-            </Container>
-          </section>
-
-          <section className="border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
-            <Container>
-              <SectionHeading eyebrow={copy.milestoneEyebrow} title={copy.milestoneTitle} />
-              <ol className="mt-10 border-t border-white/10">
-                {copy.milestones.map((item, index) => (
-                  <li key={`${item.date}-${item.title}`} className="grid min-w-0 gap-4 border-b border-white/10 py-7 sm:grid-cols-[120px_1fr] sm:gap-8 sm:py-9">
-                    <div className="flex items-center gap-3 sm:block">
-                      <span className="font-mono text-[10px] text-brand-light/70">{String(index + 1).padStart(2, '0')}</span>
-                      <time className="font-mono text-xs text-white/34 sm:mt-3 sm:block">{item.date}</time>
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="text-lg font-medium text-white sm:text-xl">{item.title}</h3>
-                      <p className="mt-3 max-w-3xl text-sm leading-6 text-white/52 sm:text-[15px] sm:leading-7">{item.detail}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </Container>
-          </section>
-
-          <section id="boundaries" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/82 py-16 sm:py-24">
-            <Container>
-              <SectionHeading eyebrow={copy.boundaryEyebrow} title={copy.boundaryTitle} body={copy.boundaryBody} />
-              <div className="mt-10 grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 lg:grid-cols-2">
-                {copy.boundaries.map((item, index) => (
-                  <article key={item.title} className="min-w-0 bg-surface-1 px-5 py-7 sm:px-7 sm:py-9">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-warn/30 font-mono text-[10px] text-warn">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                      <h3 className="min-w-0 text-lg font-medium text-white">{item.title}</h3>
-                    </div>
-                    <p className="mt-5 text-sm leading-6 text-white/54 sm:text-[15px] sm:leading-7">{item.detail}</p>
-                  </article>
-                ))}
+              <div className="mt-12 border-t border-white/10">
+                <PlanDisclosure eyebrow={copy.dependencyEyebrow} title={copy.dependencyTitle} body={copy.dependencyBody}>
+                  <DependencyMatrix copy={copy} />
+                </PlanDisclosure>
+                <PlanDisclosure eyebrow={copy.boundaryEyebrow} title={copy.boundaryTitle} body={copy.boundaryBody}>
+                  <div className="grid gap-px overflow-hidden rounded border border-white/10 bg-white/10 lg:grid-cols-2">
+                    {copy.boundaries.map((item, index) => (
+                      <article key={item.title} className="min-w-0 bg-surface-1 px-5 py-7 sm:px-7 sm:py-9">
+                        <div className="flex items-center gap-3">
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-warn/30 font-mono text-[10px] text-warn">
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
+                          <h3 className="min-w-0 text-lg font-medium text-white">{item.title}</h3>
+                        </div>
+                        <p className="mt-5 text-sm leading-6 text-white/54 sm:text-[15px] sm:leading-7">{item.detail}</p>
+                      </article>
+                    ))}
+                  </div>
+                </PlanDisclosure>
               </div>
             </Container>
           </section>
 
-          <section id="roadmap" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
-            <Container>
-              <SectionHeading eyebrow={copy.roadmapEyebrow} title={copy.roadmapTitle} body={copy.roadmapBody} />
-              <div className="relative mt-12 grid gap-8 lg:grid-cols-4 lg:gap-0">
-                <div aria-hidden="true" className="absolute left-[12.5%] right-[12.5%] top-4 hidden h-px bg-white/12 lg:block" />
-                {copy.roadmap.map((item) => (
-                  <article key={item.step} className="relative min-w-0 lg:px-5 first:lg:pl-0 last:lg:pr-0">
-                    <span className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full border border-brand-line bg-surface-1 font-mono text-[10px] text-brand-light">
-                      {item.step}
-                    </span>
-                    <h3 className="mt-6 text-lg font-medium text-white">{item.title}</h3>
-                    <p className="mt-3 text-sm leading-6 text-white/50">{item.detail}</p>
-                  </article>
-                ))}
-              </div>
-            </Container>
-          </section>
-
-          <section id="workspace" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+          <section
+            id="partner-view-workspace"
+            role="tabpanel"
+            aria-labelledby="partner-tab-workspace"
+            className={`partner-view-panel scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-12 sm:py-16 ${activeView === 'workspace' ? '' : 'hidden'}`}
+          >
             <Container>
               <SectionHeading eyebrow={copy.workspaceEyebrow} title={copy.workspaceTitle} body={copy.workspaceBody} />
+              <div className="partner-no-print mt-8 flex flex-col gap-5 border-y border-white/10 py-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="max-w-2xl">
+                  <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light/70">{copy.reviewActionsLabel}</p>
+                  <p className="mt-2 text-xs leading-5 text-white/38">{copy.reviewActionsBody}</p>
+                </div>
+                <div className="flex shrink-0 flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={handleExportReview}
+                    className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/12 px-4 text-xs font-semibold text-white/58 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                  >
+                    {exportStatus === 'exported' ? copy.exportedJson : exportStatus === 'failed' ? copy.exportFailed : copy.exportJson}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePrintBrief}
+                    className="inline-flex min-h-[44px] items-center justify-center rounded border border-brand-line bg-brand-faint px-4 text-xs font-semibold text-brand-light transition-colors hover:bg-brand/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                  >
+                    {copy.printBrief}
+                  </button>
+                </div>
+              </div>
               <ReviewerWorkspace
                 copy={copy}
                 checks={reviewChecks}
@@ -3107,27 +2759,24 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section className="bg-surface-1/86 py-16 sm:py-20">
+          <section className="bg-surface-1/86 py-8">
             <Container>
-              <div className="flex flex-col gap-8 border-y border-white/10 py-9 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <h2 className="font-display text-2xl font-medium text-white">{copy.linksTitle}</h2>
-                  <p className="mt-3 max-w-xl text-sm leading-6 text-white/42">{copy.footerNote}</p>
-                </div>
-                <div className="grid gap-2 sm:grid-cols-2">
+              <div className="flex flex-col gap-5 border-y border-white/10 py-5 lg:flex-row lg:items-center lg:justify-between">
+                <p className="text-xs leading-5 text-white/38">{copy.linksTitle} · {copy.footerNote}</p>
+                <nav className="flex flex-wrap gap-x-5 gap-y-1" aria-label={copy.linksTitle}>
                   {copy.links.map(([label, href]) => (
                     <a
                       key={href}
                       href={href}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex min-h-[44px] items-center justify-between gap-4 rounded border border-white/10 px-4 text-sm text-white/58 transition-colors hover:border-white/22 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                      className="inline-flex min-h-[36px] items-center gap-2 rounded text-xs text-white/48 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
                     >
                       {label}
                       <span aria-hidden="true" className="text-white/28">↗</span>
                     </a>
                   ))}
-                </div>
+                </nav>
               </div>
             </Container>
           </section>
@@ -3164,6 +2813,10 @@ function PartnerProgressPage() {
             display: none !important;
           }
 
+          .partner-view-panel,
+          .partner-delivery-group,
+          .partner-delivery-task,
+          .partner-evidence-scope,
           .partner-technical-section {
             display: block !important;
           }
