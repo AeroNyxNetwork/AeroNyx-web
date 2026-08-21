@@ -85,7 +85,7 @@
  *     a Todoist-style workstream/task/detail hierarchy. Print and portable
  *     exports still contain the complete public-safe review record.
  *
- * Last Modified: v3.1 - Hierarchical delivery board with task-level evidence.
+ * Last Modified: v3.2 - Mobile task density and complete print hierarchy.
  * ============================================
  */
 
@@ -104,7 +104,7 @@ import {
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '3.1';
+const REVIEW_REVISION = '3.2';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -142,14 +142,12 @@ const CONTENT = {
     english: 'EN',
     chinese: '中文',
     restricted: 'Partner build brief',
-    restrictedDetail: 'Unlisted link · public-safe delivery information',
     heroTitle: 'A clear view of what AeroNyx can do today.',
     heroBody: 'A source-reviewed delivery brief for partners: client capabilities, Rust protocol infrastructure, current dependencies, and the milestones that move AeroNyx toward a fully open privacy coordination network.',
     verified: `Verified ${VERIFIED_DATE}`,
     revision: `Brief v${REVIEW_REVISION}`,
     noTraffic: 'No customer traffic, node identities, private endpoints, keys, or payload data are included.',
     accessTitle: 'Unlisted partner review',
-    accessBody: 'This fixed route token is a convenience link, not an authentication boundary. Anyone with the URL or public source can open it, so the brief intentionally contains public-safe information only.',
     copyLink: 'Copy review link',
     copiedLink: 'Link copied',
     copyFailed: 'Copy unavailable',
@@ -187,24 +185,11 @@ const CONTENT = {
     },
     deliveryItemsLabel: 'items',
     deliveryEmpty: 'No tasks match this view.',
-    deliveryOpenDetail: 'Open task detail',
     deliveryPlannedLevel: 'Planned validation milestone',
     deliveryPlannedSources: ['Reviewed roadmap', 'Current system boundary'],
     deliveryPlannedEvidence: 'Scheduled after the current implementation and verification gates close.',
-    evidenceScopeLabel: 'Evidence scope',
-    evidenceScopeLabels: {
-      client: 'Client product',
-      node: 'Protocol nodes',
-    },
-    methodologyEyebrow: 'Review methodology',
     capabilitySearchLabel: 'Search capability evidence',
     capabilitySearchPlaceholder: 'Search relay, memory, recovery, witness…',
-    statusOverview: {
-      available: 'Available capabilities',
-      beta: 'Beta capabilities',
-      hardening: 'Hardening tracks',
-      boundaries: 'Declared boundaries',
-    },
     snapshotEyebrow: 'Current baseline',
     snapshotTitle: 'Shipping product, hardened protocol core.',
     snapshotBody: 'These identifiers anchor the brief to a concrete client release and reviewed Rust main commit. Status is based on source and test evidence, not roadmap percentages.',
@@ -246,14 +231,6 @@ const CONTENT = {
       hardening: 'Core path exists and is undergoing reliability, security, or multi-node verification.',
       progress: 'Active development; not represented as currently available.',
     },
-    filterLabel: 'Filter capabilities by delivery status',
-    filters: {
-      all: 'All',
-      available: 'Available',
-      active: 'Active work',
-    },
-    showingLabel: 'Showing',
-    capabilityLabel: 'capabilities',
     evidenceLabel: 'Verification note',
     evidenceLevelLabel: 'Evidence level',
     evidenceSourcesLabel: 'Evidence sources',
@@ -264,7 +241,6 @@ const CONTENT = {
     addEvidenceFinding: 'Add to findings',
     evidenceFindingAdded: 'In review findings',
     nextGateLabel: 'Next validation gate',
-    noCapabilitiesFound: 'No capability evidence matches this search and status filter.',
     decisionEyebrow: 'Decision view',
     decisionTitle: 'What a partner can evaluate now.',
     decisionBody: 'A compact view of the present pilot boundary. This separates usable paths from controlled beta work and capabilities that are intentionally not yet defaults.',
@@ -674,14 +650,12 @@ const CONTENT = {
     english: 'EN',
     chinese: '中文',
     restricted: '合作方開發簡報',
-    restrictedDetail: '未列出連結 · 僅含可公開的交付資訊',
     heroTitle: '清楚了解 AeroNyx 今天真正能做什麼。',
     heroBody: '給合作方的源碼核對版進度：客戶端能力、Rust 協議基礎設施、目前依賴與下一個里程碑。AeroNyx 正在走向完全開放的隱私協調網絡，但不把未完成的能力包裝成已交付。',
     verified: `核對日期 ${VERIFIED_DATE}`,
     revision: `簡報 v${REVIEW_REVISION}`,
     noTraffic: '本頁不包含客戶流量、節點身份、私有端點、密鑰或任何 payload 資料。',
     accessTitle: '未列出的合作方審閱頁',
-    accessBody: '固定路由 token 只是方便分享的入口，不是身份驗證邊界。任何取得網址或查看公開源碼的人都能開啟，因此本頁刻意只包含可公開資訊。',
     copyLink: '複製審閱連結',
     copiedLink: '連結已複製',
     copyFailed: '無法複製',
@@ -719,24 +693,11 @@ const CONTENT = {
     },
     deliveryItemsLabel: '項',
     deliveryEmpty: '此視圖沒有符合條件的任務。',
-    deliveryOpenDetail: '展開任務細節',
     deliveryPlannedLevel: '計劃中的驗證里程碑',
     deliveryPlannedSources: ['已審閱路線圖', '當前系統邊界'],
     deliveryPlannedEvidence: '在目前實現與驗證門檻完成後排期執行。',
-    evidenceScopeLabel: '證據範圍',
-    evidenceScopeLabels: {
-      client: '客戶端產品',
-      node: '協議節點',
-    },
-    methodologyEyebrow: '審閱方法',
     capabilitySearchLabel: '搜尋能力證據',
     capabilitySearchPlaceholder: '搜尋 Relay、記憶、恢復、witness…',
-    statusOverview: {
-      available: '已可用能力',
-      beta: 'Beta 能力',
-      hardening: '加固中項目',
-      boundaries: '已聲明邊界',
-    },
     snapshotEyebrow: '目前基線',
     snapshotTitle: '產品已交付，協議核心持續加固。',
     snapshotBody: '以下版本把頁面錨定到真實客戶端發布與已審核的 Rust main commit。狀態來自源碼與測試證據，不使用虛假的完成百分比。',
@@ -778,14 +739,6 @@ const CONTENT = {
       hardening: '核心路徑已存在，正在進行可靠性、安全性或多節點驗證。',
       progress: '正在開發，不會被描述成當前已可用能力。',
     },
-    filterLabel: '依交付狀態篩選能力',
-    filters: {
-      all: '全部',
-      available: '已可用',
-      active: '進行中',
-    },
-    showingLabel: '目前顯示',
-    capabilityLabel: '項能力',
     evidenceLabel: '驗證說明',
     evidenceLevelLabel: '證據層級',
     evidenceSourcesLabel: '證據來源',
@@ -796,7 +749,6 @@ const CONTENT = {
     addEvidenceFinding: '加入審閱問題',
     evidenceFindingAdded: '已在審閱問題中',
     nextGateLabel: '下一驗收門檻',
-    noCapabilitiesFound: '沒有能力證據符合目前的搜尋與狀態篩選。',
     decisionEyebrow: '決策視圖',
     decisionTitle: '合作方現在可以評估什麼。',
     decisionBody: '用最短時間看清目前 pilot 邊界，區分已可使用、受控 Beta，以及刻意尚未設為默認的能力。',
@@ -1256,14 +1208,14 @@ function ReviewViewTabs({ copy, activeView, onChange }) {
 function PlanDisclosure({ eyebrow, title, body, children }) {
   return (
     <details className="group border-b border-white/10">
-      <summary className="partner-no-print flex min-h-[72px] cursor-pointer list-none items-center justify-between gap-6 py-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-[72px] cursor-pointer list-none items-center justify-between gap-6 py-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light [&::-webkit-details-marker]:hidden">
         <span className="min-w-0">
           <span className="block text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light/70">{eyebrow}</span>
           <span className="mt-2 block text-lg font-medium leading-6 text-white sm:text-xl">{title}</span>
           {body ? <span className="mt-2 hidden max-w-3xl text-xs leading-5 text-white/38 sm:block">{body}</span> : null}
         </span>
-        <span aria-hidden="true" className="font-mono text-sm text-white/34 group-open:hidden">+</span>
-        <span aria-hidden="true" className="hidden font-mono text-sm text-brand-light group-open:inline">−</span>
+        <span aria-hidden="true" className="partner-no-print font-mono text-sm text-white/34 group-open:hidden">+</span>
+        <span aria-hidden="true" className="partner-no-print hidden font-mono text-sm text-brand-light group-open:inline">−</span>
       </summary>
       <div className="border-t border-white/10 pb-10 pt-2">{children}</div>
     </details>
@@ -1335,7 +1287,7 @@ function DeliveryBoard({
 
   return (
     <div className="mt-10">
-      <div className="partner-no-print grid grid-cols-2 gap-px overflow-hidden rounded border border-white/10 bg-white/10 sm:grid-cols-4" role="group" aria-label={copy.deliveryFilterLabel}>
+      <div className="partner-no-print grid grid-cols-4 gap-px overflow-hidden rounded border border-white/10 bg-white/10" role="group" aria-label={copy.deliveryFilterLabel}>
         {DELIVERY_FILTERS.map((key) => {
           const active = filter === key;
           return (
@@ -1344,9 +1296,9 @@ function DeliveryBoard({
               type="button"
               aria-pressed={active}
               onClick={() => onFilterChange(key)}
-              className={`min-h-[56px] min-w-0 bg-surface-1 px-4 py-2 text-left transition-colors focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light ${active ? 'bg-brand-faint' : 'hover:bg-surface-2'}`}
+              className={`min-h-[56px] min-w-0 bg-surface-1 px-2 py-2 text-left transition-colors focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light sm:px-4 ${active ? 'bg-brand-faint' : 'hover:bg-surface-2'}`}
             >
-              <span className={`block text-xs font-semibold ${active ? 'text-brand-light' : 'text-white/52'}`}>{copy.deliveryFilters[key]}</span>
+              <span className={`block text-[11px] font-semibold leading-4 sm:text-xs ${active ? 'text-brand-light' : 'text-white/52'}`}>{copy.deliveryFilters[key]}</span>
               <span className="mt-1 block font-mono text-[10px] text-white/28">{counts[key]}</span>
             </button>
           );
@@ -1402,7 +1354,7 @@ function DeliveryBoard({
                             <span className="text-sm font-medium text-white sm:text-[15px]">{item.title}</span>
                             <span className="font-mono text-[9px] text-white/26">{item.reference}</span>
                           </span>
-                          <span className="mt-1.5 block text-xs leading-5 text-white/40 sm:line-clamp-1">{item.summary}</span>
+                          <span className="mt-1.5 line-clamp-2 text-xs leading-5 text-white/40 sm:line-clamp-1">{item.summary}</span>
                         </span>
                         <span className="hidden shrink-0 text-[10px] font-semibold uppercase tracking-[0.08em] text-white/34 sm:block">{copy.deliveryStageLabels[item.stage]}</span>
                         <span aria-hidden="true" className="mt-1 shrink-0 font-mono text-sm text-white/28 group-open/task:hidden sm:mt-0">+</span>
