@@ -78,8 +78,11 @@
  *     decision links synchronized with their target sections. The report uses
  *     a deliberately static visual surface; do not reintroduce decorative
  *     animation that competes with evidence review or print output.
+ *   - [PARTNER-INFORMATION-HIERARCHY 2026-08-21 by Codex] Keep client binary
+ *     downloads on the public download surface. This route should foreground
+ *     decisions, delivery evidence, dependencies, boundaries, and pilot work.
  *
- * Last Modified: v2.1 - Static diligence surface and first-screen decision links.
+ * Last Modified: v2.2 - Decision-first hierarchy without binary download UI.
  * ============================================
  */
 
@@ -98,7 +101,7 @@ import {
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '2.1';
+const REVIEW_REVISION = '2.2';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -179,6 +182,7 @@ const CONTENT = {
       executive: 'Decision, pilot, dependencies, boundaries, and roadmap',
       technical: 'Full client and Rust capability evidence',
     },
+    methodologyEyebrow: 'Review methodology',
     quickLinksEyebrow: 'Start with the decision-critical facts',
     quickLinksTitle: 'Open the evidence that matters first.',
     quickLinksAction: 'View section',
@@ -190,10 +194,10 @@ const CONTENT = {
         detail: 'See what can be piloted now, what remains controlled beta, and what is not a default.',
       },
       {
-        href: '#artifacts',
-        label: 'Release integrity',
+        href: '#overview',
+        label: 'Delivery baseline',
         value: `Client ${CLIENT_BUILD}`,
-        detail: 'Verify immutable installers, platform assurance, and published SHA-256 evidence.',
+        detail: 'Review the current client, protocol commit, platform coverage, and delivery maturity.',
       },
       {
         href: '#boundaries',
@@ -218,15 +222,15 @@ const CONTENT = {
     },
     jumpLabel: 'Brief sections',
     jumpItems: [
-      ['#overview', 'Overview', false],
-      ['#artifacts', 'Release integrity', false],
+      ['#decision', 'Decision', false],
+      ['#overview', 'Delivery baseline', false],
       ['#pilot', 'Pilot path', false],
-      ['#workspace', 'Review workspace', false],
-      ['#client', 'Client product', true],
-      ['#rust', 'Rust infrastructure', true],
       ['#dependencies', 'Dependencies', false],
       ['#boundaries', 'Current boundaries', false],
       ['#roadmap', 'Next milestones', false],
+      ['#client', 'Client product', true],
+      ['#rust', 'Rust infrastructure', true],
+      ['#workspace', 'Review workspace', false],
     ],
     snapshotEyebrow: 'Current baseline',
     snapshotTitle: 'Shipping product, hardened protocol core.',
@@ -238,25 +242,14 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'Decision-critical evidence now leads the review.',
-    revisionDeltaBody: 'The first screen is now a static diligence surface with direct paths to pilot readiness, release integrity, trust boundaries, and the recommended review sequence. The unlisted route remains fixed, noindex, and public-safe.',
+    revisionDeltaTitle: 'The review now follows the partner decision path.',
+    revisionDeltaBody: 'Decision scope, delivery baseline, pilot, dependencies, boundaries, and milestones now form one clear reading sequence. Binary downloads no longer compete with the evidence review.',
     revisionDeltaItems: [
-      'Remove decorative protocol animation from the evidence-review experience.',
-      'Move decision-critical status and section links into the first screen.',
-      'Preserve the complete technical record, local workspace, exports, and response security headers.',
+      'Remove client installer download controls from the partner review surface.',
+      'Move the decision view before supporting baseline and technical evidence.',
+      'Keep detailed methodology available on demand instead of always expanded.',
     ],
-    artifactEyebrow: 'Release integrity',
-    artifactTitle: 'Verify the client before evaluating the protocol.',
-    artifactBody: 'Every direct installer below comes from the same immutable release contract used by the public download flow. Digests apply only to the exact filename and version shown.',
-    artifactReleaseLabel: `Release ${RELEASE_VERSION}-${RELEASE_BUILD}`,
-    artifactFileLabel: 'Artifact',
-    artifactAssuranceLabel: 'Distribution assurance',
-    artifactHashLabel: 'SHA-256',
-    artifactIntegrityPathLabel: 'Integrity path',
     artifactDownload: 'Open immutable download',
-    artifactCopyHash: 'Copy SHA-256',
-    artifactHashCopied: 'SHA-256 copied',
-    artifactHashCopyFailed: 'Copy unavailable',
     artifactAppStore: 'Open App Store listing',
     artifactAppStoreArtifact: 'AeroNyx App Store listing',
     artifactAppStoreIntegrity: 'Verified through the Apple App Store trust chain',
@@ -734,6 +727,7 @@ const CONTENT = {
       executive: '決策、Pilot、依賴、邊界與路線圖',
       technical: '完整客戶端與 Rust 能力證據',
     },
+    methodologyEyebrow: '審閱方法',
     quickLinksEyebrow: '先看影響決策的關鍵資訊',
     quickLinksTitle: '重要狀態與證據，一次直達。',
     quickLinksAction: '查看章節',
@@ -745,10 +739,10 @@ const CONTENT = {
         detail: '快速區分現在可 Pilot、受控 Beta，以及尚未設為默認的能力。',
       },
       {
-        href: '#artifacts',
-        label: '發布完整性',
+        href: '#overview',
+        label: '交付基線',
         value: `客戶端 ${CLIENT_BUILD}`,
-        detail: '核對不可變安裝包、平台分發保證與已發布的 SHA-256 證據。',
+        detail: '查看目前客戶端、協議 commit、平台覆蓋與交付成熟度。',
       },
       {
         href: '#boundaries',
@@ -773,15 +767,15 @@ const CONTENT = {
     },
     jumpLabel: '簡報目錄',
     jumpItems: [
-      ['#overview', '總覽', false],
-      ['#artifacts', '發布完整性', false],
+      ['#decision', '決策', false],
+      ['#overview', '交付基線', false],
       ['#pilot', 'Pilot 路徑', false],
-      ['#workspace', '審閱工作區', false],
-      ['#client', '客戶端產品', true],
-      ['#rust', 'Rust 基礎設施', true],
       ['#dependencies', '依賴邊界', false],
       ['#boundaries', '目前邊界', false],
       ['#roadmap', '下一里程碑', false],
+      ['#client', '客戶端產品', true],
+      ['#rust', 'Rust 基礎設施', true],
+      ['#workspace', '審閱工作區', false],
     ],
     snapshotEyebrow: '目前基線',
     snapshotTitle: '產品已交付，協議核心持續加固。',
@@ -793,25 +787,14 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '影響決策的證據，現在優先呈現。',
-    revisionDeltaBody: '首屏改為靜態的專業盡調介面，可直接進入 Pilot 準備度、發布完整性、信任邊界與建議審閱流程。未列出路由仍保持固定、noindex 與 public-safe。',
+    revisionDeltaTitle: '審閱順序現在對齊合作方決策流程。',
+    revisionDeltaBody: '決策範圍、交付基線、Pilot、依賴、邊界與里程碑形成清楚主線；客戶端安裝包下載不再干擾證據審閱。',
     revisionDeltaItems: [
-      '移除證據審閱頁中的裝飾性協議背景動畫。',
-      '把關鍵狀態與章節入口移到首屏。',
-      '保留完整技術記錄、本地工作區、匯出能力與回應安全標頭。',
+      '從合作方審閱介面移除客戶端安裝包下載控制。',
+      '把決策視圖移到交付基線與技術證據之前。',
+      '詳細審閱方法改為按需展開，不再預設佔據版面。',
     ],
-    artifactEyebrow: '發布完整性',
-    artifactTitle: '評估協議之前，先驗證客戶端。',
-    artifactBody: '以下直接安裝包與官網下載流程使用同一份不可變發布契約。雜湊只適用於此處顯示的精確檔名與版本。',
-    artifactReleaseLabel: `版本 ${RELEASE_VERSION}-${RELEASE_BUILD}`,
-    artifactFileLabel: '交付物',
-    artifactAssuranceLabel: '分發保證',
-    artifactHashLabel: 'SHA-256',
-    artifactIntegrityPathLabel: '完整性路徑',
     artifactDownload: '開啟不可變下載',
-    artifactCopyHash: '複製 SHA-256',
-    artifactHashCopied: 'SHA-256 已複製',
-    artifactHashCopyFailed: '無法複製',
     artifactAppStore: '開啟 App Store',
     artifactAppStoreArtifact: 'AeroNyx App Store 上架版本',
     artifactAppStoreIntegrity: '由 Apple App Store 信任鏈驗證',
@@ -1360,12 +1343,19 @@ function DeliveryOverview({ clientItems, rustItems, boundaries, copy }) {
 
 function StatusDefinitions({ copy }) {
   return (
-    <aside className="mt-8 border-y border-white/10 py-7 sm:py-8" aria-labelledby="partner-status-definitions">
-      <div className="grid gap-7 lg:grid-cols-[minmax(220px,0.75fr)_minmax(0,2fr)] lg:gap-12">
-        <div>
-          <h3 id="partner-status-definitions" className="text-base font-medium text-white">
+    <details className="group mt-8 border-t border-white/10">
+      <summary className="partner-no-print flex min-h-[56px] cursor-pointer list-none items-center justify-between gap-6 border-b border-white/10 py-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light [&::-webkit-details-marker]:hidden">
+        <span>
+          <span className="block text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light/70">{copy.methodologyEyebrow}</span>
+          <span id="partner-status-definitions" className="mt-1 block text-sm font-medium text-white/72">
             {copy.statusDefinitionsTitle}
-          </h3>
+          </span>
+        </span>
+        <span aria-hidden="true" className="font-mono text-sm text-white/34 group-open:hidden">+</span>
+        <span aria-hidden="true" className="hidden font-mono text-sm text-brand-light group-open:inline">−</span>
+      </summary>
+      <div className="grid gap-7 border-b border-white/10 py-7 lg:grid-cols-[minmax(220px,0.75fr)_minmax(0,2fr)] lg:gap-12">
+        <div>
           <p className="mt-3 text-sm leading-6 text-white/46">{copy.statusDefinitionsBody}</p>
         </div>
         <dl className="grid gap-5 sm:grid-cols-2">
@@ -1377,7 +1367,7 @@ function StatusDefinitions({ copy }) {
           ))}
         </dl>
       </div>
-    </aside>
+    </details>
   );
 }
 
@@ -1386,12 +1376,17 @@ function StatusDefinitions({ copy }) {
 // mistaken for a newly shipped client or Rust capability.
 function RevisionDelta({ copy }) {
   return (
-    <aside className="mt-8 border-y border-white/10 py-7 sm:py-8" aria-labelledby="partner-revision-delta">
-      <div className="grid gap-7 lg:grid-cols-[minmax(220px,0.8fr)_minmax(0,1.6fr)] lg:gap-12">
+    <details className="group border-b border-white/10">
+      <summary className="partner-no-print flex min-h-[56px] cursor-pointer list-none items-center justify-between gap-6 py-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light [&::-webkit-details-marker]:hidden">
+        <span>
+          <span className="block text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light/70">{copy.revisionDeltaEyebrow}</span>
+          <span className="mt-1 block text-sm font-medium text-white/72">{copy.revisionDeltaTitle}</span>
+        </span>
+        <span aria-hidden="true" className="font-mono text-sm text-white/34 group-open:hidden">+</span>
+        <span aria-hidden="true" className="hidden font-mono text-sm text-brand-light group-open:inline">−</span>
+      </summary>
+      <div className="grid gap-7 border-t border-white/10 py-7 lg:grid-cols-[minmax(220px,0.8fr)_minmax(0,1.6fr)] lg:gap-12">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light/78">
-            {copy.revisionDeltaEyebrow}
-          </p>
           <h3 id="partner-revision-delta" className="mt-3 text-lg font-medium leading-6 text-white">
             {copy.revisionDeltaTitle}
           </h3>
@@ -1406,103 +1401,7 @@ function RevisionDelta({ copy }) {
           ))}
         </ol>
       </div>
-    </aside>
-  );
-}
-
-// [PARTNER-RELEASE-EVIDENCE 2026-08-19 by Codex] This view renders the exact
-// immutable contract used by DownloadsModal. It does not maintain a second
-// version table, and App Store distribution is never presented with a digest.
-function ArtifactVerification({ copy }) {
-  const [hashCopyState, setHashCopyState] = useState({ platform: '', status: 'idle' });
-  const artifacts = Object.entries(RELEASE_CHANNELS);
-
-  useEffect(() => {
-    if (hashCopyState.status === 'idle') return undefined;
-    const timeout = window.setTimeout(
-      () => setHashCopyState({ platform: '', status: 'idle' }),
-      2500
-    );
-    return () => window.clearTimeout(timeout);
-  }, [hashCopyState]);
-
-  async function handleCopyHash(platform, sha256) {
-    if (!sha256 || !navigator.clipboard?.writeText) {
-      setHashCopyState({ platform, status: 'failed' });
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(sha256);
-      setHashCopyState({ platform, status: 'copied' });
-    } catch {
-      setHashCopyState({ platform, status: 'failed' });
-    }
-  }
-
-  return (
-    <div className="mt-10 border-y border-white/10">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 py-5">
-        <p className="font-mono text-xs text-brand-light">{copy.artifactReleaseLabel}</p>
-        <p className="text-[10px] uppercase tracking-eyebrow text-white/30">{CLIENT_BUILD}</p>
-      </div>
-      <div className="divide-y divide-white/10">
-        {artifacts.map(([platform, artifact]) => {
-          const copyState = hashCopyState.platform === platform ? hashCopyState.status : 'idle';
-          const hasDigest = Boolean(artifact.sha256 && artifact.filename);
-
-          return (
-            <article
-              key={platform}
-              className="grid min-w-0 gap-5 py-7 md:grid-cols-[140px_minmax(0,1fr)] md:gap-8 xl:grid-cols-[140px_minmax(240px,0.8fr)_minmax(0,1.2fr)_auto] xl:items-center"
-            >
-              <div>
-                <h3 className="text-lg font-medium text-white">{platform}</h3>
-                <p className="mt-3 text-[10px] font-semibold uppercase tracking-eyebrow text-white/28">{copy.artifactAssuranceLabel}</p>
-                <p className="mt-1 text-xs leading-5 text-white/42">{copy.artifactAssurance[platform]}</p>
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.artifactFileLabel}</p>
-                <p className="mt-2 break-all font-mono text-xs leading-5 text-white/62">
-                  {artifact.filename || copy.artifactAppStoreArtifact}
-                </p>
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">
-                  {hasDigest ? copy.artifactHashLabel : copy.artifactIntegrityPathLabel}
-                </p>
-                <p className={`mt-2 break-all font-mono text-[11px] leading-5 ${hasDigest ? 'text-white/50' : 'text-white/30'}`}>
-                  {artifact.sha256 || copy.artifactAppStoreIntegrity}
-                </p>
-              </div>
-              <div className="partner-no-print grid min-w-[176px] gap-2 sm:grid-cols-2 xl:grid-cols-1">
-                <a
-                  href={artifact.downloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-[44px] items-center justify-center rounded border border-brand-line bg-brand-faint px-4 text-center text-xs font-semibold text-brand-light transition-colors hover:bg-brand/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
-                >
-                  {hasDigest ? copy.artifactDownload : copy.artifactAppStore}
-                </a>
-                {hasDigest ? (
-                  <button
-                    type="button"
-                    onClick={() => handleCopyHash(platform, artifact.sha256)}
-                    className="inline-flex min-h-[44px] items-center justify-center rounded border border-white/12 px-4 text-xs font-semibold text-white/52 transition-colors hover:border-white/24 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
-                  >
-                    {copyState === 'copied'
-                      ? copy.artifactHashCopied
-                      : copyState === 'failed'
-                        ? copy.artifactHashCopyFailed
-                        : copy.artifactCopyHash}
-                  </button>
-                ) : null}
-              </div>
-            </article>
-          );
-        })}
-      </div>
-    </div>
+    </details>
   );
 }
 
@@ -3039,6 +2938,13 @@ function PartnerProgressPage() {
             </Container>
           </nav>
 
+          <section id="decision" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-20">
+            <Container>
+              <SectionHeading eyebrow={copy.decisionEyebrow} title={copy.decisionTitle} body={copy.decisionBody} />
+              <DecisionSummary copy={copy} />
+            </Container>
+          </section>
+
           <section id="overview" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-20">
             <Container>
               <SectionHeading eyebrow={copy.snapshotEyebrow} title={copy.snapshotTitle} body={copy.snapshotBody} />
@@ -3062,56 +2968,10 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
-          <section id="artifacts" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
-            <Container>
-              <SectionHeading eyebrow={copy.artifactEyebrow} title={copy.artifactTitle} body={copy.artifactBody} />
-              <ArtifactVerification copy={copy} />
-            </Container>
-          </section>
-
-          <section id="decision" className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
-            <Container>
-              <SectionHeading eyebrow={copy.decisionEyebrow} title={copy.decisionTitle} body={copy.decisionBody} />
-              <DecisionSummary copy={copy} />
-            </Container>
-          </section>
-
           <section id="pilot" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
             <Container>
               <SectionHeading eyebrow={copy.pilotEyebrow} title={copy.pilotTitle} body={copy.pilotBody} />
               <PilotReviewPath copy={copy} />
-            </Container>
-          </section>
-
-          <section id="workspace" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-0/78 py-16 sm:py-24">
-            <Container>
-              <SectionHeading eyebrow={copy.workspaceEyebrow} title={copy.workspaceTitle} body={copy.workspaceBody} />
-              <ReviewerWorkspace
-                copy={copy}
-                checks={reviewChecks}
-                notes={reviewNotes}
-                findings={reviewFindings}
-                decision={reviewDecision}
-                organization={reviewOrganization}
-                nextReviewDate={reviewNextReviewDate}
-                onToggle={handleToggleReviewCheck}
-                onNotesChange={handleReviewNotesChange}
-                onAddFinding={handleAddReviewFinding}
-                onUpdateFinding={handleUpdateReviewFinding}
-                onRemoveFinding={handleRemoveReviewFinding}
-                onOpenEvidence={handleOpenFindingEvidence}
-                onDecisionChange={handleReviewDecisionChange}
-                onOrganizationChange={handleReviewOrganizationChange}
-                onNextReviewDateChange={handleReviewNextReviewDateChange}
-                onExport={handleExportHandoff}
-                exportStatus={handoffExportStatus}
-                onExportMemo={handleExportDecisionMemo}
-                memoExportStatus={memoExportStatus}
-                onImport={handleImportHandoff}
-                importStatus={handoffImportStatus}
-                onClear={handleClearWorkspace}
-                clearArmed={clearWorkspaceArmed}
-              />
             </Container>
           </section>
 
@@ -3215,6 +3075,38 @@ function PartnerProgressPage() {
             </Container>
           </section>
 
+          <section id="workspace" data-partner-section className="scroll-mt-32 border-b border-white/10 bg-surface-1/78 py-16 sm:py-24">
+            <Container>
+              <SectionHeading eyebrow={copy.workspaceEyebrow} title={copy.workspaceTitle} body={copy.workspaceBody} />
+              <ReviewerWorkspace
+                copy={copy}
+                checks={reviewChecks}
+                notes={reviewNotes}
+                findings={reviewFindings}
+                decision={reviewDecision}
+                organization={reviewOrganization}
+                nextReviewDate={reviewNextReviewDate}
+                onToggle={handleToggleReviewCheck}
+                onNotesChange={handleReviewNotesChange}
+                onAddFinding={handleAddReviewFinding}
+                onUpdateFinding={handleUpdateReviewFinding}
+                onRemoveFinding={handleRemoveReviewFinding}
+                onOpenEvidence={handleOpenFindingEvidence}
+                onDecisionChange={handleReviewDecisionChange}
+                onOrganizationChange={handleReviewOrganizationChange}
+                onNextReviewDateChange={handleReviewNextReviewDateChange}
+                onExport={handleExportHandoff}
+                exportStatus={handoffExportStatus}
+                onExportMemo={handleExportDecisionMemo}
+                memoExportStatus={memoExportStatus}
+                onImport={handleImportHandoff}
+                importStatus={handoffImportStatus}
+                onClear={handleClearWorkspace}
+                clearArmed={clearWorkspaceArmed}
+              />
+            </Container>
+          </section>
+
           <section className="bg-surface-1/86 py-16 sm:py-20">
             <Container>
               <div className="flex flex-col gap-8 border-y border-white/10 py-9 lg:flex-row lg:items-center lg:justify-between">
@@ -3279,6 +3171,10 @@ function PartnerProgressPage() {
           .partner-technical-section article {
             opacity: 1 !important;
             transform: none !important;
+          }
+
+          .partner-report details > :not(summary) {
+            display: block !important;
           }
 
           .partner-report * {
