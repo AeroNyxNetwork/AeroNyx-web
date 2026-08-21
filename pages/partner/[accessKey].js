@@ -85,7 +85,7 @@
  *     a Todoist-style workstream/task/detail hierarchy. Print and portable
  *     exports still contain the complete public-safe review record.
  *
- * Last Modified: v3.3 - Reverified release and Rust node evidence baseline.
+ * Last Modified: v3.4 - Plain-language status and system boundaries.
  * ============================================
  */
 
@@ -104,7 +104,7 @@ import {
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-21';
-const REVIEW_REVISION = '3.3';
+const REVIEW_REVISION = '3.4';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -588,25 +588,25 @@ const CONTENT = {
         detail: 'Mirror synchronization, independently signed witness evidence, carrier recovery, and policy-safe authority handover were added to the Rust node.',
       },
     ],
-    boundaryEyebrow: 'Deployment readiness',
-    boundaryTitle: 'Current boundaries and acceptance conditions.',
-    boundaryBody: 'Each capability is assessed against verified implementation, operational dependencies, and its next acceptance gate. These boundaries help partners define a pilot scope and make deployment decisions.',
+    boundaryEyebrow: 'Current status',
+    boundaryTitle: 'What works today.',
+    boundaryBody: 'See what is ready, what depends on another service, and what is still being built.',
     boundaries: [
       {
-        title: 'Managed relay remains the default',
-        detail: 'The client keeps the stable managed relay path by default. Decentralized routing is being exposed as an explicit user choice rather than silently changing behavior.',
+        title: 'Managed relay is the default',
+        detail: 'The client uses the managed relay by default. Decentralized routing is not the default yet.',
       },
       {
-        title: 'LiveKit carries recommended calls today',
-        detail: 'Meeting authorization and UI are AeroNyx-controlled, while the short-term media plane uses LiveKit. The interface remains replaceable by a future Rust media path.',
+        title: 'Calls currently use LiveKit',
+        detail: 'AeroNyx controls access and the user experience. LiveKit carries audio and video.',
       },
       {
-        title: 'The ledger is purpose-built, not a general blockchain',
-        detail: 'It records signed, aggregate coordination evidence. It does not publish user messages, social relationships, browsing activity, smart contracts, or token execution.',
+        title: 'The ledger stores proofs, not user data',
+        detail: 'It records signed coordination proofs. It does not store messages, contacts, browsing data, or token activity.',
       },
       {
-        title: 'Protocol nodes are blind to payloads, not invisible to all metadata',
-        detail: 'Nodes need bounded routing and timing metadata to deliver traffic. AeroNyx minimizes and separates that metadata; it does not claim traffic-analysis immunity is finished.',
+        title: 'Nodes cannot read payloads',
+        detail: 'Nodes see only the limited routing data needed for delivery. Payloads remain encrypted.',
       },
     ],
     roadmapEyebrow: 'Next milestones',
@@ -1096,25 +1096,25 @@ const CONTENT = {
         detail: 'Rust 節點增加 mirror 同步、獨立簽名 witness、carrier recovery 與 policy-safe authority handover。',
       },
     ],
-    boundaryEyebrow: '部署準備度',
-    boundaryTitle: '當前邊界與驗收條件。',
-    boundaryBody: '每項能力都以已驗證的實現、運行依賴與下一驗收門檻為準。以下邊界協助合作方界定 Pilot 範圍並作出部署決策。',
+    boundaryEyebrow: '目前狀態',
+    boundaryTitle: '今天可以使用什麼。',
+    boundaryBody: '清楚查看哪些已可用、哪些依賴其他服務，以及哪些仍在開發。',
     boundaries: [
       {
-        title: 'Managed relay 仍是默認路徑',
-        detail: '客戶端默認保留穩定的 managed relay。去中心化路由將以清楚、可逆的用戶選擇呈現，而不是偷偷改變行為。',
+        title: 'Managed relay 是默認路徑',
+        detail: '客戶端默認使用 managed relay；去中心化路由尚未設為默認。',
       },
       {
-        title: '目前推薦通話由 LiveKit 承載',
-        detail: '會議授權與交互由 AeroNyx 控制，短期媒體層使用 LiveKit；接口保留未來替換成 Rust 媒體路徑的能力。',
+        title: '通話目前使用 LiveKit',
+        detail: 'AeroNyx 負責授權與交互，LiveKit 承載音視頻。',
       },
       {
-        title: '帳本是專用協議，不是通用公鏈',
-        detail: '它記錄簽名後的聚合協調證據，不公開用戶訊息、社交關係、瀏覽活動、智能合約或代幣執行。',
+        title: '帳本只記錄證明',
+        detail: '它記錄簽名協調證明，不存儲訊息、聯繫人、瀏覽資料或代幣活動。',
       },
       {
-        title: '節點看不到 payload，但不是所有元資料都不存在',
-        detail: '節點投遞流量仍需要有限的路由與時間元資料。AeroNyx 會最小化、隔離這些資料，但不宣稱已完全解決流量分析。',
+        title: '節點無法讀取訊息內容',
+        detail: '節點只看到投遞所需的有限路由資料，內容始終保持加密。',
       },
     ],
     roadmapEyebrow: '下一里程碑',
