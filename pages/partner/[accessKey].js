@@ -8,8 +8,8 @@
  *   boundary between shipped, beta, hardening, and planned work.
  *
  * Main Functionality:
- *   - Validates a 64-hex access key against a server-only Vercel environment
- *     variable and returns the normal 404 surface for every mismatch.
+ *   - Validates a fixed 64-hex unlisted route token and returns the normal 404
+ *     surface for every mismatch, with no deployment-time configuration.
  *   - Publishes a bilingual English/Simplified-Chinese delivery brief without
  *     adding the route to navigation, sitemap, robots.txt, or public SEO data.
  *   - Uses no-store, noindex, noarchive, and no-referrer response boundaries.
@@ -35,7 +35,6 @@
  *     can flag an item and return to its verification record without copying.
  *
  * Dependencies:
- *   - Node crypto.timingSafeEqual for server-side key comparison.
  *   - next/head, next/link, and next/router for metadata and locale switching.
  *   - components/ui/AeroNyxLogo and ProtocolBackground for shared identity.
  *   - components/ui/Container and framer-motion for responsive presentation.
@@ -50,10 +49,10 @@
  *      browser; nothing is transmitted unless a handoff file is exported.
  *
  * Important Note for Next Developer:
- *   - [PARTNER-BUILD-BRIEF 2026-08-19 by Codex] Never hard-code the access key
- *     in this public repository or expose it through NEXT_PUBLIC_* variables.
- *   - A hidden URL is not user authentication. Keep this page public-safe and
- *     add account-based authorization before publishing commercial secrets.
+ *   - [PARTNER-BUILD-BRIEF 2026-08-21 by Codex] The fixed route token is an
+ *     unlisted convenience link, not a secret or an authentication boundary.
+ *   - This repository is public. Keep every field on the page public-safe and
+ *     add account authorization before publishing commercial secrets.
  *   - Update CLIENT_BUILD, RUST_NODE_HEAD, VERIFIED_DATE, and status claims
  *     only after the corresponding release or Rust milestone is verified.
  *   - Do not add this route to sitemap.xml, robots.txt, header, or footer.
@@ -76,11 +75,10 @@
  *   - Finding references may contain only public-safe APP-xx or NODE-xx IDs;
  *     never accept URLs, endpoints, node IDs, or free-form identifiers there.
  *
- * Last Modified: v1.9 - Traceable evidence-to-finding review workflow.
+ * Last Modified: v2.0 - Fixed unlisted route without Vercel configuration.
  * ============================================
  */
 
-import { timingSafeEqual } from 'crypto';
 import { Suspense, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
@@ -107,7 +105,8 @@ const ProtocolBackground = dynamic(
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '849bdcd';
 const VERIFIED_DATE = '2026-08-19';
-const REVIEW_REVISION = '1.9';
+const REVIEW_REVISION = '2.0';
+const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
 const REVIEW_ORGANIZATION_MAX_LENGTH = 120;
@@ -163,14 +162,14 @@ const CONTENT = {
     english: 'EN',
     chinese: '中文',
     restricted: 'Partner build brief',
-    restrictedDetail: 'Restricted link · public-safe delivery information',
+    restrictedDetail: 'Unlisted link · public-safe delivery information',
     heroTitle: 'A clear view of what AeroNyx can do today.',
     heroBody: 'A source-reviewed delivery brief for partners: client capabilities, Rust protocol infrastructure, current dependencies, and the milestones that move AeroNyx toward a fully open privacy coordination network.',
     verified: `Verified ${VERIFIED_DATE}`,
     revision: `Brief v${REVIEW_REVISION}`,
     noTraffic: 'No customer traffic, node identities, private endpoints, keys, or payload data are included.',
-    accessTitle: 'Link-based review access',
-    accessBody: 'Anyone holding this URL can open the brief. Share it only with intended reviewers; it is not an account-authenticated data room.',
+    accessTitle: 'Unlisted partner review',
+    accessBody: 'This fixed route token is a convenience link, not an authentication boundary. Anyone with the URL or public source can open it, so the brief intentionally contains public-safe information only.',
     copyLink: 'Copy review link',
     copiedLink: 'Link copied',
     copyFailed: 'Copy unavailable',
@@ -219,12 +218,12 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'Every finding can now trace back to its evidence.',
-    revisionDeltaBody: 'Stable APP and NODE references now connect technical verification records to the local findings register. Reviewers can flag evidence in one action and return to its source without copying private links.',
+    revisionDeltaTitle: 'The partner brief no longer depends on deployment configuration.',
+    revisionDeltaBody: 'The existing unlisted route now uses a fixed, source-visible token. Vercel environment setup is no longer required, while wrong paths still fail closed and the page remains noindex and public-safe.',
     revisionDeltaItems: [
-      'Flag any client or node capability directly from its verification record.',
-      'Carry the public-safe evidence reference through JSON and Markdown handoffs.',
-      'Return from a finding to the exact technical evidence with one action.',
+      'Keep the current partner URL stable across deployments and environments.',
+      'Remove the production environment-variable failure mode.',
+      'Preserve 404 handling, no-store responses, noindex, and no-referrer headers.',
     ],
     artifactEyebrow: 'Release integrity',
     artifactTitle: 'Verify the client before evaluating the protocol.',
@@ -689,14 +688,14 @@ const CONTENT = {
     english: 'EN',
     chinese: '中文',
     restricted: '合作方開發簡報',
-    restrictedDetail: '受限連結 · 僅含可公開的交付資訊',
+    restrictedDetail: '未列出連結 · 僅含可公開的交付資訊',
     heroTitle: '清楚了解 AeroNyx 今天真正能做什麼。',
     heroBody: '給合作方的源碼核對版進度：客戶端能力、Rust 協議基礎設施、目前依賴與下一個里程碑。AeroNyx 正在走向完全開放的隱私協調網絡，但不把未完成的能力包裝成已交付。',
     verified: `核對日期 ${VERIFIED_DATE}`,
     revision: `簡報 v${REVIEW_REVISION}`,
     noTraffic: '本頁不包含客戶流量、節點身份、私有端點、密鑰或任何 payload 資料。',
-    accessTitle: '連結式審閱權限',
-    accessBody: '任何持有此網址的人都能開啟簡報。請只分享給指定審閱者；它不是使用帳號驗證的資料室。',
+    accessTitle: '未列出的合作方審閱頁',
+    accessBody: '固定路由 token 只是方便分享的入口，不是身份驗證邊界。任何取得網址或查看公開源碼的人都能開啟，因此本頁刻意只包含可公開資訊。',
     copyLink: '複製審閱連結',
     copiedLink: '連結已複製',
     copyFailed: '無法複製',
@@ -745,12 +744,12 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '每個審閱問題現在都能追溯到原始證據。',
-    revisionDeltaBody: '穩定的 APP 與 NODE 引用現在會把技術驗證記錄連接到本機 findings register。審閱者可以一鍵標記證據，之後無需複製私有連結就能返回來源。',
+    revisionDeltaTitle: '合作方簡報不再依賴部署環境配置。',
+    revisionDeltaBody: '現有未列出路由改為固定且源碼可見的 token，不再需要 Vercel 環境變數；錯誤路徑仍然返回 404，頁面繼續保持 noindex 與 public-safe。',
     revisionDeltaItems: [
-      '從客戶端或節點能力的驗證記錄直接建立審閱問題。',
-      '公開安全的證據引用會進入 JSON 與 Markdown 交接檔。',
-      '從 finding 一鍵返回精確的技術證據。',
+      '讓現有合作方網址跨部署與環境保持穩定。',
+      '移除 production 環境變數造成的失效點。',
+      '保留 404、no-store、noindex 與 no-referrer 安全邊界。',
     ],
     artifactEyebrow: '發布完整性',
     artifactTitle: '評估協議之前，先驗證客戶端。',
@@ -2797,7 +2796,7 @@ function PartnerProgressPage() {
     <>
       <Head>
         <title>AeroNyx Partner Build Brief</title>
-        <meta name="description" content="Restricted AeroNyx partner delivery brief." />
+        <meta name="description" content="Unlisted AeroNyx partner delivery brief." />
         <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex" />
         <meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet,noimageindex" />
         <meta name="referrer" content="no-referrer" />
@@ -3232,17 +3231,9 @@ export async function getServerSideProps(context) {
   context.res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
   context.res.setHeader('Referrer-Policy', 'no-referrer');
 
-  const expectedKey = String(process.env.AERONYX_PARTNER_PROGRESS_ACCESS_KEY || '').trim();
   const providedKey = String(context.params?.accessKey || '').trim();
-  const keysAreWellFormed = ACCESS_KEY_PATTERN.test(expectedKey) && ACCESS_KEY_PATTERN.test(providedKey);
-
-  let authorized = false;
-  if (keysAreWellFormed) {
-    const expectedBuffer = Buffer.from(expectedKey, 'utf8');
-    const providedBuffer = Buffer.from(providedKey, 'utf8');
-    authorized = expectedBuffer.length === providedBuffer.length
-      && timingSafeEqual(expectedBuffer, providedBuffer);
-  }
+  const authorized = ACCESS_KEY_PATTERN.test(providedKey)
+    && providedKey === PARTNER_PROGRESS_ACCESS_KEY;
 
   if (!authorized) {
     return { notFound: true };
