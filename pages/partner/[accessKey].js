@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v4.0 - Bilingual daily development calendar.
+ * Last Modified: v4.1 - Development reports and evidence through 2026-08-26.
  * ============================================
  */
 
@@ -109,9 +109,9 @@ import {
 import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar';
 
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
-const RUST_NODE_HEAD = '849bdcd';
-const VERIFIED_DATE = '2026-08-21';
-const REVIEW_REVISION = '4.0';
+const RUST_NODE_HEAD = '3ee6183';
+const VERIFIED_DATE = '2026-08-26';
+const REVIEW_REVISION = '4.1';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -226,17 +226,17 @@ const CONTENT = {
     snapshotBody: 'These identifiers anchor the brief to a concrete client release and reviewed Rust main commit. Status is based on source and test evidence, not roadmap percentages.',
     snapshot: [
       { label: 'Client build', value: CLIENT_BUILD, detail: 'Current cross-platform release baseline' },
-      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · verified witness latency milestone' },
+      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · composed blind-relay domains · 2,075 tests passed' },
       { label: 'Distribution', value: '4 platforms', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'Daily development reports are now part of the brief.',
-    revisionDeltaBody: `The calendar records verified work by date while keeping client ${CLIENT_BUILD} and Rust main ${RUST_NODE_HEAD} as the current evidence baseline.`,
+    revisionDeltaTitle: 'Client and Rust development is reviewed through August 26.',
+    revisionDeltaBody: `Daily reports now cover membership safety, VPN purchase recovery, identity isolation, durable encrypted relay, and the Rust domain split. Client ${CLIENT_BUILD} remains the published build; Rust main is ${RUST_NODE_HEAD}.`,
     revisionDeltaItems: [
-      'Open a marked date to read that day’s development report.',
-      'Separate completed work, work in progress, and next steps.',
-      'Include the complete public-safe log in print and JSON exports.',
+      'Added verified daily records for August 22–26.',
+      'Kept unreleased client work separate from the published build.',
+      'Updated the reviewed Rust baseline and full-workspace test evidence.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -757,17 +757,17 @@ const CONTENT = {
     snapshotBody: '以下版本把頁面錨定到真實客戶端發布與已審核的 Rust main commit。狀態來自源碼與測試證據，不使用虛假的完成百分比。',
     snapshot: [
       { label: '客戶端版本', value: CLIENT_BUILD, detail: '目前跨平台正式發布基線' },
-      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · witness 延遲加固里程碑' },
+      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · 盲中繼領域組合完成 · 2,075 項測試通過' },
       { label: '發布平台', value: '4 個平台', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '簡報已加入每日開發日報。',
-    revisionDeltaBody: `日曆按日期記錄已驗證工作，並繼續以客戶端 ${CLIENT_BUILD} 與 Rust main ${RUST_NODE_HEAD} 作為目前證據基線。`,
+    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 8 月 26 日。',
+    revisionDeltaBody: `日報已涵蓋會員安全、VPN 購買恢復、身份隔離、持久密文中繼及 Rust 領域拆分。客戶端 ${CLIENT_BUILD} 仍是正式發布版；Rust main 為 ${RUST_NODE_HEAD}。`,
     revisionDeltaItems: [
-      '點擊有標記的日期，查看當天開發日報。',
-      '分開展示已完成、進行中與下一步。',
-      '列印與 JSON 匯出保留完整公開安全日誌。',
+      '新增 8 月 22–26 日已核對的每日記錄。',
+      '未發布客戶端工作與正式版本保持清楚區分。',
+      '更新 Rust 審核基線與完整 workspace 測試證據。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',
