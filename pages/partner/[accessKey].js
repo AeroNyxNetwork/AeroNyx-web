@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v4.6 - Mobile latest-report summary yields to status evidence.
+ * Last Modified: v4.7 - Review tabs support standard keyboard navigation.
  * ============================================
  */
 
@@ -111,7 +111,7 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '3ee6183';
 const VERIFIED_DATE = '2026-08-26';
-const REVIEW_REVISION = '4.6';
+const REVIEW_REVISION = '4.7';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -1237,6 +1237,20 @@ function SectionHeading({ eyebrow, title, body }) {
 // the former quick links, depth switch, and long section index. Each tab owns a
 // focused review task while print continues to expose the complete brief.
 function ReviewViewTabs({ copy, activeView, onChange }) {
+  function handleTabKeyDown(event, index) {
+    let nextIndex = null;
+    if (event.key === 'ArrowRight') nextIndex = (index + 1) % copy.viewTabs.length;
+    if (event.key === 'ArrowLeft') nextIndex = (index - 1 + copy.viewTabs.length) % copy.viewTabs.length;
+    if (event.key === 'Home') nextIndex = 0;
+    if (event.key === 'End') nextIndex = copy.viewTabs.length - 1;
+    if (nextIndex === null) return;
+
+    event.preventDefault();
+    const nextView = copy.viewTabs[nextIndex].id;
+    onChange(nextView);
+    document.getElementById(`partner-tab-${nextView}`)?.focus();
+  }
+
   return (
     <nav className="partner-no-print sticky top-16 z-40 border-b border-white/10 bg-surface-0/96 backdrop-blur-xl sm:top-20" aria-label={copy.viewLabel}>
       <Container>
@@ -1251,7 +1265,9 @@ function ReviewViewTabs({ copy, activeView, onChange }) {
                 id={`partner-tab-${item.id}`}
                 aria-selected={active}
                 aria-controls={`partner-view-${item.id}`}
+                tabIndex={active ? 0 : -1}
                 onClick={() => onChange(item.id)}
+                onKeyDown={(event) => handleTabKeyDown(event, index)}
                 className={`relative min-h-[58px] min-w-0 border-x border-white/8 px-2 py-3 text-left transition-colors first:border-r-0 last:border-l-0 hover:bg-white/[0.035] focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-light sm:px-4 lg:min-h-[66px] ${active ? 'bg-white/[0.035]' : ''}`}
               >
                 <span className={`block font-mono text-[9px] ${active ? 'text-brand-light' : 'text-brand-light/48'}`}>
