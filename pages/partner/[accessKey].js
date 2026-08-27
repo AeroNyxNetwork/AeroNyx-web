@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v4.1 - Development reports and evidence through 2026-08-26.
+ * Last Modified: v4.2 - Latest development report surfaced in the entry view.
  * ============================================
  */
 
@@ -111,7 +111,7 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '3ee6183';
 const VERIFIED_DATE = '2026-08-26';
-const REVIEW_REVISION = '4.1';
+const REVIEW_REVISION = '4.2';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -172,6 +172,13 @@ const CONTENT = {
       { id: 'calendar', label: 'Daily reports', detail: 'Calendar and verified work by day' },
       { id: 'workspace', label: 'Review workspace', detail: 'Findings, decision, and handoff' },
     ],
+    dailyModuleEyebrow: 'Latest development report',
+    dailyModuleTitle: 'See the newest verified work before the delivery board.',
+    dailyModuleBody: 'The latest report is visible on entry, with completed work and active validation kept separate from the historical calendar.',
+    dailyModuleLatestLabel: 'Latest verified date',
+    dailyModuleUpdatesLabel: 'updates',
+    dailyModuleOpen: 'Open full daily report',
+    dailyModuleEmpty: 'No verified work recorded in this state.',
     deliveryEyebrow: 'Delivery board',
     deliveryTitle: 'One clear list of what is done, moving, and next.',
     deliveryBody: 'Work is grouped by product area. Open any item only when you need its implementation evidence, dependency boundary, or next acceptance gate.',
@@ -703,6 +710,13 @@ const CONTENT = {
       { id: 'calendar', label: '開發日報', detail: '按日期查看已驗證工作' },
       { id: 'workspace', label: '審閱工作區', detail: '問題、決策與交接' },
     ],
+    dailyModuleEyebrow: '最新開發日報',
+    dailyModuleTitle: '先看最新核對工作，再查看完整交付清單。',
+    dailyModuleBody: '合作方進入頁面即可看到最新日報；已完成與仍待驗證的工作，和歷史日曆分開呈現。',
+    dailyModuleLatestLabel: '最新核對日期',
+    dailyModuleUpdatesLabel: '項更新',
+    dailyModuleOpen: '查看完整開發日報',
+    dailyModuleEmpty: '此狀態目前沒有已核對工作。',
     deliveryEyebrow: '交付清單',
     deliveryTitle: '一張清單，看清已完成、進行中與下一步。',
     deliveryBody: '工作按產品大項分組；只有需要查看實現證據、依賴邊界或下一驗收門檻時，才展開單項細節。',
@@ -1256,6 +1270,81 @@ function ReviewViewTabs({ copy, activeView, onChange }) {
         </div>
       </Container>
     </nav>
+  );
+}
+
+// [PARTNER-DAILY-ENTRY-MODULE 2026-08-27 by Codex] Surface the latest
+// source-reviewed daily record before the tabbed review views.
+function LatestDevelopmentReport({ copy, language, onOpen }) {
+  const developmentDays = localizedDevelopmentDays(language);
+  const latestDay = developmentDays[developmentDays.length - 1];
+  const statusGroups = DEVELOPMENT_REPORT_STATUSES.map((status) => ({
+    status,
+    entries: latestDay?.entries.filter((entry) => entry.status === status) || [],
+  }));
+
+  function statusTone(status) {
+    if (status === 'complete') return 'border-ok/30 bg-ok/8 text-ok';
+    if (status === 'active') return 'border-brand-line bg-brand-faint text-brand-light';
+    return 'border-white/12 bg-white/[0.025] text-white/46';
+  }
+
+  return (
+    <section
+      id="partner-latest-report"
+      aria-labelledby="partner-latest-report-title"
+      className="mt-8 overflow-hidden rounded border border-brand-line/60 bg-surface-1/88 shadow-[0_18px_60px_rgba(22,163,176,0.08)]"
+    >
+      <div className="flex flex-col gap-5 border-b border-white/10 px-5 py-5 sm:px-7 sm:py-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="min-w-0">
+          <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light">{copy.dailyModuleEyebrow}</p>
+          <h2 id="partner-latest-report-title" className="mt-3 max-w-3xl font-display text-2xl font-medium leading-tight text-white sm:text-3xl">
+            {copy.dailyModuleTitle}
+          </h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-white/52 sm:text-[15px] sm:leading-7">
+            {copy.dailyModuleBody}
+          </p>
+        </div>
+        <div className="flex shrink-0 flex-col gap-3 sm:flex-row sm:items-center lg:flex-col lg:items-end">
+          <div className="text-left lg:text-right">
+            <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.dailyModuleLatestLabel}</p>
+            <p className="mt-1 font-mono text-sm text-white/76">{latestDay?.date || VERIFIED_DATE}</p>
+            <p className="mt-1 font-mono text-[10px] text-white/32">{latestDay?.entries.length || 0} {copy.dailyModuleUpdatesLabel}</p>
+          </div>
+          <button
+            type="button"
+            onClick={onOpen}
+            className="inline-flex min-h-[42px] items-center justify-center rounded border border-brand-line bg-brand-faint px-4 text-xs font-semibold text-brand-light transition-colors hover:bg-brand/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+          >
+            {copy.dailyModuleOpen}
+          </button>
+        </div>
+      </div>
+
+      <div className="grid gap-px bg-white/10 sm:grid-cols-3">
+        {statusGroups.map((group) => (
+          <div key={group.status} className="min-w-0 bg-surface-1/88 px-5 py-5 sm:px-6 sm:py-6">
+            <div className="flex items-center justify-between gap-3">
+              <span className={`rounded border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${statusTone(group.status)}`}>
+                {copy.calendarStatusLabels[group.status]}
+              </span>
+              <span className="font-mono text-[10px] text-white/30">{group.entries.length}</span>
+            </div>
+            <ul className="mt-5 space-y-4">
+              {group.entries.length > 0 ? group.entries.map((entry) => (
+                <li key={entry.id} className="min-w-0 border-t border-white/8 pt-4 first:border-t-0 first:pt-0">
+                  <p className="text-sm font-medium leading-5 text-white">{entry.title}</p>
+                  <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-light/62">{copy.calendarAreaLabels[entry.area]}</p>
+                  <p className="mt-2 text-xs leading-5 text-white/42">{entry.summary}</p>
+                </li>
+              )) : (
+                <li className="border-t border-white/8 pt-4 text-xs leading-5 text-white/32">{copy.dailyModuleEmpty}</li>
+              )}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -2825,6 +2914,11 @@ function PartnerProgressPage() {
                 <p className="mt-6 max-w-3xl text-base leading-7 text-white/58 sm:text-lg sm:leading-8">
                   {copy.heroBody}
                 </p>
+                <LatestDevelopmentReport
+                  copy={copy}
+                  language={language}
+                  onOpen={() => handleViewChange('calendar')}
+                />
                 <div className="mt-7 flex flex-col gap-5 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
                   <p className="max-w-2xl text-xs leading-5 text-white/36">{copy.noTraffic}</p>
                   <div className="partner-no-print flex shrink-0 gap-2" aria-label={copy.accessTitle}>
