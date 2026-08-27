@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v4.5 - Latest-report metadata condensed for mobile scanning.
+ * Last Modified: v4.6 - Mobile latest-report summary yields to status evidence.
  * ============================================
  */
 
@@ -111,7 +111,7 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '3ee6183';
 const VERIFIED_DATE = '2026-08-26';
-const REVIEW_REVISION = '4.5';
+const REVIEW_REVISION = '4.6';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -1304,7 +1304,7 @@ function LatestDevelopmentReport({ copy, language, onOpen }) {
         <h2 id="partner-latest-report-title" className="mt-3 max-w-3xl font-display text-2xl font-medium leading-tight text-white sm:text-3xl">
           {copy.dailyModuleTitle}
         </h2>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-white/52 sm:text-[15px] sm:leading-7">
+        <p className="mt-3 hidden max-w-3xl text-sm leading-6 text-white/52 sm:block sm:text-[15px] sm:leading-7">
           {copy.dailyModuleBody}
         </p>
         <div className="mt-5 flex flex-col gap-3 border-t border-white/8 pt-4 sm:flex-row sm:items-center sm:justify-between">
