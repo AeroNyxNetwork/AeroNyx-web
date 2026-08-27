@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v5.0 - Client and Rust review baseline advanced to August 27.
+ * Last Modified: v5.1 - Added clearly labelled local development evidence.
  * ============================================
  */
 
@@ -111,7 +111,7 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = 'ceded91';
 const VERIFIED_DATE = '2026-08-27';
-const REVIEW_REVISION = '5.0';
+const REVIEW_REVISION = '5.1';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -238,11 +238,11 @@ const CONTENT = {
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
     revisionDeltaTitle: 'Client and Rust development is reviewed through August 27.',
-    revisionDeltaBody: `Daily reports now cover membership financial safety, VPN purchase recovery, durable encrypted relay, and verified backup and restore domains. Client ${CLIENT_BUILD} remains the published build; Rust main is ${RUST_NODE_HEAD}.`,
+    revisionDeltaBody: `Daily reports now include both published baselines and source-tested local work, with every local item explicitly labelled. Client ${CLIENT_BUILD} remains the published build; Rust main remains ${RUST_NODE_HEAD}.`,
     revisionDeltaItems: [
-      'Added verified daily records through August 27.',
-      'Kept uncommitted client integration separate from the published build.',
-      'Advanced the reviewed Rust baseline to published backup and restore command domains.',
+      'Added the locally verified Rust backup-creation milestone without advancing the published head.',
+      'Advanced uncommitted client evidence through authoritative purchase and VPN lifecycle observability.',
+      'Kept local, pushed, and released states explicitly separate.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -775,11 +775,11 @@ const CONTENT = {
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
     revisionDeltaTitle: '客戶端與 Rust 開發已核對至 8 月 27 日。',
-    revisionDeltaBody: `日報已涵蓋會員資金安全、VPN 購買恢復、持久密文中繼及可驗證備份與恢復領域。客戶端 ${CLIENT_BUILD} 仍是正式發布版；Rust main 為 ${RUST_NODE_HEAD}。`,
+    revisionDeltaBody: `日報現同時納入正式發布基線與經源碼測試的本地工作，所有本地項目均明確標示。客戶端 ${CLIENT_BUILD} 仍是正式發布版；Rust main 仍為 ${RUST_NODE_HEAD}。`,
     revisionDeltaItems: [
-      '新增截至 8 月 27 日已核對的每日記錄。',
-      '未提交的客戶端整合工作與正式版本保持清楚區分。',
-      'Rust 審核基線推進至已發布的備份與恢復命令領域。',
+      '加入本地已驗證的 Rust 備份建立里程碑，但不推進正式 head。',
+      '未提交的客戶端證據推進至權威購買與 VPN 生命週期可觀測性。',
+      '本地、已推送與已發布狀態保持明確區分。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',

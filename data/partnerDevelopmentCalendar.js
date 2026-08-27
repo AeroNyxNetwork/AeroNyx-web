@@ -34,8 +34,11 @@
  *   - [PARTNER-DEVELOPMENT-CALENDAR 2026-08-26 by Codex] Source-verified work
  *     may be recorded before release only when the remaining device or rollout
  *     gate is stated explicitly and the entry is not labelled as shipped.
+ *   - [PARTNER-LOCAL-EVIDENCE 2026-08-27 by Codex] Local commits and
+ *     uncommitted source may be recorded when the exact verification boundary
+ *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v1.2 - Client and Rust reports through 2026-08-27.
+ * Last Modified: v1.3 - Added explicitly labelled local development evidence.
  * ============================================
  */
 
@@ -330,12 +333,27 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         area: 'client',
         status: 'active',
         title: Object.freeze({
-          en: 'Membership purchase recovery remains in integration',
-          zh: '會員購買恢復流程持續整合',
+          en: 'Purchase lifecycle observability completed locally',
+          zh: '購買生命週期可觀測性已在本地完成',
         }),
         summary: Object.freeze({
-          en: 'Centralized purchase continuation, made financial request identity fail closed, and removed repeat-redemption windows; static analysis and 169 focused membership, points, payment, and VPN tests passed. Commit, release-device, and real-order validation remain.',
-          zh: '已集中購買續接、讓金融請求身份失敗關閉，並封堵重複兌換窗口；靜態分析與 169 項會員、積分、付款及 VPN 聚焦測試通過。仍待提交、發布版真機與真實訂單驗證。',
+          en: 'Uncommitted local source keeps receipt state monotonic and records anonymous payment, points, and established-VPN events only at authoritative boundaries; static analysis and 170 focused tests passed. Commit, release-device, and real-order validation remain.',
+          zh: '本地未提交源碼保持收據狀態單調，且只在權威邊界記錄匿名付款、積分與 VPN 真正建立事件；靜態分析及 170 項聚焦測試通過。仍待提交、發布版真機與真實訂單驗證。',
+        }),
+      }),
+      // [PARTNER-LOCAL-EVIDENCE 2026-08-27 by Codex] Keep the reviewed local
+      // milestone visible without advancing the published Rust head.
+      Object.freeze({
+        id: 'node-local-backup-creation-certification',
+        area: 'node',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Local backup creation verified; certification split continues',
+          zh: '本地備份建立已驗證，認證領域持續拆分',
+        }),
+        summary: Object.freeze({
+          en: 'Local unpushed commit 1c9a89d extracted verified backup creation and passed 89 focused tests plus the 1,781-test full suite with one ignored, cargo check, and Clippy. Recovery-image certification remains uncommitted and under validation.',
+          zh: '本地未推送提交 1c9a89d 已拆出可驗證備份建立領域，89 項聚焦測試及 1,781 項完整測試通過、1 項忽略，cargo check 與 Clippy 通過。Recovery Image 認證拆分仍未提交並在驗證中。',
         }),
       }),
       Object.freeze({
@@ -347,8 +365,8 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
           zh: '合作方開發日報更新至 8 月 27 日',
         }),
         summary: Object.freeze({
-          en: 'Added the verified Rust publication baseline and source-tested client integration status while keeping unpushed work and released builds distinct.',
-          zh: '新增已核對的 Rust 發布基線與經源碼測試的客戶端整合狀態，並清楚區分未推送工作與正式發布版本。',
+          en: 'Added the verified Rust publication baseline plus explicitly labelled local Rust and client evidence while keeping unpushed work and released builds distinct.',
+          zh: '新增已核對的 Rust 發布基線，以及明確標示的本地 Rust 與客戶端證據，並保持未推送工作與正式發布版本清楚區分。',
         }),
       }),
     ]),
