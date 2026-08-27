@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v4.3 - Empty latest-report states removed from entry scanning.
+ * Last Modified: v4.4 - Entry copy tightened to foreground the daily report.
  * ============================================
  */
 
@@ -111,7 +111,7 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '3ee6183';
 const VERIFIED_DATE = '2026-08-26';
-const REVIEW_REVISION = '4.3';
+const REVIEW_REVISION = '4.4';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -151,7 +151,7 @@ const CONTENT = {
     chinese: '中文',
     restricted: 'Partner build brief',
     heroTitle: 'A clear view of what AeroNyx can do today.',
-    heroBody: 'A source-reviewed delivery brief for partners: client capabilities, Rust protocol infrastructure, current dependencies, and the milestones that move AeroNyx toward a fully open privacy coordination network.',
+    heroBody: 'A source-reviewed partner brief covering client capabilities, Rust nodes, current dependencies, and the next milestone. Unreleased work stays separate from delivery.',
     verified: `Verified ${VERIFIED_DATE}`,
     revision: `Brief v${REVIEW_REVISION}`,
     noTraffic: 'No customer traffic, node identities, private endpoints, keys, or payload data are included.',
@@ -688,7 +688,7 @@ const CONTENT = {
     chinese: '中文',
     restricted: '合作方開發簡報',
     heroTitle: '清楚了解 AeroNyx 今天真正能做什麼。',
-    heroBody: '給合作方的源碼核對版進度：客戶端能力、Rust 協議基礎設施、目前依賴與下一個里程碑。AeroNyx 正在走向完全開放的隱私協調網絡，但不把未完成的能力包裝成已交付。',
+    heroBody: '給合作方的源碼核對版進度：客戶端能力、Rust 節點、目前依賴與下一里程碑。不把未完成的能力包裝成已交付。',
     verified: `核對日期 ${VERIFIED_DATE}`,
     revision: `簡報 v${REVIEW_REVISION}`,
     noTraffic: '本頁不包含客戶流量、節點身份、私有端點、密鑰或任何 payload 資料。',
