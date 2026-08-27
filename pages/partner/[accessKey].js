@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v4.8 - Latest-report card resists global section spacing.
+ * Last Modified: v4.9 - View changes hand focus to the active review tab.
  * ============================================
  */
 
@@ -111,7 +111,7 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '3ee6183';
 const VERIFIED_DATE = '2026-08-26';
-const REVIEW_REVISION = '4.8';
+const REVIEW_REVISION = '4.9';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -2763,6 +2763,9 @@ function PartnerProgressPage() {
         behavior: reduceMotion ? 'auto' : 'smooth',
         block: 'start',
       });
+      // [PARTNER-REVIEW-HANDOFF 2026-08-27 by Codex] Keep keyboard focus in
+      // the visible sticky navigation after a view change scrolls the trigger away.
+      document.getElementById(`partner-tab-${view}`)?.focus({ preventScroll: true });
     }, 0);
   }
 
