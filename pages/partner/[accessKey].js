@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v4.2 - Latest development report surfaced in the entry view.
+ * Last Modified: v4.3 - Empty latest-report states removed from entry scanning.
  * ============================================
  */
 
@@ -111,7 +111,7 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '3ee6183';
 const VERIFIED_DATE = '2026-08-26';
-const REVIEW_REVISION = '4.2';
+const REVIEW_REVISION = '4.3';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -173,12 +173,11 @@ const CONTENT = {
       { id: 'workspace', label: 'Review workspace', detail: 'Findings, decision, and handoff' },
     ],
     dailyModuleEyebrow: 'Latest development report',
-    dailyModuleTitle: 'See the newest verified work before the delivery board.',
-    dailyModuleBody: 'The latest report is visible on entry, with completed work and active validation kept separate from the historical calendar.',
+    dailyModuleTitle: 'The newest verified work, at a glance.',
+    dailyModuleBody: 'Titles and status are visible on entry; open the full report when you need the source-reviewed detail and history.',
     dailyModuleLatestLabel: 'Latest verified date',
     dailyModuleUpdatesLabel: 'updates',
     dailyModuleOpen: 'Open full daily report',
-    dailyModuleEmpty: 'No verified work recorded in this state.',
     deliveryEyebrow: 'Delivery board',
     deliveryTitle: 'One clear list of what is done, moving, and next.',
     deliveryBody: 'Work is grouped by product area. Open any item only when you need its implementation evidence, dependency boundary, or next acceptance gate.',
@@ -711,12 +710,11 @@ const CONTENT = {
       { id: 'workspace', label: '審閱工作區', detail: '問題、決策與交接' },
     ],
     dailyModuleEyebrow: '最新開發日報',
-    dailyModuleTitle: '先看最新核對工作，再查看完整交付清單。',
-    dailyModuleBody: '合作方進入頁面即可看到最新日報；已完成與仍待驗證的工作，和歷史日曆分開呈現。',
+    dailyModuleTitle: '最新核對工作，一眼看清。',
+    dailyModuleBody: '進入頁面先看到標題與狀態；需要源碼核對細節和歷史記錄時，再打開完整日報。',
     dailyModuleLatestLabel: '最新核對日期',
     dailyModuleUpdatesLabel: '項更新',
     dailyModuleOpen: '查看完整開發日報',
-    dailyModuleEmpty: '此狀態目前沒有已核對工作。',
     deliveryEyebrow: '交付清單',
     deliveryTitle: '一張清單，看清已完成、進行中與下一步。',
     deliveryBody: '工作按產品大項分組；只有需要查看實現證據、依賴邊界或下一驗收門檻時，才展開單項細節。',
@@ -1281,7 +1279,7 @@ function LatestDevelopmentReport({ copy, language, onOpen }) {
   const statusGroups = DEVELOPMENT_REPORT_STATUSES.map((status) => ({
     status,
     entries: latestDay?.entries.filter((entry) => entry.status === status) || [],
-  }));
+  })).filter((group) => group.entries.length > 0);
 
   function statusTone(status) {
     if (status === 'complete') return 'border-ok/30 bg-ok/8 text-ok';
@@ -1321,7 +1319,7 @@ function LatestDevelopmentReport({ copy, language, onOpen }) {
         </div>
       </div>
 
-      <div className="grid gap-px bg-white/10 sm:grid-cols-3">
+      <div className={`grid gap-px bg-white/10 ${statusGroups.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
         {statusGroups.map((group) => (
           <div key={group.status} className="min-w-0 bg-surface-1/88 px-5 py-5 sm:px-6 sm:py-6">
             <div className="flex items-center justify-between gap-3">
@@ -1331,15 +1329,12 @@ function LatestDevelopmentReport({ copy, language, onOpen }) {
               <span className="font-mono text-[10px] text-white/30">{group.entries.length}</span>
             </div>
             <ul className="mt-5 space-y-4">
-              {group.entries.length > 0 ? group.entries.map((entry) => (
+              {group.entries.map((entry) => (
                 <li key={entry.id} className="min-w-0 border-t border-white/8 pt-4 first:border-t-0 first:pt-0">
                   <p className="text-sm font-medium leading-5 text-white">{entry.title}</p>
                   <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-light/62">{copy.calendarAreaLabels[entry.area]}</p>
-                  <p className="mt-2 text-xs leading-5 text-white/42">{entry.summary}</p>
                 </li>
-              )) : (
-                <li className="border-t border-white/8 pt-4 text-xs leading-5 text-white/32">{copy.dailyModuleEmpty}</li>
-              )}
+              ))}
             </ul>
           </div>
         ))}
