@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v4.7 - Review tabs support standard keyboard navigation.
+ * Last Modified: v4.8 - Latest-report card resists global section spacing.
  * ============================================
  */
 
@@ -111,7 +111,7 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '3ee6183';
 const VERIFIED_DATE = '2026-08-26';
-const REVIEW_REVISION = '4.7';
+const REVIEW_REVISION = '4.8';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -3116,6 +3116,12 @@ function PartnerProgressPage() {
       </div>
 
       <style jsx global>{`
+        /* [PARTNER-DAILY-ENTRY-MODULE 2026-08-27 by Codex] Keep the nested
+           report card independent from site-wide mobile section spacing. */
+        .partner-report #partner-latest-report {
+          padding: 0;
+        }
+
         @media print {
           @page {
             margin: 14mm;
