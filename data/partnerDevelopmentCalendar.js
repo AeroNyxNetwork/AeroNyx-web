@@ -35,7 +35,7 @@
  *     may be recorded before release only when the remaining device or rollout
  *     gate is stated explicitly and the entry is not labelled as shipped.
  *
- * Last Modified: v1.1 - Client and Rust reports through 2026-08-26.
+ * Last Modified: v1.2 - Client and Rust reports through 2026-08-27.
  * ============================================
  */
 
@@ -305,6 +305,50 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         summary: Object.freeze({
           en: 'Added source- and test-reviewed client and Rust milestones for August 22–26 while keeping unreleased work distinct from shipped builds.',
           zh: '補充 8 月 22–26 日經源碼與測試核對的客戶端及 Rust 里程碑，並明確區分未發布工作與正式版本。',
+        }),
+      }),
+    ]),
+  }),
+  Object.freeze({
+    date: '2026-08-27',
+    entries: Object.freeze([
+      Object.freeze({
+        id: 'node-backup-restore-command-domains',
+        area: 'node',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Backup and restore paths split into verified domains',
+          zh: '備份與恢復流程完成可驗證領域拆分',
+        }),
+        summary: Object.freeze({
+          en: 'Published relay error, backup, audit, inventory, prune, and restore command boundaries while preserving fail-closed ordering. GitHub main ceded91 passed 1,781 library tests with one ignored; no node deployment or restart was performed.',
+          zh: '已發布 relay 錯誤、備份、審計、庫存、清理與恢復命令邊界，並保持失敗關閉順序。GitHub main ceded91 通過 1,781 項 library 測試、1 項忽略；未部署或重啟節點。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-membership-financial-recovery',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Membership purchase recovery remains in integration',
+          zh: '會員購買恢復流程持續整合',
+        }),
+        summary: Object.freeze({
+          en: 'Centralized purchase continuation, made financial request identity fail closed, and removed repeat-redemption windows; static analysis and 169 focused membership, points, payment, and VPN tests passed. Commit, release-device, and real-order validation remain.',
+          zh: '已集中購買續接、讓金融請求身份失敗關閉，並封堵重複兌換窗口；靜態分析與 169 項會員、積分、付款及 VPN 聚焦測試通過。仍待提交、發布版真機與真實訂單驗證。',
+        }),
+      }),
+      Object.freeze({
+        id: 'partner-report-through-august-27',
+        area: 'web',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Partner daily report updated through August 27',
+          zh: '合作方開發日報更新至 8 月 27 日',
+        }),
+        summary: Object.freeze({
+          en: 'Added the verified Rust publication baseline and source-tested client integration status while keeping unpushed work and released builds distinct.',
+          zh: '新增已核對的 Rust 發布基線與經源碼測試的客戶端整合狀態，並清楚區分未推送工作與正式發布版本。',
         }),
       }),
     ]),

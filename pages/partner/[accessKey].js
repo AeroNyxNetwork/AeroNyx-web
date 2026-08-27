@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v4.9 - View changes hand focus to the active review tab.
+ * Last Modified: v5.0 - Client and Rust review baseline advanced to August 27.
  * ============================================
  */
 
@@ -109,9 +109,9 @@ import {
 import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar';
 
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
-const RUST_NODE_HEAD = '3ee6183';
-const VERIFIED_DATE = '2026-08-26';
-const REVIEW_REVISION = '4.9';
+const RUST_NODE_HEAD = 'ceded91';
+const VERIFIED_DATE = '2026-08-27';
+const REVIEW_REVISION = '5.0';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -232,17 +232,17 @@ const CONTENT = {
     snapshotBody: 'These identifiers anchor the brief to a concrete client release and reviewed Rust main commit. Status is based on source and test evidence, not roadmap percentages.',
     snapshot: [
       { label: 'Client build', value: CLIENT_BUILD, detail: 'Current cross-platform release baseline' },
-      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · composed blind-relay domains · 2,075 tests passed' },
+      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · backup and restore command domains · 1,781 library tests passed' },
       { label: 'Distribution', value: '4 platforms', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'Client and Rust development is reviewed through August 26.',
-    revisionDeltaBody: `Daily reports now cover membership safety, VPN purchase recovery, identity isolation, durable encrypted relay, and the Rust domain split. Client ${CLIENT_BUILD} remains the published build; Rust main is ${RUST_NODE_HEAD}.`,
+    revisionDeltaTitle: 'Client and Rust development is reviewed through August 27.',
+    revisionDeltaBody: `Daily reports now cover membership financial safety, VPN purchase recovery, durable encrypted relay, and verified backup and restore domains. Client ${CLIENT_BUILD} remains the published build; Rust main is ${RUST_NODE_HEAD}.`,
     revisionDeltaItems: [
-      'Added verified daily records for August 22–26.',
-      'Kept unreleased client work separate from the published build.',
-      'Updated the reviewed Rust baseline and full-workspace test evidence.',
+      'Added verified daily records through August 27.',
+      'Kept uncommitted client integration separate from the published build.',
+      'Advanced the reviewed Rust baseline to published backup and restore command domains.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -560,7 +560,7 @@ const CONTENT = {
         status: 'hardening',
         title: 'Custody witness safety',
         summary: 'Independent signed receipts, durable vault audit, startup/runtime gates, quorum expiry warning, recovery lifecycle, and bounded concurrent witness collection.',
-        evidence: `Latest reviewed milestone ${RUST_NODE_HEAD}: up to 16 exact pins in one timeout window.`,
+        evidence: `Reviewed head ${RUST_NODE_HEAD} retains bounded concurrent witness collection.`,
         evidenceLevel: 'Reviewed Rust milestone',
         evidenceSources: ['Rust source', 'Adverse-path tests'],
         nextGate: 'Deploy to independent nodes and exercise expiry, refresh, restart, and strict-gate rollback.',
@@ -769,17 +769,17 @@ const CONTENT = {
     snapshotBody: '以下版本把頁面錨定到真實客戶端發布與已審核的 Rust main commit。狀態來自源碼與測試證據，不使用虛假的完成百分比。',
     snapshot: [
       { label: '客戶端版本', value: CLIENT_BUILD, detail: '目前跨平台正式發布基線' },
-      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · 盲中繼領域組合完成 · 2,075 項測試通過' },
+      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · 備份與恢復命令領域 · 1,781 項 library 測試通過' },
       { label: '發布平台', value: '4 個平台', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 8 月 26 日。',
-    revisionDeltaBody: `日報已涵蓋會員安全、VPN 購買恢復、身份隔離、持久密文中繼及 Rust 領域拆分。客戶端 ${CLIENT_BUILD} 仍是正式發布版；Rust main 為 ${RUST_NODE_HEAD}。`,
+    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 8 月 27 日。',
+    revisionDeltaBody: `日報已涵蓋會員資金安全、VPN 購買恢復、持久密文中繼及可驗證備份與恢復領域。客戶端 ${CLIENT_BUILD} 仍是正式發布版；Rust main 為 ${RUST_NODE_HEAD}。`,
     revisionDeltaItems: [
-      '新增 8 月 22–26 日已核對的每日記錄。',
-      '未發布客戶端工作與正式版本保持清楚區分。',
-      '更新 Rust 審核基線與完整 workspace 測試證據。',
+      '新增截至 8 月 27 日已核對的每日記錄。',
+      '未提交的客戶端整合工作與正式版本保持清楚區分。',
+      'Rust 審核基線推進至已發布的備份與恢復命令領域。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',
@@ -1097,7 +1097,7 @@ const CONTENT = {
         status: 'hardening',
         title: 'Custody witness 安全',
         summary: '獨立簽名 receipt、持久 vault audit、啟動/runtime gate、quorum 到期提醒、恢復生命週期與有界並行收集。',
-        evidence: `最新里程碑 ${RUST_NODE_HEAD}：最多 16 個精確 pin，共用一個 timeout window。`,
+        evidence: `已審核 head ${RUST_NODE_HEAD} 保留有界並行 witness 收集。`,
         evidenceLevel: '已審核 Rust 里程碑',
         evidenceSources: ['Rust 源碼', '逆向情境測試'],
         nextGate: '部署到獨立節點並驗證到期、刷新、重啟與 strict gate 回滾。',
