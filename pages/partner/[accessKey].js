@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v4.4 - Entry copy tightened to foreground the daily report.
+ * Last Modified: v4.5 - Latest-report metadata condensed for mobile scanning.
  * ============================================
  */
 
@@ -111,7 +111,7 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '3ee6183';
 const VERIFIED_DATE = '2026-08-26';
-const REVIEW_REVISION = '4.4';
+const REVIEW_REVISION = '4.5';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -1293,22 +1293,24 @@ function LatestDevelopmentReport({ copy, language, onOpen }) {
       aria-labelledby="partner-latest-report-title"
       className="mt-8 overflow-hidden rounded border border-brand-line/60 bg-surface-1/88 shadow-[0_18px_60px_rgba(22,163,176,0.08)]"
     >
-      <div className="flex flex-col gap-5 border-b border-white/10 px-5 py-5 sm:px-7 sm:py-6 lg:flex-row lg:items-end lg:justify-between">
-        <div className="min-w-0">
+      <div className="border-b border-white/10 px-5 py-5 sm:px-7 sm:py-6">
+        <div className="flex items-start justify-between gap-4">
           <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-brand-light">{copy.dailyModuleEyebrow}</p>
-          <h2 id="partner-latest-report-title" className="mt-3 max-w-3xl font-display text-2xl font-medium leading-tight text-white sm:text-3xl">
-            {copy.dailyModuleTitle}
-          </h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-white/52 sm:text-[15px] sm:leading-7">
-            {copy.dailyModuleBody}
-          </p>
-        </div>
-        <div className="flex shrink-0 flex-col gap-3 sm:flex-row sm:items-center lg:flex-col lg:items-end">
-          <div className="text-left lg:text-right">
+          <div className="shrink-0 text-right">
             <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-white/30">{copy.dailyModuleLatestLabel}</p>
             <p className="mt-1 font-mono text-sm text-white/76">{latestDay?.date || VERIFIED_DATE}</p>
-            <p className="mt-1 font-mono text-[10px] text-white/32">{latestDay?.entries.length || 0} {copy.dailyModuleUpdatesLabel}</p>
           </div>
+        </div>
+        <h2 id="partner-latest-report-title" className="mt-3 max-w-3xl font-display text-2xl font-medium leading-tight text-white sm:text-3xl">
+          {copy.dailyModuleTitle}
+        </h2>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-white/52 sm:text-[15px] sm:leading-7">
+          {copy.dailyModuleBody}
+        </p>
+        <div className="mt-5 flex flex-col gap-3 border-t border-white/8 pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-white/32">
+            {latestDay?.entries.length || 0} {copy.dailyModuleUpdatesLabel}
+          </p>
           <button
             type="button"
             onClick={onOpen}
