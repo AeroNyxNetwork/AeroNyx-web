@@ -38,7 +38,7 @@
  *     uncommitted source may be recorded when the exact verification boundary
  *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v1.3 - Added explicitly labelled local development evidence.
+ * Last Modified: v1.4 - Backfilled August 27 closeout and added August 28.
  * ============================================
  */
 
@@ -333,27 +333,27 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         area: 'client',
         status: 'active',
         title: Object.freeze({
-          en: 'Purchase lifecycle observability completed locally',
-          zh: '購買生命週期可觀測性已在本地完成',
+          en: 'Purchase recovery and error boundaries completed locally',
+          zh: '購買恢復與錯誤邊界已在本地完成',
         }),
         summary: Object.freeze({
-          en: 'Uncommitted local source keeps receipt state monotonic and records anonymous payment, points, and established-VPN events only at authoritative boundaries; static analysis and 170 focused tests passed. Commit, release-device, and real-order validation remain.',
-          zh: '本地未提交源碼保持收據狀態單調，且只在權威邊界記錄匿名付款、積分與 VPN 真正建立事件；靜態分析及 170 項聚焦測試通過。仍待提交、發布版真機與真實訂單驗證。',
+          en: 'Uncommitted local source keeps receipt state monotonic, releases every continuation action lease, and preserves retryable intent when routing or storage fails; static analysis and 170 focused tests passed. Commit, release-device, and real-order validation remain.',
+          zh: '本地未提交源碼保持收據狀態單調、確保續接操作鎖在所有出口釋放，並在路由或儲存失敗時保留可重試意圖；靜態分析及 170 項聚焦測試通過。仍待提交、發布版真機與真實訂單驗證。',
         }),
       }),
-      // [PARTNER-LOCAL-EVIDENCE 2026-08-27 by Codex] Keep the reviewed local
-      // milestone visible without advancing the published Rust head.
+      // [PARTNER-AUG27-CLOSEOUT 2026-08-29 by Codex] Backfill the verified
+      // end-of-day state without advancing the published Rust head.
       Object.freeze({
         id: 'node-local-backup-creation-certification',
         area: 'node',
         status: 'active',
         title: Object.freeze({
-          en: 'Local backup creation verified; certification split continues',
-          zh: '本地備份建立已驗證，認證領域持續拆分',
+          en: 'Local relay recovery and durable stores verified',
+          zh: '本地中繼恢復與持久儲存完成驗證',
         }),
         summary: Object.freeze({
-          en: 'Local unpushed commit 1c9a89d extracted verified backup creation and passed 89 focused tests plus the 1,781-test full suite with one ignored, cargo check, and Clippy. Recovery-image certification remains uncommitted and under validation.',
-          zh: '本地未推送提交 1c9a89d 已拆出可驗證備份建立領域，89 項聚焦測試及 1,781 項完整測試通過、1 項忽略，cargo check 與 Clippy 通過。Recovery Image 認證拆分仍未提交並在驗證中。',
+          en: 'Local unpushed commits through 241bb86 extracted backup creation and certification, replay and storage schemas, plus verified-submit and blind-route durable stores. Backup and route tests, cargo check, Clippy, and the 1,781-test full suite passed with one ignored; nothing was pushed or deployed.',
+          zh: '本地未推送提交截至 241bb86，已拆出備份建立與認證、replay 與 storage schema，以及 verified-submit 與 blind-route 持久儲存。備份與路由專項、cargo check、Clippy 及 1,781 項完整測試通過、1 項忽略；未推送或部署。',
         }),
       }),
       Object.freeze({
@@ -367,6 +367,52 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         summary: Object.freeze({
           en: 'Added the verified Rust publication baseline plus explicitly labelled local Rust and client evidence while keeping unpushed work and released builds distinct.',
           zh: '新增已核對的 Rust 發布基線，以及明確標示的本地 Rust 與客戶端證據，並保持未推送工作與正式發布版本清楚區分。',
+        }),
+      }),
+    ]),
+  }),
+  // [PARTNER-AUG28-LOCAL-EVIDENCE 2026-08-29 by Codex] August 28 work was
+  // source-reviewed locally and remains explicitly separate from release.
+  Object.freeze({
+    date: '2026-08-28',
+    entries: Object.freeze([
+      Object.freeze({
+        id: 'node-blind-vault-anonymous-replica-workflow',
+        area: 'node',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Blind Vault anonymous recovery and replica workflow built locally',
+          zh: 'Blind Vault 匿名恢復與副本工作流已在本地建立',
+        }),
+        summary: Object.freeze({
+          en: 'Local commits through 10f2a31 added encrypted onion replies, anonymous pull, put, delete and lease operations, private inventory commitments, capacity-aware admission, replica planning, execution, and fail-closed invariants. Formatting and static diff checks passed; cargo test, check, Clippy, push, and deployment remain.',
+          zh: '本地提交截至 10f2a31，新增加密 onion 回程、匿名 pull、put、delete 與 lease 操作、私密 inventory commitment、容量感知准入、副本規劃、執行及 fail-closed 不變量。格式與靜態差異檢查通過；仍待 cargo test、check、Clippy、推送及部署。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-cross-device-p2p-import-hardening',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Cross-device P2P import hardened locally',
+          zh: '跨設備 P2P 導入已在本地加固',
+        }),
+        summary: Object.freeze({
+          en: 'Uncommitted local source hardened single-flight pairing and import, full-key identity binding, failure rollback, relay/push/VoIP rebinding, and desktop backup-file fallback. The final August 28 state passed formatting and diff checks only; analyze, current-tree tests, builds, and the cross-device hardware matrix remain.',
+          zh: '本地未提交源碼加固單航班配對與導入、完整公鑰身份綁定、失敗回滾、Relay／Push／VoIP 重綁，以及桌面備份檔路徑後備。8 月 28 日最終狀態僅通過格式與差異檢查；仍待 analyze、目前工作樹測試、構建及跨設備真機矩陣。',
+        }),
+      }),
+      Object.freeze({
+        id: 'partner-report-through-august-28',
+        area: 'web',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Partner daily report updated through August 28',
+          zh: '合作方開發日報更新至 8 月 28 日',
+        }),
+        summary: Object.freeze({
+          en: 'Backfilled the verified August 27 local closeout and added August 28 source-reviewed work with pending validation, push, and release gates stated explicitly.',
+          zh: '回填 8 月 27 日已驗證的本地 closeout，並新增 8 月 28 日經源碼核對的工作，明確標示待驗證、推送與發布關卡。',
         }),
       }),
     ]),
