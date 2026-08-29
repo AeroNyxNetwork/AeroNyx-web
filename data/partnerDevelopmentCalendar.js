@@ -38,7 +38,7 @@
  *     uncommitted source may be recorded when the exact verification boundary
  *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v1.4 - Backfilled August 27 closeout and added August 28.
+ * Last Modified: v1.5 - Expanded the August 28 client session evidence.
  * ============================================
  */
 
@@ -394,12 +394,25 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         area: 'client',
         status: 'active',
         title: Object.freeze({
-          en: 'Cross-device P2P import hardened locally',
-          zh: '跨設備 P2P 導入已在本地加固',
+          en: 'P2P identity import transaction hardened locally',
+          zh: 'P2P 身份導入事務已在本地加固',
         }),
         summary: Object.freeze({
-          en: 'Uncommitted local source hardened single-flight pairing and import, full-key identity binding, failure rollback, relay/push/VoIP rebinding, and desktop backup-file fallback. The final August 28 state passed formatting and diff checks only; analyze, current-tree tests, builds, and the cross-device hardware matrix remain.',
-          zh: '本地未提交源碼加固單航班配對與導入、完整公鑰身份綁定、失敗回滾、Relay／Push／VoIP 重綁，以及桌面備份檔路徑後備。8 月 28 日最終狀態僅通過格式與差異檢查；仍待 analyze、目前工作樹測試、構建及跨設備真機矩陣。',
+          en: 'Uncommitted local source added single-flight pairing/import, full-key identity matching, authoritative signer checks, and rollback across Rust handles, secure storage, preferences, and identity indexes. An earlier checkpoint passed analyze, 22 P2P/lifecycle tests, and identity recovery; later August 28 revisions passed formatting and diff checks but still require current-tree validation.',
+          zh: '本地未提交源碼加入單航班配對／導入、完整公鑰身份匹配、權威 signer 核對，以及 Rust handle、安全儲存、偏好資料與身份索引的失敗回滾。較早 checkpoint 通過 analyze、22 項 P2P／生命週期測試及身份恢復契約；8 月 28 日後續修改僅通過格式與差異檢查，仍待目前工作樹驗證。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-cross-device-service-continuity',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Cross-device service continuity expanded locally',
+          zh: '跨設備服務連續性已在本地擴展',
+        }),
+        summary: Object.freeze({
+          en: 'Local source bound group/key recovery, Agent trust, APNs, VoIP, Relay, and RelayWS rebinding to the exact imported identity; it also covered offline dual-QR, desktop secure-link and backup-file paths, Android App Links, background ciphertext resume, and stale-contact cleanup. The short-code protocol gap, current-tree tests/builds, and cross-device hardware matrix remain.',
+          zh: '本地源碼把群組／群密鑰恢復、Agent 信任、APNs、VoIP、Relay 與 RelayWS 重綁至精確導入身份；同時覆蓋離線雙 QR、桌面安全連結與備份檔路徑、Android App Link、背景密文續接及舊聯絡人清理。短碼協議缺口、目前工作樹測試／構建及跨設備真機矩陣仍待完成。',
         }),
       }),
       Object.freeze({
@@ -411,8 +424,8 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
           zh: '合作方開發日報更新至 8 月 28 日',
         }),
         summary: Object.freeze({
-          en: 'Backfilled the verified August 27 local closeout and added August 28 source-reviewed work with pending validation, push, and release gates stated explicitly.',
-          zh: '回填 8 月 27 日已驗證的本地 closeout，並新增 8 月 28 日經源碼核對的工作，明確標示待驗證、推送與發布關卡。',
+          en: 'Backfilled the verified August 27 local closeout and added detailed August 28 Rust and client session evidence with pending validation, push, and release gates stated explicitly.',
+          zh: '回填 8 月 27 日已驗證的本地 closeout，並新增 8 月 28 日詳細 Rust 與客戶端 session 證據，明確標示待驗證、推送與發布關卡。',
         }),
       }),
     ]),

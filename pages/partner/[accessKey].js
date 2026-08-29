@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v5.2 - Added August 27 closeout and August 28 local evidence.
+ * Last Modified: v5.3 - Expanded the August 28 client session evidence.
  * ============================================
  */
 
@@ -111,7 +111,7 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = 'ceded91';
 const VERIFIED_DATE = '2026-08-28';
-const REVIEW_REVISION = '5.2';
+const REVIEW_REVISION = '5.3';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -238,10 +238,10 @@ const CONTENT = {
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
     revisionDeltaTitle: 'Client and Rust development is reviewed through August 28.',
-    revisionDeltaBody: `Daily reports now include the verified August 27 local closeout and August 28 source-reviewed work, with pending test and release gates stated explicitly. Client ${CLIENT_BUILD} remains the published build; Rust main remains ${RUST_NODE_HEAD}.`,
+    revisionDeltaBody: `Daily reports now include the verified August 27 local closeout and detailed August 28 Rust and client session evidence, with pending test and release gates stated explicitly. Client ${CLIENT_BUILD} remains the published build; Rust main remains ${RUST_NODE_HEAD}.`,
     revisionDeltaItems: [
       'Closed the August 27 local Rust review with full-suite verification without advancing the published head.',
-      'Added local Blind Vault recovery, replica workflow, and cross-device P2P import evidence for August 28.',
+      'Added local Blind Vault recovery, replica workflow, P2P identity transactions, and cross-device service-continuity evidence for August 28.',
       'Kept untested local, tested local, pushed, and released states explicitly separate.',
     ],
     artifactDownload: 'Open immutable download',
@@ -775,10 +775,10 @@ const CONTENT = {
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
     revisionDeltaTitle: '客戶端與 Rust 開發已核對至 8 月 28 日。',
-    revisionDeltaBody: `日報已納入 8 月 27 日經驗證的本地 closeout 與 8 月 28 日經源碼核對的工作，並明確標示待測試與待發布關卡。客戶端 ${CLIENT_BUILD} 仍是正式發布版；Rust main 仍為 ${RUST_NODE_HEAD}。`,
+    revisionDeltaBody: `日報已納入 8 月 27 日經驗證的本地 closeout，以及 8 月 28 日詳細 Rust 與客戶端 session 證據，並明確標示待測試與待發布關卡。客戶端 ${CLIENT_BUILD} 仍是正式發布版；Rust main 仍為 ${RUST_NODE_HEAD}。`,
     revisionDeltaItems: [
       '以完整測試收口 8 月 27 日本地 Rust 核對，但不推進正式 head。',
-      '新增 8 月 28 日本地 Blind Vault 恢復、副本工作流與跨設備 P2P 導入證據。',
+      '新增 8 月 28 日本地 Blind Vault 恢復、副本工作流、P2P 身份事務與跨設備服務連續性證據。',
       '未測試本地、已測試本地、已推送與已發布狀態保持明確區分。',
     ],
     artifactDownload: '開啟不可變下載',
