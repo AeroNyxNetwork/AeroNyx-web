@@ -430,4 +430,38 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
       }),
     ]),
   }),
+  // [PARTNER-AUG29-CLIENT-AUDIT 2026-08-30 by Codex] August 29 produced
+  // verifiable local client source, but current-tree validation still fails and
+  // no newer Rust node publication evidence was found that day.
+  Object.freeze({
+    date: '2026-08-29',
+    entries: Object.freeze([
+      Object.freeze({
+        id: 'client-wallet-backup-v2-import-guardrails',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Wallet backup v2 and import guardrails advanced locally',
+          zh: '錢包備份 v2 與導入護欄已在本地推進',
+        }),
+        summary: Object.freeze({
+          en: 'Local August 29 source moved new backups to a versioned portable-root envelope, added bounded cross-device import and export checks, kept successful upgrade continuation in place, and tightened responsive backup and key-import controls. Current-tree verification is still red: flutter analyze reported 7 issues and focused wallet/backup tests failed to compile on undefined EthereumService, SolanaService, and SolanaDerivedKeyMaterial references in wallet_import_dialog.dart. Nothing was committed, pushed, or released.',
+          zh: '8 月 29 日本地源碼把新備份改為帶版本的可攜根秘密封套，加入有界的跨設備導入與導出檢查，讓升級成功後可原地續接，並收緊備份與私鑰導入的響應式控制。當前工作樹驗證仍為紅燈：flutter analyze 回報 7 項問題，聚焦的 wallet/backup 測試因 wallet_import_dialog.dart 內未定義的 EthereumService、SolanaService 與 SolanaDerivedKeyMaterial 而無法編譯。尚未提交、推送或發布。',
+        }),
+      }),
+      Object.freeze({
+        id: 'partner-report-through-august-29',
+        area: 'web',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Partner daily report updated through August 29',
+          zh: '合作方開發日報更新至 8 月 29 日',
+        }),
+        summary: Object.freeze({
+          en: 'Added the August 29 local client backup and recovery boundary with its current validation blockers stated explicitly, while keeping Rust main at ceded91 because no newer August 29 node source change, pushed commit, deployment, or release was verified.',
+          zh: '新增 8 月 29 日客戶端本地備份與恢復邊界，並明確標示目前驗證阻塞；Rust main 仍維持 ceded91，因為沒有核對到 8 月 29 日更新的節點源碼變更、已推送提交、部署或發布。',
+        }),
+      }),
+    ]),
+  }),
 ]);

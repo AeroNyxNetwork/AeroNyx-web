@@ -110,8 +110,8 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = 'ceded91';
-const VERIFIED_DATE = '2026-08-28';
-const REVIEW_REVISION = '5.3';
+const VERIFIED_DATE = '2026-08-29';
+const REVIEW_REVISION = '5.4';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -237,12 +237,15 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    revisionDeltaTitle: 'Client and Rust development is reviewed through August 28.',
-    revisionDeltaBody: `Daily reports now include the verified August 27 local closeout and detailed August 28 Rust and client session evidence, with pending test and release gates stated explicitly. Client ${CLIENT_BUILD} remains the published build; Rust main remains ${RUST_NODE_HEAD}.`,
+    // [PARTNER-AUG29-BRIEF 2026-08-30 by Codex] Advance the brief only for
+    // evidence-backed August 29 work and keep the unchanged Rust publication
+    // baseline explicit.
+    revisionDeltaTitle: 'Client and Rust development is reviewed through August 29.',
+    revisionDeltaBody: `Daily reports now include the August 29 local client wallet backup and recovery boundary with its current analyze and test blockers stated explicitly. No newer August 29 Rust node source change, pushed commit, deployment, or release was verified, so client ${CLIENT_BUILD} remains the published build and Rust main remains ${RUST_NODE_HEAD}.`,
     revisionDeltaItems: [
-      'Closed the August 27 local Rust review with full-suite verification without advancing the published head.',
-      'Added local Blind Vault recovery, replica workflow, P2P identity transactions, and cross-device service-continuity evidence for August 28.',
-      'Kept untested local, tested local, pushed, and released states explicitly separate.',
+      'Added the August 29 local wallet backup and private-key import boundary with explicit current-tree compile blockers and no release claim.',
+      'Reconfirmed public Rust GitHub main at ceded91 and found no newer August 29 node publication or deployment evidence.',
+      'Kept local source, failed validation, pushed commits, and shipped builds explicitly separate.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -774,12 +777,14 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 8 月 28 日。',
-    revisionDeltaBody: `日報已納入 8 月 27 日經驗證的本地 closeout，以及 8 月 28 日詳細 Rust 與客戶端 session 證據，並明確標示待測試與待發布關卡。客戶端 ${CLIENT_BUILD} 仍是正式發布版；Rust main 仍為 ${RUST_NODE_HEAD}。`,
+    // [PARTNER-AUG29-BRIEF 2026-08-30 by Codex] 僅在有證據支持時前進核對
+    // 日期，並保留 Rust 已發布基線未變的明確說法。
+    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 8 月 29 日。',
+    revisionDeltaBody: `日報已納入 8 月 29 日客戶端本地錢包備份與恢復邊界，並明確標示目前 analyze 與測試阻塞。沒有核對到更新的 8 月 29 日 Rust 節點源碼變更、已推送提交、部署或發布，因此客戶端 ${CLIENT_BUILD} 仍是正式發布版，Rust main 仍為 ${RUST_NODE_HEAD}。`,
     revisionDeltaItems: [
-      '以完整測試收口 8 月 27 日本地 Rust 核對，但不推進正式 head。',
-      '新增 8 月 28 日本地 Blind Vault 恢復、副本工作流、P2P 身份事務與跨設備服務連續性證據。',
-      '未測試本地、已測試本地、已推送與已發布狀態保持明確區分。',
+      '新增 8 月 29 日本地錢包備份與私鑰導入邊界，並明確寫出目前工作樹的編譯阻塞，沒有發布聲明。',
+      '重新核對公開 Rust GitHub main 仍為 ceded91，未發現更新的 8 月 29 日節點發布或部署證據。',
+      '明確區分本地源碼、驗證失敗、已推送提交與正式發布版本。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',
