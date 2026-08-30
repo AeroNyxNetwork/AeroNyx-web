@@ -110,8 +110,8 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = 'ceded91';
-const VERIFIED_DATE = '2026-08-29';
-const REVIEW_REVISION = '5.4';
+const VERIFIED_DATE = '2026-08-30';
+const REVIEW_REVISION = '5.5';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -237,15 +237,15 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    // [PARTNER-AUG29-BRIEF 2026-08-30 by Codex] Advance the brief only for
-    // evidence-backed August 29 work and keep the unchanged Rust publication
+    // [PARTNER-AUG30-BRIEF 2026-08-30 by Codex] Advance the brief only for
+    // evidence-backed August 30 work and keep the unchanged publication
     // baseline explicit.
-    revisionDeltaTitle: 'Client and Rust development is reviewed through August 29.',
-    revisionDeltaBody: `Daily reports now include the August 29 local client wallet backup and recovery boundary with its current analyze and test blockers stated explicitly. No newer August 29 Rust node source change, pushed commit, deployment, or release was verified, so client ${CLIENT_BUILD} remains the published build and Rust main remains ${RUST_NODE_HEAD}.`,
+    revisionDeltaTitle: 'Client and Rust development is reviewed through August 30.',
+    revisionDeltaBody: `Daily reports now include August 30 local Rust durability and recovery-store hardening plus client wallet-secret, backup, and import work. These changes have formatting and diff evidence only, so client ${CLIENT_BUILD} remains the published build and Rust main remains ${RUST_NODE_HEAD}.`,
     revisionDeltaItems: [
-      'Added the August 29 local wallet backup and private-key import boundary with explicit current-tree compile blockers and no release claim.',
-      'Reconfirmed public Rust GitHub main at ceded91 and found no newer August 29 node publication or deployment evidence.',
-      'Kept local source, failed validation, pushed commits, and shipped builds explicitly separate.',
+      'Added local Rust durable publication, resolution, recovery-store, and diagnostic hardening through c854089; cargo validation, push, and deployment remain.',
+      'Added uncommitted client wallet-secret lifecycle, encrypted backup, and import boundary work; analyze, tests, build, commit, push, and release remain.',
+      'Reconfirmed public Rust GitHub main at ceded91 and kept all local work separate from shipped builds.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -777,14 +777,14 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    // [PARTNER-AUG29-BRIEF 2026-08-30 by Codex] 僅在有證據支持時前進核對
+    // [PARTNER-AUG30-BRIEF 2026-08-30 by Codex] 僅在有證據支持時前進核對
     // 日期，並保留 Rust 已發布基線未變的明確說法。
-    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 8 月 29 日。',
-    revisionDeltaBody: `日報已納入 8 月 29 日客戶端本地錢包備份與恢復邊界，並明確標示目前 analyze 與測試阻塞。沒有核對到更新的 8 月 29 日 Rust 節點源碼變更、已推送提交、部署或發布，因此客戶端 ${CLIENT_BUILD} 仍是正式發布版，Rust main 仍為 ${RUST_NODE_HEAD}。`,
+    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 8 月 30 日。',
+    revisionDeltaBody: `日報已納入 8 月 30 日本地 Rust 持久性與恢復儲存加固，以及客戶端錢包秘密、備份與導入工作。這些修改目前只有格式與差異證據，因此客戶端 ${CLIENT_BUILD} 仍是正式發布版，Rust main 仍為 ${RUST_NODE_HEAD}。`,
     revisionDeltaItems: [
-      '新增 8 月 29 日本地錢包備份與私鑰導入邊界，並明確寫出目前工作樹的編譯阻塞，沒有發布聲明。',
-      '重新核對公開 Rust GitHub main 仍為 ceded91，未發現更新的 8 月 29 日節點發布或部署證據。',
-      '明確區分本地源碼、驗證失敗、已推送提交與正式發布版本。',
+      '新增截至 c854089 的本地 Rust 持久發布、解析、恢復儲存與診斷加固；仍待 cargo 驗證、推送及部署。',
+      '新增未提交的客戶端錢包秘密生命週期、加密備份與導入邊界工作；仍待 analyze、測試、構建、提交、推送及發布。',
+      '重新核對公開 Rust GitHub main 仍為 ceded91，並保持所有本地工作與正式發布版本分開。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',

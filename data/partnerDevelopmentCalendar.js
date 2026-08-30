@@ -38,7 +38,7 @@
  *     uncommitted source may be recorded when the exact verification boundary
  *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v1.5 - Expanded the August 28 client session evidence.
+ * Last Modified: v1.6 - Added the verified August 30 local development record.
  * ============================================
  */
 
@@ -460,6 +460,78 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         summary: Object.freeze({
           en: 'Added the August 29 local client backup and recovery boundary with its current validation blockers stated explicitly, while keeping Rust main at ceded91 because no newer August 29 node source change, pushed commit, deployment, or release was verified.',
           zh: '新增 8 月 29 日客戶端本地備份與恢復邊界，並明確標示目前驗證阻塞；Rust main 仍維持 ceded91，因為沒有核對到 8 月 29 日更新的節點源碼變更、已推送提交、部署或發布。',
+        }),
+      }),
+    ]),
+  }),
+  // [PARTNER-AUG30-LOCAL-EVIDENCE 2026-08-30 by Codex] Keep today's local
+  // Rust commits and uncommitted client source separate from published builds.
+  Object.freeze({
+    date: '2026-08-30',
+    entries: Object.freeze([
+      Object.freeze({
+        id: 'node-blind-vault-durable-publication-resolution',
+        area: 'node',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Blind Vault publication and resolution safety advanced locally',
+          zh: 'Blind Vault 發布與解析安全已在本地推進',
+        }),
+        summary: Object.freeze({
+          en: 'Local commits through c854089 added typed reply policies and atomic attempt resolution, retained failed publication state for exact retry, and carried an opaque journal binding from an owned send permit into durable resolution. Rustfmt, static review, and diff checks passed; cargo test, check, Clippy, push, and deployment remain.',
+          zh: '本地提交截至 c854089，新增 typed reply policy 與原子 attempt resolution，保留發布失敗狀態供精確重試，並由 owned send permit 攜帶不透明 journal binding 進入持久解析。rustfmt、靜態審閱與差異檢查通過；仍待 cargo test、check、Clippy、推送及部署。',
+        }),
+      }),
+      Object.freeze({
+        id: 'node-recovery-store-path-and-diagnostic-hardening',
+        area: 'node',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Recovery store paths and diagnostics hardened locally',
+          zh: '恢復儲存路徑與診斷已在本地加固',
+        }),
+        summary: Object.freeze({
+          en: 'Local commits pinned the recovery directory descriptor, fenced ownership, rejected ancestor symlinks with layered no-follow opens, and removed sensitive workflow, frame, protocol, and snapshot diagnostics. Formatting and diff checks passed; compilation, tests, push, and deployment remain.',
+          zh: '本地提交固定 recovery 目錄 descriptor、加入 ownership fence、以分層 no-follow 開啟拒絕上層符號連結，並移除工作流、frame、協議與 snapshot 的敏感診斷。格式與差異檢查通過；仍待編譯、測試、推送及部署。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-wallet-secret-lifecycle-hardening',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Wallet secret lifecycle hardened in local source',
+          zh: '錢包秘密生命週期已在本地源碼加固',
+        }),
+        summary: Object.freeze({
+          en: 'Uncommitted local source clears mnemonic and chain recovery slots on wallet deletion, binds private-key export to the active profile and chain, verifies every recovery slot before password change, and preserves file-only ciphertext for transaction rollback. Formatting and diff checks passed; analyze, tests, build, commit, push, and release remain.',
+          zh: '本地未提交源碼在刪除錢包時清除助記詞與各鏈恢復槽，把私鑰導出綁定至目前 profile 與鏈，在修改密碼前驗證全部恢復槽，並保留 file-only 密文供事務回滾。格式與差異檢查通過；仍待 analyze、測試、構建、提交、推送及發布。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-backup-plaintext-and-import-boundaries',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Backup plaintext and import boundaries tightened locally',
+          zh: '備份明文與導入邊界已在本地收緊',
+        }),
+        summary: Object.freeze({
+          en: 'Uncommitted local source removes stale mobile plaintext-share directories, aligns three encrypted recovery roots, verifies downloaded backup ciphertext, and guards identity changes. Import completion cleanup and mnemonic seed zeroing are still in progress; analyze, tests, build, commit, push, and release remain.',
+          zh: '本地未提交源碼清除逾期的行動端明文分享目錄、對齊三類加密恢復根、驗證下載備份密文，並防護身份切換。導入完成後清理與助記詞 seed 清零仍在進行；仍待 analyze、測試、構建、提交、推送及發布。',
+        }),
+      }),
+      Object.freeze({
+        id: 'partner-report-through-august-30',
+        area: 'web',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Partner daily report updated through August 30',
+          zh: '合作方開發日報更新至 8 月 30 日',
+        }),
+        summary: Object.freeze({
+          en: 'Added the verified August 30 local Rust and client progress with validation, publication, and release boundaries stated explicitly; published client and Rust baselines remain unchanged.',
+          zh: '新增 8 月 30 日經核對的本地 Rust 與客戶端進度，明確標示驗證、推送與發布邊界；客戶端及 Rust 正式發布基線維持不變。',
         }),
       }),
     ]),
