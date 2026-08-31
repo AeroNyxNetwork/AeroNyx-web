@@ -38,7 +38,7 @@
  *     uncommitted source may be recorded when the exact verification boundary
  *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v1.6 - Added the verified August 30 local development record.
+ * Last Modified: v1.7 - Added the verified August 31 release and active-work record.
  * ============================================
  */
 
@@ -532,6 +532,91 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         summary: Object.freeze({
           en: 'Added the verified August 30 local Rust and client progress with validation, publication, and release boundaries stated explicitly; published client and Rust baselines remain unchanged.',
           zh: '新增 8 月 30 日經核對的本地 Rust 與客戶端進度，明確標示驗證、推送與發布邊界；客戶端及 Rust 正式發布基線維持不變。',
+        }),
+      }),
+    ]),
+  }),
+  // [PARTNER-AUG31-VERIFIED-DELIVERY 2026-08-31 by Codex] Keep shipped Rust
+  // and Docs evidence separate from client work that is still being verified.
+  Object.freeze({
+    date: '2026-08-31',
+    entries: Object.freeze([
+      Object.freeze({
+        id: 'rust-node-durability-milestone-published',
+        area: 'node',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Rust privacy-node durability milestone published',
+          zh: 'Rust 隱私節點持久性里程碑已發布',
+        }),
+        summary: Object.freeze({
+          en: 'GitHub main advanced to 4e31a05 after a clean integration of Blind Vault recovery, replay-safe relay acknowledgements, managed-volume capacity enforcement, and privacy-safe relay diagnostics. The verified release line passed 270 core tests, focused server suites, and the server compile check.',
+          zh: 'GitHub main 已推進至 4e31a05，乾淨整合 Blind Vault 恢復、可安全重放的中繼確認、受管理磁碟容量約束及隱私安全的中繼診斷。經驗證的發布線通過 270 個核心測試、聚焦 server 測試組及 server 編譯檢查。',
+        }),
+      }),
+      Object.freeze({
+        id: 'durable-blind-route-blob-bounds',
+        area: 'node',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Durable blind-route BLOB boundaries enforced',
+          zh: '持久盲路由 BLOB 邊界已落實',
+        }),
+        summary: Object.freeze({
+          en: 'SQLite now validates opaque response type and size before materializing ciphertext, preserves reservation ownership on conflicts, and rejects impossible response shapes without mutating durable state. All seven focused regression tests passed.',
+          zh: 'SQLite 現在會在物化密文前驗證不透明回應的類型與大小，在衝突時保留 reservation ownership，並在不改動持久狀態的前提下拒絕不可能的回應形狀。7 個聚焦回歸測試全部通過。',
+        }),
+      }),
+      Object.freeze({
+        id: 'docs-seven-language-evidence-release',
+        area: 'docs',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Seven-language protocol evidence refreshed',
+          zh: '七語協議證據已更新',
+        }),
+        summary: Object.freeze({
+          en: 'Four canonical protocol pages and 28 localized URLs are live in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Russian, and Spanish. Article APIs, rendered pages, sitemap entries, internal links, canonical tags, hreflang, and the machine-readable llms evidence header were reverified.',
+          zh: '4 個 canonical 協議頁與 28 個在地化 URL 已以英文、簡體中文、繁體中文、日文、韓文、俄文及西班牙文上線。文章 API、渲染頁面、sitemap、內鏈、canonical、hreflang 與可機器讀取的 llms 證據標頭均已重新驗證。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-meeting-agent-wallet-verification',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Client meeting, agent, and wallet work remains active',
+          zh: '客戶端會議、Agent 與錢包工作持續進行',
+        }),
+        summary: Object.freeze({
+          en: 'Meeting and screen-sharing, agent authorization, and wallet lifecycle work are present in the current development tree. The next client milestone remains active until its commit, analysis, focused tests, platform builds, and release evidence are verified.',
+          zh: '目前開發樹中已有會議與螢幕共享、Agent 授權及錢包生命週期相關工作。下一個客戶端里程碑會在提交、分析、聚焦測試、多平台構建及發布證據完成驗證後轉為已完成。',
+        }),
+      }),
+      Object.freeze({
+        id: 'rust-next-security-contracts',
+        area: 'node',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Next Rust safety contracts are in progress',
+          zh: '下一輪 Rust 安全契約正在推進',
+        }),
+        summary: Object.freeze({
+          en: 'The active work queue covers atomic managed-volume quota enforcement, a compatible blind-route schema ceiling, envelope-bound terminal delivery proof, and side-effect-free rejection of unsafe recovery control files.',
+          zh: '目前工作佇列包括原子的受管理磁碟配額約束、相容的盲路由 schema 上限、與 envelope 綁定的 terminal delivery proof，以及對不安全恢復控制檔的零副作用拒絕。',
+        }),
+      }),
+      Object.freeze({
+        id: 'partner-report-through-august-31',
+        area: 'web',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Partner daily report updated through August 31',
+          zh: '合作方開發日報更新至 8 月 31 日',
+        }),
+        summary: Object.freeze({
+          en: 'Added today\'s published Rust and Docs evidence, kept active client work distinct from delivered milestones, and listed the next verified engineering targets.',
+          zh: '新增今日已發布的 Rust 與 Docs 證據，將進行中的客戶端工作與已交付里程碑分開，並列出下一輪可驗證的工程目標。',
         }),
       }),
     ]),
