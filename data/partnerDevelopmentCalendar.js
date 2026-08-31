@@ -38,7 +38,7 @@
  *     uncommitted source may be recorded when the exact verification boundary
  *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v1.7 - Added the verified August 31 release and active-work record.
+ * Last Modified: v1.9 - Synced the published Rust schema and recovery milestones.
  * ============================================
  */
 
@@ -546,12 +546,12 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         area: 'node',
         status: 'complete',
         title: Object.freeze({
-          en: 'Rust privacy-node durability milestone published',
-          zh: 'Rust 隱私節點持久性里程碑已發布',
+          en: 'Privacy-node durability milestone published',
+          zh: '隱私節點持久性里程碑已發布',
         }),
         summary: Object.freeze({
-          en: 'GitHub main advanced to 4e31a05 after a clean integration of Blind Vault recovery, replay-safe relay acknowledgements, managed-volume capacity enforcement, and privacy-safe relay diagnostics. The verified release line passed 270 core tests, focused server suites, and the server compile check.',
-          zh: 'GitHub main 已推進至 4e31a05，乾淨整合 Blind Vault 恢復、可安全重放的中繼確認、受管理磁碟容量約束及隱私安全的中繼診斷。經驗證的發布線通過 270 個核心測試、聚焦 server 測試組及 server 編譯檢查。',
+          en: 'The protocol-node main line advanced through c4b701b after clean integration of Blind Vault recovery, replay-safe relay acknowledgements, bounded durable route data, private inode checks, request-bound relay evidence, schema v4, ownership-bound failed-publication cleanup, managed-volume growth admission, and non-blocking rejection of unsafe recovery files. Focused server suites and full server compile checks passed on the integrated line.',
+          zh: '協議節點 main 已乾淨整合並推進至 c4b701b，涵蓋 Blind Vault 恢復、可安全重放的中繼確認、有界持久路由資料、私有 inode 驗證、與請求綁定的中繼證據、schema v4、綁定 ownership 的發布失敗清理、受管理磁碟增長准入，以及對不安全恢復檔案的非阻塞拒絕。整合線上的聚焦 server 測試組與完整 server 編譯檢查均通過。',
         }),
       }),
       Object.freeze({
@@ -568,6 +568,58 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         }),
       }),
       Object.freeze({
+        id: 'private-recovery-and-backup-inode-guards',
+        area: 'node',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Private recovery and backup inode checks hardened',
+          zh: '私有恢復與備份 inode 驗證完成加固',
+        }),
+        summary: Object.freeze({
+          en: 'Recovery and relay-backup files now verify type, effective ownership, link count, and private mode before mutation. Recovery publication tracks typed phases and pinned temp identity, while non-blocking opens ensure FIFO candidates cannot stall validation. Recovery 18/18, backup filesystem 8/8, audit 27/27, and server compile checks passed.',
+          zh: '恢復與中繼備份檔案現在會在修改前驗證類型、有效所有權、連結數及私有權限。恢復發布會追蹤型別化 phase 與固定的 temp identity，非阻塞開啟亦確保 FIFO 候選檔無法卡住驗證。恢復 18/18、備份檔案系統 8/8、audit 27/27 及 server 編譯檢查均通過。',
+        }),
+      }),
+      Object.freeze({
+        id: 'blind-route-schema-v4-migration',
+        area: 'node',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Blind-route durable schema migrated safely',
+          zh: '盲路由持久 schema 完成安全遷移',
+        }),
+        summary: Object.freeze({
+          en: 'Schema v4 now derives its ciphertext ceiling from the shared protocol constant and migrates v1-v3 data in one fail-closed transaction without extending existing leases. Blind-route 24/24, shared schema 2/2, and full server compile checks passed.',
+          zh: 'Schema v4 現在由共用協議常數取得密文上限，並以單一 fail-closed transaction 遷移 v1-v3 資料，且不延長既有 lease。盲路由 24/24、共用 schema 2/2 及完整 server 編譯檢查均通過。',
+        }),
+      }),
+      Object.freeze({
+        id: 'managed-volume-growth-admission',
+        area: 'node',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Managed-volume byte growth is now admitted atomically',
+          zh: '受管理磁碟位元組增長完成原子准入',
+        }),
+        summary: Object.freeze({
+          en: 'A per-volume typed permit now covers usage measurement through the complete mutation: writes on one volume serialize while independent volumes remain concurrent. Capacity returns 507, uncertain probes return fail-closed 503, and read, delete, recovery, and unmanaged storage remain compatible. All 104 focused tests, Clippy, and the full server compile check passed.',
+          zh: '每個磁碟的型別化 permit 現在會覆蓋用量量測至完整 mutation：同一磁碟的寫入會串行，獨立磁碟仍可並行。容量不足回傳 507，探測不確定則 fail-closed 回傳 503；讀取、刪除、恢復及未受管理儲存維持相容。104 項聚焦測試、Clippy 與完整 server 編譯檢查均通過。',
+        }),
+      }),
+      Object.freeze({
+        id: 'relay-smoke-request-bound-terminal-proof',
+        area: 'node',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Relay smoke success bound to one terminal receipt',
+          zh: '中繼 smoke 成功已綁定單一 terminal receipt',
+        }),
+        summary: Object.freeze({
+          en: 'The smoke verifier now requires a request- and message-matched response plus a terminal signature bound to the exact route, purpose, and opaque envelope. Focused proof tests passed 3/3; socket-bound live-fleet verification remains pending.',
+          zh: 'Smoke 驗證現在要求請求與訊息完全對應的回應，以及綁定精確 route、purpose 與不透明 envelope 的 terminal 簽名。聚焦 proof 測試 3/3 通過；需要 socket 的真實節點群驗證仍待完成。',
+        }),
+      }),
+      Object.freeze({
         id: 'docs-seven-language-evidence-release',
         area: 'docs',
         status: 'complete',
@@ -581,16 +633,29 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         }),
       }),
       Object.freeze({
-        id: 'client-meeting-agent-wallet-verification',
+        id: 'client-anonymous-chat-and-channel-ui',
+        area: 'client',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Anonymous web chat and channel UI advanced',
+          zh: '匿名網頁聊天與頻道 UI 完成推進',
+        }),
+        summary: Object.freeze({
+          en: 'Anonymous chat-link creation and revocation plus adaptive channel UI were committed with focused service and screen tests. The current client HEAD is 53a981f; existing 1.0.18+14 platform artifacts predate that HEAD and are not presented as a fresh reproducible release.',
+          zh: '匿名聊天連結建立與撤銷、頻道自適應 UI 已提交，並附 service 與畫面聚焦測試。目前客戶端 HEAD 為 53a981f；現有 1.0.18+14 多平台產物早於該 HEAD，因此不列為本輪可重現的新發布。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-wallet-recovery-verification',
         area: 'client',
         status: 'active',
         title: Object.freeze({
-          en: 'Client meeting, agent, and wallet work remains active',
-          zh: '客戶端會議、Agent 與錢包工作持續進行',
+          en: 'Wallet and encrypted recovery work remains active',
+          zh: '錢包與加密恢復工作持續進行',
         }),
         summary: Object.freeze({
-          en: 'Meeting and screen-sharing, agent authorization, and wallet lifecycle work are present in the current development tree. The next client milestone remains active until its commit, analysis, focused tests, platform builds, and release evidence are verified.',
-          zh: '目前開發樹中已有會議與螢幕共享、Agent 授權及錢包生命週期相關工作。下一個客戶端里程碑會在提交、分析、聚焦測試、多平台構建及發布證據完成驗證後轉為已完成。',
+          en: 'Wallet create, import, delete, account projection, encrypted P2P backup, and device-pairing safeguards remain in an uncommitted client tree. They stay active until scoped review, analysis, focused tests, and clean four-platform rebuild evidence are complete.',
+          zh: '錢包建立、導入、刪除、帳戶投影、加密 P2P 備份及設備配對防護仍在未提交客戶端工作樹中。完成範圍審核、分析、聚焦測試及乾淨的四平台重建證據前，維持進行中狀態。',
         }),
       }),
       Object.freeze({
@@ -602,8 +667,8 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
           zh: '下一輪 Rust 安全契約正在推進',
         }),
         summary: Object.freeze({
-          en: 'The active work queue covers atomic managed-volume quota enforcement, a compatible blind-route schema ceiling, envelope-bound terminal delivery proof, and side-effect-free rejection of unsafe recovery control files.',
-          zh: '目前工作佇列包括原子的受管理磁碟配額約束、相容的盲路由 schema 上限、與 envelope 綁定的 terminal delivery proof，以及對不安全恢復控制檔的零副作用拒絕。',
+          en: 'The active work queue covers authoritative miner-owner binding, durable relay resource-bound review, and socket-bound live-fleet relay verification.',
+          zh: '目前工作佇列包括權威 miner owner 綁定、持久中繼資源邊界審核，以及需要 socket 的真實節點群中繼驗證。',
         }),
       }),
       Object.freeze({
