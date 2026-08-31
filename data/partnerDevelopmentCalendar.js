@@ -38,7 +38,7 @@
  *     uncommitted source may be recorded when the exact verification boundary
  *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v1.9 - Synced the published Rust schema and recovery milestones.
+ * Last Modified: v2.2 - Recorded verified Full-node Mirror fork recovery.
  * ============================================
  */
 
@@ -682,6 +682,78 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         summary: Object.freeze({
           en: 'Added today\'s published Rust and Docs evidence, kept active client work distinct from delivered milestones, and listed the next verified engineering targets.',
           zh: '新增今日已發布的 Rust 與 Docs 證據，將進行中的客戶端工作與已交付里程碑分開，並列出下一輪可驗證的工程目標。',
+        }),
+      }),
+    ]),
+  }),
+  // [PARTNER-SEP01-RUST-INTEGRATION 2026-09-01 by Codex] Keep locally
+  // integrated evidence distinct from remote release and fleet rollout.
+  Object.freeze({
+    date: '2026-09-01',
+    entries: Object.freeze([
+      Object.freeze({
+        id: 'node-backup-hardlink-crash-recovery',
+        area: 'node',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Backup audit crash recovery completed',
+          zh: '備份審計崩潰恢復完成',
+        }),
+        summary: Object.freeze({
+          en: 'The local Rust integration line now recovers the two valid hard-link publication windows for active segments and checkpoints without weakening ordinary single-link file checks. Identity, ownership, mode, and link count are reverified before removal; backup audit tests passed 32/32, backup filesystem tests passed 12/12, and the server library compiled successfully.',
+          zh: '本地 Rust 整合線現可恢復 active segment 與 checkpoint 的兩個合法 hard-link 發布窗口，同時不放寬一般單連結檔案驗證。刪除前會重新驗證 identity、ownership、mode 與 link count；backup audit 測試 32/32、備份檔案系統測試 12/12 通過，server library 亦編譯成功。',
+        }),
+      }),
+      Object.freeze({
+        id: 'node-private-candidate-public-boundary',
+        area: 'node',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Private relay candidates removed from public selection',
+          zh: '私密中繼候選已從公開選擇移除',
+        }),
+        summary: Object.freeze({
+          en: 'Public onion-candidate selection now excludes descriptors that did not opt into public discovery, while internal private routing remains available. The change is integrated locally through c105755 with focused private/public candidate and exclusion-telemetry regressions passing.',
+          zh: '公開 onion candidate 選擇現在會排除未選擇公開發現的 descriptor，內部私密路由仍保持可用。此修復已在本地整合至 c105755，私密／公開候選與排除 telemetry 的聚焦回歸測試均通過。',
+        }),
+      }),
+      Object.freeze({
+        id: 'node-full-mirror-provenance-recovery',
+        area: 'node',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Full-node mirror recovery and fork preflight verified',
+          zh: '全節點鏡像恢復與分叉預檢已驗證',
+        }),
+        summary: Object.freeze({
+          en: 'The local Rust integration line now separates producer-signed provenance from carrier-reported progress and lets a retained mirror resume through an admitted carrier after producer discovery expires. A typed preflight validates author, signature, and common predecessor before any same-page fork mutation, preventing invalid claims from causing quarantine and valid forks from leaving block rows ahead of the durable tip. Directory-replica tests passed 131/131 and the server library compiled successfully through 53d2d70; remote release and fleet rollout remain separate gates.',
+          zh: '本地 Rust 整合線現已區分 producer 簽名來源與 carrier 回報進度，並允許已持久化 mirror 在 producer 發現資訊過期後，經合規 carrier 繼續恢復。Typed preflight 會在任何同頁分叉寫入前驗證 author、signature 與共同前序，避免無效宣告造成隔離，也避免有效分叉令 block rows 超前於 durable tip。Directory replica 測試 131/131 通過，server library 已在 53d2d70 編譯成功；遠端發布與 fleet rollout 仍是獨立關卡。',
+        }),
+      }),
+      Object.freeze({
+        id: 'node-public-discovery-projection-audit',
+        area: 'node',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Public discovery projections now enforce privacy boundaries',
+          zh: '公開發現投影已完成隱私邊界加固',
+        }),
+        summary: Object.freeze({
+          en: 'Public snapshot requests can no longer downgrade descriptor visibility, and public status now removes private or ambiguous candidate, path, health, event, and audit rows using full verified node membership. Three projection tests, three existing exclusion regressions, Clippy, and the server library compile check passed on the local integration line through bee3e8f.',
+          zh: '公開 snapshot 請求不再能降低 descriptor 可見性；公開 status 會依完整且已驗證的 node membership，移除私密或具歧義的 candidate、path、health、event 與 audit rows。3 項投影測試、3 項既有排除回歸、Clippy 與 server library 編譯檢查均在本地整合線 bee3e8f 通過。',
+        }),
+      }),
+      Object.freeze({
+        id: 'partner-report-through-september-1',
+        area: 'web',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Partner daily report updated through September 1',
+          zh: '合作方開發日報更新至 9 月 1 日',
+        }),
+        summary: Object.freeze({
+          en: 'Added today\'s verified Full-node Mirror, fork-safety, and public-discovery privacy evidence while keeping local integration distinct from remote release and fleet rollout.',
+          zh: '新增今日已驗證的 Full-node Mirror、分叉安全與公開發現隱私證據，同時將本地整合與遠端發布、fleet rollout 清楚區分。',
         }),
       }),
     ]),
