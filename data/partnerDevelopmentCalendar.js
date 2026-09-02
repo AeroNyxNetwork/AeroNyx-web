@@ -38,7 +38,7 @@
  *     uncommitted source may be recorded when the exact verification boundary
  *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v2.2 - Recorded verified Full-node Mirror fork recovery.
+ * Last Modified: v2.3 - Added the September 2 verified progress boundary.
  * ============================================
  */
 
@@ -782,6 +782,78 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         summary: Object.freeze({
           en: 'Added today\'s verified Rust hardening evidence and the explicit client compile gate while keeping local integration distinct from remote release, pushed commits, and shipped builds.',
           zh: '新增今日已驗證的 Rust 加固證據與明確的客戶端編譯關卡，同時將本地整合與遠端發布、已推送提交及正式發布版本清楚區分。',
+        }),
+      }),
+    ]),
+  }),
+  // [PARTNER-SEP02-VERIFIED-PROGRESS 2026-09-02 by Codex] Record only the
+  // current local validation boundary; no candidate is presented as released.
+  Object.freeze({
+    date: '2026-09-02',
+    entries: Object.freeze([
+      Object.freeze({
+        id: 'node-decentralized-chat-canary-validation',
+        area: 'node',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Decentralized chat candidate entered canary validation',
+          zh: '去中心化聊天候選版本進入 canary 驗證',
+        }),
+        summary: Object.freeze({
+          en: 'A read-only ancestry review selected local commit 70f48c8 as the narrow chat release boundary, covering verified onion submit, request-correlated terminal results, durable replay, and hardened backup-directory sync. Fifteen verified-submit tests plus focused custody pull and ACK checks passed, and an isolated candidate binary was built against the existing production configuration. Independent integrity recheck, single-node canary, remote push, broader rollout, and release remain.',
+          zh: '唯讀 ancestry 審核選定本地提交 70f48c8 作為最窄的聊天發布邊界，涵蓋 verified onion submit、與請求關聯的 terminal result、持久 replay，以及加固的備份目錄同步。15 項 verified-submit 測試與聚焦 custody pull／ACK 檢查通過，隔離候選二進位亦已依現有 production 配置完成構建。仍待獨立完整性複核、單節點 canary、遠端推送、擴大部署及發布。',
+        }),
+      }),
+      Object.freeze({
+        id: 'node-chat-cross-node-receive-retry-gate',
+        area: 'node',
+        status: 'next',
+        title: Object.freeze({
+          en: 'Close cross-node receive and exact-retry gates next',
+          zh: '下一步關閉跨節點收件與精確重試關卡',
+        }),
+        summary: Object.freeze({
+          en: 'A full-chain security review verified the existing request-bound receipt, local custody, pull, and receiver-authorized ACK invariants, but found that receiving through a different node and replaying an exact completed request after the live authentication window are not yet end-to-end accepted. Compatible fixes, deterministic multi-node and restart regressions, and fleet acceptance remain.',
+          zh: '完整鏈路安全審核確認現有的 request-bound receipt、本地 custody、pull 與接收方授權 ACK 不變量，但也發現經不同節點收件，以及在即時驗證窗口後重放完全相同的已完成請求，尚未通過端到端驗收。仍待相容修復、確定性的多節點／重啟回歸測試及節點群驗收。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-desktop-agent-capability-routing',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Desktop Agent capability and workspace routing hardened locally',
+          zh: '桌面 Agent 能力與工作區路由已在本地加固',
+        }),
+        summary: Object.freeze({
+          en: 'Uncommitted client source now separates live Agent availability from mounted workspaces, fail-closes stale commands at execution, pins a new conversation to its first machine and engine, preserves paired-device recovery, and adds privacy-safe background completion notices. Dart formatting and scoped diff checks passed; analyze, tests, build, commit, push, and release remain.',
+          zh: '本地未提交客戶端源碼已把 Agent 即時可用性與已掛載工作區分開，在執行入口 fail-close 過期命令，把新對話綁定至首次使用的電腦與引擎，保留已配對設備恢復，並新增不含內容的背景完成通知。Dart 格式與範圍差異檢查通過；仍待 analyze、測試、構建、提交、推送及發布。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-remote-agent-session-ownership',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Remote Agent task ownership remains in progress',
+          zh: '遠端 Agent 任務所有權仍在推進',
+        }),
+        summary: Object.freeze({
+          en: 'Current uncommitted work keeps a desktop task bound to its originating AI session while other conversations remain viewable, routes the eventual reply back to that owner, keeps non-Agent messaging available, and provides a global stop surface. Exact cancellation when the owning conversation is cleared, cold-start approval continuity, current-tree tests, and release validation remain in progress.',
+          zh: '目前未提交工作把桌面任務綁定至原始 AI session，同時允許查看其他對話，最終回覆仍回到原 owner，非 Agent 訊息功能保持可用，並提供全域停止入口。清除 owner 對話時的精確取消、冷啟動 approval 連續性、目前工作樹測試及發布驗證仍在進行。',
+        }),
+      }),
+      Object.freeze({
+        id: 'partner-report-through-september-2',
+        area: 'web',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Partner daily report updated through September 2',
+          zh: '合作方開發日報更新至 9 月 2 日',
+        }),
+        summary: Object.freeze({
+          en: 'Added today\'s verified Rust candidate, acceptance gaps, and local client Agent work while keeping in-progress builds, uncommitted source, public heads, canary rollout, and shipped releases distinct.',
+          zh: '新增今日已核對的 Rust 候選版本、驗收缺口及本地客戶端 Agent 工作，並清楚區分進行中的構建、未提交源碼、公開 head、canary 部署與正式發布。',
         }),
       }),
     ]),

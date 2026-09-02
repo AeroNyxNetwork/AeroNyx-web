@@ -110,8 +110,8 @@ import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar'
 
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = 'c4b701b';
-const VERIFIED_DATE = '2026-09-01';
-const REVIEW_REVISION = '5.7';
+const VERIFIED_DATE = '2026-09-02';
+const REVIEW_REVISION = '5.8';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -232,19 +232,19 @@ const CONTENT = {
     snapshotBody: 'These identifiers anchor the brief to a concrete client release and reviewed Rust main commit. Status is based on source and test evidence, not roadmap percentages.',
     snapshot: [
       { label: 'Client build', value: CLIENT_BUILD, detail: 'Current cross-platform release baseline' },
-      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · backup and restore command domains · 1,781 library tests passed' },
+      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · published durability and recovery baseline' },
       { label: 'Distribution', value: '4 platforms', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    // [PARTNER-SEP01-BRIEF-SYNC 2026-09-02 by Codex] Keep the page metadata in
-    // sync with the latest verified day while leaving shipped baselines honest.
-    revisionDeltaTitle: 'Client and Rust development is reviewed through September 1.',
-    revisionDeltaBody: `Daily reports now include August 31 published Rust and docs evidence, September 1 local Rust hardening, and September 1 client route-safety work with its current compile gate. Client ${CLIENT_BUILD} remains the published build, and reviewed GitHub Rust main remains ${RUST_NODE_HEAD}.`,
+    // [PARTNER-SEP02-BRIEF-SYNC 2026-09-02 by Codex] Keep candidate builds and
+    // uncommitted client work separate from published product baselines.
+    revisionDeltaTitle: 'Client and Rust development is reviewed through September 2.',
+    revisionDeltaBody: `Daily reports now include the September 2 decentralized-chat candidate and acceptance gates plus local desktop Agent capability and session-ownership work. Client ${CLIENT_BUILD} remains the published build, and reviewed GitHub Rust main remains ${RUST_NODE_HEAD}.`,
     revisionDeltaItems: [
-      'Added August 31 published Rust and documentation evidence while keeping the public baseline anchored to GitHub main c4b701b.',
-      'Added September 1 local Rust hardening for backup crash recovery, full-node mirror fork preflight, and public/private discovery boundaries with focused cargo tests.',
-      'Added September 1 local client desktop and wallet route-safety work; focused analyze stayed limited to one info, two widget tests are compile-blocked, and no new client commit or release is verified.',
+      'Added the local 70f48c8 chat candidate, focused submit, custody, pull, and ACK evidence, and its isolated build; integrity recheck, canary, remote push, and rollout remain open.',
+      'Recorded the cross-node receive and exact completed-retry acceptance gaps as next work rather than presenting the chat path as released.',
+      'Added uncommitted desktop Agent capability, workspace routing, and task-owner session work with only format and diff evidence; no client build or release advanced.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -771,19 +771,19 @@ const CONTENT = {
     snapshotBody: '以下版本把頁面錨定到真實客戶端發布與已審核的 Rust main commit。狀態來自源碼與測試證據，不使用虛假的完成百分比。',
     snapshot: [
       { label: '客戶端版本', value: CLIENT_BUILD, detail: '目前跨平台正式發布基線' },
-      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · 備份與恢復命令領域 · 1,781 項 library 測試通過' },
+      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · 已發布的持久性與恢復基線' },
       { label: '發布平台', value: '4 個平台', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    // [PARTNER-SEP01-BRIEF-SYNC 2026-09-02 by Codex] 讓頁面 metadata 與最新
-    // 已核對日期同步，同時保留正式發布基線不被本地整合工作冒充。
-    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 9 月 1 日。',
-    revisionDeltaBody: `日報已納入 8 月 31 日已發布的 Rust 與文件證據、9 月 1 日本地 Rust 加固，以及 9 月 1 日客戶端 route 安全工作與其當前編譯關卡。客戶端 ${CLIENT_BUILD} 仍是正式發布版，已審核的 GitHub Rust main 仍為 ${RUST_NODE_HEAD}。`,
+    // [PARTNER-SEP02-BRIEF-SYNC 2026-09-02 by Codex] 將候選構建與未提交
+    // 客戶端工作保持在正式發布基線之外。
+    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 9 月 2 日。',
+    revisionDeltaBody: `日報已納入 9 月 2 日去中心化聊天候選版本與驗收關卡，以及本地桌面 Agent 能力與 session ownership 工作。客戶端 ${CLIENT_BUILD} 仍是正式發布版，已審核的 GitHub Rust main 仍為 ${RUST_NODE_HEAD}。`,
     revisionDeltaItems: [
-      '新增 8 月 31 日已發布的 Rust 與文件證據，同時把公開基線維持在 GitHub main c4b701b。',
-      '新增 9 月 1 日本地 Rust 備份崩潰恢復、全節點鏡像分叉預檢，以及公開／私密發現邊界加固，並附聚焦 cargo 測試。',
-      '新增 9 月 1 日本地客戶端桌面與錢包 route 安全工作；聚焦 analyze 只有 1 個 info、兩個 widget 測試仍被編譯阻塞，且未核對到新的客戶端提交或發布。',
+      '新增本地 70f48c8 聊天候選版本、聚焦 submit、custody、pull、ACK 證據及隔離構建；完整性複核、canary、遠端推送及部署仍未完成。',
+      '把跨節點收件與精確 completed-retry 驗收缺口列為下一步，不把聊天路徑提前呈現為已發布。',
+      '新增未提交的桌面 Agent 能力、工作區路由及 task-owner session 工作，目前只有格式與差異證據；客戶端構建與發布均未前進。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',
