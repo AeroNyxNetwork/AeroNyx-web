@@ -700,8 +700,8 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
           zh: '備份審計崩潰恢復完成',
         }),
         summary: Object.freeze({
-          en: 'The local Rust integration line now recovers the two valid hard-link publication windows for active segments and checkpoints without weakening ordinary single-link file checks. Identity, ownership, mode, and link count are reverified before removal; backup audit tests passed 32/32, backup filesystem tests passed 12/12, and the server library compiled successfully.',
-          zh: '本地 Rust 整合線現可恢復 active segment 與 checkpoint 的兩個合法 hard-link 發布窗口，同時不放寬一般單連結檔案驗證。刪除前會重新驗證 identity、ownership、mode 與 link count；backup audit 測試 32/32、備份檔案系統測試 12/12 通過，server library 亦編譯成功。',
+          en: 'Local Rust commit 720c969 now recovers the two valid hard-link publication windows for active segments and checkpoints without weakening ordinary single-link file checks. Identity, ownership, mode, and link count are reverified before removal; 36 focused backup-audit tests passed and `cargo check -p aeronyx-server` succeeded.',
+          zh: '本地 Rust 提交 720c969 現可恢復 active segment 與 checkpoint 的兩個合法 hard-link 發布窗口，同時不放寬一般單連結檔案驗證。刪除前會重新驗證 identity、ownership、mode 與 link count；36 項聚焦 backup-audit 測試通過，`cargo check -p aeronyx-server` 亦成功。',
         }),
       }),
       Object.freeze({
@@ -713,8 +713,8 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
           zh: '私密中繼候選已從公開選擇移除',
         }),
         summary: Object.freeze({
-          en: 'Public onion-candidate selection now excludes descriptors that did not opt into public discovery, while internal private routing remains available. The change is integrated locally through c105755 with focused private/public candidate and exclusion-telemetry regressions passing.',
-          zh: '公開 onion candidate 選擇現在會排除未選擇公開發現的 descriptor，內部私密路由仍保持可用。此修復已在本地整合至 c105755，私密／公開候選與排除 telemetry 的聚焦回歸測試均通過。',
+          en: 'Public onion-candidate selection now excludes descriptors that did not opt into public discovery, while internal private routing remains available. The change is integrated locally through c105755; the exact private/public candidate endpoint regression passed, and three onion-candidate exclusion telemetry regressions also passed.',
+          zh: '公開 onion candidate 選擇現在會排除未選擇公開發現的 descriptor，內部私密路由仍保持可用。此修復已在本地整合至 c105755；精確的私密／公開候選 endpoint 回歸測試通過，另有 3 項 onion candidate 排除 telemetry 回歸通過。',
         }),
       }),
       Object.freeze({
@@ -739,8 +739,36 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
           zh: '公開發現投影已完成隱私邊界加固',
         }),
         summary: Object.freeze({
-          en: 'Public snapshot requests can no longer downgrade descriptor visibility, and public status now removes private or ambiguous candidate, path, health, event, and audit rows using full verified node membership. Three projection tests, three existing exclusion regressions, Clippy, and the server library compile check passed on the local integration line through bee3e8f.',
-          zh: '公開 snapshot 請求不再能降低 descriptor 可見性；公開 status 會依完整且已驗證的 node membership，移除私密或具歧義的 candidate、path、health、event 與 audit rows。3 項投影測試、3 項既有排除回歸、Clippy 與 server library 編譯檢查均在本地整合線 bee3e8f 通過。',
+          en: 'Public snapshot requests can no longer downgrade descriptor visibility, and public status now removes private or ambiguous candidate, path, health, event, and audit rows using full verified node membership. Three public-projection tests, three existing exclusion regressions, and `cargo check -p aeronyx-server` passed on the local integration line through bee3e8f.',
+          zh: '公開 snapshot 請求不再能降低 descriptor 可見性；公開 status 會依完整且已驗證的 node membership，移除私密或具歧義的 candidate、path、health、event 與 audit rows。3 項 public projection 測試、3 項既有排除回歸，以及 `cargo check -p aeronyx-server` 均在本地整合線 bee3e8f 通過。',
+        }),
+      }),
+      // [PARTNER-SEP01-CLIENT-AUDIT 2026-09-02 by Codex] Keep the uncommitted
+      // client route-safety work distinct from any shipped or pushed build.
+      Object.freeze({
+        id: 'client-desktop-and-wallet-route-safety',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'Desktop agent and wallet route safety stays in progress',
+          zh: '桌面 agent 與錢包 route 安全仍在進行中',
+        }),
+        summary: Object.freeze({
+          en: 'Uncommitted Sep 1 client changes keep desktop handoff and approval routing route-safe, and bind wallet backup, verify, and delete dialogs to their owning routes under competing overlays. Focused `flutter analyze` reported one `implementation_imports` info only. No new client commit, push, or release was verified; published build remains 1.0.18+14.',
+          zh: '未提交的 9 月 1 日客戶端修改讓桌面 handoff 與 approval 路由保持 route-safe，並把錢包備份、驗證與刪除對話框綁定到各自擁有的 route，即使有競爭中的 overlay 也不會誤退。聚焦 `flutter analyze` 只有 1 個 `implementation_imports` info；未核對到新的客戶端提交、推送或發布，正式版本仍為 1.0.18+14。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-wallet-widget-compile-gate',
+        area: 'client',
+        status: 'next',
+        title: Object.freeze({
+          en: 'Resolve wallet widget compile blockers next',
+          zh: '下一步先解決錢包 widget 編譯阻塞',
+        }),
+        summary: Object.freeze({
+          en: 'Focused widget tests for the model selector and wallet delete flow are currently blocked by unresolved `EthereumService`, `SolanaService`, and `SolanaDerivedKeyMaterial` references in `wallet_import_dialog.dart`. `wallet_unlock_continuity_contract_test.dart` still passed 3/3.',
+          zh: 'Model selector 與 wallet delete flow 的聚焦 widget 測試目前被 `wallet_import_dialog.dart` 中未解的 `EthereumService`、`SolanaService` 與 `SolanaDerivedKeyMaterial` 引用阻塞；`wallet_unlock_continuity_contract_test.dart` 仍然 3/3 通過。',
         }),
       }),
       Object.freeze({
@@ -752,8 +780,8 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
           zh: '合作方開發日報更新至 9 月 1 日',
         }),
         summary: Object.freeze({
-          en: 'Added today\'s verified Full-node Mirror, fork-safety, and public-discovery privacy evidence while keeping local integration distinct from remote release and fleet rollout.',
-          zh: '新增今日已驗證的 Full-node Mirror、分叉安全與公開發現隱私證據，同時將本地整合與遠端發布、fleet rollout 清楚區分。',
+          en: 'Added today\'s verified Rust hardening evidence and the explicit client compile gate while keeping local integration distinct from remote release, pushed commits, and shipped builds.',
+          zh: '新增今日已驗證的 Rust 加固證據與明確的客戶端編譯關卡，同時將本地整合與遠端發布、已推送提交及正式發布版本清楚區分。',
         }),
       }),
     ]),

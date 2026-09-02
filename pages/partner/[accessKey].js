@@ -91,7 +91,7 @@
  *     only from data/partnerDevelopmentCalendar.js. Keep calendar rendering
  *     derived from that source so browser, print, and JSON views cannot drift.
  *
- * Last Modified: v5.3 - Expanded the August 28 client session evidence.
+ * Last Modified: v5.7 - Synced the September 1 verified client and node audit.
  * ============================================
  */
 
@@ -109,9 +109,9 @@ import {
 import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar';
 
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
-const RUST_NODE_HEAD = 'ceded91';
-const VERIFIED_DATE = '2026-08-30';
-const REVIEW_REVISION = '5.5';
+const RUST_NODE_HEAD = 'c4b701b';
+const VERIFIED_DATE = '2026-09-01';
+const REVIEW_REVISION = '5.7';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -237,15 +237,14 @@ const CONTENT = {
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    // [PARTNER-AUG30-BRIEF 2026-08-30 by Codex] Advance the brief only for
-    // evidence-backed August 30 work and keep the unchanged publication
-    // baseline explicit.
-    revisionDeltaTitle: 'Client and Rust development is reviewed through August 30.',
-    revisionDeltaBody: `Daily reports now include August 30 local Rust durability and recovery-store hardening plus client wallet-secret, backup, and import work. These changes have formatting and diff evidence only, so client ${CLIENT_BUILD} remains the published build and Rust main remains ${RUST_NODE_HEAD}.`,
+    // [PARTNER-SEP01-BRIEF-SYNC 2026-09-02 by Codex] Keep the page metadata in
+    // sync with the latest verified day while leaving shipped baselines honest.
+    revisionDeltaTitle: 'Client and Rust development is reviewed through September 1.',
+    revisionDeltaBody: `Daily reports now include August 31 published Rust and docs evidence, September 1 local Rust hardening, and September 1 client route-safety work with its current compile gate. Client ${CLIENT_BUILD} remains the published build, and reviewed GitHub Rust main remains ${RUST_NODE_HEAD}.`,
     revisionDeltaItems: [
-      'Added local Rust durable publication, resolution, recovery-store, and diagnostic hardening through c854089; cargo validation, push, and deployment remain.',
-      'Added uncommitted client wallet-secret lifecycle, encrypted backup, and import boundary work; analyze, tests, build, commit, push, and release remain.',
-      'Reconfirmed public Rust GitHub main at ceded91 and kept all local work separate from shipped builds.',
+      'Added August 31 published Rust and documentation evidence while keeping the public baseline anchored to GitHub main c4b701b.',
+      'Added September 1 local Rust hardening for backup crash recovery, full-node mirror fork preflight, and public/private discovery boundaries with focused cargo tests.',
+      'Added September 1 local client desktop and wallet route-safety work; focused analyze stayed limited to one info, two widget tests are compile-blocked, and no new client commit or release is verified.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -777,14 +776,14 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    // [PARTNER-AUG30-BRIEF 2026-08-30 by Codex] 僅在有證據支持時前進核對
-    // 日期，並保留 Rust 已發布基線未變的明確說法。
-    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 8 月 30 日。',
-    revisionDeltaBody: `日報已納入 8 月 30 日本地 Rust 持久性與恢復儲存加固，以及客戶端錢包秘密、備份與導入工作。這些修改目前只有格式與差異證據，因此客戶端 ${CLIENT_BUILD} 仍是正式發布版，Rust main 仍為 ${RUST_NODE_HEAD}。`,
+    // [PARTNER-SEP01-BRIEF-SYNC 2026-09-02 by Codex] 讓頁面 metadata 與最新
+    // 已核對日期同步，同時保留正式發布基線不被本地整合工作冒充。
+    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 9 月 1 日。',
+    revisionDeltaBody: `日報已納入 8 月 31 日已發布的 Rust 與文件證據、9 月 1 日本地 Rust 加固，以及 9 月 1 日客戶端 route 安全工作與其當前編譯關卡。客戶端 ${CLIENT_BUILD} 仍是正式發布版，已審核的 GitHub Rust main 仍為 ${RUST_NODE_HEAD}。`,
     revisionDeltaItems: [
-      '新增截至 c854089 的本地 Rust 持久發布、解析、恢復儲存與診斷加固；仍待 cargo 驗證、推送及部署。',
-      '新增未提交的客戶端錢包秘密生命週期、加密備份與導入邊界工作；仍待 analyze、測試、構建、提交、推送及發布。',
-      '重新核對公開 Rust GitHub main 仍為 ceded91，並保持所有本地工作與正式發布版本分開。',
+      '新增 8 月 31 日已發布的 Rust 與文件證據，同時把公開基線維持在 GitHub main c4b701b。',
+      '新增 9 月 1 日本地 Rust 備份崩潰恢復、全節點鏡像分叉預檢，以及公開／私密發現邊界加固，並附聚焦 cargo 測試。',
+      '新增 9 月 1 日本地客戶端桌面與錢包 route 安全工作；聚焦 analyze 只有 1 個 info、兩個 widget 測試仍被編譯阻塞，且未核對到新的客戶端提交或發布。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',
