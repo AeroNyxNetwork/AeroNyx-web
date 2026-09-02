@@ -109,9 +109,14 @@ import {
 import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar';
 
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
-const RUST_NODE_HEAD = 'c4b701b';
+// [PARTNER-SEP02-DAILY-EVIDENCE 2026-09-02 by Codex] Keep released and
+// unpublished integration evidence separate in the partner-facing export.
+const RUST_NODE_HEAD = '1d23f46';
+const RUST_NODE_COMMIT = '1d23f46ab4c497a2b3290b7d32905099a7b28009';
+const UNPUBLISHED_INTEGRATION_REVISION = '57dd6b2';
 const VERIFIED_DATE = '2026-09-02';
-const REVIEW_REVISION = '5.8';
+const REVIEW_REVISION = '6.2';
+const EVIDENCE_VERSION = 'r8-ddr-2026-09-02.4';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -232,19 +237,19 @@ const CONTENT = {
     snapshotBody: 'These identifiers anchor the brief to a concrete client release and reviewed Rust main commit. Status is based on source and test evidence, not roadmap percentages.',
     snapshot: [
       { label: 'Client build', value: CLIENT_BUILD, detail: 'Current cross-platform release baseline' },
-      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · published durability and recovery baseline' },
+      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · 2026-09-02 isolated integration baseline' },
       { label: 'Distribution', value: '4 platforms', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    // [PARTNER-SEP02-BRIEF-SYNC 2026-09-02 by Codex] Keep candidate builds and
-    // uncommitted client work separate from published product baselines.
-    revisionDeltaTitle: 'Client and Rust development is reviewed through September 2.',
-    revisionDeltaBody: `Daily reports now include the September 2 decentralized-chat candidate and acceptance gates plus local desktop Agent capability and session-ownership work. Client ${CLIENT_BUILD} remains the published build, and reviewed GitHub Rust main remains ${RUST_NODE_HEAD}.`,
+    // [PARTNER-SEP02-TEST-BOUNDARY 2026-09-02 by Codex] Completed may name
+    // only remote main; test-backed unpublished integration stays in progress.
+    revisionDeltaTitle: 'September 2 daily evidence: release, work in progress, and gates.',
+    revisionDeltaBody: `Completed records name only released GitHub main ${RUST_NODE_HEAD} and its rerun focused server test. Integration revision ${UNPUBLISHED_INTEGRATION_REVISION} remains in progress with core and server verification, and anonymous mailbox delivery is not production wired.`,
     revisionDeltaItems: [
-      'Added the local 70f48c8 chat candidate, focused submit, custody, pull, and ACK evidence, and its isolated build; integrity recheck, canary, remote push, and rollout remain open.',
-      'Recorded the cross-node receive and exact completed-retry acceptance gaps as next work rather than presenting the chat path as released.',
-      'Added uncommitted desktop Agent capability, workspace routing, and task-owner session work with only format and diff evidence; no client build or release advanced.',
+      'Completed — remote main 1d23f46 remains the released source baseline, and focused server test verified_submit_dispatches_and_responds_with_memchain_storage_off passed in this audit.',
+      'In progress — integration 57dd6b2 has core 295/295, a passing server library cargo check, and a passing stale-replay regression; M13A, M13B, and M13A.3 are integrated while M13C wiring continues. Anonymous mailbox is not production wired.',
+      'Next — M13C, ticket issuer and exact-target route, S/M/T/R, review/release, then fleet smoke.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -525,11 +530,11 @@ const CONTENT = {
       {
         status: 'beta',
         title: 'Blind encrypted message relay',
-        summary: 'Authenticated relay frames, offline custody, idempotency, bounded abuse controls, encrypted media transport foundations, and terminal pending storage.',
+        summary: 'Authenticated relay frames, idempotency, bounded abuse controls, encrypted media transport foundations, and terminal pending storage. Cross-entry offline anonymous mailbox delivery is not released.',
         evidence: 'Nodes route opaque payloads and cannot interpret message content.',
         evidenceLevel: 'Controlled beta path',
         evidenceSources: ['Rust source', 'Protocol tests'],
-        nextGate: 'Client-to-terminal encrypted delivery under offline, duplicate, abuse, and failure cases.',
+        nextGate: 'M13C, ticket issuer and exact-target routing, S/M/T/R, review/release, then fleet smoke.',
       },
       {
         status: 'hardening',
@@ -562,7 +567,7 @@ const CONTENT = {
         status: 'hardening',
         title: 'Custody witness safety',
         summary: 'Independent signed receipts, durable vault audit, startup/runtime gates, quorum expiry warning, recovery lifecycle, and bounded concurrent witness collection.',
-        evidence: `Reviewed head ${RUST_NODE_HEAD} retains bounded concurrent witness collection.`,
+        evidence: `Reviewed head ${RUST_NODE_HEAD} retains bounded concurrent witness collection; September 2 isolated integration also reverified verified_submit and relay-smoke boundaries.`,
         evidenceLevel: 'Reviewed Rust milestone',
         evidenceSources: ['Rust source', 'Adverse-path tests'],
         nextGate: 'Deploy to independent nodes and exercise expiry, refresh, restart, and strict-gate rollback.',
@@ -606,6 +611,11 @@ const CONTENT = {
     milestoneEyebrow: 'Recent evidence',
     milestoneTitle: 'What changed most recently.',
     milestones: [
+      {
+        date: '2026-09-02',
+        title: 'Released online blind chat retained; anonymous mailbox remains unpublished',
+        detail: 'Completed records only released main 1d23f46ab4c497a2b3290b7d32905099a7b28009, with focused server test verified_submit_dispatches_and_responds_with_memchain_storage_off rerun successfully. Integration 57dd6b2 remains in progress with core 295/295, a passing server library cargo check, a passing stale-replay regression, integrated M13A/M13B/M13A.3 building blocks, and M13C wiring. Anonymous mailbox is not production wired.',
+      },
       {
         date: '2026-08-19',
         title: 'Witness collection latency bounded',
@@ -678,11 +688,11 @@ const CONTENT = {
       ['Protocol website', 'https://aeronyx.network/'],
       ['Technical documentation', 'https://docs.aeronyx.network/'],
       ['Node operator app', 'https://app.aeronyx.network/'],
-      ['Reviewed Rust commit', `https://github.com/AeroNyxNetwork/AeroNyx/commit/${RUST_NODE_HEAD}`],
+      ['Reviewed Rust commit', `https://github.com/AeroNyxNetwork/AeroNyx/commit/${RUST_NODE_COMMIT}`],
       ['Open-source organization', 'https://github.com/AeroNyxNetwork'],
     ],
     footer: 'AeroNyx partner build brief',
-    footerNote: `Source-reviewed on ${VERIFIED_DATE}. Product status changes only after implementation and verification.`,
+    footerNote: `Source-reviewed on ${VERIFIED_DATE}. Evidence ${EVIDENCE_VERSION}. Product status changes only after implementation and verification.`,
   },
   zh: {
     language: '語言',
@@ -771,19 +781,19 @@ const CONTENT = {
     snapshotBody: '以下版本把頁面錨定到真實客戶端發布與已審核的 Rust main commit。狀態來自源碼與測試證據，不使用虛假的完成百分比。',
     snapshot: [
       { label: '客戶端版本', value: CLIENT_BUILD, detail: '目前跨平台正式發布基線' },
-      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · 已發布的持久性與恢復基線' },
+      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · 2026-09-02 隔離整合基線' },
       { label: '發布平台', value: '4 個平台', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    // [PARTNER-SEP02-BRIEF-SYNC 2026-09-02 by Codex] 將候選構建與未提交
-    // 客戶端工作保持在正式發布基線之外。
-    revisionDeltaTitle: '客戶端與 Rust 開發已核對至 9 月 2 日。',
-    revisionDeltaBody: `日報已納入 9 月 2 日去中心化聊天候選版本與驗收關卡，以及本地桌面 Agent 能力與 session ownership 工作。客戶端 ${CLIENT_BUILD} 仍是正式發布版，已審核的 GitHub Rust main 仍為 ${RUST_NODE_HEAD}。`,
+    // [PARTNER-SEP02-TEST-BOUNDARY 2026-09-02 by Codex] 「已完成」只可
+    // 記錄 remote main；未發布整合只以測試證據留在進行中。
+    revisionDeltaTitle: '9 月 2 日日報：發布、進行中與驗證門檻。',
+    revisionDeltaBody: `「已完成」只記錄已發布 GitHub main ${RUST_NODE_HEAD} 與其重跑通過的聚焦 server 測試。整合版本 ${UNPUBLISHED_INTEGRATION_REVISION} 仍在進行中，具 core 與 server 驗證，但沒有把匿名郵箱 production wired。`,
     revisionDeltaItems: [
-      '新增本地 70f48c8 聊天候選版本、聚焦 submit、custody、pull、ACK 證據及隔離構建；完整性複核、canary、遠端推送及部署仍未完成。',
-      '把跨節點收件與精確 completed-retry 驗收缺口列為下一步，不把聊天路徑提前呈現為已發布。',
-      '新增未提交的桌面 Agent 能力、工作區路由及 task-owner session 工作，目前只有格式與差異證據；客戶端構建與發布均未前進。',
+      '已完成 — remote main 1d23f46 仍是已發布源碼基線，聚焦 server 測試 verified_submit_dispatches_and_responds_with_memchain_storage_off 已在本輪核對中通過。',
+      '進行中 — 整合版本 57dd6b2 的 core 295/295、server library cargo check 與 stale-replay 回歸測試通過；M13A、M13B 與 M13A.3 已整合，M13C 接線持續進行。匿名郵箱尚未 production wired。',
+      '下一步 — M13C、ticket issuer 與精確目標路由、S/M/T/R、review/release，然後才是 fleet smoke。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',
@@ -1064,11 +1074,11 @@ const CONTENT = {
       {
         status: 'beta',
         title: '盲加密訊息中繼',
-        summary: '認證 relay frame、離線託管、冪等、防濫用上限、加密媒體傳輸基礎及 terminal pending store。',
+        summary: '認證 relay frame、冪等、防濫用上限、加密媒體傳輸基礎及 terminal pending store。跨入口離線匿名郵箱送達尚未發布。',
         evidence: '節點路由不透明 payload，不能理解訊息內容。',
         evidenceLevel: '受控 Beta 路徑',
         evidenceSources: ['Rust 源碼', '協議測試'],
-        nextGate: '驗證客戶端到終端在離線、重複、濫用與故障情境下的密文投遞。',
+        nextGate: 'M13C、ticket issuer 與精確目標 routing、S/M/T/R、review/release，然後才是 fleet smoke。',
       },
       {
         status: 'hardening',
@@ -1101,7 +1111,7 @@ const CONTENT = {
         status: 'hardening',
         title: 'Custody witness 安全',
         summary: '獨立簽名 receipt、持久 vault audit、啟動/runtime gate、quorum 到期提醒、恢復生命週期與有界並行收集。',
-        evidence: `已審核 head ${RUST_NODE_HEAD} 保留有界並行 witness 收集。`,
+        evidence: `已審核 head ${RUST_NODE_HEAD} 保留有界並行 witness 收集；9 月 2 日隔離整合也重新核對了 verified_submit 與 relay-smoke 邊界。`,
         evidenceLevel: '已審核 Rust 里程碑',
         evidenceSources: ['Rust 源碼', '逆向情境測試'],
         nextGate: '部署到獨立節點並驗證到期、刷新、重啟與 strict gate 回滾。',
@@ -1145,6 +1155,11 @@ const CONTENT = {
     milestoneEyebrow: '近期證據',
     milestoneTitle: '最近真正完成了什麼。',
     milestones: [
+      {
+        date: '2026-09-02',
+        title: '已發布線上盲聊保留；匿名郵箱仍未發布',
+        detail: '「已完成」只記錄已發布 main 1d23f46ab4c497a2b3290b7d32905099a7b28009，且聚焦 server 測試 verified_submit_dispatches_and_responds_with_memchain_storage_off 已重跑通過。整合版本 57dd6b2 仍在進行中，具 core 295/295、server library cargo check 通過、stale-replay 回歸通過、已整合的 M13A/M13B/M13A.3 building blocks 與進行中的 M13C 接線。匿名郵箱尚未 production wired。',
+      },
       {
         date: '2026-08-19',
         title: 'Witness 收集延遲有界化',
@@ -1217,11 +1232,11 @@ const CONTENT = {
       ['協議官網', 'https://aeronyx.network/'],
       ['技術文檔', 'https://docs.aeronyx.network/'],
       ['節點運營 App', 'https://app.aeronyx.network/'],
-      ['已審核 Rust commit', `https://github.com/AeroNyxNetwork/AeroNyx/commit/${RUST_NODE_HEAD}`],
+      ['已審核 Rust commit', `https://github.com/AeroNyxNetwork/AeroNyx/commit/${RUST_NODE_COMMIT}`],
       ['開源組織', 'https://github.com/AeroNyxNetwork'],
     ],
     footer: 'AeroNyx 合作方開發簡報',
-    footerNote: `源碼核對日期 ${VERIFIED_DATE}。只有完成實現與驗證後，產品狀態才會更新。`,
+    footerNote: `源碼核對日期 ${VERIFIED_DATE}。證據版本 ${EVIDENCE_VERSION}。只有完成實現與驗證後，產品狀態才會更新。`,
   },
 };
 
@@ -2252,9 +2267,14 @@ function buildReviewSnapshot(copy, language) {
     generated_at: new Date().toISOString(),
     verified_date: VERIFIED_DATE,
     review_revision: REVIEW_REVISION,
+    // [PARTNER-SEP02-DAILY-AMENDMENT 2026-09-02 by Codex] The unpublished
+    // ref is a supplied short integration revision, not a release commit.
+    evidence_version: EVIDENCE_VERSION,
     language,
     client_build: CLIENT_BUILD,
     rust_node_head: RUST_NODE_HEAD,
+    rust_node_commit: RUST_NODE_COMMIT,
+    unpublished_integration_revision: UNPUBLISHED_INTEGRATION_REVISION,
     status_definitions: copy.statusDefinitions,
     revision_delta: {
       title: copy.revisionDeltaTitle,
@@ -2376,9 +2396,11 @@ function buildReviewHandoff(copy, language, checks, notes, findings, decision, o
     generated_at: new Date().toISOString(),
     verified_date: VERIFIED_DATE,
     review_revision: REVIEW_REVISION,
+    evidence_version: EVIDENCE_VERSION,
     language,
     client_build: CLIENT_BUILD,
     rust_node_head: RUST_NODE_HEAD,
+    rust_node_commit: RUST_NODE_COMMIT,
     review_progress: {
       completed,
       total: checklist.length,
@@ -2481,7 +2503,7 @@ function buildReviewMemo(copy, checks, notes, findings, decision, organization, 
     `# ${labels.title}`,
     '',
     `- **${labels.generated}:** ${new Date().toISOString()}`,
-    `- **${labels.baseline}:** ${VERIFIED_DATE} · Client ${CLIENT_BUILD} · Rust ${RUST_NODE_HEAD} · Brief v${REVIEW_REVISION}`,
+    `- **${labels.baseline}:** ${VERIFIED_DATE} · Client ${CLIENT_BUILD} · Rust ${RUST_NODE_COMMIT} · Evidence ${EVIDENCE_VERSION} · Brief v${REVIEW_REVISION}`,
     '',
     `## ${labels.decision}`,
     '',

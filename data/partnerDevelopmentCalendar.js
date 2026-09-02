@@ -38,7 +38,7 @@
  *     uncommitted source may be recorded when the exact verification boundary
  *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v2.3 - Added the September 2 verified progress boundary.
+ * Last Modified: v2.4 - Bound September 2 partner claims to rerun tests.
  * ============================================
  */
 
@@ -786,74 +786,48 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
       }),
     ]),
   }),
-  // [PARTNER-SEP02-VERIFIED-PROGRESS 2026-09-02 by Codex] Record only the
-  // current local validation boundary; no candidate is presented as released.
+  // [PARTNER-SEP02-TEST-BOUNDARY 2026-09-02 by Codex] Keep September 2 claims
+  // tied to rerun Rust tests, remote main, and explicit unpublished gates.
   Object.freeze({
     date: '2026-09-02',
     entries: Object.freeze([
       Object.freeze({
-        id: 'node-decentralized-chat-canary-validation',
+        id: 'chat-dispatch-memchain-optional-fix',
         area: 'node',
-        status: 'active',
+        status: 'complete',
         title: Object.freeze({
-          en: 'Decentralized chat candidate entered canary validation',
-          zh: '去中心化聊天候選版本進入 canary 驗證',
+          en: 'Completed: released online verified-relay source baseline',
+          zh: '已完成：已發布線上 verified-relay 源碼基線',
         }),
         summary: Object.freeze({
-          en: 'A read-only ancestry review selected local commit 70f48c8 as the narrow chat release boundary, covering verified onion submit, request-correlated terminal results, durable replay, and hardened backup-directory sync. Fifteen verified-submit tests plus focused custody pull and ACK checks passed, and an isolated candidate binary was built against the existing production configuration. Independent integrity recheck, single-node canary, remote push, broader rollout, and release remain.',
-          zh: '唯讀 ancestry 審核選定本地提交 70f48c8 作為最窄的聊天發布邊界，涵蓋 verified onion submit、與請求關聯的 terminal result、持久 replay，以及加固的備份目錄同步。15 項 verified-submit 測試與聚焦 custody pull／ACK 檢查通過，隔離候選二進位亦已依現有 production 配置完成構建。仍待獨立完整性複核、單節點 canary、遠端推送、擴大部署及發布。',
+          en: 'Remote main 1d23f46ab4c497a2b3290b7d32905099a7b28009 is the released source baseline. In the September 2 audit, focused server test `verified_submit_dispatches_and_responds_with_memchain_storage_off` passed, confirming chat dispatch still works with MemChain storage off.',
+          zh: 'remote main 1d23f46ab4c497a2b3290b7d32905099a7b28009 是已發布的源碼基線。9 月 2 日核對中，聚焦 server 測試 `verified_submit_dispatches_and_responds_with_memchain_storage_off` 通過，確認在 MemChain 存儲關閉時聊天派發仍可正常運作。',
         }),
       }),
       Object.freeze({
-        id: 'node-chat-cross-node-receive-retry-gate',
+        id: 'unpublished-mailbox-integration-evidence',
+        area: 'node',
+        status: 'active',
+        title: Object.freeze({
+          en: 'In progress: M13 integration building blocks and M13C wiring',
+          zh: '進行中：M13 整合 building blocks 與 M13C 接線',
+        }),
+        summary: Object.freeze({
+          en: 'Unpublished integration 57dd6b2 has `cargo test -p aeronyx-core` passing at 295/295, a passing server library cargo check, and a passing focused stale-replay regression (`verified_submit_stale_exact_completed_replays_in_process_and_after_restart`). M13A, M13B, and M13A.3 building blocks are integrated; M13C wiring is in progress. Anonymous mailbox is not production wired.',
+          zh: '未發布整合版本 57dd6b2 的 `cargo test -p aeronyx-core` 295/295 通過、server library cargo check 通過，聚焦 stale-replay 回歸 `verified_submit_stale_exact_completed_replays_in_process_and_after_restart` 亦已通過。M13A、M13B 與 M13A.3 building blocks 已整合；M13C 接線進行中。匿名郵箱尚未 production wired。',
+        }),
+      }),
+      Object.freeze({
+        id: 'berlin-upgrade-still-pending',
         area: 'node',
         status: 'next',
         title: Object.freeze({
-          en: 'Close cross-node receive and exact-retry gates next',
-          zh: '下一步關閉跨節點收件與精確重試關卡',
+          en: 'Next: M13C, routing, review/release, and fleet smoke',
+          zh: '下一步：M13C、路由、review/release 與 fleet smoke',
         }),
         summary: Object.freeze({
-          en: 'A full-chain security review verified the existing request-bound receipt, local custody, pull, and receiver-authorized ACK invariants, but found that receiving through a different node and replaying an exact completed request after the live authentication window are not yet end-to-end accepted. Compatible fixes, deterministic multi-node and restart regressions, and fleet acceptance remain.',
-          zh: '完整鏈路安全審核確認現有的 request-bound receipt、本地 custody、pull 與接收方授權 ACK 不變量，但也發現經不同節點收件，以及在即時驗證窗口後重放完全相同的已完成請求，尚未通過端到端驗收。仍待相容修復、確定性的多節點／重啟回歸測試及節點群驗收。',
-        }),
-      }),
-      Object.freeze({
-        id: 'client-desktop-agent-capability-routing',
-        area: 'client',
-        status: 'active',
-        title: Object.freeze({
-          en: 'Desktop Agent capability and workspace routing hardened locally',
-          zh: '桌面 Agent 能力與工作區路由已在本地加固',
-        }),
-        summary: Object.freeze({
-          en: 'Uncommitted client source now separates live Agent availability from mounted workspaces, fail-closes stale commands at execution, pins a new conversation to its first machine and engine, preserves paired-device recovery, and adds privacy-safe background completion notices. Dart formatting and scoped diff checks passed; analyze, tests, build, commit, push, and release remain.',
-          zh: '本地未提交客戶端源碼已把 Agent 即時可用性與已掛載工作區分開，在執行入口 fail-close 過期命令，把新對話綁定至首次使用的電腦與引擎，保留已配對設備恢復，並新增不含內容的背景完成通知。Dart 格式與範圍差異檢查通過；仍待 analyze、測試、構建、提交、推送及發布。',
-        }),
-      }),
-      Object.freeze({
-        id: 'client-remote-agent-session-ownership',
-        area: 'client',
-        status: 'active',
-        title: Object.freeze({
-          en: 'Remote Agent task ownership remains in progress',
-          zh: '遠端 Agent 任務所有權仍在推進',
-        }),
-        summary: Object.freeze({
-          en: 'Current uncommitted work keeps a desktop task bound to its originating AI session while other conversations remain viewable, routes the eventual reply back to that owner, keeps non-Agent messaging available, and provides a global stop surface. Exact cancellation when the owning conversation is cleared, cold-start approval continuity, current-tree tests, and release validation remain in progress.',
-          zh: '目前未提交工作把桌面任務綁定至原始 AI session，同時允許查看其他對話，最終回覆仍回到原 owner，非 Agent 訊息功能保持可用，並提供全域停止入口。清除 owner 對話時的精確取消、冷啟動 approval 連續性、目前工作樹測試及發布驗證仍在進行。',
-        }),
-      }),
-      Object.freeze({
-        id: 'partner-report-through-september-2',
-        area: 'web',
-        status: 'complete',
-        title: Object.freeze({
-          en: 'Partner daily report updated through September 2',
-          zh: '合作方開發日報更新至 9 月 2 日',
-        }),
-        summary: Object.freeze({
-          en: 'Added today\'s verified Rust candidate, acceptance gaps, and local client Agent work while keeping in-progress builds, uncommitted source, public heads, canary rollout, and shipped releases distinct.',
-          zh: '新增今日已核對的 Rust 候選版本、驗收缺口及本地客戶端 Agent 工作，並清楚區分進行中的構建、未提交源碼、公開 head、canary 部署與正式發布。',
+          en: 'Next are M13C, ticket issuer and exact-target route, S/M/T/R, review/release, then fleet smoke. These steps remain unpublished and separate from the released main baseline.',
+          zh: '下一步是 M13C、ticket issuer 與精確目標路由、S/M/T/R、review/release，然後才是 fleet smoke。這些步驟仍未發布，並且與已發布的 main 基線分開。',
         }),
       }),
     ]),
