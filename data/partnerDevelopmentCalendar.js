@@ -38,7 +38,7 @@
  *     uncommitted source may be recorded when the exact verification boundary
  *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v2.4 - Bound September 2 partner claims to rerun tests.
+ * Last Modified: v2.5 - Added the September 3 Rust, client, and web evidence boundary.
  * ============================================
  */
 
@@ -832,8 +832,8 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
       }),
     ]),
   }),
-  // [PARTNER-SEP03-DAILY-BOUNDARY 2026-09-03 by Codex] Completed remains
-  // remote main only. M13C/M13D and fleet work stay visibly unpublished.
+  // [PARTNER-SEP03-AFTERNOON-EVIDENCE 2026-09-03 by Codex] Keep published,
+  // locally verified, and next-gate work separate in partner-facing language.
   Object.freeze({
     date: '2026-09-03',
     entries: Object.freeze([
@@ -842,12 +842,12 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         area: 'node',
         status: 'complete',
         title: Object.freeze({
-          en: 'Completed: released online relay/chat source baseline',
-          zh: '已完成：已發布線上 relay/chat 源碼基線',
+          en: 'Completed: published online relay and chat baseline',
+          zh: '已完成：已發布線上中繼和聊天基線',
         }),
         summary: Object.freeze({
-          en: 'Remote main 1d23f46ab4c497a2b3290b7d32905099a7b28009 remains the only released baseline: verified online relay/chat dispatch with MemChain storage disabled. It does not claim anonymous mailbox wiring, a Berlin hotfix, or a live smoke result.',
-          zh: 'remote main 1d23f46ab4c497a2b3290b7d32905099a7b28009 仍是唯一已發布基線：MemChain 存儲關閉時已有已驗證的線上 relay/chat dispatch。它不宣稱匿名郵箱接線、Berlin hotfix 或 live smoke 結果。',
+          en: 'Remote main 1d23f46ab4c497a2b3290b7d32905099a7b28009 remains the published baseline. Online relay and chat dispatch continue to work with MemChain storage disabled. Anonymous mailbox production wiring and a new live smoke are not part of this completed item.',
+          zh: 'remote main 1d23f46ab4c497a2b3290b7d32905099a7b28009 仍是已發布基線。MemChain 存儲關閉時，線上中繼和聊天派發仍可使用。匿名郵箱 production 接線與新的 live smoke 都不屬於這個已完成項目。',
         }),
       }),
       Object.freeze({
@@ -855,12 +855,51 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         area: 'node',
         status: 'active',
         title: Object.freeze({
-          en: 'In progress: unpublished M13 building blocks, M13C and M13D',
-          zh: '進行中：未發布的 M13 building blocks、M13C 與 M13D',
+          en: 'In progress: anonymous mailbox integration at 1a21cdd',
+          zh: '進行中：匿名郵箱整合推進至 1a21cdd',
         }),
         summary: Object.freeze({
-          en: 'Unpublished integration 57dd6b228b40b02b8c321ae8033ca7794423e701 has verified M13A/B/A.2/A.3 building blocks, core 295/295, and a passing server library check. M13C server terminal/API/startup wiring is actively being implemented across five source files: its privacy boundary is the raw AMSR source-sealed response, with no clear terminal delivery receipt through middle hops. M13D target-issued anonymous admission ticket plus durable exact replay is being implemented across three files, not integrated or released.',
-          zh: '未發布整合 57dd6b228b40b02b8c321ae8033ca7794423e701 具已驗證的 M13A/B/A.2/A.3 building blocks、core 295/295 與 server library check 通過。M13C 的 server terminal/API/startup 接線正在五個源碼檔實作：其隱私邊界是原始 AMSR source-sealed 回應，middle hops 沒有明文 terminal delivery receipt。M13D 的目標簽發匿名 admission ticket 與 durable exact replay 正在三個檔案實作，尚未整合或發布。',
+          en: 'Unpublished integration 1a21cdd9698053ce0683efad79bb85508cce8e2e now includes exact-target source coordination, terminal lifecycle, admission tickets, and bounded journal state. Focused results are source journal 6/6, terminal 6/6, store 28/28, core mailbox 25/25, plus a passing server-library check. Production composition remains unfinished, the feature stays disabled by default, and this commit is not on public main.',
+          zh: '未發布整合 1a21cdd9698053ce0683efad79bb85508cce8e2e 現已包含精確目標 source coordination、終端生命週期、admission ticket 與有界 journal state。聚焦結果為 source journal 6/6、terminal 6/6、store 28/28、core mailbox 25/25，另有 server-library check 通過。production composition 尚未完成，功能仍默認關閉，且此提交不在公開 main。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-livekit-reconnect-lifecycle',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'In progress: call startup and reconnect ownership',
+          zh: '進行中：通話啟動與重連生命週期',
+        }),
+        summary: Object.freeze({
+          en: 'Local uncommitted client source now lets the LiveKit engine own legitimate reconnects, rebuilds audio state after a full restart, and adds one bounded retry for fast initial transport failures with privacy-safe phase telemetry. Microphone command and UI-state consistency during temporary SDK unavailability remains under review. Dart formatting and a scoped diff check pass; analyze, tests, builds, commit, push, and release have not run.',
+          zh: '本地未提交客戶端源碼現由 LiveKit engine 管理合法重連，在完整 restart 後重建音訊狀態，並為快速初始傳輸失敗加入一次有界重試與不含敏感資料的階段遙測。SDK 暫時不可用時的麥克風命令與 UI 狀態一致性仍在審查。Dart 格式化與 scoped diff check 通過；尚未執行 analyze、測試、構建、提交、推送或發布。',
+        }),
+      }),
+      Object.freeze({
+        id: 'client-callkit-reset-fence',
+        area: 'client',
+        status: 'active',
+        title: Object.freeze({
+          en: 'In progress: cold-start call reset race protection',
+          zh: '進行中：冷啟動通話 reset 競態防護',
+        }),
+        summary: Object.freeze({
+          en: 'Local uncommitted client source adds an app-lifetime generation fence so a reset call cannot be revived by an in-flight cold-start join. Group-call invite queue expiry is still under review against the call deadline. Formatting and scoped diff checks pass; no analyze, test, build, commit, push, or release is verified.',
+          zh: '本地未提交客戶端源碼加入 app-lifetime generation fence，避免已 reset 的通話被尚在執行的冷啟動 join 重新喚起。群組通話邀請佇列的到期行為仍在對照通話 deadline 審查。格式化與 scoped diff check 通過；沒有已驗證的 analyze、測試、構建、提交、推送或發布。',
+        }),
+      }),
+      Object.freeze({
+        id: 'partner-daily-september-3-evidence',
+        area: 'web',
+        status: 'complete',
+        title: Object.freeze({
+          en: 'Completed: September 3 evidence is visible on entry',
+          zh: '已完成：入口首頁展示 9 月 3 日證據',
+        }),
+        summary: Object.freeze({
+          en: 'The first-screen daily module and full calendar now share the same bilingual September 3 evidence. Published, local in-progress, and next-gate work remain visibly separate, with operational and private identifiers excluded.',
+          zh: '首屏日報模塊與完整日曆現共用同一份雙語 9 月 3 日證據。已發布、本地進行中與下一步保持清楚分隔，並排除運維與私有識別資訊。',
         }),
       }),
       Object.freeze({
@@ -868,12 +907,12 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         area: 'node',
         status: 'next',
         title: Object.freeze({
-          en: 'Next: complete mailbox wiring before review, release, and fleet smoke',
-          zh: '下一步：完成郵箱接線後才進行 review、release 與 fleet smoke',
+          en: 'Next: finish mailbox wiring, then review, release, and fleet smoke',
+          zh: '下一步：完成郵箱接線，再進行 review、release 與 fleet smoke',
         }),
         summary: Object.freeze({
-          en: 'Exact-target source routing, deterministic S/M/T/R tests, client descriptor/capability UX, integration review, release, and fleet smoke remain next. Anonymous cross-entry offline mailbox is not end-to-end wired or released. Berlin meets read-only GO-window prerequisites including active_sessions=0, but no deploy, restart, or smoke occurred.',
-          zh: '精確目標 source routing、確定性 S/M/T/R 測試、client descriptor/capability UX、整合 review、release 與 fleet smoke 仍是下一步。匿名跨入口離線郵箱尚未端到端接線或發布。Berlin 雖符合包括 active_sessions=0 在內的 read-only GO-window 前提，但尚未 deploy、restart 或 smoke。',
+          en: 'Production startup composition, client descriptor and capability UX, integration review, release, and fleet smoke remain ahead. The cross-entry offline mailbox is not end-to-end wired or released, and ordinary chat must not enable it implicitly.',
+          zh: 'production 啟動組合、客戶端 descriptor 與 capability UX、整合 review、release 和 fleet smoke 仍待完成。跨入口離線郵箱尚未端到端接線或發布，普通聊天也不得隱式啟用它。',
         }),
       }),
     ]),
