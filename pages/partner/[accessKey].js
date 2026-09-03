@@ -114,9 +114,10 @@ const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
 const RUST_NODE_HEAD = '1d23f46';
 const RUST_NODE_COMMIT = '1d23f46ab4c497a2b3290b7d32905099a7b28009';
 const UNPUBLISHED_INTEGRATION_REVISION = '57dd6b2';
-const VERIFIED_DATE = '2026-09-02';
-const REVIEW_REVISION = '6.2';
-const EVIDENCE_VERSION = 'r8-ddr-2026-09-02.4';
+const UNPUBLISHED_INTEGRATION_COMMIT = '57dd6b228b40b02b8c321ae8033ca7794423e701';
+const VERIFIED_DATE = '2026-09-03';
+const REVIEW_REVISION = '6.3';
+const EVIDENCE_VERSION = 'r8-ddr-2026-09-03.1';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -237,19 +238,19 @@ const CONTENT = {
     snapshotBody: 'These identifiers anchor the brief to a concrete client release and reviewed Rust main commit. Status is based on source and test evidence, not roadmap percentages.',
     snapshot: [
       { label: 'Client build', value: CLIENT_BUILD, detail: 'Current cross-platform release baseline' },
-      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · 2026-09-02 isolated integration baseline' },
+      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · 2026-09-03 daily baseline' },
       { label: 'Distribution', value: '4 platforms', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    // [PARTNER-SEP02-TEST-BOUNDARY 2026-09-02 by Codex] Completed may name
-    // only remote main; test-backed unpublished integration stays in progress.
-    revisionDeltaTitle: 'September 2 daily evidence: release, work in progress, and gates.',
-    revisionDeltaBody: `Completed records name only released GitHub main ${RUST_NODE_HEAD} and its rerun focused server test. Integration revision ${UNPUBLISHED_INTEGRATION_REVISION} remains in progress with core and server verification, and anonymous mailbox delivery is not production wired.`,
+    // [PARTNER-SEP03-DAILY-BOUNDARY 2026-09-03 by Codex] Keep the released
+    // source baseline separate from incomplete M13C/M13D implementation work.
+    revisionDeltaTitle: 'September 3 daily evidence: released baseline and unpublished wiring.',
+    revisionDeltaBody: `Completed names only released GitHub main ${RUST_NODE_HEAD}. Unpublished integration ${UNPUBLISHED_INTEGRATION_REVISION} remains in progress; M13C and M13D are not integrated, released, or production wired.`,
     revisionDeltaItems: [
-      'Completed — remote main 1d23f46 remains the released source baseline, and focused server test verified_submit_dispatches_and_responds_with_memchain_storage_off passed in this audit.',
-      'In progress — integration 57dd6b2 has core 295/295, a passing server library cargo check, and a passing stale-replay regression; M13A, M13B, and M13A.3 are integrated while M13C wiring continues. Anonymous mailbox is not production wired.',
-      'Next — M13C, ticket issuer and exact-target route, S/M/T/R, review/release, then fleet smoke.',
+      'Completed — remote main 1d23f46 is the released source baseline for verified online relay/chat dispatch with MemChain storage disabled.',
+      'In progress — unpublished integration 57dd6b2 has M13A/B/A.2/A.3 building blocks verified, core 295/295, and a passing server library check. M13C server terminal/API/startup wiring is being implemented across five source files; its privacy boundary is the raw AMSR source-sealed response, without a clear terminal delivery receipt through middle hops. M13D target-issued anonymous admission ticket and durable exact replay are being implemented across three source files, not integrated or released.',
+      'Next — M13C, ticket issuer and exact-target source routing, deterministic S/M/T/R tests, client descriptor/capability UX, integration review, release, then fleet smoke. Berlin has a read-only GO window with active_sessions=0, but no deploy, restart, or smoke occurred.',
     ],
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
@@ -612,6 +613,11 @@ const CONTENT = {
     milestoneTitle: 'What changed most recently.',
     milestones: [
       {
+        date: '2026-09-03',
+        title: 'M13C and M13D remain unpublished implementation work',
+        detail: 'Completed remains limited to released main 1d23f46ab4c497a2b3290b7d32905099a7b28009. Unpublished integration 57dd6b228b40b02b8c321ae8033ca7794423e701 has verified M13A/B/A.2/A.3 building blocks, core 295/295, and a passing server library check. M13C terminal/API/startup wiring across five source files and M13D admission-ticket/durable-replay work across three files are in progress only; anonymous cross-entry offline mailbox is not end-to-end wired or released. Berlin has active_sessions=0 in a read-only GO window, without deploy, restart, or new live smoke.',
+      },
+      {
         date: '2026-09-02',
         title: 'Released online blind chat retained; anonymous mailbox remains unpublished',
         detail: 'Completed records only released main 1d23f46ab4c497a2b3290b7d32905099a7b28009, with focused server test verified_submit_dispatches_and_responds_with_memchain_storage_off rerun successfully. Integration 57dd6b2 remains in progress with core 295/295, a passing server library cargo check, a passing stale-replay regression, integrated M13A/M13B/M13A.3 building blocks, and M13C wiring. Anonymous mailbox is not production wired.',
@@ -786,14 +792,14 @@ const CONTENT = {
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    // [PARTNER-SEP02-TEST-BOUNDARY 2026-09-02 by Codex] 「已完成」只可
-    // 記錄 remote main；未發布整合只以測試證據留在進行中。
-    revisionDeltaTitle: '9 月 2 日日報：發布、進行中與驗證門檻。',
-    revisionDeltaBody: `「已完成」只記錄已發布 GitHub main ${RUST_NODE_HEAD} 與其重跑通過的聚焦 server 測試。整合版本 ${UNPUBLISHED_INTEGRATION_REVISION} 仍在進行中，具 core 與 server 驗證，但沒有把匿名郵箱 production wired。`,
+    // [PARTNER-SEP03-DAILY-BOUNDARY 2026-09-03 by Codex] 已發布基線與未完成
+    // 的 M13C/M13D 實作必須分開，後者不得寫成 production wired。
+    revisionDeltaTitle: '9 月 3 日日報：已發布基線與未發布接線。',
+    revisionDeltaBody: `「已完成」只記錄已發布 GitHub main ${RUST_NODE_HEAD}。未發布整合 ${UNPUBLISHED_INTEGRATION_REVISION} 仍在進行中；M13C 與 M13D 尚未整合、發布或 production wired。`,
     revisionDeltaItems: [
-      '已完成 — remote main 1d23f46 仍是已發布源碼基線，聚焦 server 測試 verified_submit_dispatches_and_responds_with_memchain_storage_off 已在本輪核對中通過。',
-      '進行中 — 整合版本 57dd6b2 的 core 295/295、server library cargo check 與 stale-replay 回歸測試通過；M13A、M13B 與 M13A.3 已整合，M13C 接線持續進行。匿名郵箱尚未 production wired。',
-      '下一步 — M13C、ticket issuer 與精確目標路由、S/M/T/R、review/release，然後才是 fleet smoke。',
+      '已完成 — remote main 1d23f46 是已發布的源碼基線：MemChain 存儲關閉時已有 verified online relay/chat dispatch。',
+      '進行中 — 未發布整合 57dd6b2 的 M13A/B/A.2/A.3 building blocks 已驗證、core 295/295、server library check 通過。M13C 的 server terminal/API/startup 接線正在五個源碼檔實作；隱私邊界是原始 AMSR source-sealed 回應，不會讓 middle hops 取得明文 terminal delivery receipt。M13D 的目標簽發匿名 admission ticket 與 durable exact replay 正在三個源碼檔實作，尚未整合或發布。',
+      '下一步 — M13C、ticket issuer 與精確目標 source routing、確定性 S/M/T/R 測試、client descriptor/capability UX、整合 review、release，然後才是 fleet smoke。Berlin 的 read-only GO window 已有 active_sessions=0，但尚未 deploy、restart 或 smoke。',
     ],
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',
@@ -1155,6 +1161,11 @@ const CONTENT = {
     milestoneEyebrow: '近期證據',
     milestoneTitle: '最近真正完成了什麼。',
     milestones: [
+      {
+        date: '2026-09-03',
+        title: 'M13C 與 M13D 仍是未發布的實作工作',
+        detail: '「已完成」仍只限已發布 main 1d23f46ab4c497a2b3290b7d32905099a7b28009。未發布整合 57dd6b228b40b02b8c321ae8033ca7794423e701 具已驗證的 M13A/B/A.2/A.3 building blocks、core 295/295 與 server library check 通過。M13C 在五個源碼檔進行 terminal/API/startup 接線，M13D 在三個檔案進行 admission-ticket/durable-replay 工作，均僅為進行中；匿名跨入口離線郵箱尚未端到端接線或發布。Berlin 在 read-only GO window 有 active_sessions=0，但未 deploy、restart 或產生新的 live smoke。',
+      },
       {
         date: '2026-09-02',
         title: '已發布線上盲聊保留；匿名郵箱仍未發布',
@@ -2267,14 +2278,15 @@ function buildReviewSnapshot(copy, language) {
     generated_at: new Date().toISOString(),
     verified_date: VERIFIED_DATE,
     review_revision: REVIEW_REVISION,
-    // [PARTNER-SEP02-DAILY-AMENDMENT 2026-09-02 by Codex] The unpublished
-    // ref is a supplied short integration revision, not a release commit.
+    // [PARTNER-SEP03-DAILY-BOUNDARY 2026-09-03 by Codex] Exports preserve
+    // the full unpublished integration ref without treating it as released.
     evidence_version: EVIDENCE_VERSION,
     language,
     client_build: CLIENT_BUILD,
     rust_node_head: RUST_NODE_HEAD,
     rust_node_commit: RUST_NODE_COMMIT,
     unpublished_integration_revision: UNPUBLISHED_INTEGRATION_REVISION,
+    unpublished_integration_commit: UNPUBLISHED_INTEGRATION_COMMIT,
     status_definitions: copy.statusDefinitions,
     revision_delta: {
       title: copy.revisionDeltaTitle,
