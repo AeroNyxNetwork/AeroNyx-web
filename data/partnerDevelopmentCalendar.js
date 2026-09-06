@@ -38,7 +38,7 @@
  *     uncommitted source may be recorded when the exact verification boundary
  *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v2.5 - Added the September 3 Rust, client, and web evidence boundary.
+ * Last Modified: v2.6 - Added September 6 local evidence and final verification gates.
  * ============================================
  */
 
@@ -913,6 +913,62 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         summary: Object.freeze({
           en: 'Production startup composition, client descriptor and capability UX, integration review, release, and fleet smoke remain ahead. The cross-entry offline mailbox is not end-to-end wired or released, and ordinary chat must not enable it implicitly.',
           zh: 'production 啟動組合、客戶端 descriptor 與 capability UX、整合 review、release 和 fleet smoke 仍待完成。跨入口離線郵箱尚未端到端接線或發布，普通聊天也不得隱式啟用它。',
+        }),
+      }),
+    ]),
+  }),
+  // [PARTNER-DAILY 2026-09-06 by Codex] Dated local evidence is distinct from release and live acceptance.
+  Object.freeze({
+    date: '2026-09-06',
+    entries: Object.freeze([
+      Object.freeze({
+        id: "sep06-published-source-boundary",
+        area: "node",
+        status: "complete",
+        title: Object.freeze({ en: "Published source rechecked; no new release verified", zh: "已重核公開原始碼；未驗證新發布" }),
+        summary: Object.freeze({
+          en: "At the September 6 23:32 HKT check, public Rust main remains 1d23f46 and the website release constants remain client 1.0.18+14. A pushed source revision is not proof of deployment. No new client release or node rollout is established by this audit.",
+          zh: "9 月 6 日 23:32 HKT 核對時，公開 Rust main 仍是 1d23f46，網站發布常數仍為客戶端 1.0.18+14。已推送原始碼版本不等於部署證明。本次核對未建立新客戶端發布或節點上線的證據。",
+        }),
+      }),
+      Object.freeze({
+        id: "sep06-client-home-call-candidate",
+        area: "client",
+        status: "complete",
+        title: Object.freeze({ en: "Local code complete; final candidate verification pending", zh: "本地程式修正完成；最終候選驗證待完成" }),
+        summary: Object.freeze({
+          en: "Local commit 91ce4b7a3 binds profile display cache and asynchronous refresh to the active identity; its commit evidence records clean scoped analysis, 33 focused tests, and an unsigned ARM64 Runner build. Local commit 02b9c2495 restores typed active-call presentation; the reviewed runtime log passes 15 tests. These are local development results, not a signed installer or release; later VPN changes still require a final build.",
+          zh: "本地提交 91ce4b7a3 將個人檔案顯示快取與非同步更新綁定目前身份；提交證據記錄限定分析通過、33 項聚焦測試與未簽名 ARM64 Runner 建置。本地提交 02b9c2495 恢復具型別的通話狀態呈現；已讀取的介面測試日誌有 15 項通過。以上屬本地開發成果，並非已簽名安裝包或發布；後續 VPN 改動仍須最終重建。",
+        }),
+      }),
+      Object.freeze({
+        id: "sep06-vpn-session-regression",
+        area: "client",
+        status: "active",
+        title: Object.freeze({ en: "VPN connection ownership fixes remain under regression", zh: "VPN 連線歸屬修正仍在回歸驗證" }),
+        summary: Object.freeze({
+          en: "Local source and September 6 logs cover late connection events, cancellation, approval ownership, and voucher handling. Focused stream-owner, approval, and voucher checks pass, but the 23:29 combined VPN/Home regression reports 61 passed, 3 skipped, and 4 failed. This is not an all-green acceptance result. Wallet locking, final packaging, and real-device VPN behavior remain open.",
+          zh: "本地源碼與 9 月 6 日日誌涵蓋晚到的連線事件、取消、批准歸屬及憑證處理。聚焦連線事件歸屬、批准與憑證檢查通過，但 23:29 的 VPN／首頁合併回歸結果為 61 項通過、3 項跳過、4 項失敗，不能視為完整驗收通過。錢包鎖定、最終打包與真機 VPN 行為仍待完成。",
+        }),
+      }),
+      Object.freeze({
+        id: "sep06-node-durability-tests",
+        area: "node",
+        status: "active",
+        title: Object.freeze({ en: "Local Rust tests added for expiry and process recovery", zh: "本地 Rust 新增到期與程序恢復測試" }),
+        summary: Object.freeze({
+          en: "Unpublished integration 2104094 adds custody ticket, lease and item-expiry boundary tests, cleanup/reopen counters, and exact retry checks after restart. Separate local commit 36ce2e1 adds a killed-worker recovery test that reopens the exact target without fallback. This audit inspected the committed test source; it did not rerun those Rust suites or verify a public merge, live two-client delivery, or fleet deployment.",
+          zh: "未發布整合 2104094 新增託管 ticket、lease 與項目到期邊界、清理及重開計數，以及重啟後精確重試測試。另一個本地提交 36ce2e1 新增 worker 被終止後重新開啟精確目標且不 fallback 的恢復測試。本次核對已讀取提交中的測試源碼，未重跑這些 Rust 測試，也未驗證公開合併、真實雙客戶端投遞或節點群部署。",
+        }),
+      }),
+      Object.freeze({
+        id: "sep06-final-verification-gates",
+        area: "client",
+        status: "next",
+        title: Object.freeze({ en: "Next: resolve regressions and verify the final macOS candidate", zh: "下一步：處理回歸失敗並驗證最終 macOS 候選" }),
+        summary: Object.freeze({
+          en: "Resolve the remaining regression failures and wallet-lock boundary, rebuild from the final reviewed revision, then verify installer signing, system-extension approval, identity retention, actual VPN traffic, disconnect/reconnect, and sleep/wake on a real Mac. Anonymous mailbox release separately requires integrated client/server and live delivery evidence. No release date is asserted.",
+          zh: "處理剩餘回歸失敗與錢包鎖定邊界，從最終已審版本重建，再於真實 Mac 驗證安裝包簽名、系統擴充批准、身份保留、實際 VPN 流量、斷線／重連及睡眠／喚醒。匿名信箱發布另須客戶端／伺服器整合與線上投遞證據。本項不承諾發布日期。",
         }),
       }),
     ]),

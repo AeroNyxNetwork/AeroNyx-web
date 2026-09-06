@@ -109,15 +109,15 @@ import {
 import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar';
 
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
-// [PARTNER-SEP03-AFTERNOON-EVIDENCE 2026-09-03 by Codex] Keep released and
+// [PARTNER-DAILY 2026-09-06 by Codex] Keep released and
 // locally verified integration evidence separate in the partner-facing export.
 const RUST_NODE_HEAD = '1d23f46';
 const RUST_NODE_COMMIT = '1d23f46ab4c497a2b3290b7d32905099a7b28009';
-const UNPUBLISHED_INTEGRATION_REVISION = '1a21cdd';
-const UNPUBLISHED_INTEGRATION_COMMIT = '1a21cdd9698053ce0683efad79bb85508cce8e2e';
-const VERIFIED_DATE = '2026-09-03';
-const REVIEW_REVISION = '6.5';
-const EVIDENCE_VERSION = 'r8-ddr-2026-09-03.3';
+const UNPUBLISHED_INTEGRATION_REVISION = '2104094';
+const UNPUBLISHED_INTEGRATION_COMMIT = '2104094cc2fc71aa3b74f55090705dcb80765acf';
+const VERIFIED_DATE = '2026-09-06';
+const REVIEW_REVISION = '6.8';
+const EVIDENCE_VERSION = 'r8-ddr-2026-09-06.1';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -238,22 +238,19 @@ const CONTENT = {
     snapshotBody: 'These identifiers anchor the brief to a concrete client release and reviewed Rust main commit. Status is based on source and test evidence, not roadmap percentages.',
     snapshot: [
       { label: 'Client build', value: CLIENT_BUILD, detail: 'Current cross-platform release baseline' },
-      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · 2026-09-03 daily baseline' },
+      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · source checked September 6; deployment unverified' },
       { label: 'Distribution', value: '4 platforms', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    // [PARTNER-SEP03-AFTERNOON-EVIDENCE 2026-09-03 by Codex] Include both
+    // [PARTNER-DAILY 2026-09-06 by Codex] Include both
     // Rust and client work while preserving each verification boundary.
-    revisionDeltaTitle: 'September 3 development update.',
-    revisionDeltaBody: `The published Rust baseline remains GitHub main ${RUST_NODE_HEAD}. Integration ${UNPUBLISHED_INTEGRATION_REVISION} and today's client call work remain unpublished development: focused checks pass, but production wiring and client build validation are still open.`,
-    revisionDeltaItems: [
-      'Completed — main 1d23f46 is the published baseline for online relay and chat when MemChain storage is disabled.',
-      'In progress — unpublished integration 1a21cdd includes exact-target source coordination, terminal lifecycle, admission tickets, and bounded journal state. Source journal 6/6, terminal 6/6, store 28/28, core mailbox 25/25, and the server-library check pass. Production composition remains unfinished and default-off.',
-      'In progress — local uncommitted client changes tighten LiveKit startup/reconnect ownership, audio recovery, one bounded initial retry, and privacy-safe phase telemetry. Microphone command and UI-state consistency during temporary SDK unavailability remains under review. Formatting and scoped diff checks pass; analyze, tests, builds, commit, push, and release have not run.',
-      'In progress — a local CallKit generation fence blocks cold-start joins from reviving reset calls. Group invite queue expiry remains under review; no client test or build result is claimed.',
-      'Next — complete production startup composition and client capability UX, then integration review, release, and fleet smoke. The offline mailbox remains unreleased and ordinary chat must not enable it implicitly.',
-    ],
+    revisionDeltaTitle: 'September 6 development update.',
+    revisionDeltaBody: `Public Rust source remains ${RUST_NODE_HEAD}. Local node ${UNPUBLISHED_INTEGRATION_REVISION} adds durability test coverage; local client fixes have focused checks and an unsigned build, but later VPN/Home regression still has four failures. Final packaging and real-device acceptance remain pending.`,
+    // [PARTNER-DAILY 2026-09-06 by Codex] Keep exported changes aligned with the latest calendar evidence.
+    revisionDeltaItems: PARTNER_DEVELOPMENT_DAYS[PARTNER_DEVELOPMENT_DAYS.length - 1].entries.map(
+      (entry) => `${entry.title.en}: ${entry.summary.en}`
+    ),
     artifactDownload: 'Open immutable download',
     artifactAppStore: 'Open App Store listing',
     artifactAppStoreArtifact: 'AeroNyx App Store listing',
@@ -789,22 +786,19 @@ const CONTENT = {
     snapshotBody: '以下版本把頁面錨定到真實客戶端發布與已審核的 Rust main commit。狀態來自源碼與測試證據，不使用虛假的完成百分比。',
     snapshot: [
       { label: '客戶端版本', value: CLIENT_BUILD, detail: '目前跨平台正式發布基線' },
-      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · 2026-09-03 日報基線' },
+      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · 9 月 6 日核對源碼；部署未驗證' },
       { label: '發布平台', value: '4 個平台', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    // [PARTNER-SEP03-AFTERNOON-EVIDENCE 2026-09-03 by Codex] 同時納入 Rust
+    // [PARTNER-DAILY 2026-09-06 by Codex] 同時納入 Rust
     // 與客戶端工作，並保留各自的驗證邊界。
-    revisionDeltaTitle: '9 月 3 日開發更新。',
-    revisionDeltaBody: `已發布 Rust 基線仍是 GitHub main ${RUST_NODE_HEAD}。整合版本 ${UNPUBLISHED_INTEGRATION_REVISION} 與今天的客戶端通話改動仍屬未發布開發：聚焦檢查有結果，但 production 接線與客戶端 build 驗證仍未完成。`,
-    revisionDeltaItems: [
-      '已完成 — main 1d23f46 是已發布基線：MemChain 存儲關閉時，線上中繼與聊天仍可使用。',
-      '進行中 — 未發布整合 1a21cdd 包含精確目標 source coordination、終端生命週期、admission ticket 與有界 journal state。source journal 6/6、terminal 6/6、store 28/28、core mailbox 25/25 及 server-library check 通過；production composition 尚未完成且默認關閉。',
-      '進行中 — 本地未提交客戶端改動加固 LiveKit 啟動與重連 ownership、音訊恢復、一次有界初始重試及不含敏感資料的階段遙測。SDK 暫時不可用時的麥克風命令與 UI 狀態一致性仍在審查。格式化與 scoped diff check 通過；尚未執行 analyze、測試、構建、提交、推送或發布。',
-      '進行中 — 本地 CallKit generation fence 防止冷啟動 join 重新喚起已 reset 通話。群組邀請佇列到期行為仍在審查，不宣稱已有客戶端測試或構建結果。',
-      '下一步 — 完成 production 啟動組合與客戶端 capability UX，再進行整合 review、release 與 fleet smoke。離線郵箱仍未發布，普通聊天不得隱式啟用。',
-    ],
+    revisionDeltaTitle: '9 月 6 日開發更新。',
+    revisionDeltaBody: `公開 Rust 原始碼仍是 ${RUST_NODE_HEAD}。本地節點 ${UNPUBLISHED_INTEGRATION_REVISION} 新增持久化測試；本地客戶端修正有聚焦檢查與未簽名建置，但後續 VPN／首頁回歸仍有四項失敗。最終打包與真機驗收仍待完成。`,
+    // [PARTNER-DAILY 2026-09-06 by Codex] Keep exported changes aligned with the latest calendar evidence.
+    revisionDeltaItems: PARTNER_DEVELOPMENT_DAYS[PARTNER_DEVELOPMENT_DAYS.length - 1].entries.map(
+      (entry) => `${entry.title.zh}: ${entry.summary.zh}`
+    ),
     artifactDownload: '開啟不可變下載',
     artifactAppStore: '開啟 App Store',
     artifactAppStoreArtifact: 'AeroNyx App Store 上架版本',
