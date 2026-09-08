@@ -973,4 +973,35 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
       }),
     ]),
   }),
+  // [PARTNER-DAILY 2026-09-08 by Codex] Separate source, reported tests and release evidence.
+  Object.freeze({
+    date: '2026-09-08',
+    entries: Object.freeze([
+      Object.freeze({
+        id: 'sep08-first-run', area: 'client', status: 'complete',
+        title: Object.freeze({ en: 'First-run wallet flow completed locally; device acceptance pending', zh: '首次啟動錢包流程本地完成；待真機驗收' }),
+        summary: Object.freeze({ en: 'Local integration 8f7d23093 includes identity-bound resumable setup, strict wallet-existence checks and optional AI authentication. The delivered test record reports three real Widget/Navigator flows, seven setup contracts, one identity retry test and two UI regressions passing, with analyzer at zero issues. This audit inspected source without rerunning those tests. This is development completion, not a new installer or public release.', zh: '本地整合 8f7d23093 包含身份綁定的可恢復設定、嚴格錢包存在性檢查及可稍後完成的 AI 認證。交付測試紀錄顯示三條真實導航流程、七項設定契約、一項身份重試及兩項 UI 回歸通過，分析為零問題。本次核對源碼而未重跑測試。此為開發完成，並非新安裝包或公開發布。' }),
+      }),
+      Object.freeze({
+        id: 'sep08-community', area: 'node', status: 'active',
+        title: Object.freeze({ en: 'Community configuration and recovery integrated locally', zh: 'Community 設定及恢復已本地整合' }),
+        summary: Object.freeze({ en: 'Local Rust c11faee combines Community configuration generation with background discovery restart-recovery test source. Configuration output uses create-new semantics and onion-middle participation remains opt-in. Public main remains 1d23f46. This audit did not rerun Rust tests or verify Linux startup, public-network delivery or deployment. Community startup still needs follow-up on TUN and VPN-gateway dependencies.', zh: '本地 Rust c11faee 合入 Community 設定產生器與背景 discovery 重啟恢復測試源碼。設定輸出僅建立新檔，onion-middle 參與仍須主動開啟。公開 main 仍是 1d23f46。本次未重跑 Rust 測試，也未驗證 Linux 啟動、公網投遞或部署；Community 啟動仍須處理 TUN 與 VPN gateway 依賴。' }),
+      }),
+      Object.freeze({
+        id: 'sep08-candidate', area: 'client', status: 'active',
+        title: Object.freeze({ en: 'Build 24 source prepared; no new release established', zh: 'Build 24 源碼已準備；未確認新發布' }),
+        summary: Object.freeze({ en: 'The local Build 23 manifest records 1.0.18 build 23 and a DMG is present. Build 24 source is frozen at 72f7a9059, with first-run work in a separate source integration. No Build 24 installer or completed notarization was verified. Local artifacts do not establish public distribution; existing download and cross-platform release references are retained.', zh: '本地 Build 23 manifest 記錄 1.0.18 build 23，且存在 DMG。Build 24 源碼凍結於 72f7a9059，首次啟動工作位於另一源碼整合分支。未驗證 Build 24 安裝包或公證完成。本地產物不代表公開分發；現有下載及跨平台發布基線維持不變。' }),
+      }),
+      Object.freeze({
+        id: 'sep08-vpn', area: 'client', status: 'active',
+        title: Object.freeze({ en: 'VPN stop-intent defect confirmed; repair underway', zh: '確認 VPN 停止意願缺陷；修復進行中' }),
+        summary: Object.freeze({ en: 'At reviewed client 8f7d23093, disconnect can return when already disconnected before cancelling retries and persisting connection intent as false, leaving a path for foreground resume to retry after a stop request. Repair and a behavioral regression are in progress. Native profile-selection races require separate verification and are not a proven field-incident cause. September 6 regression failures are not declared resolved by this audit.', zh: '在已審客戶端 8f7d23093，disconnect 可能在已斷線時提早返回，尚未取消重試或保存停止意願，使恢復前台後仍可能重試。修復與行為回歸正在進行。原生 profile 選擇競態須另行驗證，並非已證實的現場事故根因。本次未宣稱 9 月 6 日回歸失敗已全部解決。' }),
+      }),
+      Object.freeze({
+        id: 'sep08-next', area: 'node', status: 'next',
+        title: Object.freeze({ en: 'Next: verify Community startup and final client candidate', zh: '下一步：驗證 Community 啟動與最終客戶端候選' }),
+        summary: Object.freeze({ en: 'Verify Community operation without VPN data-plane dependencies and Linux-specific behavior. Close the client stop-intent regression and verify the final packaged revision on a real Mac. Source publication, notarization, distribution and live acceptance each need separate evidence before release claims change.', zh: '驗證 Community 不依賴 VPN 資料平面的運行與 Linux 專屬行為。客戶端須完成停止意願回歸，並於真實 Mac 驗證最終打包版本。源碼發布、公證、分發及線上驗收各須獨立證據，才更新發布結論。' }),
+      }),
+    ]),
+  }),
 ]);

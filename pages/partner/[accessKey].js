@@ -109,15 +109,15 @@ import {
 import { PARTNER_DEVELOPMENT_DAYS } from '../../data/partnerDevelopmentCalendar';
 
 const CLIENT_BUILD = `${RELEASE_VERSION}+${RELEASE_BUILD}`;
-// [PARTNER-DAILY 2026-09-06 by Codex] Keep released and
+// [PARTNER-DAILY 2026-09-08 by Codex] Keep released and
 // locally verified integration evidence separate in the partner-facing export.
 const RUST_NODE_HEAD = '1d23f46';
 const RUST_NODE_COMMIT = '1d23f46ab4c497a2b3290b7d32905099a7b28009';
-const UNPUBLISHED_INTEGRATION_REVISION = '2104094';
-const UNPUBLISHED_INTEGRATION_COMMIT = '2104094cc2fc71aa3b74f55090705dcb80765acf';
-const VERIFIED_DATE = '2026-09-06';
-const REVIEW_REVISION = '6.8';
-const EVIDENCE_VERSION = 'r8-ddr-2026-09-06.1';
+const UNPUBLISHED_INTEGRATION_REVISION = 'c11faee';
+const UNPUBLISHED_INTEGRATION_COMMIT = 'c11faee2491bc686bff0f02d6983de771bcfb363';
+const VERIFIED_DATE = '2026-09-08';
+const REVIEW_REVISION = '6.9';
+const EVIDENCE_VERSION = 'r8-ddr-2026-09-08.1';
 const PARTNER_PROGRESS_ACCESS_KEY = 'f92fc1bea7d9afcb9d2478af7fe443f13721f52c59db0d9fcd3c02080fac0604';
 const REVIEW_WORKSPACE_STORAGE_KEY = 'aeronyx.partner.review.workspace.v1';
 const REVIEW_NOTES_MAX_LENGTH = 2000;
@@ -238,16 +238,16 @@ const CONTENT = {
     snapshotBody: 'These identifiers anchor the brief to a concrete client release and reviewed Rust main commit. Status is based on source and test evidence, not roadmap percentages.',
     snapshot: [
       { label: 'Client build', value: CLIENT_BUILD, detail: 'Current cross-platform release baseline' },
-      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · source checked September 6; deployment unverified' },
+      { label: 'Rust node head', value: RUST_NODE_HEAD, detail: 'GitHub main · source checked September 8; deployment unverified' },
       { label: 'Distribution', value: '4 platforms', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: 'Default service path', value: 'Managed relay', detail: 'Stable by default; decentralized paths remain selectable work' },
     ],
     revisionDeltaEyebrow: 'Since the previous brief',
-    // [PARTNER-DAILY 2026-09-06 by Codex] Include both
+    // [PARTNER-DAILY 2026-09-08 by Codex] Include both
     // Rust and client work while preserving each verification boundary.
-    revisionDeltaTitle: 'September 6 development update.',
-    revisionDeltaBody: `Public Rust source remains ${RUST_NODE_HEAD}. Local node ${UNPUBLISHED_INTEGRATION_REVISION} adds durability test coverage; local client fixes have focused checks and an unsigned build, but later VPN/Home regression still has four failures. Final packaging and real-device acceptance remain pending.`,
-    // [PARTNER-DAILY 2026-09-06 by Codex] Keep exported changes aligned with the latest calendar evidence.
+    revisionDeltaTitle: 'September 8 development update.',
+    revisionDeltaBody: `Public Rust remains ${RUST_NODE_HEAD}; local ${UNPUBLISHED_INTEGRATION_REVISION} integrates Community configuration and recovery tests. Client first-run source is complete with reported focused checks; final packaging, VPN stop-intent repair and device acceptance remain open.`,
+    // [PARTNER-DAILY 2026-09-08 by Codex] Keep exported changes aligned with the latest calendar evidence.
     revisionDeltaItems: PARTNER_DEVELOPMENT_DAYS[PARTNER_DEVELOPMENT_DAYS.length - 1].entries.map(
       (entry) => `${entry.title.en}: ${entry.summary.en}`
     ),
@@ -786,16 +786,16 @@ const CONTENT = {
     snapshotBody: '以下版本把頁面錨定到真實客戶端發布與已審核的 Rust main commit。狀態來自源碼與測試證據，不使用虛假的完成百分比。',
     snapshot: [
       { label: '客戶端版本', value: CLIENT_BUILD, detail: '目前跨平台正式發布基線' },
-      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · 9 月 6 日核對源碼；部署未驗證' },
+      { label: 'Rust 節點版本', value: RUST_NODE_HEAD, detail: 'GitHub main · 9 月 8 日核對源碼；部署未驗證' },
       { label: '發布平台', value: '4 個平台', detail: 'iOS · Android ARM64 · macOS · Windows' },
       { label: '默認服務路徑', value: 'Managed relay', detail: '默認保持穩定；去中心化路徑由用戶選擇' },
     ],
     revisionDeltaEyebrow: '相較上一版簡報',
-    // [PARTNER-DAILY 2026-09-06 by Codex] 同時納入 Rust
+    // [PARTNER-DAILY 2026-09-08 by Codex] 同時納入 Rust
     // 與客戶端工作，並保留各自的驗證邊界。
-    revisionDeltaTitle: '9 月 6 日開發更新。',
-    revisionDeltaBody: `公開 Rust 原始碼仍是 ${RUST_NODE_HEAD}。本地節點 ${UNPUBLISHED_INTEGRATION_REVISION} 新增持久化測試；本地客戶端修正有聚焦檢查與未簽名建置，但後續 VPN／首頁回歸仍有四項失敗。最終打包與真機驗收仍待完成。`,
-    // [PARTNER-DAILY 2026-09-06 by Codex] Keep exported changes aligned with the latest calendar evidence.
+    revisionDeltaTitle: '9 月 8 日開發更新。',
+    revisionDeltaBody: `公開 Rust 仍是 ${RUST_NODE_HEAD}；本地 ${UNPUBLISHED_INTEGRATION_REVISION} 整合 Community 設定與恢復測試。客戶端首次啟動源碼已完成並有聚焦檢查紀錄；最終打包、VPN 停止意願修復及真機驗收仍待完成。`,
+    // [PARTNER-DAILY 2026-09-08 by Codex] Keep exported changes aligned with the latest calendar evidence.
     revisionDeltaItems: PARTNER_DEVELOPMENT_DAYS[PARTNER_DEVELOPMENT_DAYS.length - 1].entries.map(
       (entry) => `${entry.title.zh}: ${entry.summary.zh}`
     ),
