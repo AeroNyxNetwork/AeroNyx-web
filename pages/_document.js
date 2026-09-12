@@ -56,7 +56,7 @@ export default function Document(props) {
         <link rel="manifest" href="/site.webmanifest" />
 
         {/* Meta tags */}
-        <meta name="theme-color" content="#7762F3" />
+        <meta name="theme-color" content="#7462F7" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </Head>

@@ -144,7 +144,7 @@ const SiteHeader = () => {
   const clientAccessLabel = copy.nav.downloadClient || copy.nav.downloads || copy.nav.privacyAccess;
   const isActiveRoute = (href) => !href.startsWith('http') && router.pathname === href;
   const desktopNavClass = (href) => (
-    `relative inline-flex min-h-[44px] items-center text-xs uppercase tracking-eyebrow transition-colors xl:text-sm ${
+    `relative inline-flex min-h-[44px] items-center text-[13px] font-medium transition-colors xl:text-sm ${
       isActiveRoute(href)
         ? 'text-white'
         : 'text-white/60 hover:text-white'
@@ -263,12 +263,12 @@ const SiteHeader = () => {
     >
       {/* Background that appears on scroll */}
       <motion.div 
-        className="absolute inset-0 backdrop-blur-md"
+        className="absolute inset-0 backdrop-blur-xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: scrolled ? 1 : 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="absolute inset-0 bg-black/80" />
+        <div className="absolute inset-0" style={{ background: 'rgba(6,6,14,0.72)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }} />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
       </motion.div>
       
@@ -279,7 +279,7 @@ const SiteHeader = () => {
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" locale={locale} className="flex min-h-[44px] items-center space-x-2">
               <AeroNyxLogo width={32} height={32} />
-              <span className="text-lg font-light tracking-normal lg:text-xl">AeroNyx</span>
+              <span className="text-lg font-semibold tracking-tight lg:text-xl">AeroNyx</span>
             </Link>
           </div>
           
@@ -289,7 +289,7 @@ const SiteHeader = () => {
               <div className="relative" data-protocol-menu>
                 <button
                   type="button"
-                  className={`relative inline-flex min-h-[44px] items-center gap-1.5 text-xs uppercase tracking-eyebrow transition-colors xl:text-sm ${
+                  className={`relative inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-medium transition-colors xl:text-sm ${
                     protocolActive ? 'text-white' : 'text-white/60 hover:text-white'
                   }`}
                   aria-expanded={isProtocolOpen}
@@ -321,7 +321,7 @@ const SiteHeader = () => {
                       : 'invisible pointer-events-none opacity-0'
                   }`}
                 >
-                  <div className="border border-white/10 bg-black/95 p-2 shadow-2xl shadow-black/40">
+                  <div className="rounded-ng-md border border-white/10 bg-[#0D0D1C]/95 p-2 shadow-2xl shadow-black/40">
                     {protocolSubLinks.map((item) => (
                       <Link
                         key={item.href}
@@ -399,7 +399,7 @@ const SiteHeader = () => {
               <div className={`absolute right-0 top-full z-30 w-44 pt-3 transition-all ${
                 isLanguageOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
               }`}>
-                <div id="language-menu" role="menu" className="border border-white/10 bg-black/95 p-2 shadow-2xl shadow-black/40">
+                <div id="language-menu" role="menu" className="rounded-ng-md border border-white/10 bg-[#0D0D1C]/95 p-2 shadow-2xl shadow-black/40">
                   {SUPPORTED_LOCALES.map((item) => (
                     <Link
                       key={item.code}
@@ -426,7 +426,7 @@ const SiteHeader = () => {
                 <Link
                   href={clientAccessHref}
                   locale={locale}
-                  className="relative z-10 flex min-h-[44px] items-center border border-white/20 px-5 py-2.5 text-xs uppercase tracking-eyebrow transition-colors hover:border-white/40 hover:bg-white/[0.03] xl:px-6 xl:text-sm"
+                  className="relative z-10 flex min-h-[44px] items-center rounded-pill bg-nyx px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_30px_rgba(116,98,247,0.28)] transition-colors hover:bg-[#7F6EFF] xl:px-6"
                 >
                   {clientAccessLabel}
                 </Link>
@@ -469,7 +469,7 @@ const SiteHeader = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
           >
-            <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
+            <div className="absolute inset-0 bg-[#06060E]/95 backdrop-blur-xl" />
             <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
             
             <nav className="relative z-10 flex max-h-[calc(100dvh-4rem)] flex-col space-y-3 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
@@ -536,7 +536,7 @@ const SiteHeader = () => {
                 href={clientAccessHref}
                 locale={locale}
                 onClick={() => setIsOpen(false)}
-                className="mt-2 flex min-h-[48px] min-w-0 items-center justify-center break-words border border-white/20 px-4 py-3 text-center leading-snug transition-colors hover:border-white/40 hover:bg-white/[0.03]"
+                className="mt-2 flex min-h-[48px] min-w-0 items-center justify-center break-words rounded-pill bg-nyx px-4 py-3 text-center font-semibold leading-snug text-white transition-colors hover:bg-[#7F6EFF]"
               >
                 {clientAccessLabel}
               </Link>

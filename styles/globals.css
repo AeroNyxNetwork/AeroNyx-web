@@ -96,17 +96,17 @@
 
 :root {
   /* Legacy brand variables — kept for backward compatibility */
-  --primary: #7762F3;
-  --primary-light: #9788F7;
-  --primary-dark: #5945C4;
+  --primary: #7462F7;
+  --primary-light: #A594FF;
+  --primary-dark: #5548A8;
   --secondary: #5FBBF7;
   --secondary-light: #8AD1FF;
   --secondary-dark: #368AD1;
 
   /* v3.0 surface + motion tokens */
-  --surface-0: #08080D;
-  --surface-1: #0C0C13;
-  --surface-2: #111118;
+  --surface-0: #06060E;
+  --surface-1: #0D0D1C;
+  --surface-2: #131324;
   --line-weak: rgba(255, 255, 255, 0.08);
   --line-strong: rgba(255, 255, 255, 0.16);
 
@@ -118,9 +118,10 @@
 
   /* Font variables — populated by next/font in _app.js/_document.js.
      Fallbacks keep the site working before that wiring lands. */
-  --font-sans: 'Inter';
-  --font-display: 'Inter Tight';
+  --font-sans: 'Geist';
+  --font-display: 'Geist';
   --font-mono: ui-monospace;
+  --font-unbounded: 'Unbounded';
   --font-apple-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text',
     'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-cjk-tc: -apple-system, BlinkMacSystemFont, 'PingFang TC',
@@ -658,3 +659,237 @@ img, svg {
 /* Z-index hierarchy:
  * 0: page background · 1: constellation canvas · 2: gradient overlays
  * 5: general content · 10: headings/sections · 50: header · 100+: modals */
+
+/* ============================================================================
+   NIGHTGLASS WEB (2026-09-12 by Claude) — the app's design language on the
+   site. Tokens mirror docs/nyx-design-language-v2.md in the app repo; the
+   rationale is docs/nightglass-web-brief.md. New sections use only these
+   utilities plus the tailwind tokens ink / slate / nyx / signal / cyan.
+   ============================================================================ */
+:root {
+  --ng-ink: #06060E;
+  --ng-slate: #0D0D1C;
+  --ng-slate2: #131324;
+  --ng-slate3: #1A1A2E;
+  --ng-nyx: #7462F7;
+  --ng-nyx-lt: #A594FF;
+  --ng-nyx-dk: #5548A8;
+  --ng-signal: #14F195;
+  --ng-cyan: #00C2E0;
+  --ng-amber: #F5A623;
+}
+.ng-display {
+  font-family: var(--font-unbounded), var(--font-display), var(--font-apple-ui);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.ng-title {
+  font-family: var(--font-unbounded), var(--font-display), var(--font-apple-ui);
+  font-weight: 700;
+  font-size: clamp(2.15rem, 4.7vw, 3.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  color: #fff;
+  text-shadow: none;
+}
+:lang(zh-Hant) .ng-title { font-family: var(--font-cjk-tc); }
+:lang(zh-Hans) .ng-title { font-family: var(--font-cjk-sc); }
+:lang(ja) .ng-title { font-family: var(--font-cjk-ja); }
+:lang(ko) .ng-title { font-family: var(--font-cjk-ko); }
+.ng-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(165, 148, 255, 0.28);
+  background: rgba(116, 98, 247, 0.08);
+  padding: 0.45rem 0.9rem;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(214, 208, 255, 0.86);
+}
+:lang(zh-Hant) .ng-eyebrow,
+:lang(zh-Hans) .ng-eyebrow,
+:lang(ja) .ng-eyebrow,
+:lang(ko) .ng-eyebrow {
+  letter-spacing: 0.04em;
+}
+.ng-lede {
+  max-width: 36rem;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.62);
+  text-wrap: pretty;
+}
+.ng-btn {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  transition: transform var(--dur-fast) var(--ease-out-brand),
+    background-color var(--dur-fast), border-color var(--dur-fast);
+}
+.ng-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ng-ink), 0 0 0 4px var(--ng-nyx-lt);
+}
+.ng-btn-primary {
+  background: var(--ng-nyx);
+  color: #fff;
+  box-shadow: 0 12px 40px rgba(116, 98, 247, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.ng-btn-primary:hover {
+  transform: translateY(-1px);
+  background: #7f6eff;
+}
+.ng-btn-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.86);
+}
+.ng-btn-ghost:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+}
+.ng-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  transition: color var(--dur-fast);
+}
+.ng-link:hover { color: var(--ng-nyx-lt); }
+.ng-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.3rem 0.65rem;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+}
+.ng-glass {
+  background: rgba(13, 13, 28, 0.72);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.24);
+}
+.ng-surface {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--ng-slate);
+  border-radius: 20px;
+}
+.ng-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--ng-slate);
+  border-radius: 20px;
+  transition: border-color var(--dur-base) var(--ease-out-brand);
+}
+.ng-card:hover { border-color: rgba(165, 148, 255, 0.3); }
+.ng-section { padding: 4.5rem 0; }
+.ng-section-head h2 {
+  font-family: var(--font-display), var(--font-apple-ui);
+  font-weight: 600;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  text-shadow: none;
+}
+.ng-hero { background: var(--ng-ink); }
+.ng-hero-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 55% at 72% 42%, rgba(116, 98, 247, 0.2), transparent 70%),
+    radial-gradient(40% 40% at 18% 85%, rgba(0, 194, 224, 0.06), transparent 70%);
+}
+.ng-hero-field::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 40%, #000, transparent);
+  mask-image: radial-gradient(70% 60% at 50% 40%, #000, transparent);
+}
+.ng-phone {
+  border-radius: 44px;
+  background: var(--ng-ink);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.65), 0 0 0 6px rgba(255, 255, 255, 0.03),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+.ng-proofstrip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.5rem;
+  text-align: left;
+}
+.ng-proofstrip dt {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+}
+:lang(zh-Hant) .ng-proofstrip dt,
+:lang(zh-Hans) .ng-proofstrip dt,
+:lang(ja) .ng-proofstrip dt,
+:lang(ko) .ng-proofstrip dt {
+  letter-spacing: 0.04em;
+}
+.ng-proofstrip dd { margin: 0.6rem 0 0; }
+.ng-num {
+  font-size: 1.6rem;
+  line-height: 1.1;
+  color: #fff;
+}
+.ng-live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 0.5rem;
+  border-radius: 999px;
+  background: var(--ng-signal);
+  box-shadow: 0 0 10px rgba(20, 241, 149, 0.6);
+  animation: ng-pulse 2.2s ease-in-out infinite;
+}
+@keyframes ng-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@media (min-width: 768px) {
+  .ng-section { padding: 7rem 0; }
+}
+@media (max-width: 640px) {
+  .ng-proofstrip {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+    text-align: center;
+  }
+  .ng-proofstrip dt { justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-btn, .ng-card, .ng-link { transition: none; }
+  .ng-live-dot { animation: none; }
+}

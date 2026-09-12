@@ -2,6 +2,12 @@
  * ============================================
  * File: tailwind.config.js
  * ============================================
+ * Modification Reason: v2.2 — Nightglass tokens (2026-09-12 by Claude).
+ *   brand/surface now carry the app's exact values (nyx #7462F7, ink
+ *   #06060E scale); ink / slate / nyx / signal / cyan added verbatim from
+ *   docs/nyx-design-language-v2.md; font-unbounded and the 10/14/20/28 radii.
+ *   Legacy tokens untouched. See docs/nightglass-web-brief.md.
+ *
  * Modification Reason: v2.1 — 2026 typography trust pass.
  *   Display text tokens now use zero letter-spacing and a restrained fixed
  *   scale so section headlines feel institutional and stable across desktop,
@@ -87,30 +93,40 @@ module.exports = {
          * v2.0 TOKEN SYSTEM — all new/refactored sections use these.
          * --------------------------------------------------------- */
         brand: {
-          DEFAULT: '#7762F3',
-          light: '#9788F7',
-          dark: '#5945C4',
-          faint: 'rgba(119, 98, 243, 0.07)',  // badge/card tint
-          line: 'rgba(119, 98, 243, 0.22)',   // emphasized borders
+          DEFAULT: '#7462F7',
+          light: '#A594FF',
+          dark: '#5548A8',
+          faint: 'rgba(116, 98, 247, 0.07)',  // badge/card tint
+          line: 'rgba(116, 98, 247, 0.22)',   // emphasized borders
         },
         cipher: {
           DEFAULT: '#5FBBF7',                 // "network view" contexts only
           light: '#8AD1FF',
         },
         surface: {
-          0: '#08080D',   // page base (warm near-black, not #000)
-          1: '#0C0C13',   // alternating section base
-          2: '#111118',   // cards
-          3: '#16161F',   // card hover / overlays
+          0: '#06060E',   // ink — the app's OLED ground
+          1: '#0D0D1C',   // slate — alternating section base
+          2: '#131324',   // slate2 — cards, inputs
+          3: '#1A1A2E',   // slate3 — hover / overlays
         },
-        ok: '#9788F7',    // "ready/healthy" — light purple, NEVER green
+        ok: '#A594FF',    // "ready/healthy" — light purple, NEVER green
         warn: '#D4B483',  // muted amber
+
+        /* ---------------------------------------------------------
+         * NIGHTGLASS (2026-09-12) — the app's tokens, verbatim.
+         * --------------------------------------------------------- */
+        ink: '#06060E',
+        slate: { DEFAULT: '#0D0D1C', 2: '#131324', 3: '#1A1A2E' },
+        nyx: { DEFAULT: '#7462F7', light: '#A594FF', dark: '#5548A8' },
+        signal: '#14F195',   // live / received moments only
+        cyan: '#00C2E0',     // the network view (ciphertext)
       },
 
       fontFamily: {
         sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
         display: ['var(--font-display)', 'var(--font-sans)', 'Inter', 'sans-serif'],
         mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        unbounded: ['var(--font-unbounded)', 'var(--font-display)', 'sans-serif'],
       },
 
       fontSize: {
@@ -125,6 +141,10 @@ module.exports = {
         sm: '2px',
         DEFAULT: '4px',
         md: '6px',
+        ng: '10px',      // Nightglass radius scale 10 / 14 / 20 / 28
+        'ng-md': '14px',
+        'ng-lg': '20px',
+        'ng-xl': '28px',
         pill: '999px',  // status dots / pills only
       },
 
