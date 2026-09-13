@@ -14,8 +14,7 @@
 import Container from '../ui/Container';
 import RouteDiagram from '../ui/RouteDiagram';
 import useReducedMotion from '../../lib/hooks/useReducedMotion';
-
-const ARCHITECTURE_DOCS = 'https://docs.aeronyx.network/intro/aeronyx-app-and-protocol-architecture';
+import { ARCHITECTURE_DOCS } from '../../lib/external-links';
 
 export default function HowItWorks({ copy }) {
   const h = copy.howItWorks;

@@ -24,12 +24,28 @@
  * clip-path, and touch-action:pan-y with horizontal-gesture detection so the
  * lens never swallows the page scroll on phones.
  *
+ * 2026-09-13 LAYER FIX — the visible "the lens hides nothing" bug.
+ * styles/globals.css carries two page-wide rules that hijack Tailwind utility
+ * classes:
+ *     .text-white, .text-neutral-300, .text-neutral-200 { position: relative;
+ *                                                        z-index: 5 }
+ *     .text-center                                      { position: relative;
+ *                                                        z-index: 5 }
+ * They exist so page copy floats above the background canvas, but they reach
+ * inside every component. Every plaintext element in the phone carrying
+ * `text-white` — the contact name, the received amount, the avatar, the tab
+ * labels — was lifted to z-index 5 while the ciphertext overlay sat at
+ * z-index auto, so the plaintext painted straight through the "sealed" view
+ * wherever the lens was. The clip was never the problem. The two layers now
+ * declare their own stacking order (0 / 1 / 2) and isolate themselves, so no
+ * page-level utility rule can reorder what lives inside them.
+ *
  * Dependencies: framer-motion; styles/globals.css (.ng-phone, .ng-glass,
  * .ng-display); lib/i18n-nightglass (copy.hero + copy.phone).
  * ============================================================================
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const NYX = '#7462F7';
@@ -52,6 +68,7 @@ const rand = seeded(0x4e59);
 const HEX = '0123456789abcdef';
 const hex = (n) => Array.from({ length: n }, () => HEX[Math.floor(rand() * 16)]).join('');
 const BLOBS = [
+  { bytes: 164, hex: hex(52) },
   { bytes: 182, hex: hex(64) },
   { bytes: 233, hex: hex(84) },
   { bytes: 148, hex: hex(56) },
@@ -148,7 +165,10 @@ function Bubble({ side, cipher, blob, meta, children }) {
   );
 }
 
-function PhoneScreen({ phone, cipher }) {
+/* memo: the sweep changes `split` up to 60×/s on the wrapper above. Neither
+   screen depends on it, and both props are referentially stable, so the two
+   ~80-node subtrees are reconciled once instead of once per frame. */
+const PhoneScreen = memo(function PhoneScreen({ phone, cipher }) {
   return (
     <div className="absolute inset-0 flex flex-col" style={{ background: cipher ? '#070A14' : 'var(--ng-ink)' }}>
       {/* Header (status-bar height reserved for the island) */}
@@ -185,10 +205,11 @@ function PhoneScreen({ phone, cipher }) {
 
       {/* Conversation */}
       <div className="flex flex-1 flex-col justify-end gap-2.5 px-3 pb-3">
-        <Bubble side="right" cipher={cipher} blob={BLOBS[0]} meta={phone.cipherMeta}>{phone.m1}</Bubble>
-        <Bubble side="left" cipher={cipher} blob={BLOBS[1]} meta={phone.cipherMeta}>{phone.m2}</Bubble>
+        <Bubble side="left" cipher={cipher} blob={BLOBS[0]} meta={phone.cipherMeta}>{phone.m0}</Bubble>
+        <Bubble side="right" cipher={cipher} blob={BLOBS[1]} meta={phone.cipherMeta}>{phone.m1}</Bubble>
+        <Bubble side="left" cipher={cipher} blob={BLOBS[2]} meta={phone.cipherMeta}>{phone.m2}</Bubble>
         {cipher ? (
-          <Bubble side="left" cipher blob={BLOBS[2]} meta={phone.cipherMeta} />
+          <Bubble side="left" cipher blob={BLOBS[3]} meta={phone.cipherMeta} />
         ) : (
           <div
             className="max-w-[78%] self-start rounded-[14px] px-4 py-3"
@@ -202,7 +223,7 @@ function PhoneScreen({ phone, cipher }) {
             <div className="mt-1.5 text-[11px] text-white/45" style={MONO}>{phone.receivedMeta}</div>
           </div>
         )}
-        <Bubble side="right" cipher={cipher} blob={BLOBS[3]} meta={phone.cipherMeta}>{phone.m3}</Bubble>
+        <Bubble side="right" cipher={cipher} blob={BLOBS[4]} meta={phone.cipherMeta}>{phone.m3}</Bubble>
       </div>
 
       {/* Composer */}
@@ -260,7 +281,7 @@ function PhoneScreen({ phone, cipher }) {
       </div>
     </div>
   );
-}
+});
 
 export default function ProductLens({ copy, reduced }) {
   const { hero, phone } = copy;
@@ -409,19 +430,36 @@ export default function ProductLens({ copy, reduced }) {
       >
         {/* Height comes from .ng-phone::before (padding-top 211.11% = 9:19), not
             from aspect-ratio: Safari < 15 and older WebViews ignore aspect-ratio
-            and collapsed the phone to a 1px line. */}
-        <PhoneScreen phone={phone} cipher={false} />
-        <div className="absolute inset-0" style={{ WebkitClipPath: `inset(0 0 0 ${split}%)`, clipPath: `inset(0 0 0 ${split}%)` }}>
+            and collapsed the phone to a 1px line.
+
+            zIndex + isolation on BOTH screens is load-bearing, not decoration:
+            without a stacking context of their own, the page-wide
+            `.text-white { position: relative; z-index: 5 }` rule in globals.css
+            lifts individual plaintext nodes above the sealed overlay and the
+            lens stops hiding anything. See the header note. */}
+        <div className="absolute inset-0" style={{ zIndex: 0, isolation: 'isolate' }}>
+          <PhoneScreen phone={phone} cipher={false} />
+        </div>
+        <div
+          className="absolute inset-0"
+          style={{
+            zIndex: 1,
+            isolation: 'isolate',
+            WebkitClipPath: `inset(0 0 0 ${split}%)`,
+            clipPath: `inset(0 0 0 ${split}%)`,
+          }}
+        >
           <PhoneScreen phone={phone} cipher />
         </div>
 
         {/* Dynamic island */}
-        <div className="pointer-events-none absolute left-1/2 top-3 h-[22px] w-[88px] -translate-x-1/2 rounded-pill bg-black" />
+        <div className="pointer-events-none absolute left-1/2 top-3 h-[22px] w-[88px] -translate-x-1/2 rounded-pill bg-black" style={{ zIndex: 2 }} />
 
         {/* Divider + handle */}
         <div
           className="pointer-events-none absolute bottom-0 top-0 w-[2px]"
           style={{
+            zIndex: 2,
             left: `${split}%`,
             transform: 'translateX(-1px)',
             background: `linear-gradient(to bottom, transparent, ${CYAN}, transparent)`,
@@ -431,6 +469,7 @@ export default function ProductLens({ copy, reduced }) {
         <div
           className="pointer-events-none absolute flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-pill"
           style={{
+            zIndex: 2,
             left: `${split}%`,
             top: '50%',
             background: 'rgba(6,6,14,0.92)',
@@ -449,7 +488,7 @@ export default function ProductLens({ copy, reduced }) {
               exit={{ opacity: 0, y: 4 }}
               transition={{ type: 'spring', stiffness: 500, damping: 32 }}
               className="absolute right-4 top-14 rounded-[10px] border px-2.5 py-1.5 text-[10px] tracking-[0.12em]"
-              style={{ ...MONO, color: CYAN, borderColor: 'rgba(0,194,224,0.4)', background: 'rgba(7,10,20,0.92)' }}
+              style={{ ...MONO, zIndex: 2, color: CYAN, borderColor: 'rgba(0,194,224,0.4)', background: 'rgba(7,10,20,0.92)' }}
             >
               {hero.stamp}
             </motion.div>

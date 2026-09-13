@@ -11,12 +11,11 @@
 import { useState } from 'react';
 import Container from '../ui/Container';
 import DownloadsModal from '../ui/DownloadsModal';
-
-const DOCS = 'https://docs.aeronyx.network/';
-const CONTACT = 'mailto:hi@aeronyx.network';
+import { DOCS, CONTACT, WEB_APP } from '../../lib/external-links';
 
 export default function ClosingCta({ copy }) {
   const c = copy.closing;
+  const b = copy.browser;
   const [downloadsOpen, setDownloadsOpen] = useState(false);
 
   return (
@@ -30,8 +29,12 @@ export default function ClosingCta({ copy }) {
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <button type="button" onClick={() => setDownloadsOpen(true)} className="ng-btn ng-btn-primary w-full sm:w-auto">{c.download}</button>
-              <a href={DOCS} target="_blank" rel="noopener noreferrer" className="ng-btn ng-btn-ghost w-full sm:w-auto">{c.docs}</a>
-              <a href={CONTACT} className="ng-link px-2 py-3">{c.talk} →</a>
+              <a href={WEB_APP} target="_blank" rel="noopener noreferrer" className="ng-btn ng-btn-ghost w-full sm:w-auto">{b.cta}</a>
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+              <a href={DOCS} target="_blank" rel="noopener noreferrer" className="ng-link" style={{ color: 'rgba(255,255,255,0.62)' }}>{c.docs} →</a>
+              <a href={CONTACT} className="ng-link" style={{ color: 'rgba(255,255,255,0.62)' }}>{c.talk} →</a>
             </div>
 
             <ul className="mt-10 flex flex-wrap items-center justify-center gap-2">

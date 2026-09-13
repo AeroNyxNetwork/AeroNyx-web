@@ -835,6 +835,12 @@ img, svg {
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.65), 0 0 0 6px rgba(255, 255, 255, 0.03),
     inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  /* Own stacking context. Above, `.text-white`/`.text-center` are given
+     position:relative + z-index:5 page-wide so copy floats over the background
+     canvas; those rules reach into every component. Isolating here (and per
+     layer in ProductLens) keeps the phone's internal order under the
+     component's control instead of a utility class's. */
+  isolation: isolate;
 }
 /* 9:19 chassis height without aspect-ratio (Safari < 15 / older WebViews
    ignore it and collapsed the phone); the screens are absolutely positioned

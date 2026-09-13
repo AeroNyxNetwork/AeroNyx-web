@@ -32,11 +32,13 @@ import AnimatedMessageCounter from '../ui/AnimatedMessageCounter';
 import DownloadsModal from '../ui/DownloadsModal';
 import useNetworkStats from '../../lib/hooks/useNetworkStats';
 import useReducedMotion from '../../lib/hooks/useReducedMotion';
+import { WEB_APP } from '../../lib/external-links';
 
 const rise = (i) => ({ animationDelay: `${0.08 + i * 0.07}s` });
 
 export default function NightglassHero({ copy, messages }) {
   const h = copy.hero;
+  const b = copy.browser;
   const syncing = messages?.homeStats?.syncing || 'Syncing';
   const reduced = useReducedMotion();
   const [downloadsOpen, setDownloadsOpen] = useState(false);
@@ -66,7 +68,22 @@ export default function NightglassHero({ copy, messages }) {
               </a>
             </div>
 
-            <dl className="ng-proofstrip ng-rise mt-10" style={rise(4)}>
+            {/* The second door: app.aeronyx.network. Phrased so it never reads
+                as "no install needed" — browser chat signs in by scanning
+                with the app. */}
+            <p className="ng-rise mt-4 text-[13px]" style={rise(4)}>
+              <a
+                href={WEB_APP}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ng-link font-normal"
+                style={{ color: 'rgba(255,255,255,0.52)' }}
+              >
+                {b.heroLink} →
+              </a>
+            </p>
+
+            <dl className="ng-proofstrip ng-rise mt-10" style={rise(5)}>
               <div>
                 <dt>
                   <span className="ng-live-dot" aria-hidden="true" />

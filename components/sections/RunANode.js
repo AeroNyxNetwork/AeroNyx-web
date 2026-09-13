@@ -18,9 +18,8 @@
 
 import Container from '../ui/Container';
 import useNetworkStats from '../../lib/hooks/useNetworkStats';
+import { NODE_GUIDE, NODEBOARD } from '../../lib/external-links';
 
-const NODE_GUIDE = 'https://docs.aeronyx.network/node-operators/rust-node-operations-and-health-checks';
-const NODEBOARD = 'https://app.aeronyx.network/';
 const MONO = { fontFamily: 'var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace' };
 
 function NodeCard({ card }) {

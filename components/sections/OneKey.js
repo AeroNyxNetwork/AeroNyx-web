@@ -23,6 +23,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Container from '../ui/Container';
 import DownloadsModal from '../ui/DownloadsModal';
+import { WEB_CHAT } from '../../lib/external-links';
 
 const NYX = '#7462F7';
 const NYX_LT = '#A594FF';
@@ -130,7 +131,7 @@ export default function OneKey({ copy, locale }) {
                 <div className="mt-4 flex flex-wrap gap-1.5">
                   {panel.chips.map((chip) => <span key={chip} className="ng-chip">{chip}</span>)}
                 </div>
-                <div className="mt-auto pt-6">
+                <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-6">
                   {panel.href === 'download' ? (
                     <button type="button" onClick={() => setDownloadsOpen(true)} className="ng-link">
                       {panel.cta} →
@@ -139,6 +140,19 @@ export default function OneKey({ copy, locale }) {
                     <Link href={panel.href} locale={locale} className="ng-link">
                       {panel.cta} →
                     </Link>
+                  )}
+                  {/* Messages panel also opens the browser chat at
+                      app.aeronyx.network/chat. */}
+                  {i === 0 && (
+                    <a
+                      href={WEB_CHAT}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ng-link font-normal"
+                      style={{ color: 'rgba(255,255,255,0.52)' }}
+                    >
+                      {copy.browser.chat} →
+                    </a>
                   )}
                 </div>
               </div>
