@@ -3,30 +3,29 @@
  * index.js - Homepage, product-led (Nightglass pass)
  * ============================================
  * [NIGHTGLASS-WEB 2026-09-12 by Claude] Section order:
- *   1. NightglassHero       — the claim, the Product Lens, the live proof strip
- *   2. NetworkProof         — five privacy-safe aggregates (traffic, packets,
- *                             nodes, route readiness, verifiable blind ledger)
- *   3. OneKey               — messages / confidential AI / wallet, one key
- *   4. VisibilityLedger     — what each layer can see
- *   5. NorthStarBand        — the covenant (#north-star-plan kept)
- *   6. ProtocolArchitecture — how it works (#how-it-works kept)
- *   7. JoinNetwork          — run a node (#join-network)
- *   8. FutureVision         — roadmap (#vision)
- *   9. SophisticatedCTA     — final conversion
+ *   1. NightglassHero   — the claim, the Product Lens, the live proof strip
+ *   2. NetworkProof     — privacy-safe network totals (traffic, packets,
+ *                         nodes, private routes, verifiable ledger)
+ *   3. OneKey           — messages / private AI / wallet, one key
+ *   4. VisibilityLedger — who sees what (#visibility)
+ *   5. NorthStarBand    — the covenant (#north-star-plan kept)
+ *   6. HowItWorks       — sealed → carried → opened (#how-it-works kept)
+ *   7. RunANode         — install / carry / watch (#join-network kept)
+ *   8. Roadmap          — 2026 / 2028 / 2030 in plain words (#vision kept)
+ *   9. ClosingCta       — download / docs / talk to us
+ *
+ * 2026-09-13: sections 6–9 replaced ProtocolArchitecture, JoinNetwork,
+ * FutureVision and SophisticatedCTA. Those read protocol vocabulary out of
+ * lib/i18n and JoinNetwork carried a four-step slideshow (orbiting dots,
+ * rotating ring, random background lines, height jumps on step change).
+ * The new sections speak the same plain register as the hero and read from
+ * lib/i18n-nightglass; the anchors the header and the hero rely on are kept.
  *
  * Kept from v6.x: getStaticProps({ locale }) → pageLocale, explicit
  * activeLocale propagation into the locale-aware sections and the footer,
  * and the SEO component contract (canonical + hreflang live in SEO.js).
- *
- * What left this page: NarrativeHero (protocol-first headline, eye canvas,
- * mock agent), HomeNetworkStats (readiness diagnostics on the front page —
- * its ledger evidence moved into NetworkProof), CorePrimitives and
- * ProductsEcosystem (their content lives on /privacy-network and /memchain,
- * which stay and are linked from OneKey and the nav). Rationale, the VC read
- * and the type/color decisions: docs/nightglass-web-brief.md.
- *
- * Copy for the new sections: lib/i18n-nightglass.js (7 locales, deep-merged
- * over English). Existing sections keep reading lib/i18n.
+ * Rationale, the VC read and the type/color decisions:
+ * docs/nightglass-web-brief.md.
  * ============================================
  */
 
@@ -45,10 +44,10 @@ import NetworkProof from '../components/sections/NetworkProof';
 import OneKey from '../components/sections/OneKey';
 import VisibilityLedger from '../components/sections/VisibilityLedger';
 import NorthStarBand from '../components/sections/NorthStarBand';
-import ProtocolArchitecture from '../components/sections/ProtocolArchitecture';
-import JoinNetwork from '../components/sections/JoinNetwork';
-import FutureVision from '../components/sections/FutureVision';
-import SophisticatedCTA from '../components/sections/SophisticatedCTA';
+import HowItWorks from '../components/sections/HowItWorks';
+import RunANode from '../components/sections/RunANode';
+import Roadmap from '../components/sections/Roadmap';
+import ClosingCta from '../components/sections/ClosingCta';
 
 const ProtocolBackground = dynamic(
   () => import('../components/ui/ProtocolBackground'),
@@ -72,7 +71,8 @@ export default function Home({ pageLocale = DEFAULT_LOCALE }) {
         title={copy.seo.title}
         description={copy.seo.description}
         canonicalUrl={`https://aeronyx.network${canonicalPath}/`}
-        keywords={messages.seo.keywords}
+        ogImageAlt={copy.seo.ogAlt}
+        keywords={copy.seo.keywords}
       />
 
       <Suspense fallback={<div className="fixed inset-0" style={{ background: 'var(--surface-0, #06060E)' }} />}>
@@ -85,12 +85,12 @@ export default function Home({ pageLocale = DEFAULT_LOCALE }) {
         <NightglassHero copy={copy} messages={messages} />
         <NetworkProof copy={copy} messages={messages} locale={activeLocale} />
         <OneKey copy={copy} locale={activeLocale} />
-        <VisibilityLedger copy={copy} messages={messages} />
-        <NorthStarBand messages={messages} />
-        <ProtocolArchitecture activeLocale={activeLocale} />
-        <JoinNetwork activeLocale={activeLocale} />
-        <FutureVision activeLocale={activeLocale} />
-        <SophisticatedCTA />
+        <VisibilityLedger copy={copy} />
+        <NorthStarBand copy={copy} />
+        <HowItWorks copy={copy} />
+        <RunANode copy={copy} />
+        <Roadmap copy={copy} />
+        <ClosingCta copy={copy} />
       </main>
 
       <Footer activeLocale={activeLocale} />

@@ -836,6 +836,28 @@ img, svg {
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.65), 0 0 0 6px rgba(255, 255, 255, 0.03),
     inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
+/* 9:19 chassis height without aspect-ratio (Safari < 15 / older WebViews
+   ignore it and collapsed the phone); the screens are absolutely positioned
+   over this padding box. */
+.ng-phone::before {
+  content: '';
+  display: block;
+  padding-top: 211.11%;
+}
+/* Entrance used by the hero: runs from the first paint with no JS, and ends
+   visible even if a script never loads. */
+@keyframes ng-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.ng-rise {
+  animation: ng-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+/* Glass without backdrop-filter (Firefox < 103, older Android WebViews):
+   fall back to a solid slate so the tab bar stays legible. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ng-glass { background: rgba(13, 13, 28, 0.96); }
+}
 .ng-proofstrip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -891,5 +913,5 @@ img, svg {
 }
 @media (prefers-reduced-motion: reduce) {
   .ng-btn, .ng-card, .ng-link { transition: none; }
-  .ng-live-dot { animation: none; }
+  .ng-live-dot, .ng-rise { animation: none; }
 }

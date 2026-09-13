@@ -2,23 +2,24 @@
  * ============================================================================
  * File: components/sections/VisibilityLedger.js
  * ============================================================================
- * [NIGHTGLASS-WEB 2026-09-12 by Claude] "What each layer can see" as a
- * three-column ledger: client, decentralized nodes, public status — each
- * with what it can and cannot see. The rows come from the already-localized
- * lib/i18n protocolArchitecture.visibility.items, so every locale keeps its
- * translation; only the frame is new.
+ * [NIGHTGLASS-WEB 2026-09-12 by Claude] "Who sees what" as a three-column
+ * ledger: your phone, the nodes on the way, this website — each with what it
+ * can and cannot see.
  *
- * This is the verifiable claim a technical reader looks for before believing
- * "private by construction" — stated as a table, not a paragraph.
+ * 2026-09-13: rows now come from lib/i18n-nightglass (copy.ledger.rows) in
+ * plain language, instead of the protocol-vocabulary rows in lib/i18n
+ * protocolArchitecture.visibility.items ("signed routing metadata", "TTL",
+ * "producer-scoped commitments"). Same claim, said the way a person would
+ * say it; the technical table still lives on /privacy-network.
  * ============================================================================
  */
 
 import Container from '../ui/Container';
 
-export default function VisibilityLedger({ copy, messages }) {
+export default function VisibilityLedger({ copy }) {
   const l = copy.ledger;
-  const items = messages.protocolArchitecture?.visibility?.items || [];
-  if (!items.length) return null;
+  const rows = l.rows || [];
+  if (!rows.length) return null;
 
   return (
     <section id="visibility" className="ng-section" style={{ background: 'var(--surface-0)' }}>
@@ -30,15 +31,12 @@ export default function VisibilityLedger({ copy, messages }) {
         </div>
 
         <div className="ng-surface mx-auto mt-12 grid max-w-6xl overflow-hidden md:grid-cols-3">
-          {items.map((item, i) => (
+          {rows.map((item, i) => (
             <div
               key={item.surface}
-              className={`flex flex-col gap-5 p-6 md:p-8 ${i < items.length - 1 ? 'border-b border-white/[0.07] md:border-b-0 md:border-r' : ''}`}
+              className={`flex flex-col gap-5 p-6 md:p-8 ${i < rows.length - 1 ? 'border-b border-white/[0.07] md:border-b-0 md:border-r' : ''}`}
             >
-              <div className="flex items-center gap-3">
-                <span className="ng-display text-[13px] text-[#A594FF]">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="text-lg font-semibold text-white" style={{ letterSpacing: '-0.01em' }}>{item.surface}</h3>
-              </div>
+              <h3 className="text-lg font-semibold text-white" style={{ letterSpacing: '-0.01em' }}>{item.surface}</h3>
               <div>
                 <div className="text-[11px] font-medium uppercase tracking-eyebrow text-white/45">{l.canSee}</div>
                 <p className="mt-1.5 text-sm leading-relaxed text-white/85">{item.canSee}</p>

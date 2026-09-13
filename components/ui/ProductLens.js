@@ -19,6 +19,11 @@
  * phone; the ciphertext comes from a fixed-seed PRNG so the server and the
  * client render the same bytes (no hydration drift).
  *
+ * 2026-09-13 compatibility pass: phone height via .ng-phone::before padding
+ * (aspect-ratio collapsed on older Safari/WebViews), -webkit-clip-path beside
+ * clip-path, and touch-action:pan-y with horizontal-gesture detection so the
+ * lens never swallows the page scroll on phones.
+ *
  * Dependencies: framer-motion; styles/globals.css (.ng-phone, .ng-glass,
  * .ng-display); lib/i18n-nightglass (copy.hero + copy.phone).
  * ============================================================================
@@ -306,46 +311,73 @@ export default function ProductLens({ copy, reduced }) {
     return () => cancelAnimationFrame(raf);
   }, [reduced, compact]);
 
-  // Pointer + touch drag.
+  // Pointer (mouse / pen) + touch drag.
+  //
+  // Touch is the compatibility-sensitive path. The first version claimed the
+  // whole phone with touch-action:none and preventDefault'ed every touchmove,
+  // so on a real phone a thumb landing on the lens could no longer scroll the
+  // page — the hero felt stuck. Now the box allows vertical panning
+  // (touch-action: pan-y) and a touch only becomes a scrub once it has moved
+  // ~8px and is clearly more horizontal than vertical; a vertical swipe is
+  // handed back to the browser untouched. Touch pointers are ignored by the
+  // pointer handlers so the gesture is decided in one place.
   useEffect(() => {
     if (reduced) return undefined;
     const moveTo = (cx) => {
       const r = boxRef.current?.getBoundingClientRect();
-      if (!r || cx == null) return;
+      if (!r || !r.width || cx == null) return;
       setSplit(Math.max(0, Math.min(100, ((cx - r.left) / r.width) * 100)));
     };
     const inside = (target) => boxRef.current?.contains(target);
+    const takeOver = () => { scrub.current = true; auto.current = false; setTouched(true); };
     const down = (e) => {
-      if (!inside(e.target)) return;
-      scrub.current = true; auto.current = false; setTouched(true);
+      if (e.pointerType === 'touch' || !inside(e.target)) return;
+      takeOver();
       moveTo(e.clientX);
     };
-    const move = (e) => { if (scrub.current) moveTo(e.clientX); };
+    const move = (e) => { if (scrub.current && e.pointerType !== 'touch') moveTo(e.clientX); };
     const up = () => { scrub.current = false; };
+
+    const gesture = { active: false, decided: false, x: 0, y: 0 };
     const tStart = (e) => {
-      if (!inside(e.target)) return;
-      scrub.current = true; auto.current = false; setTouched(true);
-      moveTo(e.touches?.[0]?.clientX);
+      const t = e.touches?.[0];
+      if (!t || !inside(e.target)) return;
+      gesture.active = true; gesture.decided = false; gesture.x = t.clientX; gesture.y = t.clientY;
     };
     const tMove = (e) => {
+      if (!gesture.active) return;
+      const t = e.touches?.[0];
+      if (!t) return;
+      if (!gesture.decided) {
+        const dx = Math.abs(t.clientX - gesture.x);
+        const dy = Math.abs(t.clientY - gesture.y);
+        if (dx < 8 && dy < 8) return;
+        gesture.decided = true;
+        if (dy >= dx) { gesture.active = false; return; } // a scroll — the browser keeps it
+        takeOver();
+      }
       if (!scrub.current) return;
-      e.preventDefault();
-      moveTo(e.touches?.[0]?.clientX);
+      if (e.cancelable) e.preventDefault();
+      moveTo(t.clientX);
     };
-    const tEnd = () => { scrub.current = false; };
+    const tEnd = () => { gesture.active = false; scrub.current = false; };
     window.addEventListener('pointerdown', down);
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
     window.addEventListener('touchstart', tStart, { passive: true });
     window.addEventListener('touchmove', tMove, { passive: false });
     window.addEventListener('touchend', tEnd);
+    window.addEventListener('touchcancel', tEnd);
     return () => {
       window.removeEventListener('pointerdown', down);
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
       window.removeEventListener('touchstart', tStart);
       window.removeEventListener('touchmove', tMove);
       window.removeEventListener('touchend', tEnd);
+      window.removeEventListener('touchcancel', tEnd);
     };
   }, [reduced]);
 
@@ -373,10 +405,13 @@ export default function ProductLens({ copy, reduced }) {
         aria-valuenow={Math.round(split)}
         onKeyDown={onKeyDown}
         className="ng-phone relative select-none overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-[#A594FF]/60"
-        style={{ aspectRatio: '9 / 19', touchAction: 'none', cursor: reduced ? 'default' : 'ew-resize' }}
+        style={{ touchAction: 'pan-y', cursor: reduced ? 'default' : 'ew-resize' }}
       >
+        {/* Height comes from .ng-phone::before (padding-top 211.11% = 9:19), not
+            from aspect-ratio: Safari < 15 and older WebViews ignore aspect-ratio
+            and collapsed the phone to a 1px line. */}
         <PhoneScreen phone={phone} cipher={false} />
-        <div className="absolute inset-0" style={{ clipPath: `inset(0 0 0 ${split}%)` }}>
+        <div className="absolute inset-0" style={{ WebkitClipPath: `inset(0 0 0 ${split}%)`, clipPath: `inset(0 0 0 ${split}%)` }}>
           <PhoneScreen phone={phone} cipher />
         </div>
 

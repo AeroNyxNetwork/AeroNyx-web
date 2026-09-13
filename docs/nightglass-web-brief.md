@@ -79,6 +79,37 @@ reduced-motion aware — never decoration.
   ja, ko, es) in `lib/i18n-nightglass.js`, deep-merged over English so a
   missing string can never surface a key.
 
+## 4b. Second pass (2026-09-13): plain words, no JS-dependent first paint
+
+The first pass shipped the grammar but left two things wrong. The copy still
+spoke protocol ("ciphertext", "relay", "TTL", "signed routing metadata",
+"node infrastructure covenant"), and the bottom half of the page was the old
+site: a four-step slideshow with orbiting dots, a rotating ring, fake progress
+bars and randomly generated lines. Changes:
+
+- **Register.** Every sentence on the homepage now uses three verbs — sealed,
+  carried, opened — and names people, not layers ("your phone", "nodes on the
+  way", "this website"). All seven locales rewritten. The technical tables
+  stay on `/privacy-network` and in the docs, linked from the sections that
+  used to contain them.
+- **Sections.** `HowItWorks` (route diagram + three steps), `RunANode`
+  (install / carry / watch + one honest node card + live node count),
+  `Roadmap` (2026 / 2028 / 2030) and `ClosingCta` replace
+  `ProtocolArchitecture`, `JoinNetwork`, `FutureVision`, `SophisticatedCTA`.
+  Anchors `#how-it-works`, `#join-network`, `#vision` are unchanged.
+- **Motion that cannot break.** The route diagram is native SVG SMIL
+  (`<animateMotion>`): no bundle, no re-mount jumps, pauses on each node,
+  static under reduced motion. The hero entrance is a CSS keyframe
+  (`.ng-rise`), so the server HTML is visible before hydration.
+- **Lens compatibility.** Phone height via `::before` padding (aspect-ratio
+  collapsed on older Safari/WebViews), `-webkit-clip-path` beside
+  `clip-path`, `touch-action: pan-y` plus horizontal-gesture detection so a
+  thumb on the phone still scrolls the page, solid fallback for glass where
+  `backdrop-filter` is missing.
+- **Crawler + share surfaces.** `/llms.txt` intro tells the product story;
+  the Open Graph image alt carries the new tagline; the footer tagline (all
+  locales) matches the hero.
+
 ## 5. Out of scope here, next
 
 - Secondary pages (`/privacy-network`, `/memchain`) inherit the tokens and

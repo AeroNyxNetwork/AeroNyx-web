@@ -4,16 +4,19 @@
  * ============================================================================
  * [NIGHTGLASS-WEB 2026-09-12 by Claude] The North Star covenant ("More
  * private. Open source. Global by default.") as one quiet band between the
- * product and the protocol deep-dive. It used to live inside
- * ProductsEcosystem; the copy (already localized in lib/i18n under
- * productsEcosystem.northStar) and the `#north-star-plan` anchor are kept.
+ * product and how it works. The `#north-star-plan` anchor is kept.
+ *
+ * 2026-09-13: copy moved from lib/i18n productsEcosystem.northStar ("node
+ * infrastructure covenant", "user-level telemetry", "signed state") to
+ * lib/i18n-nightglass copy.northStar — the same three promises, in plain
+ * words. /privacy-network keeps its own NorthStarPlan and its own copy.
  * ============================================================================
  */
 
 import Container from '../ui/Container';
 
-export default function NorthStarBand({ messages }) {
-  const ns = messages.productsEcosystem?.northStar;
+export default function NorthStarBand({ copy }) {
+  const ns = copy?.northStar;
   if (!ns) return null;
   const signals = ns.signals || [];
 
