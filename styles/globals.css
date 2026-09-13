@@ -751,6 +751,9 @@ img, svg {
   transform: translateY(-1px);
   background: #7f6eff;
 }
+/* Press feedback: a button that only reacts to hover feels dead on touch,
+   where there is no hover at all. */
+.ng-btn:active { transform: translateY(0) scale(0.985); }
 .ng-btn-ghost {
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.02);
@@ -864,18 +867,32 @@ img, svg {
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .ng-glass { background: rgba(13, 13, 28, 0.96); }
 }
+/* Proof strip — three readouts that must read as one instrument.
+   Alignment rule: the grid stretches all three columns to the same height,
+   each column is a flex column, and the label takes `flex: 1`. Everything
+   below the label therefore starts at the same offset from the bottom, so
+   the three values stay on one baseline no matter how many lines a label
+   wraps to in a given language. (Before this, a two-line label pushed its
+   value down and the row looked broken.) */
 .ng-proofstrip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: 1.75rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 1.5rem;
   text-align: left;
 }
-.ng-proofstrip dt {
+.ng-proofstrip > div {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  min-width: 0;
+}
+.ng-proofstrip dt {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
   font-size: 11px;
+  line-height: 1.45;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.42);
@@ -886,7 +903,33 @@ img, svg {
 :lang(ko) .ng-proofstrip dt {
   letter-spacing: 0.04em;
 }
-.ng-proofstrip dd { margin: 0.6rem 0 0; }
+.ng-proofstrip dd { margin: 0; }
+/* The value: one typeface, one size, one baseline for all three. */
+.ng-proofstrip .ng-pv {
+  margin-top: 0.7rem;
+  font-family: var(--font-unbounded), var(--font-display), var(--font-apple-ui);
+  font-weight: 700;
+  font-size: clamp(1.35rem, 2.1vw, 1.7rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  white-space: nowrap;
+}
+/* The fine print: the exact live count lives here, in tabular mono, so it can
+   tick every second without moving a single pixel of the layout. */
+.ng-proofstrip .ng-pd {
+  margin-top: 0.4rem;
+  min-height: 1.3em;
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.32);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .ng-num {
   font-size: 1.6rem;
   line-height: 1.1;
@@ -902,6 +945,33 @@ img, svg {
   box-shadow: 0 0 10px rgba(20, 241, 149, 0.6);
   animation: ng-pulse 2.2s ease-in-out infinite;
 }
+/* Optical alignment with the first line of a label that may wrap. */
+.ng-proofstrip dt .ng-live-dot {
+  flex: 0 0 auto;
+  margin-top: 0.45em;
+}
+/* Tertiary link — deliberately quieter than the two buttons above it, so the
+   CTA cluster still reads primary / secondary / aside instead of three peers. */
+.ng-link-quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color var(--dur-fast) var(--ease-out-brand);
+}
+.ng-link-quiet:hover { color: rgba(255, 255, 255, 0.88); }
+.ng-link-quiet:focus-visible {
+  outline: none;
+  color: #fff;
+  box-shadow: 0 0 0 2px var(--ng-ink), 0 0 0 4px var(--ng-nyx-lt);
+  border-radius: 6px;
+}
+.ng-link-quiet .ng-arrow {
+  transition: transform var(--dur-fast) var(--ease-out-brand);
+}
+.ng-link-quiet:hover .ng-arrow { transform: translateX(3px); }
 @keyframes ng-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }
@@ -916,8 +986,13 @@ img, svg {
     text-align: center;
   }
   .ng-proofstrip dt { justify-content: center; }
+  .ng-proofstrip > div { align-items: center; }
+  /* One column: labels no longer need to equalise, and a stretched label
+     would leave a gap above each value. */
+  .ng-proofstrip dt { flex: 0 0 auto; }
+  .ng-proofstrip .ng-pv { margin-top: 0.45rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ng-btn, .ng-card, .ng-link { transition: none; }
+  .ng-btn, .ng-card, .ng-link, .ng-link-quiet, .ng-link-quiet .ng-arrow { transition: none; }
   .ng-live-dot, .ng-rise { animation: none; }
 }

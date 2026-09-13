@@ -18,23 +18,38 @@
  * first viewport stayed blank. CSS runs from the first paint, needs no JS,
  * and still honours prefers-reduced-motion.
  *
- * Dependencies: ../ui/ProductLens, ../ui/AnimatedMessageCounter,
- * ../ui/DownloadsModal, ../../lib/hooks/useNetworkStats (multi-consumer
- * safe), ../../lib/hooks/useReducedMotion, lib/i18n-nightglass copy passed
- * in by pages/index.js.
+ * 2026-09-13 proof-strip rebuild. It used AnimatedMessageCounter, which
+ * auto-fits its own font size between 18 and 44 px and emits a pulse line
+ * that appears and disappears: the traffic figure ended up a different
+ * typeface and size from the two beside it, sat on a different baseline
+ * because its label wrapped to two lines, and reflowed the whole row on
+ * every tick. Now all three readouts share one typeface, one size and one
+ * baseline; the value is human-scaled (1.2 TB) and the exact live count
+ * sits under it in tabular mono, where it can tick without moving anything.
+ * NetworkProof still uses AnimatedMessageCounter — the big-tile treatment
+ * suits it there.
+ *
+ * Dependencies: ../ui/ProductLens, ../ui/DownloadsModal,
+ * ../../lib/hooks/useNetworkStats (multi-consumer safe),
+ * ../../lib/hooks/useReducedMotion, ../../lib/hooks/useLiveCount,
+ * lib/i18n-nightglass copy passed in by pages/index.js.
  * ============================================================================
  */
 
 import { useState } from 'react';
 import Container from '../ui/Container';
 import ProductLens from '../ui/ProductLens';
-import AnimatedMessageCounter from '../ui/AnimatedMessageCounter';
 import DownloadsModal from '../ui/DownloadsModal';
 import useNetworkStats from '../../lib/hooks/useNetworkStats';
 import useReducedMotion from '../../lib/hooks/useReducedMotion';
+import useLiveCount from '../../lib/hooks/useLiveCount';
+import { formatDataVolume } from '../../lib/utils/apiService';
 import { WEB_APP } from '../../lib/external-links';
 
 const rise = (i) => ({ animationDelay: `${0.08 + i * 0.07}s` });
+// Fixed locale on purpose: grouping must be identical on the server and the
+// client or the first paint is a hydration mismatch.
+const EXACT = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 
 export default function NightglassHero({ copy, messages }) {
   const h = copy.hero;
@@ -45,6 +60,13 @@ export default function NightglassHero({ copy, messages }) {
   const { stats, isLoading } = useNetworkStats({ period: '30d', autoRefresh: true, refreshInterval: 30000 });
 
   const nodes = Number(stats.protocolReportedNodes || 0);
+
+  // The live byte total, extrapolated between the ~30 s API syncs. Shown twice:
+  // human-scaled as the value, exact as the line underneath.
+  const liveBytes = useLiveCount(stats.encryptedTrafficBytes, { minStep: 1024, paused: reduced });
+  const hasLive = !isLoading && typeof liveBytes === 'number';
+  const carried = hasLive ? formatDataVolume(liveBytes) : (isLoading ? syncing : (stats.encryptedTraffic || syncing));
+  const carriedExact = hasLive ? `${EXACT.format(liveBytes)} ${h.liveUnit}` : null;
 
   return (
     <section data-hero-section className="ng-hero relative overflow-hidden">
@@ -71,45 +93,40 @@ export default function NightglassHero({ copy, messages }) {
             {/* The second door: app.aeronyx.network. Phrased so it never reads
                 as "no install needed" — browser chat signs in by scanning
                 with the app. */}
-            <p className="ng-rise mt-4 text-[13px]" style={rise(4)}>
-              <a
-                href={WEB_APP}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ng-link font-normal"
-                style={{ color: 'rgba(255,255,255,0.52)' }}
-              >
-                {b.heroLink} →
+            <p className="ng-rise mt-5" style={rise(4)}>
+              <a href={WEB_APP} target="_blank" rel="noopener noreferrer" className="ng-link-quiet">
+                {b.heroLink}
+                <span className="ng-arrow" aria-hidden="true">→</span>
               </a>
             </p>
 
+            {/* Three readouts, one instrument: same typeface, same size, one
+                baseline. The headline value is human-scaled (1.2 TB) and the
+                exact count sits under it in tabular mono, which is what lets
+                it tick every second without reflowing the row. */}
             <dl className="ng-proofstrip ng-rise mt-10" style={rise(5)}>
               <div>
                 <dt>
                   <span className="ng-live-dot" aria-hidden="true" />
                   {h.liveLabel}
                 </dt>
-                <dd className="ng-counter">
-                  {isLoading ? (
-                    <span className="ng-num text-white/45">{syncing}</span>
-                  ) : (
-                    <AnimatedMessageCounter
-                      value={stats.encryptedTrafficBytes}
-                      fallback={stats.encryptedTraffic || syncing}
-                      suffix={h.liveUnit}
-                      pulseLabel="live"
-                      defaultStep={1024}
-                    />
-                  )}
-                </dd>
+                {/* The fine-print row below is reserved in all three columns so
+                    the values stay on one baseline. Its placeholder is a
+                    NON-BREAKING space on purpose: a plain space collapses, the
+                    <dd> gets no line box, and the column's value drops. Keep
+                    the NBSP (and .ng-pd's min-height) if you touch this. */}
+                <dd className="ng-pv">{carried}</dd>
+                <dd className="ng-pd">{carriedExact || ' '}</dd>
               </div>
               <div>
                 <dt>{h.nodesLabel}</dt>
-                <dd className="ng-display ng-num">{nodes > 0 ? nodes : '—'}</dd>
+                <dd className="ng-pv">{nodes > 0 ? nodes : '—'}</dd>
+                <dd className="ng-pd">{' '}</dd>
               </div>
               <div>
                 <dt>{h.plaintextLabel}</dt>
-                <dd className="ng-display ng-num" style={{ color: '#A594FF' }}>{h.plaintextValue}</dd>
+                <dd className="ng-pv" style={{ color: '#A594FF' }}>{h.plaintextValue}</dd>
+                <dd className="ng-pd">{' '}</dd>
               </div>
             </dl>
           </div>
