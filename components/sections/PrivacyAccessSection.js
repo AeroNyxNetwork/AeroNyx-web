@@ -1,247 +1,208 @@
 /**
- * ============================================
+ * ============================================================================
  * File: components/sections/PrivacyAccessSection.js
- * ============================================
- * Modification Reason: v2.6 - Localized phone mock title.
- *   The in-phone product title now reads from the existing Privacy Network
- *   copy contract so localized pages do not show an English-only app mockup.
+ * ============================================================================
+ * [NIGHTGLASS-WEB 2026-09-13 by Claude] The closing section of
+ * /privacy-network: what the Privacy Network does, said plainly, next to a
+ * phone you can actually operate. Keeps the `#privacy-access` anchor the
+ * page hero's primary CTA points at, and the DownloadsModal contract.
  *
- * Modification Reason: v2.7 - Access conversion surface polish.
- *   The download/access section now shares the same brand-primary CTA,
- *   numbered assurance card rhythm, and tighter phone-mock wrapping used by
- *   the Privacy Network product page. DownloadsModal behavior and the existing
- *   localization copy contract remain unchanged.
+ * Rebuilt because the previous version failed in four ways that all showed
+ * up in one screenshot:
  *
- * Modification Reason: v2.5 - Mobile conversion polish.
- *   Reordered the mobile section so the product promise and download action
- *   appear before the device mockup and before secondary feature cards,
- *   converted feature bullets into compact assurance cards, and reduced the
- *   phone frame height on small screens so the access section feels like a
- *   polished product CTA instead of a heavy engineering demo. Existing modal
- *   and localization contracts are preserved.
+ *   1. CLIPPED. The chassis was a fixed `h-[600px]` with `overflow-hidden`
+ *      and the content inside was taller than that, so the last metric card
+ *      was sliced through the middle of its own label. The chassis now takes
+ *      its height from .ng-phone's 9:19 padding box and the content is an
+ *      absolutely positioned column with the metrics pinned to the bottom,
+ *      so there is nothing to overflow.
+ *   2. DEAD ON ARRIVAL. It defaulted to disconnected: the first thing a
+ *      visitor saw was UNPROTECTED, Standby, 0 B, 0 — a product that looks
+ *      broken. It now starts connected, and the switch is there to show what
+ *      turning it off costs you.
+ *   3. AN INVISIBLE CONTROL. The circle was a real <button> that toggled
+ *      state, but nothing said so — buttons get no pointer cursor by
+ *      default, and there was no hint, no hover, no focus treatment. It is
+ *      now unmistakably a control, and the section says "try the switch".
+ *   4. FICTION PRESENTED AS FACT. It showed `192.168.1.1` as "your IP" (a
+ *      LAN address — nonsense as a public address) and flipped to an
+ *      invented "29.4 GB" when connected. The IP row now answers the
+ *      question the product actually answers — visible to every site, or
+ *      hidden — and the off state shows em-dashes rather than zeros,
+ *      because nothing is being measured then.
  *
- * Historical Notes:
- * v2.4 - Product-grade protection mockup.
- *   Replaced the generic tab-bar phone mockup with a daily protection view:
- *   encrypted traffic, encrypted packets, protocol health, hidden IP, and
- *   regional route status. This aligns the app preview with the public
- *   Privacy Network page and avoids presenting the product as a simple switch.
- *   The phone shell now owns overflow and condenses route/IP assurance into
- *   the header area so no hidden status rows are clipped below the frame.
- *   The outer visual clips connection ripples so the connected state cannot
- *   create horizontal page scroll on mobile.
- *   The primary connection control uses localized accessible text so the mock
- *   remains testable and usable with assistive technologies.
- *   Protection microcopy is read from the existing i18n contract with fallbacks
- *   so language pages do not ship an English-only phone preview.
- *
- * Historical Notes:
- * v2.3 - Privacy Network product wording.
- *   Renamed the active download section and changed the page anchor to
- *   #privacy-access. Phone mockup structure, DownloadsModal contract, and
- *   visible Privacy Network copy are preserved.
- *
- * Dependencies:
- *   - components/ui/DownloadsModal (isOpen/onClose contract preserved)
- *   - lib/i18n privacy network copy
- *
- * ⚠️ Important Notes for Next Developer:
- *   - Keep the copy contract (PrivacyAccessVisual receives `copy`).
- *   - Brand rule: no green, no emojis. Connected = brand purple.
- *
- * Last Modified: v2.3 - Privacy Network product wording
- * Last Modified: v2.4 - Product-grade protection mockup
- * Last Modified: v2.5 - Mobile conversion polish
- * Last Modified: v2.6 - Localized phone mock title
- * Last Modified: v2.7 - Access conversion surface polish
- * ============================================
+ * Copy moved from lib/i18n `vpn` (which read "auditable decentralized node
+ * boundary", "user-level telemetry") to lib/i18n-nightglass
+ * `privacyNetwork`, so this page speaks the same plain register as the
+ * homepage. lib/i18n's `vpn` block is untouched — DownloadsModal and other
+ * surfaces still read it.
+ * ============================================================================
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
 import Container from '../ui/Container';
 import DownloadsModal from '../ui/DownloadsModal';
-import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
+import { DEFAULT_LOCALE } from '../../lib/i18n';
+import { getNightglassCopy } from '../../lib/i18n-nightglass';
+import useReducedMotion from '../../lib/hooks/useReducedMotion';
 
-const PrivacyAccessSection = () => {
-  const [showDownloads, setShowDownloads] = useState(false);
-  const { locale } = useRouter();
-  const copy = getMessages(locale || DEFAULT_LOCALE).vpn;
-  const features = copy.features;
+const NYX_LT = '#A594FF';
+const MONO = { fontFamily: 'var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace' };
+const OFF = '—';
 
+function PowerGlyph({ on }) {
   return (
-    <section id="privacy-access" className="border-t border-white/10 py-12 md:py-24" style={{ background: 'var(--surface-1, #0C0C13)' }}>
-      <Container>
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-8 md:gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-            {/* Content */}
-            <div className="order-1 min-w-0">
-              <div className="mb-4 inline-flex max-w-full border border-brand-line bg-brand-faint px-3 py-1.5 text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
-                {copy.privacyNetwork}
-              </div>
-              <h2 className="mb-4 break-words text-display-md font-light text-white md:mb-6">
-                {copy.title}
-                <span className="mt-2 block break-words text-lg text-white/40 md:text-xl">
-                  {copy.subtitle}
-                </span>
-              </h2>
-
-              <p className="mb-6 max-w-copy break-words text-sm leading-relaxed text-white/60 md:mb-8 md:text-lg">
-                {copy.description}
-              </p>
-
-              <button
-                onClick={() => setShowDownloads(true)}
-                className="mb-6 inline-flex min-h-[48px] w-full max-w-xs min-w-0 items-center justify-center break-words rounded border border-brand-line bg-brand px-6 py-3 text-center text-sm font-semibold leading-snug tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.2)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light sm:w-auto md:mb-8 md:px-8 md:py-4 md:text-base"
-              >
-                {copy.download}
-              </button>
-
-              <div className="grid gap-2 sm:grid-cols-2 md:gap-3">
-                {features.map((feature, i) => (
-                  <div key={feature.title} className="relative min-w-0 overflow-hidden border border-white/10 bg-white/[0.025] p-3 md:p-4">
-                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/30 to-transparent" />
-                    <div className="mb-3 flex items-start justify-between gap-3">
-                      <div className="h-1.5 w-1.5 shrink-0 rounded-pill bg-brand-light/70" />
-                      <div className="shrink-0 text-[10px] uppercase leading-4 tracking-eyebrow text-white/34">
-                        {String(i + 1).padStart(2, '0')}
-                      </div>
-                    </div>
-                    <div className="break-words text-sm font-medium leading-snug text-white/80 md:text-base">{feature.title}</div>
-                    <div className="mt-2 break-words text-xs leading-relaxed text-white/56 md:text-sm">{feature.description}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Visual */}
-            <div className="order-2 min-w-0">
-              <PrivacyAccessVisual copy={copy} />
-            </div>
-          </div>
-        </div>
-      </Container>
-
-      <DownloadsModal
-        isOpen={showDownloads}
-        onClose={() => setShowDownloads(false)}
-      />
-    </section>
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+      <path d="M12 3v9" />
+      <path d="M18.4 6.6a9 9 0 1 1-12.8 0" />
+      {on && <circle cx="12" cy="12" r="10.5" stroke="none" fill="none" />}
+    </svg>
   );
-};
+}
 
-/* Minimal icons — replace 🛡️/⚡ (v2.0) */
-const ShieldIcon = () => (
-  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-brand-light mx-auto">
-    <path d="M12 2L4 6v6c0 4.4 3.1 8.5 8 10 4.9-1.5 8-5.6 8-10V6l-8-4z" />
-    <path d="M9 12l2 2 4-4" />
-  </svg>
-);
-
-const PowerIcon = () => (
-  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/60 mx-auto">
-    <path d="M12 2v10" />
-    <path d="M18.4 6.6a9 9 0 11-12.8 0" />
-  </svg>
-);
-
-// Privacy Network app visual — copy contract preserved from v1.
-const PrivacyAccessVisual = ({ copy }) => {
-  const [isConnected, setIsConnected] = useState(false);
-  const protectionMetrics = [
-    { label: copy.encryptedTraffic || 'Encrypted traffic', value: isConnected ? '29.4 GB' : '0 B' },
-    { label: copy.encryptedPackets || 'Encrypted packets', value: isConnected ? '1.8M' : '0' },
-    { label: copy.protocolHealth || 'Protocol health', value: isConnected ? (copy.ready || 'Ready') : (copy.standby || 'Standby') },
+/** The phone. `on` is owned by the section so the caption can follow it. */
+function PrivacyPhone({ copy, on, onToggle, reduced }) {
+  const p = copy.phone;
+  const rows = [
+    { label: p.routeLabel, value: on ? p.routeOn : p.routeOff },
+    { label: p.ipLabel, value: on ? p.ipOn : p.ipOff, accent: on },
+  ];
+  const metrics = [
+    { label: p.carriedLabel, value: on ? p.carriedValue : OFF },
+    { label: p.readableLabel, value: on ? p.readableValue : OFF, accent: on },
   ];
 
   return (
-    <div className="relative flex min-w-0 items-center justify-center overflow-hidden py-1 md:py-2">
-      {/* Phone mockup */}
-      <div className="relative h-[520px] w-64 max-w-full overflow-hidden rounded-[2rem] border-2 border-white/10 p-3 shadow-[0_28px_90px_rgba(0,0,0,0.45)] md:h-[600px] md:w-72 md:rounded-[3rem] md:p-4" style={{ background: 'var(--surface-0, #08080D)' }}>
-        <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-brand-light/50 to-transparent" />
-        <div className="flex h-full w-full flex-col overflow-hidden rounded-[1.55rem] p-4 md:rounded-[2.5rem] md:p-6" style={{ background: 'var(--surface-2, #111118)' }}>
+    <div className="relative mx-auto w-full max-w-[300px]">
+      {/* Soft field behind the phone — the only thing that moves when the
+          switch flips, and it stays still under prefers-reduced-motion. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-10 rounded-[999px]"
+        style={{
+          background: 'radial-gradient(50% 42% at 50% 45%, rgba(116,98,247,0.28), transparent 70%)',
+          opacity: on ? 1 : 0,
+          transition: reduced ? 'none' : 'opacity 600ms cubic-bezier(0.22,1,0.36,1)',
+        }}
+      />
+      <div className="ng-phone relative select-none overflow-hidden">
+        <div className="absolute inset-0 flex flex-col px-5 pb-5" style={{ paddingTop: 44 }}>
           {/* Status bar */}
-          <div className="mb-5 flex items-center justify-between gap-3 text-xs text-white/40 md:mb-8">
-            <span>9:41 AM</span>
-            <div className="flex gap-1">
-              <div className="w-4 h-3 border border-white/40 rounded-sm" />
-              <div className="w-1 h-3 bg-white/40 rounded-sm" />
-            </div>
+          <div className="flex items-center justify-between text-[10px] text-white/40" style={MONO}>
+            <span>9:41</span>
+            <span className="flex items-center gap-1">
+              <span className="inline-block h-[10px] w-[18px] rounded-[3px] border border-white/35" />
+              <span className="inline-block h-[10px] w-[3px] rounded-[1px] bg-white/35" />
+            </span>
           </div>
 
-          {/* App content */}
-          <div className="flex-1 flex flex-col">
-            <div className="mb-4 md:mb-6">
-              <div className="break-words text-xl font-light leading-tight md:text-2xl">{copy.title}</div>
-              <div className="mt-2 inline-flex max-w-full break-words border border-brand-line bg-brand-faint px-2.5 py-1 text-[10px] uppercase leading-4 tracking-eyebrow text-brand-light">
-                {isConnected ? copy.protected : copy.unprotected}
-              </div>
-              <div className="mt-3 grid gap-1 text-xs text-white/42">
-                <div className="flex min-w-0 justify-between gap-3">
-                  <span className="min-w-0 break-words">{copy.location}</span>
-                  <span className="min-w-0 break-words text-right text-white/60">{isConnected ? (copy.activeRoute || 'Asia route') : (copy.standby || 'Standby')}</span>
-                </div>
-                <div className="flex min-w-0 justify-between gap-3">
-                  <span className="min-w-0 break-words">{copy.ipAddress}</span>
-                  <span className="min-w-0 break-all text-right font-mono text-white/60">{isConnected ? '***.***.***' : '192.168.1.1'}</span>
-                </div>
-              </div>
+          <div className="mt-5">
+            <div className="text-[17px] font-semibold leading-tight text-white">{p.appName}</div>
+            <div
+              className="mt-2 inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1 text-[10px] font-semibold uppercase tracking-eyebrow"
+              style={on
+                ? { background: 'rgba(116,98,247,0.18)', border: '1px solid rgba(165,148,255,0.45)', color: NYX_LT }
+                : { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)' }}
+            >
+              {on ? p.on : p.off}
             </div>
 
-            {/* Connection button — connected = brand purple (v2.0) */}
-            <div className="mb-4 flex items-center justify-center md:mb-6">
-              <button
-                onClick={() => setIsConnected(!isConnected)}
-                aria-pressed={isConnected}
-                aria-label={isConnected ? copy.connected : copy.connect}
-                className={`h-20 w-20 rounded-pill border-2 transition-all duration-slow ease-out-brand md:h-28 md:w-28 ${
-                  isConnected
-                    ? 'border-brand-light bg-brand-faint shadow-[0_0_36px_rgba(151,136,247,0.25)]'
-                    : 'border-white/20 bg-white/[0.02] hover:border-white/40'
-                }`}
-              >
-                <div className="text-center">
-                  <div className="mb-1 md:mb-2">
-                    {isConnected ? <ShieldIcon /> : <PowerIcon />}
-                  </div>
-                  <div className="text-xs md:text-sm">
-                    {isConnected ? copy.connected : copy.connect}
-                  </div>
+            <dl className="mt-4 grid gap-1.5 text-[11px]">
+              {rows.map((row) => (
+                <div key={row.label} className="flex items-baseline justify-between gap-3">
+                  <dt className="shrink-0 text-white/40">{row.label}</dt>
+                  <dd
+                    className="min-w-0 truncate text-right"
+                    style={{ color: row.accent ? NYX_LT : 'rgba(255,255,255,0.68)' }}
+                  >
+                    {row.value}
+                  </dd>
                 </div>
+              ))}
+            </dl>
+          </div>
+
+          {/* The switch. An actual control, and it looks like one. */}
+          <div className="mt-6 flex flex-col items-center">
+            <button
+              type="button"
+              onClick={onToggle}
+              aria-pressed={on}
+              aria-label={on ? p.disconnect : p.connect}
+              className="ng-power flex h-24 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-pill"
+              data-on={on ? 'true' : 'false'}
+            >
+              <PowerGlyph on={on} />
+              <span className="text-[11px] font-semibold">{on ? p.disconnect : p.connect}</span>
+            </button>
+            <span className="mt-2.5 text-[10px] text-white/35">{on ? p.hintOn : p.hintOff}</span>
+          </div>
+
+          {/* Pinned to the bottom, so the column absorbs any slack instead of
+              pushing content past the chassis. */}
+          <dl className="mt-auto grid gap-2">
+            {metrics.map((metric) => (
+              <div
+                key={metric.label}
+                className="rounded-[12px] px-3 py-2.5"
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
+              >
+                <dt className="text-[9px] uppercase tracking-eyebrow text-white/38">{metric.label}</dt>
+                <dd
+                  className="ng-display mt-1 text-[17px] leading-none"
+                  style={{ color: metric.accent ? NYX_LT : '#fff' }}
+                >
+                  {metric.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+      <p className="mt-4 text-center text-[11px] text-white/35">{p.note}</p>
+    </div>
+  );
+}
+
+export default function PrivacyAccessSection() {
+  const { locale } = useRouter();
+  const copy = getNightglassCopy(locale || DEFAULT_LOCALE).privacyNetwork;
+  const reduced = useReducedMotion();
+  const [showDownloads, setShowDownloads] = useState(false);
+  // Starts protected: the product should be doing its job when you arrive.
+  const [on, setOn] = useState(true);
+
+  return (
+    <section id="privacy-access" className="ng-section scroll-mt-20 border-t border-white/[0.07] md:scroll-mt-24" style={{ background: 'var(--surface-1)' }}>
+      <Container>
+        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+          <div className="ng-section-head">
+            <p className="ng-eyebrow">{copy.eyebrow}</p>
+            <h2 className="mt-5 text-white">{copy.title}</h2>
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-white/58">{copy.description}</p>
+
+            <div className="mt-8">
+              <button type="button" onClick={() => setShowDownloads(true)} className="ng-btn ng-btn-primary w-full sm:w-auto">
+                {copy.cta}
               </button>
             </div>
 
-            <div className="mb-3 grid gap-2 md:mb-5">
-              {protectionMetrics.map((metric) => (
-                <div key={metric.label} className="relative min-w-0 overflow-hidden border border-white/10 bg-white/[0.025] p-3">
-                  <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-brand-light/35 to-transparent" />
-                  <div className="break-words text-[10px] uppercase leading-4 tracking-eyebrow text-white/34">{metric.label}</div>
-                  <div className="mt-1 break-words font-mono text-lg text-white">{metric.value}</div>
-                </div>
+            <ul className="mt-10 grid gap-3 sm:grid-cols-2">
+              {copy.points.map((point) => (
+                <li key={point.title} className="rounded-[14px] border border-white/[0.08] p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                  <div className="text-sm font-semibold text-white">{point.title}</div>
+                  <p className="mt-1.5 text-xs leading-relaxed text-white/55">{point.body}</p>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
-        </div>
-      </div>
 
-      {/* Connection ripples — brand purple (v2.0) */}
-      {isConnected && (
-        <div className="absolute inset-0 pointer-events-none">
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              className="absolute top-1/2 left-1/2 w-48 md:w-64 h-48 md:h-64 border border-brand/20 rounded-pill"
-              initial={{ scale: 1, opacity: 0 }}
-              animate={{ scale: 2, opacity: [0, 0.5, 0] }}
-              transition={{ duration: 3, repeat: Infinity, delay: i * 1 }}
-              style={{ transform: 'translate(-50%, -50%)' }}
-            />
-          ))}
+          <PrivacyPhone copy={copy} on={on} onToggle={() => setOn((v) => !v)} reduced={reduced} />
         </div>
-      )}
-    </div>
+      </Container>
+
+      <DownloadsModal isOpen={showDownloads} onClose={() => setShowDownloads(false)} />
+    </section>
   );
-};
-
-export default PrivacyAccessSection;
+}

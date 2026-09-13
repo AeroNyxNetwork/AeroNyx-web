@@ -950,6 +950,44 @@ img, svg {
   flex: 0 0 auto;
   margin-top: 0.45em;
 }
+/* The Privacy Network power switch. It was a real <button> before and nobody
+   could tell: no pointer cursor (browsers do not give buttons one), no hover,
+   no focus treatment, no pressed state. A control the visitor never discovers
+   is the same as no control. */
+.ng-power {
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.62);
+  transition:
+    border-color var(--dur-base) var(--ease-out-brand),
+    background-color var(--dur-base) var(--ease-out-brand),
+    color var(--dur-base) var(--ease-out-brand),
+    box-shadow var(--dur-base) var(--ease-out-brand),
+    transform var(--dur-fast) var(--ease-out-brand);
+}
+.ng-power:hover {
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.85);
+}
+.ng-power:active { transform: scale(0.96); }
+/* outline rather than a ring shadow: the connected state already owns the
+   box-shadow, and the two would fight. */
+.ng-power:focus-visible {
+  outline: 2px solid var(--ng-nyx-lt);
+  outline-offset: 3px;
+}
+.ng-power[data-on='true'] {
+  border-color: rgba(165, 148, 255, 0.7);
+  background: rgba(116, 98, 247, 0.16);
+  color: #fff;
+  box-shadow: 0 0 34px rgba(116, 98, 247, 0.32);
+}
+.ng-power[data-on='true']:hover {
+  border-color: rgba(165, 148, 255, 0.92);
+  background: rgba(116, 98, 247, 0.22);
+}
+
 /* Tertiary link — deliberately quieter than the two buttons above it, so the
    CTA cluster still reads primary / secondary / aside instead of three peers. */
 .ng-link-quiet {
@@ -993,6 +1031,6 @@ img, svg {
   .ng-proofstrip .ng-pv { margin-top: 0.45rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ng-btn, .ng-card, .ng-link, .ng-link-quiet, .ng-link-quiet .ng-arrow { transition: none; }
+  .ng-btn, .ng-card, .ng-link, .ng-link-quiet, .ng-link-quiet .ng-arrow, .ng-power { transition: none; }
   .ng-live-dot, .ng-rise { animation: none; }
 }
