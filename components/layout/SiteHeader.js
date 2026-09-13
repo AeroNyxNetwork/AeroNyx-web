@@ -106,8 +106,17 @@
  *   - next/link and next/router for locale-aware internal routing.
  *
  * Important Note for Next Developer:
- *   - Do not point the CTA back to a homepage download anchor. Privacy Network
- *     now belongs to pages/privacy-network.js.
+ *   - The download CTA opens DownloadsModal in place. It used to be a Link to
+ *     /privacy-network#privacy-access, which meant a visitor who clicked
+ *     "Download" got a page navigation and a scroll, then still had to find a
+ *     button to reach the actual downloads — and on the homepage it looked
+ *     simply broken, because nothing happened where a modal was expected.
+ *     Every other download entry on the site (hero, wallet panel, closing CTA,
+ *     Privacy Network section) opens the same modal; the header now matches.
+ *     If you point this back at a page anchor, you are re-introducing that.
+ *   - The v2.6 note that used to sit here ("do not point the CTA back to a
+ *     homepage download anchor") was about the old homepage #download section,
+ *     which no longer exists. The modal is the destination now.
  *
  * Last Modified: v2.5 - Renamed active header component to SiteHeader
  * Last Modified: v2.6 - Download client CTA alignment
@@ -129,6 +138,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import AeroNyxLogo from '../ui/AeroNyxLogo';
+import DownloadsModal from '../ui/DownloadsModal';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, getMessages } from '../../lib/i18n';
 
 const SiteHeader = () => {
@@ -136,11 +146,11 @@ const SiteHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isProtocolOpen, setIsProtocolOpen] = useState(false);
+  const [showDownloads, setShowDownloads] = useState(false);
   const router = useRouter();
   const locale = router.locale || DEFAULT_LOCALE;
   const copy = getMessages(locale);
   const currentLocale = SUPPORTED_LOCALES.find((item) => item.code === locale) || SUPPORTED_LOCALES[0];
-  const clientAccessHref = '/privacy-network#privacy-access';
   const clientAccessLabel = copy.nav.downloadClient || copy.nav.downloads || copy.nav.privacyAccess;
   const isActiveRoute = (href) => !href.startsWith('http') && router.pathname === href;
   const desktopNavClass = (href) => (
@@ -423,13 +433,13 @@ const SiteHeader = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.985 }}
               >
-                <Link
-                  href={clientAccessHref}
-                  locale={locale}
+                <button
+                  type="button"
+                  onClick={() => setShowDownloads(true)}
                   className="relative z-10 flex min-h-[44px] items-center rounded-pill bg-nyx px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_30px_rgba(116,98,247,0.28)] transition-colors hover:bg-[#7F6EFF] xl:px-6"
                 >
                   {clientAccessLabel}
-                </Link>
+                </button>
               </motion.div>
             </div>
           </div>
@@ -532,14 +542,13 @@ const SiteHeader = () => {
                 )
               ))}
               
-              <Link
-                href={clientAccessHref}
-                locale={locale}
-                onClick={() => setIsOpen(false)}
-                className="mt-2 flex min-h-[48px] min-w-0 items-center justify-center break-words rounded-pill bg-nyx px-4 py-3 text-center font-semibold leading-snug text-white transition-colors hover:bg-[#7F6EFF]"
+              <button
+                type="button"
+                onClick={() => { setIsOpen(false); setShowDownloads(true); }}
+                className="mt-2 flex min-h-[48px] w-full min-w-0 items-center justify-center break-words rounded-pill bg-nyx px-4 py-3 text-center font-semibold leading-snug text-white transition-colors hover:bg-[#7F6EFF]"
               >
                 {clientAccessLabel}
-              </Link>
+              </button>
 
               <div className="grid grid-cols-2 gap-2 pt-2">
                 {SUPPORTED_LOCALES.map((item) => (
@@ -562,6 +571,8 @@ const SiteHeader = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <DownloadsModal isOpen={showDownloads} onClose={() => setShowDownloads(false)} />
     </motion.header>
   );
 };

@@ -174,7 +174,7 @@ export default function PrivacyAccessSection() {
   const [on, setOn] = useState(true);
 
   return (
-    <section id="privacy-access" className="ng-section scroll-mt-20 border-t border-white/[0.07] md:scroll-mt-24" style={{ background: 'var(--surface-1)' }}>
+    <section id="privacy-access" className="ng-section scroll-mt-20 md:scroll-mt-24" style={{ background: 'var(--surface-1)' }}>
       <Container>
         <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
           <div className="ng-section-head">

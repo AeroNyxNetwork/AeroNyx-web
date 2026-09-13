@@ -950,6 +950,19 @@ img, svg {
   flex: 0 0 auto;
   margin-top: 0.45em;
 }
+/* FAQ rows built on native <details>. Keyboard-operable and open-able with
+   JavaScript off; only the disclosure arrow needs styling. */
+.ng-faq summary::-webkit-details-marker { display: none; }
+.ng-faq summary::marker { content: ''; }
+.ng-faq summary { transition: background-color var(--dur-fast) var(--ease-out-brand); }
+.ng-faq summary:hover { background: rgba(255, 255, 255, 0.02); }
+.ng-faq summary:focus-visible {
+  outline: 2px solid var(--ng-nyx-lt);
+  outline-offset: -2px;
+}
+.ng-faq .ng-faq-mark { transition: transform var(--dur-base) var(--ease-out-brand); }
+.ng-faq[open] .ng-faq-mark { transform: rotate(180deg); }
+
 /* The Privacy Network power switch. It was a real <button> before and nobody
    could tell: no pointer cursor (browsers do not give buttons one), no hover,
    no focus treatment, no pressed state. A control the visitor never discovers
@@ -1031,6 +1044,7 @@ img, svg {
   .ng-proofstrip .ng-pv { margin-top: 0.45rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ng-btn, .ng-card, .ng-link, .ng-link-quiet, .ng-link-quiet .ng-arrow, .ng-power { transition: none; }
+  .ng-btn, .ng-card, .ng-link, .ng-link-quiet, .ng-link-quiet .ng-arrow, .ng-power,
+  .ng-faq summary, .ng-faq .ng-faq-mark { transition: none; }
   .ng-live-dot, .ng-rise { animation: none; }
 }
