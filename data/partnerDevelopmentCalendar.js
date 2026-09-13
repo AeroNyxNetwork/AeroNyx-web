@@ -38,7 +38,7 @@
  *     uncommitted source may be recorded when the exact verification boundary
  *     is stated and the entry remains distinct from pushed or released work.
  *
- * Last Modified: v2.6 - Added September 6 local evidence and final verification gates.
+ * Last Modified: v2.7 - Added September 13 published source and local verification boundaries.
  * ============================================
  */
 
@@ -1001,6 +1001,37 @@ export const PARTNER_DEVELOPMENT_DAYS = Object.freeze([
         id: 'sep08-next', area: 'node', status: 'next',
         title: Object.freeze({ en: 'Next: verify Community startup and final client candidate', zh: '下一步：驗證 Community 啟動與最終客戶端候選' }),
         summary: Object.freeze({ en: 'Verify Community operation without VPN data-plane dependencies and Linux-specific behavior. Close the client stop-intent regression and verify the final packaged revision on a real Mac. Source publication, notarization, distribution and live acceptance each need separate evidence before release claims change.', zh: '驗證 Community 不依賴 VPN 資料平面的運行與 Linux 專屬行為。客戶端須完成停止意願回歸，並於真實 Mac 驗證最終打包版本。源碼發布、公證、分發及線上驗收各須獨立證據，才更新發布結論。' }),
+      }),
+    ]),
+  }),
+  // [PARTNER-DAILY 2026-09-14 by Codex] September 13 evidence; publication, local checks and acceptance stay distinct.
+  Object.freeze({
+    date: '2026-09-13',
+    entries: Object.freeze([
+      Object.freeze({
+        id: "sep13-node-published", area: "node", status: "complete",
+        title: Object.freeze({ en: "Published source: Rust main advances to 3e46f65", zh: "已發布原始碼：Rust main 推進至 3e46f65" }),
+        summary: Object.freeze({ en: "The September 13 evening GitHub check verifies public main 3e46f65. Reviewed commits add bounded terminal-result retention and startup auditing for the mailbox source journal, expose an already-verified redacted V2 invitation summary, and separate probe sequence from issuance time in test fixtures. This confirms pushed source and test additions; it does not establish passing node suites, deployment or live delivery.", zh: "9 月 13 日晚間 GitHub 核對確認公開 main 為 3e46f65。已讀取提交加入信箱來源日誌的有界終態保存與啟動檢查、已驗證 V2 邀請的去敏摘要，以及測試資料中獨立的探測序號與簽發時間。這證實原始碼及測試新增已推送，並不代表節點測試全數通過、完成部署或線上投遞。" }),
+      }),
+      Object.freeze({
+        id: "sep13-client-local-fixes", area: "client", status: "complete",
+        title: Object.freeze({ en: "Local fixes complete; final client verification pending", zh: "本地修正完成；最終客戶端驗證待完成" }),
+        summary: Object.freeze({ en: "Reviewed local commits 98e66f0c3, 4d7f971c1 and 4937c1a8f register the purchase coordinator above navigation, make failed balance reads report failure instead of zero, and align Home and tray connection wording with shared privacy-network state. Source guards were added, but this audit did not rerun Flutter analysis or tests. These are local code changes, not a verified installer or release.", zh: "已讀取本地提交 98e66f0c3、4d7f971c1 與 4937c1a8f：在導航上層註冊購買協調器、讓餘額讀取失敗回報錯誤而非零，以及讓首頁與系統匣連線文字對齊共用隱私網絡狀態。已新增源碼防回歸檢查，但本次未重跑 Flutter 分析或測試。以上屬本地程式改動，並非已驗證安裝包或發布。" }),
+      }),
+      Object.freeze({
+        id: "sep13-client-rust-checks", area: "client", status: "complete",
+        title: Object.freeze({ en: "Recorded client Rust checks pass with warnings", zh: "客戶端 Rust 檢查紀錄通過，仍有警告" }),
+        summary: Object.freeze({ en: "The September 13 local release-line Rust log records 162 tests passed, zero failed and three ignored. Cargo check completed with 22 warnings; clippy completed with warnings, so this is not a warning-free result. Local commit f2cd7a660 contains rebuilt iOS, macOS and Android ARM64 libraries. These logs concern the client Rust library, not the Rust node or full Flutter app; this audit did not rerun them or verify Windows packaging.", zh: "9 月 13 日本地發布分支 Rust 日誌記錄 162 項測試通過、零失敗及三項忽略。Cargo check 完成但有 22 項警告；clippy 完成但仍有警告，不能稱為零警告通過。本地提交 f2cd7a660 包含重建的 iOS、macOS 與 Android ARM64 原生庫。這些紀錄屬客戶端 Rust 庫，並非 Rust 節點或完整 Flutter 應用；本次未重跑，亦未驗證 Windows 打包。" }),
+      }),
+      Object.freeze({
+        id: "sep13-candidate-boundary", area: "client", status: "active",
+        title: Object.freeze({ en: "Client integration remains under release verification", zh: "客戶端整合仍待發布驗證" }),
+        summary: Object.freeze({ en: "Local client metadata is 1.0.18+24 and additional candidate integration branches exist. The website download constants remain 1.0.18+14. Version metadata, source commits and rebuilt libraries do not independently prove final installer signing, notarization, public distribution or real-device acceptance. No new client release is established by this audit.", zh: "本地客戶端版本資料為 1.0.18+24，並存在額外候選整合分支。網站下載常數仍為 1.0.18+14。版本資料、源碼提交與原生庫重建均不能獨立證明最終安裝包簽名、公證、公開分發或真機驗收。本次核對未確認新客戶端發布。" }),
+      }),
+      Object.freeze({
+        id: "sep13-next-gates", area: "node", status: "next",
+        title: Object.freeze({ en: "Next: verify the published node and final client together", zh: "下一步：驗證公開節點與最終客戶端組合" }),
+        summary: Object.freeze({ en: "Obtain test results tied to the published Rust head and the final client revision, then verify connection, idle recovery, disconnect/reconnect and mailbox delivery on the intended client/node combination. Confirm packaging and distribution separately. Earlier unresolved regression records remain historical evidence until matching replacement results are verified.", zh: "取得對應公開 Rust head 與最終客戶端版本的測試結果，再以預定客戶端／節點組合驗證連線、閒置恢復、斷線／重連及信箱投遞。打包與分發須另行確認。較早未解決的回歸紀錄，在核對到相應新結果前仍保留為歷史證據。" }),
       }),
     ]),
   }),
