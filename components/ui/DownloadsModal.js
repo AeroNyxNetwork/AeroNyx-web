@@ -123,6 +123,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import useOsDetection from '../../lib/hooks/useOsDetection';
 import AeroNyxLogo from './AeroNyxLogo';
 import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
+import { getNightglassCopy } from '../../lib/i18n-nightglass';
 
 // [DOWNLOAD-INTEGRITY-20260723 by Codex] Website download links are pinned to
 // immutable release objects. Never attach a published digest to a mutable
@@ -202,6 +203,89 @@ const CloseIcon = ({ onClick, label }) => (
   </button>
 );
 
+/**
+ * [NIGHTGLASS-WEB 2026-09-16 by Claude] One-time legal notice, shown to
+ * EVERYONE before the download list.
+ *
+ * Deliberately not geo-targeted. A notice that singles out a jurisdiction and
+ * then hands the visitor a way through records that we identified the risk and
+ * helped anyway — that reads worse in any forum than a plain notice to all. It
+ * also keeps the promise ledger.rows makes on the homepage: this website
+ * cannot see anything about one person. Checking a visitor's country to decide
+ * what to show them is a per-person decision, and it would have made that
+ * sentence false.
+ *
+ * The acknowledgement lives in localStorage — on the visitor's own device,
+ * never sent anywhere, never readable by us. If storage is unavailable
+ * (private window, blocked site data, a browser that throws on access) the
+ * read fails to `false` and the notice simply shows again, which is the safe
+ * direction for a legal notice.
+ */
+const NOTICE_KEY = 'aeronyx.downloadNoticeAck.v1';
+
+const readNoticeAck = () => {
+  if (typeof window === 'undefined') return false;
+  try {
+    return window.localStorage.getItem(NOTICE_KEY) === '1';
+  } catch (error) {
+    return false;
+  }
+};
+
+const writeNoticeAck = () => {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(NOTICE_KEY, '1');
+  } catch (error) {
+    /* Per-device convenience only: if it cannot be stored, the notice reappears. */
+  }
+};
+
+const DownloadNotice = ({ copy, limitsHref, onAccept }) => (
+  <div>
+    <div className="border border-brand-line bg-brand-faint p-4">
+      <div className="flex items-start">
+        <svg
+          className="mr-2.5 mt-0.5 h-5 w-5 flex-shrink-0 text-brand-light"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 3 2.5 20h19L12 3Z" />
+          <path d="M12 10v4" />
+          <path d="M12 17h.01" />
+        </svg>
+        <div className="min-w-0">
+          <h3 className="text-sm font-medium leading-snug text-white">{copy.title}</h3>
+          <p className="mt-1.5 text-xs leading-relaxed text-white/68">{copy.body}</p>
+        </div>
+      </div>
+    </div>
+
+    <p className="mt-3 text-[11px] leading-relaxed text-white/40">{copy.neutrality}</p>
+
+    <div className="mt-5 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <a
+        href={limitsHref}
+        className="inline-flex min-h-[44px] items-center justify-center text-xs text-white/50 underline-offset-4 transition-colors hover:text-white hover:underline sm:justify-start"
+      >
+        {copy.link} →
+      </a>
+      <button
+        type="button"
+        onClick={onAccept}
+        className="inline-flex min-h-[44px] items-center justify-center rounded border border-brand-line bg-brand px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light"
+      >
+        {copy.cta}
+      </button>
+    </div>
+  </div>
+);
+
 const DownloadsModal = ({ isOpen, onClose }) => {
   const modalRef = useRef(null);
   const previouslyFocusedElement = useRef(null);
@@ -210,10 +294,26 @@ const DownloadsModal = ({ isOpen, onClose }) => {
   const { locale } = useRouter();
   const messages = getMessages(locale || DEFAULT_LOCALE);
   const copy = messages.downloadsModal || getMessages(DEFAULT_LOCALE).downloadsModal;
+  const notice = getNightglassCopy(locale || DEFAULT_LOCALE).downloadNotice;
+  const limitsHref = locale && locale !== DEFAULT_LOCALE
+    ? `/${locale}/privacy-network`
+    : '/privacy-network';
+  // Read on mount (client only) and again on each open, so an acknowledgement
+  // made in another tab is honoured without a flash of the notice.
+  const [acknowledged, setAcknowledged] = useState(readNoticeAck);
+  const acceptNotice = () => {
+    writeNoticeAck();
+    setAcknowledged(true);
+  };
+
   // Detect user's OS
   const userOs = useOsDetection();
   
   // Handle body scroll locking while preserving any pre-existing page state.
+  useEffect(() => {
+    if (isOpen) setAcknowledged(readNoticeAck());
+  }, [isOpen]);
+
   useEffect(() => {
     if (!isOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -476,6 +576,13 @@ const DownloadsModal = ({ isOpen, onClose }) => {
                   <CloseIcon onClick={onClose} label={copy.closeLabel} />
                 </div>
                 
+                {/* Everything below the header is behind the one-time notice.
+                    The bottom close button stays outside it, so the dialog can
+                    always be dismissed without acknowledging anything. */}
+                {!acknowledged ? (
+                  <DownloadNotice copy={notice} limitsHref={limitsHref} onAccept={acceptNotice} />
+                ) : (
+                  <>
                 {/* Security notice */}
                 <div className="mb-6 flex items-start border border-brand-line bg-brand-faint p-3">
                   <svg className="mr-2 mt-0.5 h-5 w-5 flex-shrink-0 text-brand-light" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -677,7 +784,9 @@ const DownloadsModal = ({ isOpen, onClose }) => {
                     </p>
                   </div>
                 </details>
-                
+                  </>
+                )}
+
                 {/* Extra close button at bottom for mobile accessibility */}
                 <div className="mt-6 text-center">
                   <button 
