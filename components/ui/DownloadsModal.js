@@ -124,6 +124,7 @@ import useOsDetection from '../../lib/hooks/useOsDetection';
 import AeroNyxLogo from './AeroNyxLogo';
 import { DEFAULT_LOCALE, getMessages } from '../../lib/i18n';
 import { getNightglassCopy } from '../../lib/i18n-nightglass';
+import { PRIVACY_POLICY } from '../../lib/external-links';
 
 // [DOWNLOAD-INTEGRITY-20260723 by Codex] Website download links are pinned to
 // immutable release objects. Never attach a published digest to a mutable
@@ -267,21 +268,31 @@ const DownloadNotice = ({ copy, limitsHref, onAccept }) => (
     </div>
 
     <p className="mt-3 text-[11px] leading-relaxed text-white/40">{copy.neutrality}</p>
+    <p className="mt-2 text-[11px] leading-relaxed text-white/55">{copy.jurisdiction}</p>
 
-    <div className="mt-5 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <button
+      type="button"
+      onClick={onAccept}
+      className="mt-5 inline-flex min-h-[44px] w-full items-center justify-center rounded border border-brand-line bg-brand px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light"
+    >
+      {copy.cta}
+    </button>
+
+    <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
       <a
         href={limitsHref}
-        className="inline-flex min-h-[44px] items-center justify-center text-xs text-white/50 underline-offset-4 transition-colors hover:text-white hover:underline sm:justify-start"
+        className="inline-flex min-h-[36px] items-center text-xs text-white/45 underline-offset-4 transition-colors hover:text-white hover:underline"
       >
         {copy.link} →
       </a>
-      <button
-        type="button"
-        onClick={onAccept}
-        className="inline-flex min-h-[44px] items-center justify-center rounded border border-brand-line bg-brand px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light"
+      <a
+        href={PRIVACY_POLICY}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex min-h-[36px] items-center text-xs text-white/45 underline-offset-4 transition-colors hover:text-white hover:underline"
       >
-        {copy.cta}
-      </button>
+        {copy.policyLink} →
+      </a>
     </div>
   </div>
 );
