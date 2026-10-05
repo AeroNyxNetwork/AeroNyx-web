@@ -195,10 +195,23 @@
  * Last Modified: v3.0 - Privacy boundary and FAQ close polish
  * Last Modified: v3.1 - Mobile evidence hierarchy polish
  * Last Modified: v3.2 - FAQ structured data for GEO
+ * Last Modified: v3.3 - [NYXI-WEB 2026-10-06 by Claude] MemChain keeps its
+ *   protocol narrative; Nyxi (小霓) is presented as its first application in
+ *   a "Built on MemChain" section between Pipeline and Pillars (a live demo
+ *   of recall by date / saying "I don't know" / forgetting, plus the owner's
+ *   eight points). Removed the user-chosen-model claims, which stopped being
+ *   true on 2026-10-05 (memory runs through one TEE-hosted model): the lab
+ *   axis 'brain', the third pillar, the "AI model choice" comparison row, the
+ *   two sentences that announced them, and the privacy-boundary title and
+ *   paragraph built on the same choice (all replaced from lib/i18n-memchain).
+ *   Site rule: the website says "TEE", never the vendor's name.
+ *   Layout: Nyxi stands beside her conversation instead of above an
+ *   isolated demo; an odd last FAQ spans both columns; the closing CTA sends
+ *   people to Nyxi.
  * ============================================
  */
 
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -207,7 +220,44 @@ import SEO from '../components/ui/SEO';
 import Container from '../components/ui/Container';
 import SiteHeader from '../components/layout/SiteHeader';
 import Footer from '../components/layout/Footer';
+import DownloadsModal from '../components/ui/DownloadsModal';
 import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
+import { getNightglassCopy } from '../lib/i18n-nightglass';
+import { getMemchainCopy } from '../lib/i18n-memchain';
+import { NYXI_REST, nyxiClip } from '../lib/external-links';
+
+// The comparison row about choosing your AI model. Matched by position
+// because the row has no id; the en text is checked so a reorder in lib/i18n
+// fails loudly instead of silently dropping the wrong row.
+const MODEL_CHOICE_ROW = 4;
+
+/* Drop the user-chosen-model claims (no longer true since 2026-10-05). */
+function withoutModelChoice(pageCopy, mc) {
+  const rows = pageCopy.comparison?.rows || [];
+  const enRow = getMessages(DEFAULT_LOCALE).memchainPage?.comparison?.rows?.[MODEL_CHOICE_ROW];
+  if (process.env.NODE_ENV !== 'production' && !/model/i.test(enRow?.dimension || '')) {
+    throw new Error('memchain: comparison row ' + MODEL_CHOICE_ROW + ' is no longer "AI model choice"');
+  }
+  return {
+    ...pageCopy,
+    advantageLab: {
+      ...pageCopy.advantageLab,
+      description: mc.labDescription,
+      axes: (pageCopy.advantageLab?.axes || []).filter((axis) => axis.id !== 'brain'),
+    },
+    pillars: {
+      ...pageCopy.pillars,
+      description: mc.pillarsDescription,
+      items: (pageCopy.pillars?.items || []).slice(0, 2),
+    },
+    comparison: { ...pageCopy.comparison, rows: rows.filter((_, i) => i !== MODEL_CHOICE_ROW) },
+    privacyBoundary: {
+      ...pageCopy.privacyBoundary,
+      title: mc.boundaryTitle,
+      paragraphs: [(pageCopy.privacyBoundary?.paragraphs || [])[0], mc.boundaryTee].filter(Boolean),
+    },
+  };
+}
 
 const ProtocolBackground = dynamic(
   () => import('../components/ui/ProtocolBackground'),
@@ -259,7 +309,9 @@ export default function MemChainPage() {
   const canonicalPath = activeLocale === DEFAULT_LOCALE ? '/memchain' : `/${activeLocale}/memchain`;
   const canonicalUrl = `https://aeronyx.network${canonicalPath}`;
   const copy = getMessages(activeLocale);
-  const pageCopy = copy.memchainPage || getMessages(DEFAULT_LOCALE).memchainPage;
+  const mc = getMemchainCopy(activeLocale);
+  const ng = getNightglassCopy(activeLocale);
+  const pageCopy = withoutModelChoice(copy.memchainPage || getMessages(DEFAULT_LOCALE).memchainPage, mc);
   const faqStructuredData = buildFaqStructuredData(pageCopy.faq, canonicalUrl);
 
   return (
@@ -283,12 +335,13 @@ export default function MemChainPage() {
         <ProtocolContinuity copy={pageCopy.protocolContinuity} />
         <MemoryAdvantageLab copy={pageCopy.advantageLab} />
         <Pipeline copy={pageCopy.pipeline} />
+        <BuiltOnMemChain copy={mc} alt={ng.nyxi.alt} />
         <Pillars copy={pageCopy.pillars} />
         <Benchmarks copy={pageCopy.benchmarks} />
         <Comparison copy={pageCopy.comparison} />
         <PrivacyBoundary copy={pageCopy.privacyBoundary} />
         <FAQ copy={pageCopy.faq} />
-        <MemChainAction copy={pageCopy.action} />
+        <MemChainAction copy={pageCopy.action} talkLabel={mc.app.cta} />
       </main>
 
       <Footer />
@@ -527,7 +580,10 @@ const MemoryAdvantageLab = ({ copy }) => {
             <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">
               {copy.eyebrow}
             </div>
-            <h2 className="mt-4 max-w-3xl break-words text-display-lg font-light text-white">
+            {/* display-md, not -lg: this column is ~0.4 of the row, and at -lg
+                "這不是另一張記憶表格，" could not fit one line, so the forced
+                break orphaned the comma. */}
+            <h2 className="mt-4 max-w-3xl break-words text-display-md font-light text-white">
               {copy.title}
             </h2>
             <p className="mt-4 max-w-copy text-base leading-relaxed text-white/58 md:text-lg">
@@ -746,7 +802,7 @@ const Pillars = ({ copy }) => (
         title={copy.title}
         description={copy.description}
       />
-      <div className="mt-10 grid gap-4 lg:grid-cols-3">
+      <div className="mt-10 grid gap-4 lg:grid-cols-2">
         {copy.items.map((pillar, index) => (
           <article key={pillar.title} className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5">
             <div className="absolute right-4 top-4 font-mono text-3xl font-light leading-none text-white/10">
@@ -910,7 +966,12 @@ const FAQ = ({ copy }) => (
       />
       <div className="mt-10 grid gap-3 md:grid-cols-2">
         {copy.items.map((item, index) => (
-          <article key={item.q} className="page-card relative min-w-0 overflow-hidden border p-4 md:p-5">
+          <article
+            key={item.q}
+            className={`page-card relative min-w-0 overflow-hidden border p-4 md:p-5 ${
+              copy.items.length % 2 === 1 && index === copy.items.length - 1 ? 'md:col-span-2' : ''
+            }`}
+          >
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/18 to-transparent" />
             <div className="mb-5 flex items-start justify-between gap-4">
               <div className="min-w-0 break-words font-mono text-xs uppercase leading-4 tracking-[0.14em] text-brand-light/80">
@@ -927,7 +988,9 @@ const FAQ = ({ copy }) => (
   </section>
 );
 
-const MemChainAction = ({ copy }) => (
+const MemChainAction = ({ copy, talkLabel }) => {
+  const [downloadsOpen, setDownloadsOpen] = useState(false);
+  return (
   <section className="border-t border-white/10 py-14 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
     <Container>
       <div className="page-surface relative overflow-hidden border p-5 text-center md:p-8">
@@ -943,12 +1006,14 @@ const MemChainAction = ({ copy }) => (
           {copy.description}
         </p>
         <div className="relative mx-auto mt-7 grid max-w-2xl gap-3 sm:grid-cols-2 sm:gap-4">
-          <Link
-            href="/privacy-network"
+          {/* The page is about Nyxi's memory: the primary door is her. */}
+          <button
+            type="button"
+            onClick={() => setDownloadsOpen(true)}
             className="inline-flex min-h-[48px] min-w-0 items-center justify-center break-words rounded border border-brand-line bg-brand px-6 py-3.5 text-center text-sm font-semibold leading-snug tracking-wide text-white shadow-[0_18px_50px_rgba(119,98,243,0.18)] transition duration-fast hover:-translate-y-0.5 hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light"
           >
-            {copy.primaryCta}
-          </Link>
+            {talkLabel}
+          </button>
           <a
             href="#privacy-boundary"
             className="inline-flex min-h-[48px] min-w-0 items-center justify-center break-words rounded border border-white/15 px-6 py-3.5 text-center text-sm font-medium leading-snug tracking-wide text-white/76 transition duration-fast hover:-translate-y-0.5 hover:bg-white/[0.035] hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
@@ -958,8 +1023,128 @@ const MemChainAction = ({ copy }) => (
         </div>
       </div>
     </Container>
+    <DownloadsModal isOpen={downloadsOpen} onClose={() => setDownloadsOpen(false)} />
   </section>
-);
+  );
+};
+
+/*
+ * [NYXI-WEB 2026-10-06 by Claude] Built on MemChain: Nyxi. The protocol story
+ * above says what MemChain guarantees; this shows what it feels like, through
+ * the app's own character. Uses the homepage stage styles (.ng-nyxi-*) and the
+ * official asset byte for byte. The greeting clip loads only once the section
+ * is near the viewport, and never under prefers-reduced-motion.
+ */
+const BuiltOnMemChain = ({ copy, alt }) => {
+  const reduced = useReducedMotion();
+  const [src, setSrc] = useState(NYXI_REST);
+  const [near, setNear] = useState(false);
+  const [downloadsOpen, setDownloadsOpen] = useState(false);
+  const stageId = 'memchain-nyxi-stage';
+
+  useEffect(() => {
+    const el = document.getElementById(stageId);
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setNear(true);
+      return undefined;
+    }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setNear(true); io.disconnect(); } }, { rootMargin: '300px 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!near || reduced) {
+      setSrc(NYXI_REST);
+      return undefined;
+    }
+    let cancelled = false;
+    const img = new Image();
+    img.onload = () => { if (!cancelled) setSrc(nyxiClip('grin')); };
+    img.src = nyxiClip('grin');
+    return () => { cancelled = true; };
+  }, [near, reduced]);
+
+  const { app, demo, points } = copy;
+
+  return (
+    <section id="nyxi" className="scroll-mt-24 border-y border-white/10 py-14 md:py-20" style={{ background: 'var(--surface-1, #0C0C13)' }}>
+      <Container>
+        {/* Header row: the claim and the door, left-aligned like every other
+            section on this page. */}
+        <div className="grid items-end gap-6 lg:grid-cols-[1fr_auto]">
+          <div className="max-w-3xl">
+            <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{app.eyebrow}</div>
+            <h2 className="mt-3 break-words text-display-md font-light text-white">{app.title}</h2>
+            <p className="mt-4 text-base leading-relaxed text-white/62 md:text-lg">{app.description}</p>
+          </div>
+          <button type="button" onClick={() => setDownloadsOpen(true)} className="ng-btn ng-btn-primary w-full sm:w-auto">
+            {app.cta}
+          </button>
+        </div>
+
+        {/* Nyxi beside her own conversation: the face and the proof read as
+            one object, instead of a lone figure over an isolated card. */}
+        <div className="mt-12 grid items-center gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
+          <div>
+            <div id={stageId} className="ng-nyxi-stage">
+              <div className="ng-nyxi-glow" aria-hidden="true" />
+              <p className="ng-nyxi-bubble">{app.bubble}</p>
+              <div className="ng-nyxi-figure">
+                <span className="ng-nyxi-floor" aria-hidden="true" />
+                {/* eslint-disable-next-line @next/next/no-img-element -- the
+                    official asset must be served byte for byte. */}
+                <img className="ng-nyxi-portrait" src={src} width={256} height={256} alt={alt} loading="lazy" decoding="async" draggable={false} />
+              </div>
+            </div>
+          </div>
+
+        {/* The demo: three answers most assistants get wrong. */}
+        <div className="ng-surface p-5 md:p-8">
+          <p className="mb-6 text-center text-[11px] uppercase tracking-eyebrow text-white/35">{demo.example}</p>
+          <ol className="flex flex-col gap-7">
+            {demo.exchanges.map((x) => (
+              <li key={x.you} className="flex flex-col gap-2.5">
+                <p className="max-w-[80%] self-end rounded-[16px] rounded-br-[4px] px-4 py-2.5 text-[14px] leading-snug text-white" style={{ background: '#7462F7' }}>
+                  <span className="sr-only">{demo.you}: </span>{x.you}
+                </p>
+                <div className="flex max-w-[86%] items-end gap-2 self-start">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- official asset, byte for byte */}
+                  <img src={NYXI_REST} width={32} height={32} alt="" aria-hidden="true" className="h-8 w-8 shrink-0 select-none" draggable={false} loading="lazy" />
+                  <div>
+                    <p className="rounded-[16px] rounded-bl-[4px] px-4 py-2.5 text-[14px] leading-snug text-white/90" style={{ background: 'var(--ng-slate3)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                      {x.nyxi}
+                    </p>
+                    <p className="mt-1.5 pl-1 text-[11px] font-medium text-[#A594FF]">{x.note}</p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+        </div>
+
+        {/* The owner's eight points. */}
+        <div className="mt-14">
+          <div className="text-[10px] uppercase tracking-eyebrow text-brand-light">{points.eyebrow}</div>
+          <h3 className="mt-3 max-w-3xl break-words text-2xl font-light text-white md:text-3xl">{points.title}</h3>
+          <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {points.items.map((item) => (
+              <li key={item.title} className="page-card min-w-0 border p-4 md:p-5">
+                <h4 className="text-[15px] font-medium leading-snug text-white">{item.title}</h4>
+                <p className="mt-2 text-sm leading-relaxed text-white/58">{item.body}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-6 border border-brand-line bg-brand-faint px-5 py-4 text-sm leading-relaxed text-white/72">
+            {points.membership}
+          </p>
+        </div>
+      </Container>
+      <DownloadsModal isOpen={downloadsOpen} onClose={() => setDownloadsOpen(false)} />
+    </section>
+  );
+};
 
 const SectionHeader = ({ eyebrow, title, description }) => (
   <div className="max-w-3xl">
