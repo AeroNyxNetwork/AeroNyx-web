@@ -16,6 +16,11 @@
  *
  * Replaces CorePrimitives + ProductsEcosystem on the homepage; both pages
  * they pointed at remain.
+ *
+ * [NYXI-WEB 2026-10-06 by Claude] The AI panel is Nyxi (小霓) — the official
+ * character standing on the panel's floor line, saying one line, instead of
+ * an abstract row of mode chips. It links to her own section (#nyxi), where
+ * she moves; here she stays still so the three panels read calmly together.
  * ============================================================================
  */
 
@@ -23,11 +28,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Container from '../ui/Container';
 import DownloadsModal from '../ui/DownloadsModal';
-import { WEB_CHAT } from '../../lib/external-links';
+import { WEB_CHAT, NYXI_REST } from '../../lib/external-links';
 
 const NYX = '#7462F7';
-const NYX_LT = '#A594FF';
-const SIGNAL = '#14F195';
 const MONO = { fontFamily: 'var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace' };
 
 function ChatFragment({ phone }) {
@@ -49,33 +52,48 @@ function ChatFragment({ phone }) {
   );
 }
 
-function NyxFragment({ chips }) {
-  const modes = ['Fast', 'Deep', 'Confidential'];
+/*
+ * Nyxi in a 176 px tile. The 512 px still is shown at 176 px (crisp on any
+ * screen up to 2.9×). Geometry from the asset: feet at 441/512 → 152 px, so
+ * the figure is sunk 16 px below the tile's bottom edge and she stands 8 px
+ * above the panel's floor line with a contact shadow under her. She is
+ * right-aligned so her line (top-left, corner pointing at her) never covers
+ * her face at any panel width.
+ */
+function NyxiFragment({ bubble, alt }) {
   return (
-    <div className="flex h-full flex-col justify-between p-5">
-      <div className="flex items-center gap-2">
-        <span className="flex h-7 w-7 items-center justify-center rounded-[10px]" style={{ background: 'rgba(116,98,247,0.18)' }}>
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke={NYX_LT} strokeWidth="1.75" strokeLinejoin="round" aria-hidden="true">
-            <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" />
-          </svg>
-        </span>
-        <span className="text-[13px] font-semibold text-white">Nyx</span>
-      </div>
-      <div className="flex gap-1.5">
-        {modes.map((mode, i) => (
-          <span
-            key={mode}
-            className="rounded-pill px-2.5 py-1 text-[10px] font-medium"
-            style={i === 2
-              ? { background: 'rgba(116,98,247,0.22)', color: '#fff', border: '1px solid rgba(165,148,255,0.4)' }
-              : { color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.08)' }}
-          >
-            {mode}
-          </span>
-        ))}
-      </div>
-      <div className="rounded-[12px] px-3 py-2 text-[10px]" style={{ ...MONO, background: 'var(--ng-slate2)', color: 'rgba(255,255,255,0.55)' }}>
-        <span style={{ color: SIGNAL }}>●</span> {chips[1]} · {chips[2]}
+    <div className="relative flex h-full items-end justify-end overflow-hidden pr-4">
+      <p
+        className="absolute left-4 top-4 max-w-[46%] rounded-[14px] rounded-br-[4px] px-3 py-2 text-[12px] leading-snug text-white/90"
+        style={{ background: 'var(--ng-slate3)', border: '1px solid rgba(165,148,255,0.28)' }}
+      >
+        {bubble}
+      </p>
+      <div className="relative -mb-4 h-[176px] w-[176px] shrink-0">
+        <span
+          aria-hidden="true"
+          className="absolute rounded-[50%]"
+          style={{
+            left: '52%',
+            top: 146,
+            width: 96,
+            height: 12,
+            transform: 'translateX(-50%)',
+            background: 'radial-gradient(closest-side, rgba(0,0,0,0.6), rgba(0,0,0,0))',
+          }}
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element -- the official
+            asset must be served byte for byte; next/image would re-encode it. */}
+        <img
+          src={NYXI_REST}
+          width={176}
+          height={176}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          className="relative block select-none"
+        />
       </div>
     </div>
   );
@@ -105,7 +123,7 @@ export default function OneKey({ copy, locale }) {
   const [downloadsOpen, setDownloadsOpen] = useState(false);
   const fragments = [
     <ChatFragment key="chat" phone={copy.phone} />,
-    <NyxFragment key="nyx" chips={k.panels[1].chips} />,
+    <NyxiFragment key="nyxi" bubble={k.panels[1].bubble} alt={copy.nyxi.alt} />,
     <WalletFragment key="wallet" chips={k.panels[2].chips} />,
   ];
 
@@ -136,6 +154,12 @@ export default function OneKey({ copy, locale }) {
                     <button type="button" onClick={() => setDownloadsOpen(true)} className="ng-link">
                       {panel.cta} →
                     </button>
+                  ) : panel.href.startsWith('#') ? (
+                    // Same-page anchor (Nyxi → #nyxi): a plain link, so the
+                    // locale-aware <Link> cannot rewrite it into a navigation.
+                    <a href={panel.href} className="ng-link">
+                      {panel.cta} →
+                    </a>
                   ) : (
                     <Link href={panel.href} locale={locale} className="ng-link">
                       {panel.cta} →

@@ -4,9 +4,14 @@
  * ============================================
  * [NIGHTGLASS-WEB 2026-09-12 by Claude] Section order:
  *   1. NightglassHero   — the claim, the Product Lens, the live proof strip
+ *   1b. MeetNyxi        — the AeroNyx AI as the app shows her: the official
+ *                         character, her greeting, her moods (#nyxi).
+ *                         [NYXI-WEB 2026-10-06 by Claude] Second on the page
+ *                         because she is who you talk to first in the app;
+ *                         after the hero so the opening thesis stays whole.
  *   2. NetworkProof     — privacy-safe network totals (traffic, packets,
  *                         nodes, private routes, verifiable ledger)
- *   3. OneKey           — messages / private AI / wallet, one key
+ *   3. OneKey           — messages / Nyxi / wallet, one key
  *   4. VisibilityLedger — who sees what (#visibility)
  *   5. NorthStarBand    — the covenant (#north-star-plan kept)
  *   6. HowItWorks       — sealed → carried → opened (#how-it-works kept)
@@ -40,6 +45,7 @@ import { DEFAULT_LOCALE, getMessages } from '../lib/i18n';
 import { getNightglassCopy } from '../lib/i18n-nightglass';
 
 import NightglassHero from '../components/sections/NightglassHero';
+import MeetNyxi from '../components/sections/MeetNyxi';
 import NetworkProof from '../components/sections/NetworkProof';
 import OneKey from '../components/sections/OneKey';
 import VisibilityLedger from '../components/sections/VisibilityLedger';
@@ -83,6 +89,7 @@ export default function Home({ pageLocale = DEFAULT_LOCALE }) {
 
       <main className="relative z-10">
         <NightglassHero copy={copy} messages={messages} />
+        <MeetNyxi copy={copy} />
         <NetworkProof copy={copy} messages={messages} locale={activeLocale} />
         <OneKey copy={copy} locale={activeLocale} />
         <VisibilityLedger copy={copy} />

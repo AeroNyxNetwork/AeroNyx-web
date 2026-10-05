@@ -1001,6 +1001,137 @@ img, svg {
   background: rgba(116, 98, 247, 0.22);
 }
 
+/* [NYXI-WEB 2026-10-06 by Claude] CJK headings break only at punctuation and
+   spaces, so a title never splits a word ("讀／不到", "記／憶表格"). If a run
+   cannot fit the line at all, overflow-wrap:anywhere still breaks it, so a
+   narrow phone never overflows. Balance evens out the lines where supported. */
+:lang(zh-Hant) :is(h1, h2, h3),
+:lang(zh-Hans) :is(h1, h2, h3),
+:lang(ja) :is(h1, h2, h3),
+:lang(ko) :is(h1, h2, h3) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+/* [NYXI-WEB 2026-10-06 by Claude] Nyxi's stage. Every number below comes from
+   measuring the official asset (see lib/external-links.js): a 512 px canvas
+   shown at 256 px; resting feet at 441/512 ≈ 220 px; resting head at
+   119/512 ≈ 60 px, leaving headroom the greeting bubble may sit over. */
+.ng-nyxi-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  isolation: isolate;
+  padding-top: 0.25rem;
+}
+.ng-nyxi-glow {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(380px, 100%);
+  height: 280px;
+  transform: translateX(-50%);
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(50% 50% at 50% 55%, rgba(116, 98, 247, 0.3), transparent 72%);
+}
+.ng-nyxi-bubble {
+  position: relative;
+  z-index: 2;
+  max-width: 17.5rem;
+  margin: 0;
+  border-radius: 18px;
+  border: 1px solid rgba(165, 148, 255, 0.28);
+  background: var(--ng-slate3);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  transition: opacity var(--dur-base) var(--ease-out-brand), transform var(--dur-base) var(--ease-out-brand);
+}
+.ng-nyxi-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--ng-slate3);
+  border-right: 1px solid rgba(165, 148, 255, 0.28);
+  border-bottom: 1px solid rgba(165, 148, 255, 0.28);
+}
+.ng-nyxi-bubble[data-away='true'] {
+  opacity: 0;
+  transform: translateY(6px);
+}
+/* Pulled up 40 px into the transparent headroom: tail tip lands ~13 px above
+   her resting head, so the bubble reads as hers, not as a caption. */
+.ng-nyxi-figure {
+  position: relative;
+  width: 256px;
+  height: 256px;
+  margin-top: -40px;
+}
+.ng-nyxi-portrait {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 256px;
+  height: 256px;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+/* Contact shadow: she is a 3D object and stands on the surface. Lit from the
+   upper left in her render, so the shadow sits a touch to the right. */
+.ng-nyxi-floor {
+  position: absolute;
+  z-index: 0;
+  left: 52%;
+  top: 212px;
+  width: 152px;
+  height: 20px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0));
+}
+.ng-mood {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0 0.85rem;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-out-brand),
+    background-color var(--dur-fast) var(--ease-out-brand),
+    color var(--dur-fast) var(--ease-out-brand),
+    transform var(--dur-fast) var(--ease-out-brand);
+}
+.ng-mood:hover { border-color: rgba(165, 148, 255, 0.42); color: #fff; }
+.ng-mood:active { transform: scale(0.96); }
+.ng-mood:focus-visible {
+  outline: 2px solid var(--ng-nyx-lt);
+  outline-offset: 2px;
+}
+.ng-mood[aria-pressed='true'] {
+  border-color: rgba(165, 148, 255, 0.6);
+  background: rgba(116, 98, 247, 0.22);
+  color: #fff;
+}
+/* Fetching that mood's clip (~650–800 KB): a breath, not a spinner. */
+.ng-mood[data-loading='true'] { animation: ng-pulse 1.1s ease-in-out infinite; }
+
 /* Tertiary link — deliberately quieter than the two buttons above it, so the
    CTA cluster still reads primary / secondary / aside instead of three peers. */
 .ng-link-quiet {
@@ -1045,6 +1176,6 @@ img, svg {
 }
 @media (prefers-reduced-motion: reduce) {
   .ng-btn, .ng-card, .ng-link, .ng-link-quiet, .ng-link-quiet .ng-arrow, .ng-power,
-  .ng-faq summary, .ng-faq .ng-faq-mark { transition: none; }
-  .ng-live-dot, .ng-rise { animation: none; }
+  .ng-faq summary, .ng-faq .ng-faq-mark, .ng-mood, .ng-nyxi-bubble { transition: none; }
+  .ng-live-dot, .ng-rise, .ng-mood[data-loading='true'] { animation: none; }
 }
