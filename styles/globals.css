@@ -1001,6 +1001,17 @@ img, svg {
   background: rgba(116, 98, 247, 0.22);
 }
 
+/* [NYXI-WEB 2026-10-07 by Claude] A horizontal rail with its scrollbar hidden
+   gives no sign that more sits off-screen. Fade the last 36 px so the cut-off
+   item reads as "continues", not "broken". Phones and tablets only: from lg the
+   rail becomes a grid and nothing scrolls. -webkit- for Safari < 15.4. */
+@media (max-width: 1023px) {
+  .ng-rail-fade {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+  }
+}
+
 /* [NYXI-WEB 2026-10-06 by Claude] CJK headings break only at punctuation and
    spaces, so a title never splits a word ("讀／不到", "記／憶表格"). If a run
    cannot fit the line at all, overflow-wrap:anywhere still breaks it, so a

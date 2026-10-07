@@ -195,6 +195,10 @@
  * Last Modified: v3.0 - Privacy boundary and FAQ close polish
  * Last Modified: v3.1 - Mobile evidence hierarchy polish
  * Last Modified: v3.2 - FAQ structured data for GEO
+ * Last Modified: v3.4 - [NYXI-WEB 2026-10-07 by Claude] Phone pass: the
+ *   advantage-lab axis rail is a hidden-scrollbar horizontal scroller with no
+ *   cue that more axes sit off-screen; it now fades at its right edge
+ *   (.ng-rail-fade, phones/tablets only).
  * Last Modified: v3.3 - [NYXI-WEB 2026-10-06 by Claude] MemChain keeps its
  *   protocol narrative; Nyxi (小霓) is presented as its first application in
  *   a "Built on MemChain" section between Pipeline and Pillars (a live demo
@@ -593,7 +597,7 @@ const MemoryAdvantageLab = ({ copy }) => {
               {copy.categoryContext}
             </div>
 
-            <div className="-mx-4 mt-6 flex max-w-full snap-x gap-2 overflow-x-auto px-4 pb-2 scrollbar-hide lg:mx-0 lg:grid lg:overflow-visible lg:px-0 lg:pb-0">
+            <div className="ng-rail-fade -mx-4 mt-6 flex max-w-full snap-x gap-2 overflow-x-auto px-4 pb-2 scrollbar-hide lg:mx-0 lg:grid lg:overflow-visible lg:px-0 lg:pb-0">
               {copy.axes.map((axis) => {
                 const active = axis.id === activeAxisId;
                 return (

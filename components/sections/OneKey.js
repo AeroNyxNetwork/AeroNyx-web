@@ -99,10 +99,10 @@ function NyxiFragment({ bubble, alt }) {
   );
 }
 
-function WalletFragment({ chips }) {
+function WalletFragment({ chips, total, caption }) {
   return (
     <div className="flex h-full flex-col justify-between p-5">
-      <div className="text-[10px] font-medium uppercase tracking-eyebrow text-white/45">Total</div>
+      <div className="text-[10px] font-medium uppercase tracking-eyebrow text-white/45">{total}</div>
       <div className="ng-display text-[28px] leading-none text-white">12.48 SOL</div>
       <div className="flex flex-wrap gap-1.5">
         {chips.map((chain) => (
@@ -111,8 +111,10 @@ function WalletFragment({ chips }) {
           </span>
         ))}
       </div>
-      <div className="truncate text-[10px]" style={{ ...MONO, color: 'rgba(255,255,255,0.35)' }}>
-        rust keystore · 7xKX…AsU · sign only what you read
+      {/* Wraps instead of truncating: it used to be one hard-coded English line
+          cut mid-word at every width (…"sign only what yo"), in every locale. */}
+      <div className="text-[10px] leading-snug" style={{ ...MONO, color: 'rgba(255,255,255,0.4)' }}>
+        {caption}
       </div>
     </div>
   );
@@ -124,7 +126,7 @@ export default function OneKey({ copy, locale }) {
   const fragments = [
     <ChatFragment key="chat" phone={copy.phone} />,
     <NyxiFragment key="nyxi" bubble={k.panels[1].bubble} alt={copy.nyxi.alt} />,
-    <WalletFragment key="wallet" chips={k.panels[2].chips} />,
+    <WalletFragment key="wallet" chips={k.panels[2].chips} total={k.walletTotal} caption={k.walletCaption} />,
   ];
 
   return (
