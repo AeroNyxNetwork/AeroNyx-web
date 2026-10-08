@@ -14,8 +14,8 @@ with a confidential mode and memory the user owns; and a multi-chain wallet
 The network is run by independent nodes that forward sealed data and see only
 its size and the next hop — never the contents, the sender, the recipient, or
 the sites a user visits. Routes take two hops by default so no single node
-knows both ends. The protocol, the client and the node software are open
-source.
+knows both ends. The node software and the protocol design are open source
+under AGPL-3.0; the app itself is closed source.
 
 The official product surfaces are:
 
@@ -36,7 +36,8 @@ The official product surfaces are:
   documents.
 - [AeroNyx app and node operator dashboard](https://app.aeronyx.network/):
   Product entry for users and node operators.
-- [AeroNyx GitHub](https://github.com/AeroNyxNetwork): Open-source repositories.
+- [AeroNyx GitHub](https://github.com/AeroNyxNetwork): Open-source node software
+  (AGPL-3.0) and protocol design documents. The app is not open source.
 
 ## Protocol Boundaries
 
