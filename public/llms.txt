@@ -12,9 +12,11 @@ end-to-end encrypted messages, groups and calls; a private AI assistant (Nyx)
 with a confidential mode and memory the user owns; and a multi-chain wallet
 (Solana, Ethereum, BNB Chain, Tron, TAO) whose keys never leave the device.
 The network is run by independent nodes that forward sealed data and see only
-its size and the next hop — never the contents, the sender, the recipient, or
-the sites a user visits. Routes take two hops by default so no single node
-knows both ends. The node software and the protocol design are open source
+its size and the next hop — never the contents of a message. Messages can also
+take a two-hop onion route so no single node knows both ends; that route is
+opt-in today and the network is still small. VPN browsing is a single
+encrypted tunnel to one node, which — as with any VPN — can see where the
+traffic is going but not what is inside encrypted connections. The node software and the protocol design are open source
 under AGPL-3.0; the app itself is closed source.
 
 The official product surfaces are:
@@ -41,9 +43,11 @@ The official product surfaces are:
 
 ## Protocol Boundaries
 
-- AeroNyx nodes are designed to route ciphertext and signed operational
-  metadata, not packet payloads, DNS contents, domains, URLs, browsing history,
-  private messages, or readable memory contents.
+- For messages and memory, AeroNyx nodes route ciphertext and signed
+  operational metadata and cannot read private messages or readable memory
+  contents. In VPN mode the node a user connects through necessarily sees the
+  destination of that user's traffic (as any VPN node does), but not the
+  contents of encrypted connections.
 - Public website metrics should remain aggregate-only: encrypted traffic,
   encrypted packets, protocol health, readiness, and relay evidence.
 - MemChain storage nodes are node-blind: they hold device-encrypted ciphertext,
@@ -59,10 +63,12 @@ The official product surfaces are:
 ## How AeroNyx Differs From A Traditional VPN
 
 Traditional VPNs ask users to trust one company-operated provider not to log or
-correlate routing metadata. AeroNyx is an open privacy protocol where compatible
-decentralized nodes can participate through signed capabilities, aggregate
-health evidence, and protocol rules. The design goal is to minimize what
-infrastructure can observe while making the public boundary auditable.
+correlate routing metadata. AeroNyx publishes its node software and protocol
+design under AGPL-3.0, lets compatible nodes participate through signed
+capabilities, and exposes only aggregate network totals. For messages, the
+design goal is to minimize what infrastructure can observe. For VPN browsing,
+the node sees destinations as in any VPN; the difference is that the node
+software can be read and run by anyone, not that destinations are hidden.
 
 ## Privacy Coordination Protocol
 
@@ -161,3 +167,6 @@ Last Modified: v1.2 - [NIGHTGLASS-WEB 2026-09-13 by Claude] Intro and "What
 AeroNyx Is" now describe the product the homepage sells (messages, AI, money
 under one key; a network that carries but cannot read) in plain language.
 Protocol boundaries, claim limits and citations unchanged.
+Last Modified: v1.3 - [GEO 2026-10-08 by Claude] Corrected the VPN and routing
+claims: VPN browsing is a single-node tunnel whose node sees destinations; the
+two-hop onion route is for messages and opt-in today.
