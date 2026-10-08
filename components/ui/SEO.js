@@ -263,10 +263,15 @@ const SEO = ({
       
       {/* Canonical URL */}
       <link rel="canonical" href={canonical} />
+      {/* [GEO 2026-10-08 by Claude] The two .map()s below used to share key={item.code}.
+          next/head dedupes by key across the whole <Head>, so the og:locale:alternate
+          <meta>s (processed last) evicted five of the six other-language hreflang
+          <link>s: every page shipped only x-default + its own language, and the
+          alternates lived only in sitemap.xml. Distinct key namespaces fix it. */}
       <link rel="alternate" hrefLang="x-default" href={buildLocaleUrl(canonical, DEFAULT_LOCALE)} />
       {SUPPORTED_LOCALES.map((item) => (
         <link
-          key={item.code}
+          key={`hreflang-${item.code}`}
           rel="alternate"
           hrefLang={item.code}
           href={buildLocaleUrl(canonical, item.code)}
@@ -281,7 +286,7 @@ const SEO = ({
         .filter((item) => item.code !== activeLocale)
         .map((item) => (
           <meta
-            key={item.code}
+            key={`og-locale-alt-${item.code}`}
             property="og:locale:alternate"
             content={OG_LOCALE_BY_CODE[item.code] || item.code}
           />
