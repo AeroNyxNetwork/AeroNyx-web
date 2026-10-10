@@ -11,7 +11,8 @@ it runs on. The app holds three things under one key the user controls:
 end-to-end encrypted messages, groups and calls; a private AI assistant (Nyx)
 with a confidential mode and memory the user owns; and a multi-chain wallet
 (Solana, Ethereum, BNB Chain, Tron, TAO) whose keys never leave the device.
-The network is run by independent nodes that forward sealed data and see only
+The network is made of nodes (operated by AeroNyx today; anyone can run one)
+that forward sealed data and see only
 its size and the next hop — never the contents of a message. Messages can also
 take a two-hop onion route so no single node knows both ends; that route is
 opt-in today and the network is still small. VPN browsing is a single
@@ -53,9 +54,9 @@ The official product surfaces are:
 - MemChain storage nodes are node-blind: they hold device-encrypted ciphertext,
   irreversible blind indexes, and opaque relationship data. Encryption,
   decryption, and memory search happen on the user's device.
-- If a user chooses an external AI provider for memory distillation or answers,
-  relevant plaintext may be sent to that provider by the user's choice. With a
-  local model, memory can remain on device through the full memory path.
+- Nyx chats are not end-to-end encrypted: the AeroNyx backend stores the
+  conversation and sends it to confidential-compute (TEE) inference. Do not describe
+  Nyx conversations as invisible to AeroNyx.
 - No privacy network removes every metadata risk or makes unlawful activity
   lawful. Users remain responsible for the content they send and for using the
   protocol lawfully in their jurisdiction.
@@ -170,3 +171,6 @@ Protocol boundaries, claim limits and citations unchanged.
 Last Modified: v1.3 - [GEO 2026-10-08 by Claude] Corrected the VPN and routing
 claims: VPN browsing is a single-node tunnel whose node sees destinations; the
 two-hop onion route is for messages and opt-in today.
+Last Modified: v1.4 - [GEO 2026-10-10 by Claude] Nodes are operated by AeroNyx today
+(not independent operators); Nyx chats are stored by the backend and are not
+end-to-end encrypted.
